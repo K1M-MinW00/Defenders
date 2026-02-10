@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MonsterNavAgent2D : MonoBehaviour, IDamageable
+
+public class Monster : MonoBehaviour, IDamageable
 {
     [Header("Combat")]
     public float atkRange = 1.5f;
@@ -11,7 +13,12 @@ public class MonsterNavAgent2D : MonoBehaviour, IDamageable
 
     private NavMeshAgent agent;
     private Transform target;
-    private float atkTimer;
+    private float lastAtkTime;
+
+    public List<PlayerCharacter> characters;
+
+    private bool isDead;
+    public bool IsDead => isDead;
 
     [SerializeField] private float hp = 50;
 
@@ -32,7 +39,7 @@ public class MonsterNavAgent2D : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        atkTimer += Time.deltaTime;
+
     }
     /// <summary>
     /// 주기적으로 공격 가능 여부 체크
@@ -118,9 +125,9 @@ public class MonsterNavAgent2D : MonoBehaviour, IDamageable
 
     private void TryAttack()
     {
-        if (atkTimer >= atkCoolTime)
+        if (lastAtkTime - Time.time >= atkCoolTime)
         {
-            atkTimer = 0f;
+            lastAtkTime = Time.time;
             Debug.Log("플레이어 공격");
         }
     }
