@@ -7,6 +7,7 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
     public static StageManager Instance;
+    public StageUIController stageUI;
 
     [Header("Stage Data")]
     public StageData currentStageData;
@@ -43,6 +44,11 @@ public class StageManager : MonoBehaviour
     private void Start()
     {
         InitializeStage();
+
+        stageUI.Initialize(this);
+
+        stageUI.SetStageInfo(currentStageData.stageName, currentStageData.stageId.ToString());
+        stageUI.CreateWaveUI(currentStageData.waves);
     }
 
     private void InitializeStage()
@@ -89,7 +95,7 @@ public class StageManager : MonoBehaviour
     private void StartPreparePhase()
     {
         CurrentState = StageState.Preparing;
-
+        stageUI.gameObject.SetActive(true);
         prepareTimer = prepareDuration;
 
         // 타이머 UI 설정
@@ -99,11 +105,10 @@ public class StageManager : MonoBehaviour
 
     private IEnumerator PrepareRoutine()
     {
-        while(prepareTimer >0f)
+        while(prepareTimer > 0f)
         {
             prepareTimer -= Time.deltaTime;
-
-            // UI 업데이트
+            stageUI.UpdatePrepTimer(prepareTimer);
 
             yield return null;
         }
@@ -113,16 +118,28 @@ public class StageManager : MonoBehaviour
 
     private void StartCombatPhase()
     {
+        stageUI.gameObject.SetActive(false);
 
-        // UI Show Prepare UI
-
-        if(CurrentWave == null)
+        if (CurrentWave == null)
         {
-            // StartStageClear();
+            Debug.LogWarning("Stage Data , Wave Data Null");
             return;
         }
 
+        StartWave();
+        
+    }
+    public void StartBattleEarly()
+    {
+        StopAllCoroutines();
+        StartCombatPhase();
+    }
+
+    private void StartWave()
+    {
         CurrentState = StageState.Combat;
+
+        stageUI.UpdateCurrentWave(currentWaveIndex);
         monsterSpawner.StartWave(CurrentWave);
     }
 
