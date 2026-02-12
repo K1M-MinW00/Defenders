@@ -1,40 +1,33 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu(menuName = "Wave/WaveData")]
-public class WaveData : ScriptableObject
+[System.Serializable]
+public class WaveData
 {
+    public WaveType waveType;
+
     public List<SubWaveData> subWaves;
-    public float delayBetweenSubWaves = 5f;
     public int totalMonsterCount;
+    public int rewardGold;
+}
 
-    #if UNITY_EDITOR
-    private void OnValidate()
-    {
-        RecalculateTotalMonsterCount();
-    }
-    #endif
-
-    private void RecalculateTotalMonsterCount()
-    {
-        totalMonsterCount = 0;
-
-        if (subWaves == null)
-            return;
-
-        foreach (var subWave in subWaves)
-        {
-            if (subWave != null)
-            {
-                totalMonsterCount += subWave.count;
-            }
-        }
-    }
+public enum WaveType
+{
+    Normal,
+    Elite,
+    Boss
 }
 
 [System.Serializable]
 public class SubWaveData
 {
-    public string monsterId;   // A, B, C, D
+    public List<MonsterGroup> spawnGroups;
+    public float delayAfter;
+}
+
+[System.Serializable]
+public class MonsterGroup
+{
+    public string monsterId;
     public int count;
 }

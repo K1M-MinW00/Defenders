@@ -1,68 +1,73 @@
-using UnityEngine;
-using System.Collections.Generic;
+//using UnityEngine;
+//using System.Collections.Generic;
 
-public class MonsterPool : MonoBehaviour
-{
-    [System.Serializable]
-    public class PoolItem
-    {
-        public string monsterId;
-        public GameObject prefab;
-        public int initialCount;
-    }
+//public class MonsterPool : MonoBehaviour
+//{
+//    private Dictionary<string, Queue<GameObject>> pool = new();
+//    private Dictionary<string, GameObject> prefabCache = new();
 
-    public List<PoolItem> poolItems;
+//    public void Init(StageData stageData)
+//    {
+//        HashSet<string> requiredMonsterIds = CollectMonsterIds(stageData);
 
-    private Dictionary<string, Queue<GameObject>> pool = new();
+//        foreach (var monsterId in requiredMonsterIds)
+//            Prewarm(monsterId, 20);
+//    }
 
-    private void Awake()
-    {
-        foreach (var item in poolItems)
-        {
-            Queue<GameObject> queue = new();
+//    private HashSet<string> CollectMonsterIds(StageData stageData)
+//    {
+//        HashSet<string> ids = new();
 
-            for (int i = 0; i < item.initialCount; i++)
-            {
-                GameObject obj = Instantiate(item.prefab, transform);
-                obj.SetActive(false);
-                queue.Enqueue(obj);
+//        foreach(var wave in stageData.waves)
+//        {
+//            foreach(var sub in wave.subWaves)
+//            {
+//                foreach (var spawnGroup in sub.spawnGroups)
+//                    ids.Add(spawnGroup.monsterId);
+//            }
+//        }
 
-            }
+//        return ids;
+//    }
 
-            pool[item.monsterId] = queue;
-        }
-    }
+//    private void PreWarm(string monsterId,int count)
+//    {
+//        if(!pool.ContainsKey(monsterId))
+//            pool[monsterId] = new Queue<GameObject>();
 
-    public GameObject Spawn(string monsterId, Vector3 position)
-    {
-        if (!pool.ContainsKey(monsterId))
-        {
-            Debug.LogError($"MonsterPool: No pool for {monsterId}");
-            return null;
-        }
+//        // GameObject obj = 
+//    }
 
-        GameObject obj = pool[monsterId].Count > 0
-            ? pool[monsterId].Dequeue()
-            : Instantiate(GetPrefab(monsterId), transform);
+//    public GameObject Spawn(string monsterId, Vector3 position)
+//    {
+//        if (!pool.ContainsKey(monsterId))
+//        {
+//            Debug.LogError($"MonsterPool: No pool for {monsterId}");
+//            return null;
+//        }
 
-        obj.transform.position = position;
-        obj.SetActive(true);
-        return obj;
-    }
+//        GameObject obj = pool[monsterId].Count > 0
+//            ? pool[monsterId].Dequeue()
+//            : Instantiate(GetPrefab(monsterId), transform);
 
-    public void Despawn(string monsterId, GameObject obj)
-    {
-        obj.SetActive(false);
-        pool[monsterId].Enqueue(obj);
-    }
+//        obj.transform.position = position;
+//        obj.SetActive(true);
+//        return obj;
+//    }
 
-    private GameObject GetPrefab(string monsterId)
-    {
-        foreach (var item in poolItems)
-        {
-            if (item.monsterId == monsterId)
-                return item.prefab;
-        }
-        return null;
-    }
-}
+//    public void Despawn(string monsterId, GameObject obj)
+//    {
+//        obj.SetActive(false);
+//        pool[monsterId].Enqueue(obj);
+//    }
+
+//    private GameObject GetPrefab(string monsterId)
+//    {
+//        foreach (var item in poolItems)
+//        {
+//            if (item.monsterId == monsterId)
+//                return item.prefab;
+//        }
+//        return null;
+//    }
+//}

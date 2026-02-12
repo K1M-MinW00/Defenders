@@ -250,7 +250,7 @@ MonoBehaviour:
   atkRange: 3
   target: {fileID: 0}
   agent: {fileID: 0}
-  monsterPool: {fileID: 1990264461}
+  monsterSpawner: {fileID: 1990264462}
 --- !u!114 &105141495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -357,6 +357,50 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &173197328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 173197330}
+  - component: {fileID: 173197329}
+  m_Layer: 0
+  m_Name: ObjectPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &173197329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173197328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca73541639b4b6449a0e2028e87c75c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectPool
+--- !u!4 &173197330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173197328}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &242455254
 GameObject:
   m_ObjectHideFlags: 0
@@ -27134,7 +27178,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1990264463}
   - component: {fileID: 1990264462}
-  - component: {fileID: 1990264461}
   m_Layer: 0
   m_Name: MonsterSpawner
   m_TagString: Untagged
@@ -27142,25 +27185,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1990264461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1990264460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57349146f05e8bf45b96d47017a2e8ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MonsterPool
-  poolItems:
-  - monsterId: a
-    prefab: {fileID: 9069340018009947690, guid: b4876304ad813c64f867d2c0dd22d0f8, type: 3}
-    initialCount: 10
-  - monsterId: b
-    prefab: {fileID: 9069340018009947690, guid: 062f96aa23318324c9f93e34ec4d0087, type: 3}
-    initialCount: 10
 --- !u!114 &1990264462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27173,10 +27197,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59705d221f1e84540bc2769d7aa58c9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
-  monsterPool: {fileID: 1990264461}
-  waveData: {fileID: 11400000, guid: 57c41f1132247af48ba1c325605d2e9a, type: 2}
+  Instance: {fileID: 0}
+  pool: {fileID: 0}
   spawnPoint: {fileID: 1990264463}
-  spawnInterval: 0.1
 --- !u!4 &1990264463
 Transform:
   m_ObjectHideFlags: 0
@@ -27192,6 +27215,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1993685768
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1993685770}
+  - component: {fileID: 1993685769}
+  m_Layer: 0
+  m_Name: StageManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1993685769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1993685768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab77874d51504947bf00eb378d1959e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  currentStageData: {fileID: 11400000, guid: 5521dee372fc64842a559f0cc41e146e, type: 2}
+  objectPool: {fileID: 173197329}
+  monsterSpawner: {fileID: 1990264462}
+  prepareDuration: 5
+--- !u!4 &1993685770
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1993685768}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -27201,3 +27272,5 @@ SceneRoots:
   - {fileID: 242455257}
   - {fileID: 105141491}
   - {fileID: 1990264463}
+  - {fileID: 1993685770}
+  - {fileID: 173197330}

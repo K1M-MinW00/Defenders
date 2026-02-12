@@ -2,14 +2,23 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 [RequireComponent(typeof(NavMeshAgent))]
 
-public class Monster : MonoBehaviour, IDamageable
+public class Monster : MonoBehaviour, IDamageable, IPoolable
 {
+    private ObjectPool pool;
+    private string poolKey;
+    public string PoolKey => poolKey;
+
+
     [Header("Combat")]
     public float atkRange = 1.5f;
     public float atkCoolTime = 1.0f;
+    
+    private float maxHp = 50;
+    [SerializeField] private float curHp = 50;
 
     private NavMeshAgent agent;
     private Transform target;
@@ -20,7 +29,7 @@ public class Monster : MonoBehaviour, IDamageable
     private bool isDead;
     public bool IsDead => isDead;
 
-    [SerializeField] private float hp = 50;
+    public event Action<Monster> OnDead;
 
     private void Awake()
     {
@@ -37,10 +46,32 @@ public class Monster : MonoBehaviour, IDamageable
         StartCoroutine(CombatCheckRoutine());
     }
 
-    private void Update()
+    
+    public void SetPool(ObjectPool pool, string key)
     {
-
+        this.pool = pool;
+        this.poolKey = key;
     }
+
+    public void OnSpawn()
+    {
+        isDead = false;
+        curHp = maxHp;
+
+        target = null;
+        lastAtkTime = 0f;
+
+        agent.isStopped = false;
+        agent.ResetPath();
+
+        StartCoroutine (CombatCheckRoutine());
+    }
+
+    public void OnDespawn()
+    {
+        StopAllCoroutines();
+    }
+
     /// <summary>
     /// 주기적으로 공격 가능 여부 체크
     /// </summary>
@@ -48,18 +79,16 @@ public class Monster : MonoBehaviour, IDamageable
     {
         WaitForSeconds wait = new WaitForSeconds(2f);
 
-        while (true)
+        while (!isDead)
         {
             if (target == null)
-            {
                 FindClosestPlayer();
-            }
-
+            
             if (target != null)
             {
-                float distance = Vector2.Distance(transform.position, target.position);
+                float sqrDist = (transform.position - target.position).sqrMagnitude;
 
-                if (distance <= atkRange)
+                if (sqrDist <= atkRange * atkRange)
                 {
                     StopMovement();
                     TryAttack();
@@ -85,7 +114,8 @@ public class Monster : MonoBehaviour, IDamageable
 
         foreach (GameObject player in players)
         {
-            float dist = Vector3.SqrMagnitude(player.transform.position - currentPos);
+            float dist = (player.transform.position - currentPos).sqrMagnitude;
+            
             if (dist < closestDist)
             {
                 closestDist = dist;
@@ -94,8 +124,6 @@ public class Monster : MonoBehaviour, IDamageable
         }
 
         target = closest;
-        Debug.Log("몬스터 타겟 설정");
-
     }
 
     private void MoveToTarget()
@@ -118,28 +146,39 @@ public class Monster : MonoBehaviour, IDamageable
         if (agent.isStopped)
             return;
 
-        Debug.Log("몬스터 정지");
         agent.isStopped = true;
         agent.velocity = Vector3.zero;
     }
 
     private void TryAttack()
     {
-        if (lastAtkTime - Time.time >= atkCoolTime)
-        {
-            lastAtkTime = Time.time;
-            Debug.Log("플레이어 공격");
-        }
+        if (Time.time - lastAtkTime < atkCoolTime)
+            return;
+
+        lastAtkTime = Time.time;
+
+        // TODO : 공격 시도
+
     }
 
     public void TakeDamage(float damage)
     {
-        hp -= damage;
-        Debug.Log($"Enemy Hit! HP: {hp}");
+        if (isDead)
+            return;
 
-        if (hp <= 0)
+        curHp -= damage;
+        Debug.Log($"Enemy Hit! HP: {curHp}");
+
+        if (curHp <= 0)
         {
-            Destroy(gameObject);
+            Die();
         }
+    }
+    private void Die()
+    {
+        isDead = true;
+        agent.isStopped = true;
+
+        OnDead?.Invoke(this);
     }
 }

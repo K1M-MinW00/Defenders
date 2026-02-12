@@ -76,6 +76,9 @@ public class PlayerCharacter : MonoBehaviour
     {
         Transform candidate = FindClosestEnemy();
 
+        if (candidate == null)
+            return false;
+
         if(IsTargetInRange(candidate))
         {
             target = candidate;

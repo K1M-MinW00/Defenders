@@ -1,52 +1,77 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    public MonsterPool monsterPool;
-    public WaveData waveData;
+    public MonsterSpawner Instance;
+
+    // public MonsterPool monsterPool;
+    public ObjectPool pool;
+
     public Transform spawnPoint;
 
-    private List<Monster> monsterLists;
-    public List<Monster> MonsterLists => monsterLists;
+    private List<Monster> aliveMonsters = new();
+    public List<Monster> MonsterLists => aliveMonsters;
 
-    public float spawnInterval = 0.1f;
+    public event Action OnWaveCompleted;
 
     private void Awake()
     {
-        monsterLists = new List<Monster>();
-    }
-    private void Start()
-    {
-        StartWave();
+        Instance = this;
     }
 
-    public void StartWave()
+    public void Init(ObjectPool pool)
     {
-        StartCoroutine(SpawnWaveRoutine());
+        this.pool = pool;
     }
 
-    private IEnumerator SpawnWaveRoutine()
+    public void StartWave(WaveData waveData)
     {
+        StartCoroutine(SpawnWaveRoutine(waveData));
+    }
+
+    private IEnumerator SpawnWaveRoutine(WaveData waveData)
+    {
+        aliveMonsters.Clear();
+
         foreach (var subWave in waveData.subWaves)
         {
             yield return StartCoroutine(SpawnSubWave(subWave));
-            yield return new WaitForSeconds(waveData.delayBetweenSubWaves);
+            yield return new WaitForSeconds(subWave.delayAfter);
         }
-
         Debug.Log("Wave finished");
+
+        yield return new WaitUntil(() => aliveMonsters.Count == 0);
+
+        OnWaveCompleted?.Invoke();
     }
 
     private IEnumerator SpawnSubWave(SubWaveData subWave)
     {
-        for (int i = 0; i < subWave.count; i++)
+        foreach (var group in subWave.spawnGroups)
         {
-            GameObject obj = monsterPool.Spawn(subWave.monsterId, spawnPoint.position);
-            Monster monster = obj.GetComponent<Monster>();
-            monsterLists.Add(monster);
+            for (int i = 0; i < group.count; i++)
+            {
+                GameObject obj = pool.Spawn(group.monsterId, spawnPoint.position);
 
-            yield return new WaitForSeconds(spawnInterval);
+                Monster monster = obj.GetComponent<Monster>();
+                monster.SetPool(pool, group.monsterId);
+                monster.OnDead += HandleMonsterDead;
+
+                aliveMonsters.Add(monster);
+            }
+            yield return new WaitForSeconds(subWave.delayAfter);
         }
+        yield return null;
+    }
+
+    private void HandleMonsterDead(Monster monster)
+    {
+        monster.OnDead -= HandleMonsterDead;
+        aliveMonsters.Remove(monster);
+
+        pool.Despawn(monster.PoolKey, monster.gameObject);
     }
 }
