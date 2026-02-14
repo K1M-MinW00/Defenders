@@ -103,7 +103,8 @@ GameObject:
   - component: {fileID: 2097232020744271374}
   - component: {fileID: 270112344376680128}
   - component: {fileID: 2214487855274408288}
-  m_Layer: 0
+  - component: {fileID: -5942573187183334152}
+  m_Layer: 6
   m_Name: b
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -136,7 +137,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1
+  m_Speed: 3
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -198,4 +199,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Monster
   atkRange: 1.5
   atkCoolTime: 1
-  hp: 50
+  curHp: 50
+  characters: []
+--- !u!50 &-5942573187183334152
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9069340018009947690}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4

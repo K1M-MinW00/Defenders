@@ -11,6 +11,8 @@ public class StageManager : MonoBehaviour
 
     [Header("Stage Data")]
     public StageData currentStageData;
+    public EconomyConfig economyConfig;
+
 
     [Header("Reference")]
     [SerializeField] private ObjectPool objectPool;
@@ -20,6 +22,10 @@ public class StageManager : MonoBehaviour
     public float prepareDuration = 5f;
     private float prepareTimer;
     private int currentWaveIndex = 0;
+
+
+    public PlacementArea placementArea;
+    public PlacementController placementController;
 
 
     public StageState CurrentState { get; private set; }
@@ -54,6 +60,7 @@ public class StageManager : MonoBehaviour
     private void InitializeStage()
     {
         currentWaveIndex = 0;
+        EconomyManager.Instance.Init(economyConfig);
 
         PrepareMonsters();
 
@@ -99,6 +106,7 @@ public class StageManager : MonoBehaviour
         prepareTimer = prepareDuration;
 
         // 타이머 UI 설정
+        placementController?.EnablePlacement(true);
 
         StartCoroutine(PrepareRoutine());
     }
@@ -119,6 +127,7 @@ public class StageManager : MonoBehaviour
     private void StartCombatPhase()
     {
         stageUI.gameObject.SetActive(false);
+        placementController?.EnablePlacement(false);
 
         if (CurrentWave == null)
         {
@@ -160,6 +169,7 @@ public class StageManager : MonoBehaviour
 
         Debug.Log("Stage Clear!");
     }
+
 }
 
 public enum StageState

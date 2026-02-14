@@ -16,10 +16,13 @@ public class MoveState : IPlayerState
 
     public void Update()
     {
-        if (owner.target == null)
+        if(!owner.HasValidTarget())
         {
-            fsm.ChangeState(owner.idleState);
-            return;
+            if(!owner.SearchTarget(forceRefresh: true))
+            {
+                fsm.ChangeState(owner.idleState);
+                return;
+            }
         }
 
         if (owner.IsTargetInRange(owner.target))

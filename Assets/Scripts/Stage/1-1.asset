@@ -19,9 +19,9 @@ MonoBehaviour:
     subWaves:
     - spawnGroups:
       - monsterId: a
-        count: 3
+        count: 6
       - monsterId: b
-        count: 2
+        count: 6
       delayAfter: 2
     totalMonsterCount: 0
     rewardGold: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
     subWaves:
     - spawnGroups:
       - monsterId: a
-        count: 5
+        count: 15
       delayAfter: 2
     totalMonsterCount: 0
     rewardGold: 0

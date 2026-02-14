@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem.Layouts;
 
 public class AttackState : IPlayerState
 {
@@ -19,25 +18,22 @@ public class AttackState : IPlayerState
 
     public void Update()
     {
-        if (owner.target == null)
+        if(!owner.HasValidTarget())
         {
-            fsm.ChangeState(owner.idleState);
-            return;
+            if(!owner.SearchTarget(forceRefresh : true))
+            {
+                fsm.ChangeState(owner.idleState);
+                return;
+            }
         }
 
-        if (owner.IsTargetInRange(owner.target))
+        if(!owner.IsTargetInRange(owner.target))
         {
-            owner.attackBehavior.TryAttack(owner.target);
-            return;
-        }
-
-        Transform candidate = owner.FindClosestEnemy();
-
-        if (candidate == owner.target)
             fsm.ChangeState(owner.moveState);
+            return;
+        }
 
-        else
-            owner.target = candidate;
+        owner.attackBehavior.TryAttack(owner.target);
     }
 
     public void Exit() { }
