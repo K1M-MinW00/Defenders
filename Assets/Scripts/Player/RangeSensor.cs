@@ -10,10 +10,6 @@ public class RangeSensor : MonoBehaviour
     private readonly HashSet<Monster> inRange = new HashSet<Monster>();
 
     public IReadOnlyCollection<Monster> InRange => inRange;
-
-    public event Action<Monster> OnEntered;
-    public event Action<Monster> OnExited;
-
     private CircleCollider2D col;
 
     private void Awake()
@@ -39,8 +35,7 @@ public class RangeSensor : MonoBehaviour
         if (monster.IsDead)
             return;
 
-        if (inRange.Add(monster))
-            OnEntered?.Invoke(monster);
+        inRange.Add(monster);
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -51,8 +46,7 @@ public class RangeSensor : MonoBehaviour
         if (!other.TryGetComponent(out Monster monster))
             return;
 
-        if (inRange.Remove(monster))
-            OnExited?.Invoke(monster);
+        inRange.Remove(monster);
     }
 
     // 몬스터가 Destroy 되거나, 죽어서 남아있을 수 있으니 정리용

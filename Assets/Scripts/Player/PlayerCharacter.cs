@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,8 +9,8 @@ public class PlayerCharacter : MonoBehaviour
     [Header("Combat")]
     public float atkRange = 3f;
     public float targetRefreshInterval = .2f;
-
     public Transform target { get; private set; }
+
 
     [HideInInspector] public NavMeshAgent agent;
     public IAttackBehavior attackBehavior;
@@ -25,6 +26,8 @@ public class PlayerCharacter : MonoBehaviour
 
     private float nextTargetRefreshTime;
 
+    private UnitInstance unit;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -32,6 +35,8 @@ public class PlayerCharacter : MonoBehaviour
         agent.updateUpAxis = false;
 
         attackBehavior = GetComponent<IAttackBehavior>();
+
+        unit = GetComponent<UnitInstance>();
 
         fsm = new PlayerFSM();
         idleState = new IdleState(this, fsm);
@@ -41,13 +46,7 @@ public class PlayerCharacter : MonoBehaviour
         if (rangeSensor == null)
             rangeSensor = GetComponentInChildren<RangeSensor>(true);
 
-        if (rangeSensor != null)
-        {
-            rangeSensor.SetRadius(atkRange);
-
-            rangeSensor.OnExited += OnEnemyExitedRange;
-            rangeSensor.OnEntered += OnEnemyEnteredRange;
-        }
+        SetAttackRange(unit.CurrentStats.range);
     }
 
     private void Start()
@@ -65,9 +64,12 @@ public class PlayerCharacter : MonoBehaviour
     public void SetAttackRange(float newRange)
     {
         atkRange = newRange;
+        rangeSensor.SetRadius(atkRange);
+    }
 
-        if (rangeSensor != null)
-            rangeSensor.SetRadius(atkRange);
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
     }
 
     public bool HasValidTarget()
@@ -93,36 +95,31 @@ public class PlayerCharacter : MonoBehaviour
         return distSqr <= atkRange * atkRange;
     }
 
-    public bool SearchTarget(bool forceRefresh = false)
+    // 사거리 안 후보군에서 가장 가까운 몬스터를 target 으로 설정 (Idle, Attack 에서만 사용)
+    public bool AcquireTargetInRange(bool forceRefresh = false)
     {
-        if (!forceRefresh && HasValidTarget() && IsTargetInRange(target))
+        if (!forceRefresh && HasValidTarget() && IsTargetInRange(target)) // 타겟이 이미 유효하고 사거리 안이면 유지
             return true;
 
         if (!forceRefresh && Time.time < nextTargetRefreshTime)
-            return HasValidTarget();
+            return HasValidTarget() && IsTargetInRange(target);
 
         nextTargetRefreshTime = Time.time + targetRefreshInterval;
 
-        if (rangeSensor == null)
-        {
-            target = null;
-            return false;
-        }
 
+        target = GetClosestEnemyInRange();
         rangeSensor.CleanupDeadOrNull();
-        target = FindClosestEnemyInRange();
 
         return target != null;
     }
 
-    private Transform FindClosestEnemyInRange()
+    public Transform GetClosestEnemyInRange()
     {
-        if (rangeSensor == null)
-            return null;
-
         float closestDistSqr = float.PositiveInfinity;
 
         Transform best = null;
+
+        rangeSensor.CleanupDeadOrNull();
 
         foreach (var enemy in rangeSensor.InRange)
         {
@@ -143,17 +140,5 @@ public class PlayerCharacter : MonoBehaviour
     public void ClearTarget()
     {
         target = null;
-    }
-
-    private void OnEnemyExitedRange(Monster monster)
-    {
-        if (target != null && monster != null && monster.transform == target)
-            target = null;
-    }
-
-    private void OnEnemyEnteredRange(Monster monster)
-    {
-        if (target == null && monster != null && !monster.IsDead)
-            target = monster.transform;
     }
 }

@@ -12,11 +12,12 @@ public class IdleState : IPlayerState
     public void Enter()
     {
         owner.agent.isStopped = true;
+        owner.ClearTarget();
     }
 
     public void Update()
     {
-        if (owner.SearchTarget())
+        if (owner.AcquireTargetInRange())
         {
             fsm.ChangeState(owner.attackState);
         }
