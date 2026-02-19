@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 296b0febbb6cd714f860f6e666ab90f3, type: 3}
   m_Name: aa
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
-  unitId: 
-  displayName: 
+  unitId: aa
+  displayName: aa
   baseStats:
-    atk: 0
-    def: 0
-    maxHp: 0
-    range: 0
+    atk: 5
+    def: 1
+    maxHp: 10
+    range: 5
   starMultipliers:
   - 1
   - 1.6
