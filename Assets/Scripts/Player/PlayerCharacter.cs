@@ -13,10 +13,8 @@ public class PlayerCharacter : MonoBehaviour
 
 
     [HideInInspector] public NavMeshAgent agent;
-    public IAttackBehavior attackBehavior;
-
-    [Header("Sensors")]
-    [SerializeField] private RangeSensor rangeSensor;
+    [HideInInspector] public IAttackBehavior attackBehavior;
+    private RangeSensor rangeSensor;
 
     // States
     private PlayerFSM fsm;
@@ -46,12 +44,13 @@ public class PlayerCharacter : MonoBehaviour
         if (rangeSensor == null)
             rangeSensor = GetComponentInChildren<RangeSensor>(true);
 
-        SetAttackRange(unit.CurrentStats.range);
     }
 
     private void Start()
     {
         nextTargetRefreshTime = Time.time;
+
+        SetAttackRange(unit.CurrentStats.range);
 
         fsm.ChangeState(idleState);
     }
@@ -67,10 +66,8 @@ public class PlayerCharacter : MonoBehaviour
         rangeSensor.SetRadius(atkRange);
     }
 
-    public void SetTarget(Transform newTarget)
-    {
-        target = newTarget;
-    }
+    public void SetTarget(Transform newTarget) => target = newTarget;
+    public void ClearTarget() => target = null;
 
     public bool HasValidTarget()
     {
@@ -137,8 +134,4 @@ public class PlayerCharacter : MonoBehaviour
         return best;
     }
 
-    public void ClearTarget()
-    {
-        target = null;
-    }
 }

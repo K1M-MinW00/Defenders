@@ -17,6 +17,7 @@ public class StageManager : MonoBehaviour
     [Header("Reference")]
     [SerializeField] private ObjectPool objectPool;
     [SerializeField] private MonsterSpawner monsterSpawner;
+    [SerializeField] private UnitSummoner unitSummoner;
 
     [Header("Prepare Settings")]
     public float prepareDuration = 5f;
@@ -170,6 +171,16 @@ public class StageManager : MonoBehaviour
         Debug.Log("Stage Clear!");
     }
 
+    public void TrySummonUnit()
+    {
+        if (CurrentState != StageState.Preparing)
+            return;
+
+        if (!EconomyManager.Instance.TrySummonUnit())
+            return;
+
+        unitSummoner.SummonRandomUnit();
+    }
 }
 
 public enum StageState

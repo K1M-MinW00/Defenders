@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 296b0febbb6cd714f860f6e666ab90f3, type: 3}
+  m_Name: Blue
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  unitId: u1
+  displayName: Blue
+  unitPrefab: {fileID: 124320340541618209, guid: e7f77842937444b4089e344c4cdce5b4, type: 3}
+  baseStats:
+    atk: 10
+    def: 1
+    maxHp: 100
+    range: 5
+  starMultipliers:
+  - 1
+  - 1.6
+  - 2.3
+  - 3.5

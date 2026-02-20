@@ -18,6 +18,7 @@ public class StageUIController : MonoBehaviour
 
     [Header("Button")]
     public Button startButton;
+    public Button summonButton;
 
     private StageManager stageManager;
 
@@ -25,11 +26,17 @@ public class StageUIController : MonoBehaviour
     {
         stageManager = manager;
         startButton.onClick.AddListener(OnClickStart);
+        summonButton.onClick.AddListener(OnClickSummon);
     }
 
     void OnClickStart()
     {
         stageManager.StartBattleEarly();
+    }
+
+    void OnClickSummon()
+    {
+        stageManager.TrySummonUnit();
     }
 
     public void SetStageInfo(string stageName, string stageId)

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248a3e40d1e3e874f848216ca528505c, type: 3}
   m_Name: BaseConfig
   m_EditorClassIdentifier: Assembly-CSharp::EconomyConfig
-  initialGold: 15
+  initialGold: 100
   normalReward: 14
   eliteReward: 28
   bossReward: 42

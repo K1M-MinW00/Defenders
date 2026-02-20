@@ -7,6 +7,9 @@ public class UnitData : ScriptableObject
     public string unitId;
     public string displayName;
 
+    [Header("Prefab")]
+    public GameObject unitPrefab;
+
     [Header("Base Stats (Star 1)")]
     public UnitStats baseStats;
 
@@ -17,6 +20,12 @@ public class UnitData : ScriptableObject
 
     public UnitStats GetStats(int star)
     {
+        if(starMultipliers == null || starMultipliers.Length == 0)
+        {
+            Debug.LogWarning($"Unit Data ({name}) has no starMultipliers. Using baseStats");
+            return baseStats;
+        }
+
         int idx = Mathf.Clamp(star - 1, 0, starMultipliers.Length - 1);
         float mul = starMultipliers[idx];
         return baseStats * mul;
