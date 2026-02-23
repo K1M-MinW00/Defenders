@@ -1,19 +1,24 @@
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class PlacementController : MonoBehaviour
 {
+    [Header("Reference")]
     [SerializeField] private Camera mainCam;
-    [SerializeField] private PlacementArea placementArea;
+    [SerializeField] private TilemapPlacementArea placementArea;
+    [SerializeField] private UIDropRouter uiDropRouter;
+    [SerializeField] private StageUIController stageUIController;
+
+    [Header("Section")]
     [SerializeField] private LayerMask unitLayer; // PlayerUnit 레이어만 포함
-    [SerializeField] private float raycastMaxDistance = 50f;
 
     private bool placementEnabled;
-
-    private PlayerCharacter draggingUnit;
+    public PlayerCharacter DraggingUnit { get;private set; }
     private Vector3 originalPos;
-    private NavMeshAgent cachedAgent;
-    private bool wasStopped;
+
 
     private void Awake()
     {
@@ -26,7 +31,7 @@ public class PlacementController : MonoBehaviour
         placementEnabled = enable;
 
         // 전투 시작 시 드래그 중이던 게 있으면 정리
-        if (!placementEnabled && draggingUnit != null)
+        if (!placementEnabled && DraggingUnit != null)
         {
             CancelDrag();
         }
@@ -39,11 +44,11 @@ public class PlacementController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
             TryBeginDrag();
 
-        if (draggingUnit != null && Input.GetMouseButton(0))
+        if (DraggingUnit != null && Input.GetMouseButton(0))
             Dragging();
 
-        if (draggingUnit != null && Input.GetMouseButtonUp(0))
-            EndDrag();
+        if (DraggingUnit != null && Input.GetMouseButtonUp(0))
+            EndDrag(Input.mousePosition);
     }
 
     private void TryBeginDrag()
@@ -51,24 +56,20 @@ public class PlacementController : MonoBehaviour
         Vector2 world = GetMouseWorld2D();
 
         // 유닛만 Raycast로 선택
-        var hit = Physics2D.Raycast(world, Vector2.zero, raycastMaxDistance, unitLayer);
-        if (hit.collider == null)
+        var hit = Physics2D.OverlapPoint(world, unitLayer);
+        if (hit == null)
             return;
 
-        var unit = hit.collider.GetComponent<PlayerCharacter>();
+        var unit = hit.GetComponent<PlayerCharacter>();
         if (unit == null)
             return;
 
-        draggingUnit = unit;
+        DraggingUnit = unit;
         originalPos = unit.transform.position;
 
         // 드래그 중 이동/AI 멈춤
-        cachedAgent = unit.GetComponent<NavMeshAgent>();
-        if (cachedAgent != null)
-        {
-            wasStopped = cachedAgent.isStopped;
-            cachedAgent.isStopped = true;
-        }
+
+        stageUIController?.SetUnitDragMode(true);
     }
 
     private void Dragging()
@@ -77,39 +78,50 @@ public class PlacementController : MonoBehaviour
 
         // (선택) 영역 밖이면 드래그는 하되, 드랍만 실패 처리할 수도 있고
         // 여기서 Clamp 처리를 할 수도 있습니다.
-        draggingUnit.transform.position = new Vector3(world.x, world.y, draggingUnit.transform.position.z);
+        DraggingUnit.transform.position = new Vector3(world.x, world.y, DraggingUnit.transform.position.z);
     }
 
-    private void EndDrag()
+    private void EndDrag(Vector2 screenPos)
     {
-        Vector2 pos = draggingUnit.transform.position;
+        if(uiDropRouter != null && uiDropRouter.TryGetDropAction(screenPos,out var action))
+        {
+            HandleDropAction(action);
+            FinishDrag();
+            return;
+        }
 
+        Vector2 pos = DraggingUnit.transform.position;
         bool ok = placementArea != null && placementArea.CanPlace(pos);
 
         if (!ok)
+            DraggingUnit.transform.position = originalPos;
+
+        FinishDrag();
+    }
+
+    private void HandleDropAction(UnitDropAction action)
+    {
+        switch (action)
         {
-            draggingUnit.transform.position = originalPos;
+            case UnitDropAction.Sell:
+                StageManager.Instance?.TrySellUnit(DraggingUnit);
+                break;
+            case UnitDropAction.Reroll:
+                StageManager.Instance?.TryRerollUnit(DraggingUnit);
+                break;
         }
-
-        // agent 복구
-        if (cachedAgent != null)
-            cachedAgent.isStopped = wasStopped;
-
-        draggingUnit = null;
-        cachedAgent = null;
     }
 
     private void CancelDrag()
     {
-        if (draggingUnit == null) return;
+        DraggingUnit.transform.position = originalPos;
+        FinishDrag();    
+    }
 
-        draggingUnit.transform.position = originalPos;
-
-        if (cachedAgent != null)
-            cachedAgent.isStopped = wasStopped;
-
-        draggingUnit = null;
-        cachedAgent = null;
+    private void FinishDrag()
+    {
+        DraggingUnit = null;
+        stageUIController?.SetUnitDragMode(false);
     }
 
     private Vector2 GetMouseWorld2D()

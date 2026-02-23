@@ -4,7 +4,6 @@ using UnityEngine;
 public class UnitInstance : MonoBehaviour
 {
 	public UnitData Data { get; private set; }
-	public int star => Star;
 	public int Star { get; private set; } = 1;
 	public UnitStats CurrentStats { get; private set; }
 	public float CurrentHp { get; private set; }

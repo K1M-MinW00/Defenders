@@ -18,6 +18,8 @@ public class StageManager : MonoBehaviour
     [SerializeField] private ObjectPool objectPool;
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private UnitSummoner unitSummoner;
+    [SerializeField] private UnitRoster unitRoster;
+    [SerializeField] private FusionService fusionService;
 
     [Header("Prepare Settings")]
     public float prepareDuration = 5f;
@@ -25,7 +27,7 @@ public class StageManager : MonoBehaviour
     private int currentWaveIndex = 0;
 
 
-    public PlacementArea placementArea;
+    public TilemapPlacementArea placementArea;
     public PlacementController placementController;
 
 
@@ -108,6 +110,7 @@ public class StageManager : MonoBehaviour
 
         // 타이머 UI 설정
         placementController?.EnablePlacement(true);
+        placementArea?.SetVisible(true);
 
         StartCoroutine(PrepareRoutine());
     }
@@ -129,6 +132,8 @@ public class StageManager : MonoBehaviour
     {
         stageUI.gameObject.SetActive(false);
         placementController?.EnablePlacement(false);
+        placementArea?.SetVisible(false);
+
 
         if (CurrentWave == null)
         {
@@ -178,6 +183,48 @@ public class StageManager : MonoBehaviour
 
         if (!EconomyManager.Instance.TrySummonUnit())
             return;
+
+        unitSummoner.SummonRandomUnit();
+    }
+
+    public void TrySellUnit(PlayerCharacter unit)
+    {
+        if (CurrentState != StageState.Preparing)
+            return;
+
+        if (unit == null)
+            return;
+
+        var inst = unit.GetComponent<UnitInstance>();
+        if (inst == null)
+            return;
+
+        unitRoster?.Unregister(inst);
+
+        EconomyManager.Instance.SellUnit(inst.Star);
+        Destroy(unit.gameObject);
+    }
+
+    public void TryRerollUnit(PlayerCharacter unit)
+    {
+        if (CurrentState != StageState.Preparing)
+            return;
+
+        if (unit == null)
+            return;
+
+        var inst = unit.GetComponent<UnitInstance>();
+        if (inst == null)
+            return;
+
+        if (!EconomyManager.Instance.TryReroll())
+            return;
+
+        Vector3 pos = unit.transform.position;
+        Transform parent = unit.transform.parent;
+
+        unitRoster?.Unregister(inst);
+        Destroy(unit.gameObject);
 
         unitSummoner.SummonRandomUnit();
     }

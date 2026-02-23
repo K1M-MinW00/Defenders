@@ -18,7 +18,7 @@ public class EconomyConfig : ScriptableObject
 
     [Header("Shop")]
     public int summonUnit = 5;
-    public int[] sellUnit = { 3, 6, 12, 24 };
+    public int[] sellUnit = { 3, 6, 12, 24 }; // 1¼º ~ 4¼º
     public int reRollUnit = 2;
 
     public int GetWaveReward(WaveType type)
@@ -41,9 +41,13 @@ public class EconomyConfig : ScriptableObject
 
     public int CalculateSellUnit(int star)
     {
-        if (star >= sellUnit.Length)
+        int idx = star-1;
+        if (idx >= sellUnit.Length)
+        {
+            Debug.LogWarning("Unit star is over the 4th.");
             return -1;
+        }
 
-        return sellUnit[star];
+        return sellUnit[idx];
     }
 }

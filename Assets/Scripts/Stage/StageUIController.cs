@@ -8,6 +8,9 @@ public class StageUIController : MonoBehaviour
     [Header("Stage Info")]
     public TextMeshProUGUI stageInfoText;
 
+    [Header("Currency")]
+    public TextMeshProUGUI goldText;
+
     [Header("Wave UI")]
     public Transform waveContainer;
     public GameObject waveItemPrefab;
@@ -20,6 +23,13 @@ public class StageUIController : MonoBehaviour
     public Button startButton;
     public Button summonButton;
 
+    public Button reRollButton;
+    public Button sellButton;
+
+    [Header("Group")]
+    [SerializeField] private GameObject defaultButtonsGroup;
+    [SerializeField] private GameObject unitActionButtonsGroup;
+
     private StageManager stageManager;
 
     public void Initialize(StageManager manager)
@@ -27,8 +37,13 @@ public class StageUIController : MonoBehaviour
         stageManager = manager;
         startButton.onClick.AddListener(OnClickStart);
         summonButton.onClick.AddListener(OnClickSummon);
+        EconomyManager.Instance.OnGoldChanged += UpdateGoldUI;
     }
 
+    private void OnDestroy()
+    {
+        EconomyManager.Instance.OnGoldChanged -= UpdateGoldUI;
+    }
     void OnClickStart()
     {
         stageManager.StartBattleEarly();
@@ -37,6 +52,11 @@ public class StageUIController : MonoBehaviour
     void OnClickSummon()
     {
         stageManager.TrySummonUnit();
+    }
+
+    private void UpdateGoldUI(int gold)
+    {
+        goldText.text = gold.ToString();
     }
 
     public void SetStageInfo(string stageName, string stageId)
@@ -95,5 +115,11 @@ public class StageUIController : MonoBehaviour
                 return Color.red;
         }
         return Color.white;
+    }
+
+    public void SetUnitDragMode(bool isDraggingUnit)
+    {
+        defaultButtonsGroup?.SetActive(!isDraggingUnit);
+        unitActionButtonsGroup?.SetActive(isDraggingUnit);
     }
 }

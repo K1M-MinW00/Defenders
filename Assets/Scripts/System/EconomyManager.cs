@@ -87,6 +87,9 @@ public class EconomyManager : MonoBehaviour
     {
         int price = config.CalculateSellUnit(star);
 
+        Debug.Log($"Sell - {star} Unit , Price : {price}");
         AddGold(price);
+        Debug.Log($"Current Gold is {CurrentGold}");
+        OnGoldChanged?.Invoke(CurrentGold);
     }
 }

@@ -4,7 +4,7 @@ public class PlacementArea : MonoBehaviour
 {
     [SerializeField] private Collider2D areaCollider; // PolygonCollider2D 권장
     [SerializeField] private LayerMask blockedLayer;  // 배치 불가(장애물/길 등) 레이어 (선택)
-    [SerializeField] private float unitRadius = 0.35f; // 유닛 겹침 방지용 (선택)
+    [SerializeField] private float unitRadius = 0.35f; //Q유닛 겹침 방지용 (선택)
 
     private void Awake()
     {
@@ -34,11 +34,4 @@ public class PlacementArea : MonoBehaviour
 
         return true;
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        // 디버그용 표시 정도만
-    }
-#endif
 }
