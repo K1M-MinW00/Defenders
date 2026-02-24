@@ -20,6 +20,9 @@ public class StageManager : MonoBehaviour
     [SerializeField] private UnitSummoner unitSummoner;
     [SerializeField] private UnitRoster unitRoster;
     [SerializeField] private FusionService fusionService;
+    [SerializeField] private PopulationManager populationManager;
+
+    public PopulationManager Population { get => populationManager; }
 
     [Header("Prepare Settings")]
     public float prepareDuration = 5f;
@@ -66,7 +69,7 @@ public class StageManager : MonoBehaviour
         EconomyManager.Instance.Init(economyConfig);
 
         PrepareMonsters();
-
+        populationManager.Init();
         monsterSpawner.Init(objectPool);
         monsterSpawner.OnWaveCompleted += HandleWaveCompleted;
 
@@ -181,12 +184,28 @@ public class StageManager : MonoBehaviour
         if (CurrentState != StageState.Preparing)
             return;
 
+        if (populationManager != null && !populationManager.CanSummon())
+            return;
+
         if (!EconomyManager.Instance.TrySummonUnit())
             return;
 
         unitSummoner.SummonRandomUnit();
+        populationManager?.Notify();
     }
 
+    public void TryIncreasePopulation()
+    {
+        if (CurrentState != StageState.Preparing)
+            return;
+
+        if (populationManager == null)
+            return;
+
+        if (populationManager.TryIncreaseMax())
+            populationManager.Notify();
+
+    }
     public void TrySellUnit(PlayerCharacter unit)
     {
         if (CurrentState != StageState.Preparing)

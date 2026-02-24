@@ -67,9 +67,15 @@ public class PlacementController : MonoBehaviour
         DraggingUnit = unit;
         originalPos = unit.transform.position;
 
-        // µÂ∑°±◊ ¡ﬂ ¿Ãµø/AI ∏ÿ√„
+        int star = 1;
+        
+        var inst = unit.GetComponent<UnitInstance>();
 
-        stageUIController?.SetUnitDragMode(true);
+        if (inst != null)
+            star = inst.Star;
+
+        bool canReroll = (star == 1);
+        stageUIController?.SetUnitDragMode(true, canReroll);
     }
 
     private void Dragging()
@@ -101,13 +107,20 @@ public class PlacementController : MonoBehaviour
 
     private void HandleDropAction(UnitDropAction action)
     {
+        if (DraggingUnit == null)
+            return;
+
+        var inst = DraggingUnit.GetComponent<UnitInstance>();
+        int star = inst != null ? inst.Star : 1;
+
         switch (action)
         {
             case UnitDropAction.Sell:
                 StageManager.Instance?.TrySellUnit(DraggingUnit);
                 break;
             case UnitDropAction.Reroll:
-                StageManager.Instance?.TryRerollUnit(DraggingUnit);
+                if(star == 1)
+                    StageManager.Instance?.TryRerollUnit(DraggingUnit);
                 break;
         }
     }

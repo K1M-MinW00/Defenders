@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using UnityEngine;
 
 public class EconomyManager : MonoBehaviour
@@ -7,9 +6,6 @@ public class EconomyManager : MonoBehaviour
     public static EconomyManager Instance { get; private set; }
 
     private EconomyConfig config;
-    private int populationIndex;
-    
-    [SerializeField] private int[] populationCostCurve;
 
     public int CurrentGold { get; private set; }
 
@@ -28,10 +24,7 @@ public class EconomyManager : MonoBehaviour
     public void Init(EconomyConfig config)
     {
         this.config = config;
-
         CurrentGold = config.initialGold;
-        populationIndex = 0;
-
         OnGoldChanged?.Invoke(CurrentGold);
     }
 
@@ -55,10 +48,7 @@ public class EconomyManager : MonoBehaviour
         if (amount <= 0)
             return;
 
-        int before = CurrentGold;
         CurrentGold += amount;
-
-        // UI 업데이트
         OnGoldChanged?.Invoke(CurrentGold);
     }
 
@@ -70,11 +60,7 @@ public class EconomyManager : MonoBehaviour
         if (CurrentGold < cost)
             return false;
 
-        int before = CurrentGold;
         CurrentGold -= cost;
-
-
-        // UI 업데이트 
         OnGoldChanged?.Invoke(CurrentGold);
 
         return true;
@@ -86,10 +72,6 @@ public class EconomyManager : MonoBehaviour
     public void SellUnit(int star)
     {
         int price = config.CalculateSellUnit(star);
-
-        Debug.Log($"Sell - {star} Unit , Price : {price}");
         AddGold(price);
-        Debug.Log($"Current Gold is {CurrentGold}");
-        OnGoldChanged?.Invoke(CurrentGold);
     }
 }

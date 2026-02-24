@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class StageUIController : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class StageUIController : MonoBehaviour
 
     [Header("Currency")]
     public TextMeshProUGUI goldText;
+
+    [Header("Population")]
+    public TextMeshProUGUI populationText;
 
     [Header("Wave UI")]
     public Transform waveContainer;
@@ -22,28 +26,74 @@ public class StageUIController : MonoBehaviour
     [Header("Button")]
     public Button startButton;
     public Button summonButton;
-
-    public Button reRollButton;
-    public Button sellButton;
+    public Button increasePopButton;
+    public GameObject reRollDropzone;
 
     [Header("Group")]
     [SerializeField] private GameObject defaultButtonsGroup;
     [SerializeField] private GameObject unitActionButtonsGroup;
 
     private StageManager stageManager;
+    private PopulationManager population;
+    private EconomyManager economy;
 
     public void Initialize(StageManager manager)
     {
         stageManager = manager;
         startButton.onClick.AddListener(OnClickStart);
         summonButton.onClick.AddListener(OnClickSummon);
-        EconomyManager.Instance.OnGoldChanged += UpdateGoldUI;
+        increasePopButton.onClick.AddListener(OnClickIncreasePop);
+
+        BindEconomy();
+        BindPopulation();
+    }
+
+    private void BindPopulation()
+    {
+        population = stageManager.Population;
+
+        if (population == null)
+            return;
+
+        population.OnPopulationChanged += UpdatePopulationUI;
+        UpdatePopulationUI(population.CurrentPopulation, population.MaxPopulation);
+    }
+
+    private void BindEconomy()
+    {
+        economy = EconomyManager.Instance;
+
+        if (economy == null)
+            return;
+
+        economy.OnGoldChanged += UpdateGoldUI;
+        UpdateGoldUI(economy.CurrentGold);
     }
 
     private void OnDestroy()
     {
-        EconomyManager.Instance.OnGoldChanged -= UpdateGoldUI;
+        UnBindEconomy();
+        UnBindPopulation();
     }
+
+    private void UnBindEconomy()
+    {
+        if (economy == null)
+            return;
+
+        economy.OnGoldChanged -= UpdateGoldUI;
+        economy = null;
+    }
+
+    private void UnBindPopulation()
+    {
+        if (population == null)
+            return;
+
+        population.OnPopulationChanged -= UpdatePopulationUI;
+        population = null;
+    }
+
     void OnClickStart()
     {
         stageManager.StartBattleEarly();
@@ -53,12 +103,20 @@ public class StageUIController : MonoBehaviour
     {
         stageManager.TrySummonUnit();
     }
+    void OnClickIncreasePop()
+    {
+        stageManager.TryIncreasePopulation();
+    }
 
     private void UpdateGoldUI(int gold)
     {
         goldText.text = gold.ToString();
     }
 
+    private void UpdatePopulationUI(int current, int max)
+    {
+        populationText.text = $"{current} / {max}";
+    }
     public void SetStageInfo(string stageName, string stageId)
     {
         stageInfoText.text = $"{stageName} - {stageId}";
@@ -117,9 +175,14 @@ public class StageUIController : MonoBehaviour
         return Color.white;
     }
 
-    public void SetUnitDragMode(bool isDraggingUnit)
+    public void SetUnitDragMode(bool isDraggingUnit, bool canReroll = true)
     {
         defaultButtonsGroup?.SetActive(!isDraggingUnit);
         unitActionButtonsGroup?.SetActive(isDraggingUnit);
+
+        if(isDraggingUnit)
+        {
+            reRollDropzone.SetActive(canReroll);
+        }
     }
 }
