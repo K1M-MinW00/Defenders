@@ -19,6 +19,8 @@ public class StageUIController : MonoBehaviour
     public Transform waveContainer;
     public GameObject waveItemPrefab;
     private List<Image> waveImages = new List<Image>();
+    [SerializeField] private TextMeshProUGUI monsterCountText;
+
 
     [Header("Timer")]
     public TextMeshProUGUI prepTimerText;
@@ -36,6 +38,7 @@ public class StageUIController : MonoBehaviour
     private StageManager stageManager;
     private PopulationManager population;
     private EconomyManager economy;
+    private MonsterSpawner monsterSpawner;
 
     public void Initialize(StageManager manager)
     {
@@ -45,12 +48,25 @@ public class StageUIController : MonoBehaviour
         increasePopButton.onClick.AddListener(OnClickIncreasePop);
 
         BindEconomy();
+        BindMonsterUI();
         BindPopulation();
+    }
+
+    private void BindMonsterUI()
+    {
+        monsterSpawner = stageManager != null ? stageManager.MonsterSpawner : null;
+
+        if (monsterSpawner == null)
+            return;
+
+        monsterSpawner.OnAliveCountChanged += UpdateMonsterCountUI;
+
+        UpdateMonsterCountUI(monsterSpawner.AliveCount);
     }
 
     private void BindPopulation()
     {
-        population = stageManager.Population;
+        population = stageManager.PopulationManager;
 
         if (population == null)
             return;
@@ -74,6 +90,16 @@ public class StageUIController : MonoBehaviour
     {
         UnBindEconomy();
         UnBindPopulation();
+        UnBindMonsterUI();
+    }
+
+    private void UnBindMonsterUI()
+    {
+        if (monsterSpawner == null)
+            return;
+
+        monsterSpawner.OnAliveCountChanged -= UpdateMonsterCountUI;
+        monsterSpawner = null;
     }
 
     private void UnBindEconomy()
@@ -117,6 +143,12 @@ public class StageUIController : MonoBehaviour
     {
         populationText.text = $"{current} / {max}";
     }
+
+    private void UpdateMonsterCountUI(int aliveCount)
+    {
+        monsterCountText.text = $"Remain Monster : {aliveCount.ToString()}";
+    }
+
     public void SetStageInfo(string stageName, string stageId)
     {
         stageInfoText.text = $"{stageName} - {stageId}";

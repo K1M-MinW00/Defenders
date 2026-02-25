@@ -5,9 +5,12 @@ public class UnitInstance : MonoBehaviour
 {
 	public UnitData Data { get; private set; }
 	public int Star { get; private set; } = 1;
+
 	public UnitStats CurrentStats { get; private set; }
 	public float CurrentHp { get; private set; }
 	public float CurrentEnergy { get; private set; }
+
+	public bool IsAlive => CurrentHp > 0f;
 
 	public event Action<UnitInstance> OnDataChanged;
 	public event Action<UnitInstance> OnStarChanged;
@@ -19,7 +22,10 @@ public class UnitInstance : MonoBehaviour
 	{
 		SetUnitData(data, star);
 		CurrentHp = CurrentStats.maxHp;
+		CurrentEnergy = 0f;
+
 		OnHpChanged?.Invoke(this);
+		OnEnergyChanged?.Invoke(this);
 	}
 
 	public void SetUnitData(UnitData newData, int star = 1)
@@ -65,8 +71,27 @@ public class UnitInstance : MonoBehaviour
 	{
 		if (dmg <= 0f) 
 			return;
+
 		CurrentHp = Mathf.Max(0f, CurrentHp - dmg);
 		OnHpChanged?.Invoke(this);
+	}
+
+	public void HealToFull()
+	{
+		CurrentHp = CurrentStats.maxHp;
+		OnHpChanged?.Invoke(this);
+	}
+
+	public void ResetEnergy()
+	{
+		CurrentEnergy = 0f;
+		OnEnergyChanged?.Invoke(this);
+	}
+
+	public void ResetForPrepare()
+	{
+		HealToFull();
+		ResetEnergy();
 	}
 
 	private void RecalculateStats()

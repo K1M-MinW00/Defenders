@@ -5,22 +5,18 @@ using System;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    public MonsterSpawner Instance;
-
-    // public MonsterPool monsterPool;
     public ObjectPool pool;
-
     public Transform spawnPoint;
 
-    private List<Monster> aliveMonsters = new();
-    public List<Monster> MonsterLists => aliveMonsters;
+    private readonly List<Monster> aliveMonsters = new();
+    public IReadOnlyList<Monster> MonsterLists => aliveMonsters;
+    public int AliveCount => aliveMonsters.Count;
 
-    public event Action OnWaveCompleted;
+    public event Action OnAllMonstersSpawned;
+    public event Action<int> OnAliveCountChanged;
 
-    private void Awake()
-    {
-        Instance = this;
-    }
+    private bool isSpawning;
+    public bool IsSpawning => isSpawning;
 
     public void Init(ObjectPool pool)
     {
@@ -29,23 +25,24 @@ public class MonsterSpawner : MonoBehaviour
 
     public void StartWave(WaveData waveData)
     {
+        StopAllCoroutines();
         StartCoroutine(SpawnWaveRoutine(waveData));
     }
 
     private IEnumerator SpawnWaveRoutine(WaveData waveData)
     {
+        isSpawning = true;
         aliveMonsters.Clear();
+        OnAliveCountChanged?.Invoke(aliveMonsters.Count);
 
         foreach (var subWave in waveData.subWaves)
         {
             yield return StartCoroutine(SpawnSubWave(subWave));
             yield return new WaitForSeconds(subWave.delayAfter);
         }
-        Debug.Log("Wave finished");
 
-        yield return new WaitUntil(() => aliveMonsters.Count == 0);
-
-        OnWaveCompleted?.Invoke();
+        isSpawning = false;
+        OnAllMonstersSpawned?.Invoke();
     }
 
     private IEnumerator SpawnSubWave(SubWaveData subWave)
@@ -61,16 +58,18 @@ public class MonsterSpawner : MonoBehaviour
                 monster.OnDead += HandleMonsterDead;
 
                 aliveMonsters.Add(monster);
+                OnAliveCountChanged?.Invoke(aliveMonsters.Count);
             }
+
             yield return new WaitForSeconds(subWave.delayAfter);
         }
-        yield return null;
     }
 
     private void HandleMonsterDead(Monster monster)
     {
         monster.OnDead -= HandleMonsterDead;
         aliveMonsters.Remove(monster);
+        OnAliveCountChanged?.Invoke(aliveMonsters.Count);
 
         pool.Despawn(monster.PoolKey, monster.gameObject);
     }

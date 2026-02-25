@@ -21,8 +21,10 @@ public class StageManager : MonoBehaviour
     [SerializeField] private UnitRoster unitRoster;
     [SerializeField] private FusionService fusionService;
     [SerializeField] private PopulationManager populationManager;
+    [SerializeField] private UnitResetService unitResetService;
 
-    public PopulationManager Population { get => populationManager; }
+    public PopulationManager PopulationManager => populationManager;
+    public MonsterSpawner MonsterSpawner => monsterSpawner;
 
     [Header("Prepare Settings")]
     public float prepareDuration = 5f;
@@ -35,6 +37,8 @@ public class StageManager : MonoBehaviour
 
 
     public StageState CurrentState { get; private set; }
+
+    private bool waveEnded;
 
     private WaveData CurrentWave
     {
@@ -71,7 +75,6 @@ public class StageManager : MonoBehaviour
         PrepareMonsters();
         populationManager.Init();
         monsterSpawner.Init(objectPool);
-        monsterSpawner.OnWaveCompleted += HandleWaveCompleted;
 
         // ToDo : 재화 설정
         StartPreparePhase();
@@ -156,20 +159,82 @@ public class StageManager : MonoBehaviour
     private void StartWave()
     {
         CurrentState = StageState.Combat;
+        waveEnded = false;
+
+        unitResetService?.CapturePreWavePositions(unitRoster);
+
+        monsterSpawner.OnAliveCountChanged += HandleMonsterAliveChanged;
+        monsterSpawner.OnAllMonstersSpawned += HandleAllMonstersSpawned;
 
         stageUI.UpdateCurrentWave(currentWaveIndex);
         monsterSpawner.StartWave(CurrentWave);
     }
 
-    private void HandleWaveCompleted()
+    private void HandleMonsterAliveChanged(int aliveCount)
     {
+        EvaluateWaveResult();
+    }
+
+    private void HandleAllMonstersSpawned()
+    {
+        EvaluateWaveResult();
+    }
+
+    private void EvaluateWaveResult()
+    {
+        if (waveEnded)
+            return;
+
+        int aliveUnits = unitRoster.CountAliveUnits();
+        int aliveMonsters = monsterSpawner.AliveCount;
+
+        if(aliveUnits == 0 && (monsterSpawner.IsSpawning || aliveMonsters > 0))
+        {
+            waveEnded = true;
+            EndWaveLose();
+            return;
+        }
+
+        if(aliveMonsters == 0 && !monsterSpawner.IsSpawning && aliveUnits > 0)
+        {
+            waveEnded = true;
+            EndWaveWin();
+            return;
+        }
+    }
+
+    private void EndWaveWin()
+    {
+        UnsubscribeWaveEvents();
+
+        unitResetService.ResetUnitsForPrepare(unitRoster);
+
         currentWaveIndex++;
 
         if (CurrentWave == null)
             StartStageClear();
-
         else
+        {
+            // TODO : 웨이브 클리어 보상 (골드 + 유물)
             StartPreparePhase();
+        }
+    }
+
+    private void EndWaveLose()
+    {
+        UnsubscribeWaveEvents();
+
+        CurrentState = StageState.StageFail;
+
+        Debug.Log("Stage Fail");
+
+        // TODO : 실패 UI , 로비로 돌아가기
+    }
+
+    private void UnsubscribeWaveEvents()
+    {
+        monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
+        monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
     }
 
     private void StartStageClear()
@@ -177,6 +242,8 @@ public class StageManager : MonoBehaviour
         CurrentState = StageState.StageClear;
 
         Debug.Log("Stage Clear!");
+
+        // TODO : 성공 UI , 보상 , 로비로 돌아가기
     }
 
     public void TrySummonUnit()

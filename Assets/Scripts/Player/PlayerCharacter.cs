@@ -34,8 +34,6 @@ public class PlayerCharacter : MonoBehaviour
 
         attackBehavior = GetComponent<IAttackBehavior>();
 
-        unit = GetComponent<UnitInstance>();
-
         fsm = new PlayerFSM();
         idleState = new IdleState(this, fsm);
         moveState = new MoveState(this, fsm);
@@ -44,20 +42,46 @@ public class PlayerCharacter : MonoBehaviour
         if (rangeSensor == null)
             rangeSensor = GetComponentInChildren<RangeSensor>(true);
 
+        unit = GetComponent<UnitInstance>();
+        unit.OnDataChanged += HandleUnitChanged;
+        unit.OnStarChanged += HandleUnitChanged;
+
+        ApplyUnitStats();
     }
 
     private void Start()
     {
         nextTargetRefreshTime = Time.time;
-
-        SetAttackRange(unit.CurrentStats.range);
-
         fsm.ChangeState(idleState);
     }
 
     private void Update()
     {
         fsm.Update();
+    }
+
+    private void OnDestroy()
+    {
+        if(unit != null)
+        {
+            unit.OnDataChanged -= HandleUnitChanged;
+            unit.OnStarChanged -= HandleUnitChanged;
+        }
+    }
+
+    private void HandleUnitChanged(UnitInstance _)
+    {
+        ApplyUnitStats();
+    }
+
+    private void ApplyUnitStats()
+    {
+        if (unit == null || unit.Data == null)
+            return;
+
+        SetAttackRange(unit.CurrentStats.range);
+
+        // 공격 속도, 공격력 등 IAttackBehavior 과 연동 필요
     }
 
     public void SetAttackRange(float newRange)

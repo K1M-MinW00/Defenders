@@ -59,6 +59,18 @@ public class UnitRoster : MonoBehaviour
         return null;
     }
 
+    public int CountAliveUnits()
+    {
+        int alive = 0;
+
+        foreach (var u in units)
+        {
+            if (u != null && u.IsAlive)
+                alive++;
+        }
+
+        return alive;
+    }
     public void CleanupNulls()
     {
         units.RemoveAll(u => u == null);
