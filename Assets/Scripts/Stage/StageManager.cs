@@ -63,7 +63,6 @@ public class StageManager : MonoBehaviour
 
         stageUI.Initialize(this);
 
-        stageUI.SetStageInfo(currentStageData.stageName, currentStageData.stageId.ToString());
         stageUI.CreateWaveUI(currentStageData.waves);
     }
 
@@ -111,10 +110,10 @@ public class StageManager : MonoBehaviour
     private void StartPreparePhase()
     {
         CurrentState = StageState.Preparing;
-        stageUI.gameObject.SetActive(true);
         prepareTimer = prepareDuration;
 
-        // 타이머 UI 설정
+        stageUI.SetPhase(CurrentState);
+
         placementController?.EnablePlacement(true);
         placementArea?.SetVisible(true);
 
@@ -136,10 +135,8 @@ public class StageManager : MonoBehaviour
 
     private void StartCombatPhase()
     {
-        stageUI.gameObject.SetActive(false);
         placementController?.EnablePlacement(false);
         placementArea?.SetVisible(false);
-
 
         if (CurrentWave == null)
         {
@@ -148,7 +145,6 @@ public class StageManager : MonoBehaviour
         }
 
         StartWave();
-        
     }
     public void StartBattleEarly()
     {
@@ -159,6 +155,8 @@ public class StageManager : MonoBehaviour
     private void StartWave()
     {
         CurrentState = StageState.Combat;
+        stageUI.SetPhase(CurrentState);
+
         waveEnded = false;
 
         unitResetService?.CapturePreWavePositions(unitRoster);

@@ -6,52 +6,101 @@ using System;
 
 public class StageUIController : MonoBehaviour
 {
-    [Header("Stage Info")]
-    public TextMeshProUGUI stageInfoText;
+    [Header("Roots")]
+    [SerializeField] private GameObject common_HUD;
+    [SerializeField] private GameObject prepare_HUD;
+    [SerializeField] private GameObject combat_HUD;
 
-    [Header("Currency")]
-    public TextMeshProUGUI goldText;
-
-    [Header("Population")]
-    public TextMeshProUGUI populationText;
-
-    [Header("Wave UI")]
-    public Transform waveContainer;
-    public GameObject waveItemPrefab;
-    private List<Image> waveImages = new List<Image>();
+    [Header("Common HUD")]
+    [SerializeField] private TextMeshProUGUI stageInfoText;
     [SerializeField] private TextMeshProUGUI monsterCountText;
 
+    [Header("Prepare UI")]
+    [SerializeField] private TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private TextMeshProUGUI populationText;
 
-    [Header("Timer")]
-    public TextMeshProUGUI prepTimerText;
+    [Header("Wave UI")]
+    //public Transform waveContainer;
+    //public GameObject waveItemPrefab;
+    private List<Image> waveImages = new List<Image>();
 
     [Header("Button")]
     public Button startButton;
     public Button summonButton;
     public Button increasePopButton;
-    public GameObject reRollDropzone;
 
-    [Header("Group")]
+    [Header("Prepare Button Groups")]
     [SerializeField] private GameObject defaultButtonsGroup;
     [SerializeField] private GameObject unitActionButtonsGroup;
 
+    [Header("Unit Action Zones")]
+    [SerializeField] private GameObject reRollzone;
+    [SerializeField] private GameObject sellZone;
+
     private StageManager stageManager;
-    private PopulationManager population;
     private EconomyManager economy;
+    private PopulationManager population;
     private MonsterSpawner monsterSpawner;
 
+    private StageState cachedState;
     public void Initialize(StageManager manager)
     {
         stageManager = manager;
-        startButton.onClick.AddListener(OnClickStart);
-        summonButton.onClick.AddListener(OnClickSummon);
-        increasePopButton.onClick.AddListener(OnClickIncreasePop);
+        cachedState = stageManager.CurrentState;
+
+        startButton.onClick.AddListener(stageManager.StartBattleEarly);
+        summonButton.onClick.AddListener(stageManager.TrySummonUnit);
+        increasePopButton.onClick.AddListener(stageManager.TryIncreasePopulation);
 
         BindEconomy();
-        BindMonsterUI();
         BindPopulation();
+        BindMonsterUI();
+
+        SetStageInfo(stageManager.currentStageData.stageName, stageManager.currentStageData.stageId.ToString());
+        CreateWaveUI(stageManager.currentStageData.waves);
+        SetPhase(stageManager.CurrentState);
+
+        UpdateGoldUI(economy.CurrentGold);
+        UpdatePopulationUI(population.CurrentPopulation, population.MaxPopulation);
+        UpdateMonsterCountUI(monsterSpawner.AliveCount);
     }
 
+    private void OnDestroy()
+    {
+        UnBindEconomy();
+        UnBindPopulation();
+        UnBindMonsterUI();
+    }
+
+    public void SetPhase(StageState state)
+    {
+        cachedState = state;
+
+        if (common_HUD != null)
+            common_HUD.SetActive(true);
+
+        bool isPreparing = state == StageState.Preparing;
+        bool isCombat = state == StageState.Combat;
+
+        if (prepare_HUD != null)
+            prepare_HUD.SetActive(isPreparing);
+
+        if(combat_HUD != null)
+            combat_HUD.SetActive(isCombat);
+
+        if (isPreparing)
+            SetUnitDragMode(false);
+
+        if (monsterSpawner != null)
+            UpdateMonsterCountUI(monsterSpawner.AliveCount);
+    }
+
+
+    /// <summary>
+    ///  Bindings
+    /// </summary>
+    /// 
     private void BindMonsterUI()
     {
         monsterSpawner = stageManager != null ? stageManager.MonsterSpawner : null;
@@ -60,7 +109,6 @@ public class StageUIController : MonoBehaviour
             return;
 
         monsterSpawner.OnAliveCountChanged += UpdateMonsterCountUI;
-
         UpdateMonsterCountUI(monsterSpawner.AliveCount);
     }
 
@@ -86,12 +134,6 @@ public class StageUIController : MonoBehaviour
         UpdateGoldUI(economy.CurrentGold);
     }
 
-    private void OnDestroy()
-    {
-        UnBindEconomy();
-        UnBindPopulation();
-        UnBindMonsterUI();
-    }
 
     private void UnBindMonsterUI()
     {
@@ -120,20 +162,10 @@ public class StageUIController : MonoBehaviour
         population = null;
     }
 
-    void OnClickStart()
-    {
-        stageManager.StartBattleEarly();
-    }
-
-    void OnClickSummon()
-    {
-        stageManager.TrySummonUnit();
-    }
-    void OnClickIncreasePop()
-    {
-        stageManager.TryIncreasePopulation();
-    }
-
+    /// <summary>
+    /// Update UI
+    /// </summary>
+    /// 
     private void UpdateGoldUI(int gold)
     {
         goldText.text = gold.ToString();
@@ -141,12 +173,17 @@ public class StageUIController : MonoBehaviour
 
     private void UpdatePopulationUI(int current, int max)
     {
-        populationText.text = $"{current} / {max}";
+        populationText.text = $"{current}/{max}";
     }
 
     private void UpdateMonsterCountUI(int aliveCount)
     {
-        monsterCountText.text = $"Remain Monster : {aliveCount.ToString()}";
+        if (cachedState == StageState.Preparing)
+            monsterCountText.text = $"Expected : {aliveCount.ToString()}";
+        else if (cachedState == StageState.Combat)
+            monsterCountText.text = $"Remained : {aliveCount.ToString()}";
+        else
+            monsterCountText.text = aliveCount.ToString();
     }
 
     public void SetStageInfo(string stageName, string stageId)
@@ -156,27 +193,6 @@ public class StageUIController : MonoBehaviour
 
     public void CreateWaveUI(List<WaveData> waves)
     {
-        return;
-
-        waveImages.Clear();
-
-        foreach (Transform child in waveContainer)
-            Destroy(child.gameObject);
-
-        for (int i = 0; i < waves.Count; i++)
-        {
-            GameObject obj = Instantiate(waveItemPrefab, waveContainer);
-            Image img = obj.GetComponent<Image>();
-
-            TextMeshProUGUI text =
-                obj.GetComponentInChildren<TextMeshProUGUI>();
-
-            text.text = (i + 1).ToString();
-
-            img.color = GetWaveColor(waves[i].waveType);
-
-            waveImages.Add(img);
-        }
     }
 
     public void UpdateCurrentWave(int currentIndex)
@@ -190,7 +206,7 @@ public class StageUIController : MonoBehaviour
 
     public void UpdatePrepTimer(float time)
     {
-        prepTimerText.text = $"{time:F1}";
+        timerText.text = $"{time:F1}";
     }
 
     private Color GetWaveColor(WaveType type)
@@ -214,7 +230,7 @@ public class StageUIController : MonoBehaviour
 
         if(isDraggingUnit)
         {
-            reRollDropzone.SetActive(canReroll);
+            reRollzone.SetActive(canReroll);
         }
     }
 }
