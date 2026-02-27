@@ -43,7 +43,6 @@ public class PlayerCharacter : MonoBehaviour
             rangeSensor = GetComponentInChildren<RangeSensor>(true);
 
         unit = GetComponent<UnitInstance>();
-        unit.OnDataChanged += HandleUnitChanged;
         unit.OnStarChanged += HandleUnitChanged;
 
         ApplyUnitStats();
@@ -62,9 +61,8 @@ public class PlayerCharacter : MonoBehaviour
 
     private void OnDestroy()
     {
-        if(unit != null)
+        if (unit != null)
         {
-            unit.OnDataChanged -= HandleUnitChanged;
             unit.OnStarChanged -= HandleUnitChanged;
         }
     }
@@ -79,7 +77,7 @@ public class PlayerCharacter : MonoBehaviour
         if (unit == null || unit.Data == null)
             return;
 
-        SetAttackRange(unit.CurrentStats.range);
+        SetAttackRange(unit.Stats.range);
 
         // 공격 속도, 공격력 등 IAttackBehavior 과 연동 필요
     }
@@ -100,7 +98,7 @@ public class PlayerCharacter : MonoBehaviour
 
         var m = target.GetComponent<Monster>();
 
-        if (m == null || m.IsDead)
+        if (m == null || !m.IsAlive)
             return false;
 
         return true;
@@ -144,7 +142,7 @@ public class PlayerCharacter : MonoBehaviour
 
         foreach (var enemy in rangeSensor.InRange)
         {
-            if (enemy == null || enemy.IsDead)
+            if (enemy == null || !enemy.IsAlive)
                 continue;
 
             float distSqr = (enemy.transform.position - transform.position).sqrMagnitude;

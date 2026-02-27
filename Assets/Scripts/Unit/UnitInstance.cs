@@ -1,90 +1,90 @@
 using System;
 using UnityEngine;
 
-public class UnitInstance : MonoBehaviour
+public class UnitInstance : MonoBehaviour, IDamageable
 {
 	public UnitData Data { get; private set; }
 	public int Star { get; private set; } = 1;
 
-	public UnitStats CurrentStats { get; private set; }
-	public float CurrentHp { get; private set; }
-	public float CurrentEnergy { get; private set; }
+	public UnitStats Stats { get; private set; }
+	public float Hp { get; private set; }
+	public float Energy { get; private set; }
 
-	public bool IsAlive => CurrentHp > 0f;
+	[SerializeField] private float energyPerSec = 10f;
 
-	public event Action<UnitInstance> OnDataChanged;
+	public bool IsAlive => Hp > 0f;
+	public bool IsEnergyFull => Energy >= Stats.maxEnergy;
 	public event Action<UnitInstance> OnStarChanged;
 	public event Action<UnitInstance> OnHpChanged;
 	public event Action<UnitInstance> OnEnergyChanged;
 
-
 	public void Initialize(UnitData data, int star = 1)
 	{
-		SetUnitData(data, star);
-		CurrentHp = CurrentStats.maxHp;
-		CurrentEnergy = 0f;
-
-		OnHpChanged?.Invoke(this);
-		OnEnergyChanged?.Invoke(this);
-	}
-
-	public void SetUnitData(UnitData newData, int star = 1)
-	{
-		if (newData == null)
-		{
-			Debug.LogError("SetUnitData failed: newData is null.");
-			return;
-		}
-
-		Data = newData;
-		Star = Mathf.Max(1, star);
+		Data = data;
+		Star = star;
 
 		RecalculateStats();
-
-		CurrentHp = CurrentStats.maxHp;
-
-		OnDataChanged?.Invoke(this);
-		OnStarChanged?.Invoke(this);
-		OnHpChanged?.Invoke(this);
+		ResetForPrepare();
 	}
 
-	public void ApplyStarUp(int newStar)
-	{
-		if (Data == null)
-		{
-			Debug.LogError("ApplyStarUp failed: Data is null.");
+    private void Update()
+    {
+		if (!CanRegenEnergy() || IsEnergyFull)
 			return;
-		}
 
-		newStar = Mathf.Max(Star, newStar);
-		
-		Star = newStar;
+        AddEnergy();
+    }
+
+    private void AddEnergy()
+    {
+		float before = Energy;
+		Energy = Mathf.Clamp(Energy + energyPerSec * Time.deltaTime, 0f, Stats.maxEnergy);
+
+		if(!Mathf.Approximately(before,Energy))
+			OnEnergyChanged?.Invoke(this);
+
+		if(IsEnergyFull)
+		{
+			Debug.Log($"Energy Full : {Data.displayName} (Star {Star})");
+			Invoke("ResetEnergy",2f);
+		}
+    }
+
+    private bool CanRegenEnergy()
+    {
+		return IsAlive && StageManager.Instance.CurrentState == StageState.Combat;
+    }
+
+    public void ApplyStarUp()
+	{
+		Star++;
 		RecalculateStats();
 
-		CurrentHp = CurrentStats.maxHp;
-
+		ResetForPrepare();
 		OnStarChanged?.Invoke(this);
-		OnHpChanged?.Invoke(this);
 	}
 
-	public void TakeDamage(float dmg)
+	public void TakeDamage(float damage)
 	{
-		if (dmg <= 0f) 
+		if (damage <= 0f) 
 			return;
 
-		CurrentHp = Mathf.Max(0f, CurrentHp - dmg);
+		if (!IsAlive)
+			return;
+
+		Hp = Mathf.Max(0f, Hp - damage);
 		OnHpChanged?.Invoke(this);
 	}
 
 	public void HealToFull()
 	{
-		CurrentHp = CurrentStats.maxHp;
+		Hp = Stats.maxHp;
 		OnHpChanged?.Invoke(this);
 	}
 
 	public void ResetEnergy()
 	{
-		CurrentEnergy = 0f;
+		Energy = 0f;
 		OnEnergyChanged?.Invoke(this);
 	}
 
@@ -96,6 +96,6 @@ public class UnitInstance : MonoBehaviour
 
 	private void RecalculateStats()
 	{
-		CurrentStats = Data.GetStats(Star);
+		Stats = Data.GetStats(Star);
 	}
 }

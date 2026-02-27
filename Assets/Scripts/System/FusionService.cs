@@ -49,7 +49,7 @@ public class FusionService : MonoBehaviour
             // (현재는 seed=새 유닛으로 들어온다는 가정)
 
             // 승급
-            keep.ApplyStarUp(star + 1);
+            keep.ApplyStarUp();
 
             // 소모 유닛 제거
             roster.Unregister(consume);
