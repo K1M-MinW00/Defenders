@@ -25,6 +25,7 @@ public class StageManager : MonoBehaviour
 
     public PopulationManager PopulationManager => populationManager;
     public MonsterSpawner MonsterSpawner => monsterSpawner;
+    public UnitRoster UnitRoster => unitRoster;
 
     [Header("Prepare Settings")]
     public float prepareDuration = 5f;

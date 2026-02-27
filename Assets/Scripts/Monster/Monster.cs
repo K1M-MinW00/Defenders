@@ -8,7 +8,6 @@ using System;
 
 public class Monster : MonoBehaviour, IDamageable, IPoolable
 {
-    private ObjectPool pool;
     private string poolKey;
     public string PoolKey => poolKey;
 
@@ -26,8 +25,7 @@ public class Monster : MonoBehaviour, IDamageable, IPoolable
 
     public List<PlayerCharacter> characters;
 
-    private bool isDead;
-    public bool IsDead => isDead;
+    public bool IsAlive => curHp > 0f;
 
     public event Action<Monster> OnDead;
 
@@ -43,19 +41,16 @@ public class Monster : MonoBehaviour, IDamageable, IPoolable
     private void Start()
     {
         FindClosestPlayer();
-        StartCoroutine(CombatCheckRoutine());
     }
 
     
-    public void SetPool(ObjectPool pool, string key)
+    public void SetPool(string key)
     {
-        this.pool = pool;
         this.poolKey = key;
     }
 
     public void OnSpawn()
     {
-        isDead = false;
         curHp = maxHp;
 
         target = null;
@@ -79,7 +74,7 @@ public class Monster : MonoBehaviour, IDamageable, IPoolable
     {
         WaitForSeconds wait = new WaitForSeconds(2f);
 
-        while (!isDead)
+        while (IsAlive)
         {
             if (target == null)
                 FindClosestPlayer();
@@ -163,7 +158,7 @@ public class Monster : MonoBehaviour, IDamageable, IPoolable
 
     public void TakeDamage(float damage)
     {
-        if (isDead)
+        if (!IsAlive)
             return;
 
         curHp -= damage;
@@ -176,7 +171,6 @@ public class Monster : MonoBehaviour, IDamageable, IPoolable
     }
     private void Die()
     {
-        isDead = true;
         agent.isStopped = true;
 
         OnDead?.Invoke(this);

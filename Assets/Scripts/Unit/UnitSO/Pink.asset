@@ -19,6 +19,7 @@ MonoBehaviour:
     atk: 5
     def: 1
     maxHp: 100
+    maxEnergy: 100
     range: 7
   starMultipliers:
   - 1

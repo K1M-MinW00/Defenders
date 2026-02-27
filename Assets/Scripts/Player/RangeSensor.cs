@@ -7,9 +7,9 @@ public class RangeSensor : MonoBehaviour
 {
     [SerializeField] private LayerMask enemyLayer;
 
-    private readonly HashSet<Monster> inRange = new HashSet<Monster>();
+    private readonly HashSet<MonsterController> inRange = new HashSet<MonsterController>();
 
-    public IReadOnlyCollection<Monster> InRange => inRange;
+    public IReadOnlyCollection<MonsterController> InRange => inRange;
     private CircleCollider2D col;
 
     private void Awake()
@@ -29,7 +29,7 @@ public class RangeSensor : MonoBehaviour
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        if (!other.TryGetComponent(out Monster monster))
+        if (!other.TryGetComponent(out MonsterController monster))
             return;
 
         if (monster.IsDead)
@@ -43,7 +43,7 @@ public class RangeSensor : MonoBehaviour
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        if (!other.TryGetComponent(out Monster monster))
+        if (!other.TryGetComponent(out MonsterController monster))
             return;
 
         inRange.Remove(monster);

@@ -8,8 +8,8 @@ public class MonsterSpawner : MonoBehaviour
     public ObjectPool pool;
     public Transform spawnPoint;
 
-    private readonly List<Monster> aliveMonsters = new();
-    public IReadOnlyList<Monster> MonsterLists => aliveMonsters;
+    private readonly List<MonsterController> aliveMonsters = new();
+    public IReadOnlyList<MonsterController> MonsterLists => aliveMonsters;
     public int AliveCount => aliveMonsters.Count;
 
     public event Action OnAllMonstersSpawned;
@@ -53,24 +53,28 @@ public class MonsterSpawner : MonoBehaviour
             {
                 GameObject obj = pool.Spawn(group.monsterId, spawnPoint.position);
 
-                Monster monster = obj.GetComponent<Monster>();
-                monster.SetPool(pool, group.monsterId);
+                MonsterController monster = obj.GetComponent<MonsterController>();
+                monster.SetPoolKey(group.monsterId);
                 monster.OnDead += HandleMonsterDead;
+
+                monster.OnSpawn();
 
                 aliveMonsters.Add(monster);
                 OnAliveCountChanged?.Invoke(aliveMonsters.Count);
+
             }
 
             yield return new WaitForSeconds(subWave.delayAfter);
         }
     }
 
-    private void HandleMonsterDead(Monster monster)
+    private void HandleMonsterDead(MonsterController monster)
     {
         monster.OnDead -= HandleMonsterDead;
         aliveMonsters.Remove(monster);
         OnAliveCountChanged?.Invoke(aliveMonsters.Count);
 
+        monster.OnDespawn();
         pool.Despawn(monster.PoolKey, monster.gameObject);
     }
 }

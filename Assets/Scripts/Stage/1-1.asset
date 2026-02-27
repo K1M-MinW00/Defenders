@@ -32,4 +32,4 @@ MonoBehaviour:
         count: 15
       delayAfter: 2
     totalMonsterCount: 0
-    rewardGold: 0
+    rewardGold: 15

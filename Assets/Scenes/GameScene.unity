@@ -35184,7 +35184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageManager
   stageUI: {fileID: 1749784780}
-  currentStageData: {fileID: 11400000, guid: 5521dee372fc64842a559f0cc41e146e, type: 2}
+  currentStageData: {fileID: 11400000, guid: 242734004baf86f49bba3b58fc8ed476, type: 2}
   economyConfig: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}
   objectPool: {fileID: 173197329}
   monsterSpawner: {fileID: 1990264462}

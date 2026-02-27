@@ -96,9 +96,9 @@ public class PlayerCharacter : MonoBehaviour
         if (target == null)
             return false;
 
-        var m = target.GetComponent<Monster>();
+        var m = target.GetComponent<MonsterController>();
 
-        if (m == null || !m.IsAlive)
+        if (m == null || m.IsDead)
             return false;
 
         return true;
@@ -142,7 +142,7 @@ public class PlayerCharacter : MonoBehaviour
 
         foreach (var enemy in rangeSensor.InRange)
         {
-            if (enemy == null || !enemy.IsAlive)
+            if (enemy == null || enemy.IsDead)
                 continue;
 
             float distSqr = (enemy.transform.position - transform.position).sqrMagnitude;
