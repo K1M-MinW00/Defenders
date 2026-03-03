@@ -50,6 +50,35 @@ public class ObjectPool : MonoBehaviour
         return obj;
     }
 
+    public GameObject Spawn(string key, Vector3 position, Transform parent)
+    {
+        if (!pool.ContainsKey(key))
+        {
+            Debug.LogError($"Pool not found: {key}");
+            return null;
+        }
+
+        GameObject obj;
+
+        if (pool[key].Count > 0)
+        {
+            obj = pool[key].Dequeue();
+        }
+        else
+        {
+            obj = Instantiate(prefabCache[key], transform);
+        }
+
+        obj.transform.SetParent(parent, true);
+        obj.transform.position = position;
+        obj.SetActive(true);
+
+        if (obj.TryGetComponent(out IPoolable poolable))
+            poolable.OnSpawn();
+
+        return obj;
+    }
+
     public void Despawn(string key, GameObject obj)
     {
         if (obj.TryGetComponent(out IPoolable poolable))

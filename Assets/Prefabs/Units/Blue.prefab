@@ -86,7 +86,7 @@ MonoBehaviour:
   damage: 10
   bulletPrefab: {fileID: 6037398024264052577, guid: ab122d62f78584d4a84f48e8deb9359b, type: 3}
   firePoint: {fileID: 9077033087894072933}
-  bulletSpeed: 10
+  bulletSpeed: 30
 --- !u!4 &9077033087894072933 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8685747163263829668, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}

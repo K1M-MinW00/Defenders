@@ -74,7 +74,6 @@ public class MonsterSpawner : MonoBehaviour
         aliveMonsters.Remove(monster);
         OnAliveCountChanged?.Invoke(aliveMonsters.Count);
 
-        monster.OnDespawn();
         pool.Despawn(monster.PoolKey, monster.gameObject);
     }
 }

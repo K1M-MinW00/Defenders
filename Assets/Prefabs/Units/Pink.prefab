@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Name
-      value: Unit_Pink
+      value: Pink
       objectReference: {fileID: 0}
     - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Sprite
@@ -91,4 +91,4 @@ MonoBehaviour:
   damage: 10
   bulletPrefab: {fileID: 6037398024264052577, guid: ab122d62f78584d4a84f48e8deb9359b, type: 3}
   firePoint: {fileID: 805747424527919293}
-  bulletSpeed: 30
+  bulletSpeed: 20

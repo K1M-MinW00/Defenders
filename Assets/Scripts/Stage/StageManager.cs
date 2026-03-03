@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Resources;
 using UnityEngine;
 
 public class StageManager : MonoBehaviour
@@ -31,7 +29,6 @@ public class StageManager : MonoBehaviour
     public float prepareDuration = 5f;
     private float prepareTimer;
     private int currentWaveIndex = 0;
-
 
     public TilemapPlacementArea placementArea;
     public PlacementController placementController;
@@ -76,6 +73,8 @@ public class StageManager : MonoBehaviour
         populationManager.Init();
         monsterSpawner.Init(objectPool);
 
+        DamageUIService.Instance.Init(objectPool);
+
         // ToDo : 재화 설정
         StartPreparePhase();
     }
@@ -106,6 +105,7 @@ public class StageManager : MonoBehaviour
             // 기본 20마리 프리워밍 (추후 계산 기반으로 변경 가능)
             objectPool.Prewarm(id, prefab, 20);
         }
+
     }
 
     private void StartPreparePhase()
