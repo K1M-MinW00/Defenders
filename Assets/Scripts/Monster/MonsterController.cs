@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -168,24 +167,7 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
         if(unitRoster == null)
             return null;
 
-        float best = float.PositiveInfinity;
-        UnitInstance bestUnit = null;
-        Vector3 p = transform.position;
-
-        foreach(var u in unitRoster.Units)
-        {
-            if (u == null || !u.IsAlive)
-                continue;
-
-            float d = (u.transform.position - p).sqrMagnitude;
-            if(d < best)
-            {
-                best = d;
-                bestUnit = u;
-            }
-        }
-
-        return bestUnit;
+        return unitRoster.FindClosestAlive(transform.position);
     }
 
     private void MoveTo(Vector3 targetPos)
