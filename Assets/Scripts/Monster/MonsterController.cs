@@ -19,7 +19,6 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
     [Header("AI")]
     [SerializeField] private float retargetInterval = .25f;
     [SerializeField] private float navSampleRadius = 1.0f;
-    [SerializeField] private float retargetHysteresisRatio = .8f;
 
     [Header("References")]
     [SerializeField] private UnitRoster unitRoster;
@@ -37,6 +36,7 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
     public NavMeshAgent Agent { get; private set; }
     public IMonsterAttack Attack { get;private set; }
     public UnitInstance TargetUnit { get; private set; }
+
     private float lastAttackTime;
     private State state;
 
@@ -50,8 +50,6 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
         Agent.updateRotation = false;
         Agent.updateUpAxis = false;
 
-        if (unitRoster == null)
-            unitRoster = StageManager.Instance.UnitRoster;
 
         Attack = attackBehaviour as IMonsterAttack;
         if (Attack == null)
@@ -59,7 +57,14 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
 
     }
 
+    private void Start()
+    {
+        if (unitRoster == null)
+            unitRoster = StageManager.Instance.UnitRoster;
+    }
+
     public void SetPoolKey(string key) => poolKey = key;
+
     public void OnSpawn()
     {
         IsDead = false;
@@ -118,7 +123,7 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
                 float curd = (TargetUnit.transform.position - transform.position).sqrMagnitude;
                 float cand = (candidate.transform.position - transform.position).sqrMagnitude;
 
-                if (cand <= curd * (retargetHysteresisRatio * retargetHysteresisRatio))
+                if (cand <= curd )
                     TargetUnit = candidate;
             }
         }
@@ -210,6 +215,7 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
             return;
 
         CurrentHp -= damage;
+        DamageUIService.Instance?.Show(transform.position, damage);
 
         if (CurrentHp <= 0f)
             Die();
@@ -225,4 +231,56 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
         StopMovement();
         OnDead?.Invoke(this);
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (!Application.isPlaying)
+            return;
+
+        if (Agent == null)
+            return;
+
+        DrawNavMeshPath();
+        DrawTargetGizmo();
+    }
+
+    private void DrawNavMeshPath()
+    {
+        if (!Agent.hasPath)
+            return;
+
+        NavMeshPath path = Agent.path;
+        if (path == null || path.corners.Length < 2)
+            return;
+
+        Gizmos.color = Color.cyan;
+
+        for (int i = 0; i < path.corners.Length - 1; i++)
+        {
+            Gizmos.DrawLine(path.corners[i], path.corners[i + 1]);
+        }
+
+        // 코너 포인트 표시
+        Gizmos.color = Color.blue;
+        foreach (var corner in path.corners)
+        {
+            Gizmos.DrawSphere(corner, 0.1f);
+        }
+    }
+
+    private void DrawTargetGizmo()
+    {
+        if (TargetUnit == null)
+            return;
+
+        // 타겟 라인
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, TargetUnit.transform.position);
+
+        // 공격 사거리
+        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+#endif
 }

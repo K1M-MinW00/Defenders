@@ -1,19 +1,18 @@
 ﻿public class PlayerFSM
 {
-    private IPlayerState currentState;
-
+    public IPlayerState CurrentState { get; private set; }
     public void ChangeState(IPlayerState newState)
     {
-        if (currentState == newState)
+        if (CurrentState == newState)
             return;
 
-        currentState?.Exit();
-        currentState = newState;
-        currentState.Enter();
+        CurrentState?.Exit();
+        CurrentState = newState;
+        CurrentState.Enter();
     }
 
     public void Update()
     {
-        currentState?.Update();
+        CurrentState?.Update();
     }
 }

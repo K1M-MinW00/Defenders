@@ -30,19 +30,31 @@ public class UnitRoster : MonoBehaviour
         }
     }
 
-    public int CountBy(string unitId, int star)
+    public UnitInstance FindClosestAlive(Vector3 from)
     {
-        int count = 0;
-        for (int i = 0; i < units.Count; i++)
-        {
-            var u = units[i];
-            if (u == null) continue;
-            if (u.Data == null) continue;
+        UnitInstance best = null;
+        float bestD = float.PositiveInfinity;
 
-            if (u.Data.unitId == unitId && u.Star == star)
-                count++;
+        for (int i = units.Count - 1; i >= 0; --i)
+        {
+            UnitInstance u = units[i];
+
+            if (u == null || !u.IsAlive)
+                continue;
+
+            float d = (u.transform.position - from).sqrMagnitude;
+
+            if(d < bestD)
+            {
+                bestD = d;
+                best = u;
+            }
         }
-        return count;
+
+        if(best == null) 
+            return null;
+
+        return best;
     }
 
     public UnitInstance FindAny(string unitId, int star, UnitInstance exclude = null)
