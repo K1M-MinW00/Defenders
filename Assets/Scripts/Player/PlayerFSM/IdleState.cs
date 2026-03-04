@@ -1,4 +1,4 @@
-public class IdleState : IPlayerState
+public class IdleState : IState
 {
     private PlayerCharacter owner;
     private PlayerFSM fsm;

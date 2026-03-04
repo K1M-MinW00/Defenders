@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8054379882903055387}
   - component: {fileID: 5018757311990664221}
   - component: {fileID: 1385343888076783973}
+  - component: {fileID: 4173038608186531338}
   m_Layer: 6
   m_Name: MonsterBase
   m_TagString: Enemy
@@ -133,16 +134,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36e08d0fa2ca99e46ac65ac950b63cf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterController
-  maxHp: 50
-  moveSpeed: 3.5
-  attackRange: 1.5
-  attackPerSec: 1
-  atkDamage: 5
+  stats:
+    maxHp: 0
+    moveSpeed: 0
+    atkDamage: 0
+    atkRange: 0
+    atkCoolTime: 0
   retargetInterval: 0.25
+  destinationRefreshInterval: 0.15
   navSampleRadius: 1
-  retargetHysteresisRatio: 0.8
   unitRoster: {fileID: 0}
   attackBehaviour: {fileID: 0}
+--- !u!114 &4173038608186531338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390678771801392321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 011d42c6d7364a94a9bccb92ae7752b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterHealth
+  stats:
+    maxHp: 0
+    moveSpeed: 0
+    atkDamage: 0
+    atkRange: 0
+    atkCoolTime: 0
 --- !u!1 &5829918057703837809
 GameObject:
   m_ObjectHideFlags: 0

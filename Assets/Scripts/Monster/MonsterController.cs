@@ -1,45 +1,39 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MonsterController : MonoBehaviour, IDamageable, IPoolable
+[RequireComponent(typeof(MonsterHealth))]
+public class MonsterController : MonoBehaviour, IPoolable
 {
-    private enum State { Idle, Move, Attack}
-
-    [Header("Stats")]
-    [SerializeField] private float maxHp = 50f;
-    [SerializeField] private float moveSpeed = 3.5f;
-    [SerializeField] private float attackRange = 1.5f;
-    [SerializeField] private float attackPerSec = 1.0f;
-    [SerializeField] private float atkDamage = 5f;
+    [SerializeField] private MonsterStats stats;
 
     [Header("AI")]
-    [SerializeField] private float retargetInterval = .25f;
     [SerializeField] private float navSampleRadius = 1.0f;
 
     [Header("References")]
     [SerializeField] private UnitRoster unitRoster;
     [SerializeField] private MonoBehaviour attackBehaviour;
 
-    public float CurrentHp { get;private set; }
-    public bool IsDead { get; private set; }
-    public float AttackRange => attackRange;
-    public float AttackCooldown => attackPerSec <= 0f ? 999f : (1f / attackPerSec);
-    public float AtkDamage => atkDamage;
+    public NavMeshAgent Agent { get; private set; }
+    public UnitInstance TargetUnit { get; private set; }
+    public IMonsterAttack Attack { get;private set; }
+    public MonsterHealth Health { get; private set; }
+
+    public float AttackRange => (stats != null) ? stats.atkRange : 0f;
+    public float AttackCooldown => (stats != null && stats.atkCoolTime > 0f) ? (1f / stats.atkCoolTime) : 999f;
+    public float AtkDamage => (stats != null) ? stats.atkDamage : 0f;
 
     private string poolKey;
     public string PoolKey => poolKey;
 
-    public NavMeshAgent Agent { get; private set; }
-    public IMonsterAttack Attack { get;private set; }
-    public UnitInstance TargetUnit { get; private set; }
 
-    private float lastAttackTime;
-    private State state;
+    public void SetPoolKey(string key) => poolKey = key;
 
-    private Coroutine aiLoop;
+    private MonsterFSM fsm;
+    public MonsterMoveState moveState;
+    public MonsterAttackState attackState;
+    public MonsterIdleState idleState;
 
     public event Action<MonsterController> OnDead;
 
@@ -49,128 +43,93 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
         Agent.updateRotation = false;
         Agent.updateUpAxis = false;
 
-
         Attack = attackBehaviour as IMonsterAttack;
+
         if (Attack == null)
             Attack = GetComponent<IMonsterAttack>();
 
-    }
+        Health = GetComponent<MonsterHealth>();
+        Health.OnDead += HandleDead;
 
-    private void Start()
-    {
+        fsm = new MonsterFSM();
+        moveState = new MonsterMoveState(this, fsm);
+        attackState = new MonsterAttackState(this,fsm);
+        idleState = new MonsterIdleState(this, fsm);
+
+
         if (unitRoster == null)
             unitRoster = StageManager.Instance.UnitRoster;
     }
 
-    public void SetPoolKey(string key) => poolKey = key;
+    private void Start()
+    {
+    }
+
+    private void Update()
+    {
+        if (Health.IsDead)
+            return;
+
+        fsm.Update();
+    }
 
     public void OnSpawn()
     {
-        IsDead = false;
-        CurrentHp = maxHp;
+        ApplyStats();
 
         TargetUnit = null;
-        lastAttackTime = -999f;
-        state = State.Idle;
-
-        Agent.speed = moveSpeed;
+        
         Agent.isStopped = false;
         Agent.ResetPath();
 
-        if(aiLoop != null)
-            StopCoroutine(aiLoop);
+        Health.Initialize(stats);
+        Health.ResetHealth();
 
-        aiLoop = StartCoroutine(AILoop());
+        fsm.ChangeState(idleState);
     }
 
     public void OnDespawn()
     {
-        if(aiLoop != null)
-        {
-            StopCoroutine(aiLoop);
-            aiLoop = null;
-        }
-
         TargetUnit = null;
         Agent.ResetPath() ;
         Agent.isStopped = true;
     }
 
-    private IEnumerator AILoop()
+    private void ApplyStats()
     {
-        var wait = new WaitForSeconds(retargetInterval);
-
-        while(!IsDead)
-        {
-            Tick();
-            yield return wait;
-        }
-    }
-
-    private void Tick()
-    {
-        if(!IsTargetValid(TargetUnit))
-        {
-            TargetUnit = FindClosestAliveUnit();
-            state = TargetUnit != null ? State.Move : State.Idle;
-        }
-        else
-        {
-            UnitInstance candidate = FindClosestAliveUnit();
-            if(candidate != null && candidate != TargetUnit)
-            {
-                float curd = (TargetUnit.transform.position - transform.position).sqrMagnitude;
-                float cand = (candidate.transform.position - transform.position).sqrMagnitude;
-
-                if (cand <= curd )
-                    TargetUnit = candidate;
-            }
-        }
-
-        if(TargetUnit == null)
-        {
-            StopMovement();
-            state = State.Idle;
-            return;
-        }
-
-        bool inRange = (TargetUnit.transform.position - transform.position).sqrMagnitude <= attackRange * attackRange;
-
-        if (inRange)
-        {
-            StopMovement();
-            state = State.Attack;
-
-            TryAttack();
-        }
-        else
-        {
-            state = State.Move;
-            MoveTo(TargetUnit.transform.position);
-        }
-    }
-
-    private void TryAttack()
-    {
-        if (Time.time - lastAttackTime < AttackCooldown)
+        if (stats == null)
             return;
 
-        lastAttackTime = Time.time;
+        Agent.speed = stats.moveSpeed;
 
-        Attack.Execute(this);
+        // TODO : 공격 관련 Attack Behaviour 에서 stats 참조하여 적용
     }
 
-    private bool IsTargetValid(UnitInstance u) => u != null && u.IsAlive;
 
-    private UnitInstance FindClosestAliveUnit()
+    private void HandleDead(MonsterHealth health)
+    {
+        StopMovement();
+        OnDead?.Invoke(this);
+    }
+
+
+    // --- Targeting / Movement Helpers ---
+    public bool IsTargetValid(UnitInstance u) => u != null && u.IsAlive;
+
+    public void SetTarget(UnitInstance newTarget) => TargetUnit = newTarget;
+
+    public UnitInstance FindClosestAliveUnit()
     {
         if(unitRoster == null)
+        {
+            Debug.LogWarning("UnitRoster Null");
             return null;
+        }
 
         return unitRoster.FindClosestAlive(transform.position);
     }
-
-    private void MoveTo(Vector3 targetPos)
+    
+    public  void MoveTo(Vector3 targetPos)
     {
         if (Agent.isStopped)
             Agent.isStopped = false;
@@ -179,41 +138,14 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
             Agent.SetDestination(hit.position);
     }
 
-    private void StopMovement()
+    public void StopMovement()
     {
-        if(!Agent.isStopped)
-        {
-            Agent.isStopped = true;
-            Agent.velocity = Vector3.zero;
-        }
+        Agent.isStopped = true;
+        Agent.velocity = Vector3.zero;
+        Agent.ResetPath();
     }
 
-    public void TakeDamage(float damage)
-    {
-        if (IsDead)
-            return;
-
-        if (damage <= 0f)
-            return;
-
-        CurrentHp -= damage;
-        DamageUIService.Instance?.Show(transform.position, damage);
-
-        if (CurrentHp <= 0f)
-            Die();
-    }
-
-    public void Kill() => Die();
-    private void Die()
-    {
-        if (IsDead)
-            return;
-
-        IsDead = true;
-        StopMovement();
-        OnDead?.Invoke(this);
-    }
-
+    // TODO : 기즈모 따로 분리
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
@@ -262,7 +194,8 @@ public class MonsterController : MonoBehaviour, IDamageable, IPoolable
 
         // 공격 사거리
         Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(transform.position, AttackRange);
     }
+
 #endif
 }

@@ -24,6 +24,30 @@ PrefabInstance:
       propertyPath: atkDamage
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.maxHp
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkRange
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: attackBehaviour
+      value: 
+      objectReference: {fileID: 2791707638519805805}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkDamage
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.moveSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkCoolTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1662279240561831942, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: m_Height
       value: 0.5
@@ -94,6 +118,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4173038608186531338, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.maxHp
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4173038608186531338, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkRange
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4173038608186531338, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkDamage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4173038608186531338, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.moveSpeed
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}

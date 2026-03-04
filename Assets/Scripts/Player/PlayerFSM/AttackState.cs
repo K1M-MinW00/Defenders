@@ -1,7 +1,7 @@
 using System.Net;
 using UnityEngine;
 
-public class AttackState : IPlayerState
+public class AttackState : IState
 {
     private PlayerCharacter owner;
     private PlayerFSM fsm;

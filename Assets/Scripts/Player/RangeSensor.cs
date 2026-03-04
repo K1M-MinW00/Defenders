@@ -32,7 +32,7 @@ public class RangeSensor : MonoBehaviour
         if (!other.TryGetComponent(out MonsterController monster))
             return;
 
-        if (monster.IsDead)
+        if (monster.Health.IsDead)
             return;
 
         inRange.Add(monster);
@@ -52,6 +52,6 @@ public class RangeSensor : MonoBehaviour
     // 몬스터가 Destroy 되거나, 죽어서 남아있을 수 있으니 정리용
     public void CleanupDeadOrNull()
     {
-        inRange.RemoveWhere(m => m == null || m.IsDead);
+        inRange.RemoveWhere(m => m == null || m.Health.IsDead);
     }
 }

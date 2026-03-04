@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class MoveState : IPlayerState
+public class MoveState : IState
 {
     private PlayerCharacter owner;
     private PlayerFSM fsm;

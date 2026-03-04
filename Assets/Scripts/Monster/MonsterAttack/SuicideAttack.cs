@@ -77,7 +77,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         }
 
         ResetVisual();
-        ctx.Kill();
+        ctx.Health.Kill();
         casting = false;
     }
 

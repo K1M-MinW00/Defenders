@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -99,7 +97,7 @@ public class PlayerCharacter : MonoBehaviour
 
         var m = target.GetComponent<MonsterController>();
 
-        if (m == null || m.IsDead)
+        if (m == null || m.Health.IsDead)
             return false;
 
         return true;
@@ -143,7 +141,7 @@ public class PlayerCharacter : MonoBehaviour
 
         foreach (var enemy in rangeSensor.InRange)
         {
-            if (enemy == null || enemy.IsDead)
+            if (enemy == null || enemy.Health.IsDead)
                 continue;
 
             float distSqr = (enemy.transform.position - transform.position).sqrMagnitude;
