@@ -14,16 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   unitId: u2
   displayName: Pink
+  icon: {fileID: 0}
   unitPrefab: {fileID: 8606135018648911609, guid: bdc58187f35cb7d4da26dd8412a53414, type: 3}
   baseStats:
     atk: 5
     def: 1
     maxHp: 100
-    maxEnergy: 100
-    attackRange: 5
-    detectionRange: 10
-  starMultipliers:
-  - 1
-  - 1.6
-  - 2.3
-  - 3.5
+    maxMp: 100
+    attackRange: 8
+    attackPerSec: 3

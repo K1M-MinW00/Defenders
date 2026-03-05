@@ -14,16 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
   unitId: u1
   displayName: Blue
+  icon: {fileID: 0}
   unitPrefab: {fileID: 124320340541618209, guid: e7f77842937444b4089e344c4cdce5b4, type: 3}
   baseStats:
     atk: 10
     def: 1
     maxHp: 100
-    maxEnergy: 100
+    maxMp: 100
     attackRange: 5
-    detectionRange: 10
-  starMultipliers:
-  - 1
-  - 1.6
-  - 2.3
-  - 3.5
+    attackPerSec: 5
