@@ -20,8 +20,36 @@ public class RangeSensor : MonoBehaviour
 
     public void SetRadius(float radius)
     {
-        if (col == null) col = GetComponent<CircleCollider2D>();
+        if (col == null) 
+            col = GetComponent<CircleCollider2D>();
+        
         col.radius = radius;
+
+        Debug.Log($"SetDetctionRange {radius}");
+    }
+
+    public MonsterController GetClosestAlive(Vector3 from)
+    {
+        CleanupDeadOrNull();
+
+        float closestDistSqr = float.PositiveInfinity;
+
+        MonsterController best = null;
+
+        foreach (var enemy in inRange)
+        {
+            if (enemy == null || enemy.Health.IsDead)
+                continue;
+
+            float distSqr = (enemy.transform.position - transform.position).sqrMagnitude;
+            if (distSqr < closestDistSqr)
+            {
+                closestDistSqr = distSqr;
+                best = enemy;
+            }
+        }
+
+        return best;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

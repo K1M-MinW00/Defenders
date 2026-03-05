@@ -8,12 +8,13 @@ public class UnitInstance : MonoBehaviour, IDamageable
 
 	public UnitStats Stats { get; private set; }
 	public float Hp { get; private set; }
-	public float Energy { get; private set; }
+	public float Mp { get; private set; }
 
 	[SerializeField] private float energyPerSec = 10f;
 
 	public bool IsAlive => Hp > 0f;
-	public bool IsEnergyFull => Energy >= Stats.maxEnergy;
+	public bool IsEnergyFull => Mp >= Stats.maxMp;
+
 	public event Action<UnitInstance> OnStarChanged;
 	public event Action<UnitInstance> OnHpChanged;
 	public event Action<UnitInstance> OnEnergyChanged;
@@ -25,6 +26,7 @@ public class UnitInstance : MonoBehaviour, IDamageable
 
 		RecalculateStats();
 		ResetForPrepare();
+		OnStarChanged?.Invoke(this);
 	}
 
     private void Update()
@@ -32,20 +34,21 @@ public class UnitInstance : MonoBehaviour, IDamageable
 		if (!CanRegenEnergy() || IsEnergyFull)
 			return;
 
-        AddEnergy();
+        RegenMp();
     }
 
-    private void AddEnergy()
+    private void RegenMp()
     {
-		float before = Energy;
-		Energy = Mathf.Clamp(Energy + energyPerSec * Time.deltaTime, 0f, Stats.maxEnergy);
+		float before = Mp;
+		Mp = Mathf.Clamp(Mp + energyPerSec * Time.deltaTime, 0f, Stats.maxMp);
 
-		if(!Mathf.Approximately(before,Energy))
+		if(!Mathf.Approximately(before,Mp))
 			OnEnergyChanged?.Invoke(this);
 
 		if(IsEnergyFull)
 		{
-			Debug.Log($"Energy Full : {Data.displayName} (Star {Star})");
+			Debug.Log($"Energy Full : {Data.DisplayName} (Star {Star})");
+			//TODO 스킬사용 후 에너지 리셋
 			Invoke("ResetEnergy",2f);
 		}
     }
@@ -66,10 +69,7 @@ public class UnitInstance : MonoBehaviour, IDamageable
 
 	public void TakeDamage(float damage)
 	{
-		if (damage <= 0f) 
-			return;
-
-		if (!IsAlive)
+		if (damage <= 0f || !IsAlive) 
 			return;
 
 		Hp = Mathf.Max(0f, Hp - damage);
@@ -84,7 +84,7 @@ public class UnitInstance : MonoBehaviour, IDamageable
 
 	public void ResetEnergy()
 	{
-		Energy = 0f;
+		Mp = 0f;
 		OnEnergyChanged?.Invoke(this);
 	}
 
@@ -96,6 +96,11 @@ public class UnitInstance : MonoBehaviour, IDamageable
 
 	private void RecalculateStats()
 	{
-		Stats = Data.GetStats(Star);
+		if (Data == null)
+			return;
+
+		Stats = Data.BaseStats;
+		// TODO : 합성 스탯 업그레이드
+
 	}
 }

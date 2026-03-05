@@ -24,17 +24,10 @@ public class UnitSummoner : MonoBehaviour
 
         // 2) 랜덤 UnitData 선택
         UnitData data = unitPool[Random.Range(0, unitPool.Length)];
-        if (data == null || data.unitPrefab == null)
-        {
-            Debug.LogError("Summon failed: UnitData or unitPrefab is null.");
-            return;
-        }
 
         // 3) 스폰 위치 결정
         Vector3 pos = ResolveSpawnPosition();
-
-        // 4) 프리팹 생성
-        GameObject go = Instantiate(data.unitPrefab, pos, Quaternion.identity, unitsRoot);
+        GameObject go = Instantiate(data.UnitPrefab, pos, Quaternion.identity, unitsRoot);
 
         // 5) 런타임 초기화
         var instance = go.GetComponent<UnitInstance>();

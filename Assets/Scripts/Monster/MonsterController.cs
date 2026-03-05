@@ -17,7 +17,7 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     public NavMeshAgent Agent { get; private set; }
     public UnitInstance TargetUnit { get; private set; }
-    public IMonsterAttack Attack { get;private set; }
+    public IMonsterAttack Attack { get; private set; }
     public MonsterHealth Health { get; private set; }
 
     public float AttackRange => (stats != null) ? stats.atkRange : 0f;
@@ -53,7 +53,7 @@ public class MonsterController : MonoBehaviour, IPoolable
 
         fsm = new MonsterFSM();
         moveState = new MonsterMoveState(this, fsm);
-        attackState = new MonsterAttackState(this,fsm);
+        attackState = new MonsterAttackState(this, fsm);
         idleState = new MonsterIdleState(this, fsm);
 
 
@@ -78,7 +78,7 @@ public class MonsterController : MonoBehaviour, IPoolable
         ApplyStats();
 
         TargetUnit = null;
-        
+
         Agent.isStopped = false;
         Agent.ResetPath();
 
@@ -91,7 +91,7 @@ public class MonsterController : MonoBehaviour, IPoolable
     public void OnDespawn()
     {
         TargetUnit = null;
-        Agent.ResetPath() ;
+        Agent.ResetPath();
         Agent.isStopped = true;
     }
 
@@ -120,7 +120,7 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     public UnitInstance FindClosestAliveUnit()
     {
-        if(unitRoster == null)
+        if (unitRoster == null)
         {
             Debug.LogWarning("UnitRoster Null");
             return null;
@@ -128,8 +128,8 @@ public class MonsterController : MonoBehaviour, IPoolable
 
         return unitRoster.FindClosestAlive(transform.position);
     }
-    
-    public  void MoveTo(Vector3 targetPos)
+
+    public void MoveTo(Vector3 targetPos)
     {
         if (Agent.isStopped)
             Agent.isStopped = false;

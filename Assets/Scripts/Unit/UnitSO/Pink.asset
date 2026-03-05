@@ -20,7 +20,8 @@ MonoBehaviour:
     def: 1
     maxHp: 100
     maxEnergy: 100
-    range: 7
+    attackRange: 5
+    detectionRange: 10
   starMultipliers:
   - 1
   - 1.6

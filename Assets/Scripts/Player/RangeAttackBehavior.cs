@@ -22,8 +22,6 @@ public class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 
     public void TryAttack(Transform target)
     {
-        if (Time.time < lastAttackTime + attackCooldown)
-            return;
 
         if (!ammoHandler.CanShoot())
         {
@@ -33,7 +31,6 @@ public class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 
         Fire(target);
         ammoHandler.ConsumeAmmo();
-        lastAttackTime = Time.time;
     }
 
     private void Fire(Transform target)
@@ -42,7 +39,5 @@ public class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 
         Bullet bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         bullet.Init(dir, bulletSpeed, damage);
-
-        Debug.Log("ÃÑ¾Ë ¹ß»ç");
     }
 }

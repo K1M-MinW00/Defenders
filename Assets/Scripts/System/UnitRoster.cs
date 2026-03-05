@@ -66,7 +66,7 @@ public class UnitRoster : MonoBehaviour
             if (u == null || u == exclude) continue;
             if (u.Data == null) continue;
 
-            if (u.Data.unitId == unitId && u.Star == star)
+            if (u.Data.UnitId == unitId && u.Star == star)
                 return u;
         }
         return null;

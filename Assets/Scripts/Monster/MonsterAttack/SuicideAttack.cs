@@ -17,6 +17,8 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
     [SerializeField] private float scaleMultiplier = 2f;
 
     private bool casting;
+    private Coroutine _castRoutine;
+
     private UnitInstance target;
 
     private void Awake()
@@ -24,12 +26,17 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         if (bodySrdr == null)
             bodySrdr = GetComponentInChildren<SpriteRenderer>();
     }
+
+    private void OnDisable()
+    {
+        ResetVisual();
+        casting = false;
+        target = null;
+    }
+
     public void Execute(MonsterController ctx)
     {
-        if (ctx == null)
-            return;
-
-        if (casting)
+        if (ctx == null || casting)
             return;
 
         target = ctx.TargetUnit;
@@ -37,7 +44,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
             return;
 
         casting = true;
-        ctx.StartCoroutine(CastAndExplode(ctx));
+        _castRoutine = ctx.StartCoroutine(CastAndExplode(ctx));
     }
 
     private IEnumerator CastAndExplode(MonsterController ctx)
@@ -48,6 +55,12 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
 
         while(timer < castTime)
         {
+            if(ctx == null || ctx.Health.IsDead)
+            {
+                CleanupCast();
+                yield break;
+            }
+
             timer += Time.deltaTime;
             float t = Mathf.Clamp01(timer / castTime);
 
@@ -59,9 +72,8 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
 
         if(target == null || !target.IsAlive)
         {
-            ResetVisual();
-            casting = false;
-            yield return null;
+            CleanupCast();
+            yield break;
         }
 
         Vector2 center = ctx.transform.position;
@@ -76,14 +88,23 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
             ui.TakeDamage(ctx.AtkDamage);
         }
 
-        ResetVisual();
+        CleanupCast();
         ctx.Health.Kill();
-        casting = false;
     }
 
     private void ResetVisual()
     {
         bodySrdr.color = Color.white;
         transform.localScale = Vector3.one;
+    }
+
+    private void CleanupCast()
+    {
+        if (!casting)
+            return;
+
+        casting = false;
+        ResetVisual();
+        target = null;
     }
 }

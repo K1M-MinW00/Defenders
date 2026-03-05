@@ -60,10 +60,10 @@ public class UnitHUDController : MonoBehaviour
     }
     private void RefreshEnergy()
     {
-        float maxE = Mathf.Max(1f, unit.Stats.maxEnergy);
+        float maxE = Mathf.Max(1f, unit.Stats.maxMp);
         energySlider.minValue = 0f;
         energySlider.maxValue = maxE;
-        energySlider.value = Mathf.Clamp(unit.Energy, 0f, maxE);
+        energySlider.value = Mathf.Clamp(unit.Mp, 0f, maxE);
     }
 
     private void RefreshStar()

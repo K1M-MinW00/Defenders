@@ -7,18 +7,7 @@ public class UnitStats
     [Min(0)] public float atk;
     [Min(0)] public float def;
     [Min(0)] public float maxHp;
-    [Min(0)] public float maxEnergy;
-    [Min(0)] public float range;
-    public static UnitStats operator *(UnitStats s, float m)
-    {
-        return new UnitStats
-        {
-            atk = s.atk * m,
-            def = s.def * m,
-            maxHp = s.maxHp * m,
-            maxEnergy = s.maxEnergy * m,
-            range = s.range * m
-        };
-    }
-
+    [Min(0)] public float maxMp;
+    [Min(0)] public float attackRange;
+    [Min(0.01f)] public float attackPerSec;
 }

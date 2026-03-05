@@ -6,6 +6,10 @@ public class AttackState : IState
     private PlayerCharacter owner;
     private PlayerFSM fsm;
 
+    private float _nextCheckTime;
+    private float _nextAttackTime;
+    private float checkInterval = .1f;
+
     public AttackState(PlayerCharacter owner, PlayerFSM fsm)
     {
         this.owner = owner;
@@ -15,47 +19,43 @@ public class AttackState : IState
     public void Enter()
     {
         owner.agent.isStopped = true;
+
+        _nextCheckTime = Time.time;
+        _nextAttackTime = Time.time;
     }
 
     public void Update()
     {
-        if(owner.HasValidTarget())
+        if (Time.time >= _nextCheckTime)
         {
-            if (owner.IsTargetInRange(owner.target)) // 1. 타겟 유효 + 사거리 안이면 타겟 공격
+            _nextCheckTime = Time.time + checkInterval;
+
+            Debug.Log(owner.AttackPerSec);
+            var newTarget = owner.GetClosestEnemyInRange();
+
+            // 더 이상 사거리 안에 몬스터가 존재하지 않으면
+            if (newTarget == null)
             {
-                owner.attackBehavior.TryAttack(owner.target);
+                if (owner.HasValidTarget()) // 기존 타겟이 유효하면 따라가기
+                    fsm.ChangeState(owner.moveState);
+                else // 대기
+                {
+                    owner.ClearTarget();
+                    fsm.ChangeState(owner.idleState);
+                }
                 return;
             }
-            else // 2. 타겟은 유효하지만 사거리 밖에 있을 때
-            {
-                Transform inRange = owner.GetClosestEnemyInRange();
-
-                if (inRange != null) // 2-1. 사거리 안에 다른 몬스터가 있으면 타겟으로 설정하고 Attack 유지
-                {
-                    owner.SetTarget(inRange);
-                    return;
-                }
-                else // 2-2. 사거리 안에 다른 몬스터가 없어, 기존의 타겟을 유지한 채 따라가기 위해 Move
-                {
-                    fsm.ChangeState(owner.moveState);
-                    return;
-                }
-            }
+            owner.SetTarget(newTarget);
         }
 
-        // 3. 기존 타겟이 무효(null / 죽음)인 경우
-        Transform candidate = owner.GetClosestEnemyInRange();
-        if(candidate != null)
-        {
-            owner.SetTarget(candidate);
+        if (Time.time < _nextAttackTime)
             return;
-        }
-        else // 3-2. 기존 타겟도 없고 사거리 내 몬스터도 없으면 Idle 상태로 돌아가 대기
-        {
-            owner.ClearTarget();
-            fsm.ChangeState(owner.idleState);
-        }
 
+        if (!owner.HasValidTarget())
+            return;
+
+        owner.attackBehavior?.TryAttack(owner.Target.transform);
+        _nextAttackTime = Time.time + (1f / owner.AttackPerSec);
     }
 
     public void Exit() { }

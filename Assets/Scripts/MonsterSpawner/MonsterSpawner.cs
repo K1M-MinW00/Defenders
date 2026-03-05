@@ -76,4 +76,31 @@ public class MonsterSpawner : MonoBehaviour
 
         pool.Despawn(monster.PoolKey, monster.gameObject);
     }
+
+    public MonsterController FindClosestAlive(Vector3 from)
+    {
+        MonsterController best = null;
+        float bestD = float.PositiveInfinity;
+
+        for (int i = aliveMonsters.Count - 1; i >= 0; i--)
+        {
+            MonsterController m = aliveMonsters[i];
+
+            if (m == null || m.Health.IsDead)
+                continue;
+
+            float d = (m.transform.position - from).sqrMagnitude;
+
+            if (d < bestD)
+            {
+                bestD = d;
+                best = m;
+            }
+        }
+
+        if (best == null)
+            return null;
+
+        return best;
+    }
 }

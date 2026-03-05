@@ -1,14 +1,14 @@
-using System;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class MoveState : IState
 {
     private PlayerCharacter owner;
     private PlayerFSM fsm;
 
-    private Vector3 destination;
-    
+    private float _nextDestRefreshTime;
+    private float interval = .2f;
+
+
     public MoveState(PlayerCharacter owner, PlayerFSM fsm)
     {
         this.owner = owner;
@@ -19,38 +19,47 @@ public class MoveState : IState
     {
         owner.agent.isStopped = false;
 
-        if (owner.HasValidTarget())
-            destination = owner.target.position;
-        else
-            destination = owner.transform.position;
+        if (!owner.HasValidTarget())
+        {
+            fsm.ChangeState(owner.idleState);
+            return;
+        }
 
+        Vector3 destination = owner.Target.transform.position;
         owner.agent.SetDestination(destination);
+
+        _nextDestRefreshTime = Time.time + interval;
     }
 
     public void Update()
     {
-        Transform inRange = owner.GetClosestEnemyInRange();
+        MonsterController inRange = owner.GetClosestEnemyInRange();
 
-        if(inRange != null) // 이동 중 사거리 안에 몬스터가 들어오면 즉시 그 몬스터를 타겟으로 Attack
+        if (inRange != null) // 이동 중 사거리 안에 몬스터가 들어오면 즉시 그 몬스터를 타겟으로 Attack
         {
             owner.SetTarget(inRange);
             fsm.ChangeState(owner.attackState);
             return;
         }
 
-        if(!HasArrived())
-            return;
-
-        Transform atArrival = owner.GetClosestEnemyInRange();
-        if (atArrival != null)
-        {
-            owner.SetTarget(atArrival);
-            fsm.ChangeState(owner.attackState);
-        }
-        else
+        if (!owner.HasValidTarget())
         {
             owner.ClearTarget();
             fsm.ChangeState(owner.idleState);
+            return;
+        }
+
+        if (Time.time >= _nextDestRefreshTime)
+        {
+            owner.agent.SetDestination(owner.Target.transform.position);
+            _nextDestRefreshTime = Time.time + interval;
+        }
+
+        if (HasArrived())
+        {
+            owner.ClearTarget();
+            fsm.ChangeState(owner.idleState);
+            return;
         }
     }
 
@@ -59,8 +68,7 @@ public class MoveState : IState
         if (owner.agent.pathPending)
             return false;
 
-        // remainingDistance가 Infinity가 나오는 케이스 방지
-        if (float.IsInfinity(owner.agent.remainingDistance)) 
+        if (float.IsInfinity(owner.agent.remainingDistance))
             return true;
 
         return owner.agent.remainingDistance <= owner.agent.stoppingDistance;

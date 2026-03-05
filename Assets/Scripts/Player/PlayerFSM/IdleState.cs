@@ -1,8 +1,11 @@
+using UnityEngine;
+
 public class IdleState : IState
 {
     private PlayerCharacter owner;
     private PlayerFSM fsm;
 
+    private float _nextCheckTime;
     public IdleState(PlayerCharacter owner, PlayerFSM fsm)
     {
         this.owner = owner;
@@ -12,14 +15,22 @@ public class IdleState : IState
     public void Enter()
     {
         owner.agent.isStopped = true;
+        _nextCheckTime = 0f;
+
         owner.ClearTarget();
     }
 
     public void Update()
     {
-        if (owner.AcquireTargetInRange())
+        if(Time.time >= _nextCheckTime)
         {
-            fsm.ChangeState(owner.attackState);
+            _nextCheckTime = Time.time + owner.targetRefreshInterval;
+
+            if(owner.DetectTargetInRange())
+            {
+                fsm.ChangeState(owner.attackState);
+                return;
+            }
         }
     }
 

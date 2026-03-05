@@ -6,24 +6,21 @@ using UnityEngine.AI;
 public class PlayerCharacter : MonoBehaviour
 {
     [Header("Combat")]
-    public float atkRange = 3f;
     public float targetRefreshInterval = .2f;
-    public Transform target { get; private set; }
+    public MonsterController Target { get; private set; }
 
 
     [HideInInspector] public NavMeshAgent agent;
     [HideInInspector] public IAttackBehavior attackBehavior;
     private RangeSensor rangeSensor;
-
     // States
     private PlayerFSM fsm;
     public IdleState idleState;
     public MoveState moveState;
     public AttackState attackState;
 
-    private float nextTargetRefreshTime;
-
-    private UnitInstance unit;
+    public UnitInstance unit;
+    public float AttackPerSec => unit.Stats.attackPerSec;
 
     private void Awake()
     {
@@ -43,18 +40,18 @@ public class PlayerCharacter : MonoBehaviour
 
         unit = GetComponent<UnitInstance>();
         unit.OnStarChanged += HandleUnitChanged;
-
-        ApplyUnitStats();
     }
 
     private void Start()
     {
-        nextTargetRefreshTime = Time.time;
         fsm.ChangeState(idleState);
     }
 
     private void Update()
     {
+        if (!unit.IsAlive)
+            return;
+
         fsm.Update();
     }
 
@@ -74,85 +71,68 @@ public class PlayerCharacter : MonoBehaviour
     private void ApplyUnitStats()
     {
         if (unit == null || unit.Data == null)
+        {
+            Debug.LogWarning("Unit Null");
             return;
+        }
 
-        SetAttackRange(unit.Stats.range);
+        SetDetectionRange(unit.Stats.attackRange);
 
         // 공격 속도, 공격력 등 IAttackBehavior 과 연동 필요
     }
 
-    public void SetAttackRange(float newRange)
+    public void SetDetectionRange(float newRange)
     {
-        atkRange = newRange;
-        rangeSensor.SetRadius(atkRange);
+        rangeSensor.SetRadius(newRange);
     }
 
-    public void SetTarget(Transform newTarget) => target = newTarget;
-    public void ClearTarget() => target = null;
+    public void SetTarget(MonsterController newTarget) => Target = newTarget;
+    public void ClearTarget() => Target = null;
 
     public bool HasValidTarget()
     {
-        if (target == null)
-            return false;
-
-        var m = target.GetComponent<MonsterController>();
-
-        if (m == null || m.Health.IsDead)
-            return false;
-
-        return true;
-    }
-
-    public bool IsTargetInRange(Transform candidate)
-    {
-        if (candidate == null)
-            return false;
-
-        float distSqr = (candidate.position - transform.position).sqrMagnitude;
-
-        return distSqr <= atkRange * atkRange;
+        return Target != null && !Target.Health.IsDead;
     }
 
     // 사거리 안 후보군에서 가장 가까운 몬스터를 target 으로 설정 (Idle, Attack 에서만 사용)
-    public bool AcquireTargetInRange(bool forceRefresh = false)
+    public bool DetectTargetInRange()
     {
-        if (!forceRefresh && HasValidTarget() && IsTargetInRange(target)) // 타겟이 이미 유효하고 사거리 안이면 유지
-            return true;
-
-        if (!forceRefresh && Time.time < nextTargetRefreshTime)
-            return HasValidTarget() && IsTargetInRange(target);
-
-        nextTargetRefreshTime = Time.time + targetRefreshInterval;
-
-
-        target = GetClosestEnemyInRange();
-        rangeSensor.CleanupDeadOrNull();
-
-        return target != null;
+        Target = GetClosestEnemyInRange();
+        return Target != null;
     }
 
-    public Transform GetClosestEnemyInRange()
+    public MonsterController GetClosestEnemyInRange()
     {
-        float closestDistSqr = float.PositiveInfinity;
+        return rangeSensor.GetClosestAlive(transform.position);
+    }
 
-        Transform best = null;
+    public void EngageRequest()
+    {
+        if (unit == null || !unit.IsAlive)
+            return;
 
-        rangeSensor.CleanupDeadOrNull();
+        if (HasValidTarget())
+            return;
 
-        foreach (var enemy in rangeSensor.InRange)
+        bool found = FindGlobalAliveMonster();
+
+        if (found)
         {
-            if (enemy == null || enemy.Health.IsDead)
-                continue;
-
-            float distSqr = (enemy.transform.position - transform.position).sqrMagnitude;
-            if (distSqr < closestDistSqr)
-            {
-                closestDistSqr = distSqr;
-                best = enemy.transform;
-            }
+            fsm.ChangeState(moveState);
         }
+        else
+        {
+            ClearTarget();
+            fsm.ChangeState(idleState);
+        }
+    }
 
-        return best;
+    public bool FindGlobalAliveMonster()
+    {
+        MonsterController m = StageManager.Instance.MonsterSpawner.FindClosestAlive(transform.position);
+        SetTarget(m);
+
+        return HasValidTarget();
     }
 
 #if UNITY_EDITOR
@@ -172,7 +152,6 @@ public class PlayerCharacter : MonoBehaviour
         if (!Application.isPlaying)
             return;
 
-        // agent는 Awake에서 세팅되지만, 안전하게 보장
         if (agent == null)
             agent = GetComponent<NavMeshAgent>();
 
@@ -191,25 +170,22 @@ public class PlayerCharacter : MonoBehaviour
 
     private void DrawAttackRange()
     {
-        // 공격 사거리(유닛 기준)
         Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
-        Gizmos.DrawWireSphere(transform.position, atkRange);
+        Gizmos.DrawWireSphere(transform.position, unit.Stats.attackRange);
     }
 
     private void DrawTargetLine()
     {
-        if (target == null)
+        if (Target == null)
             return;
 
-        // 타겟이 유효하지 않으면 색 변경
         bool valid = HasValidTarget();
         Gizmos.color = valid ? Color.red : Color.gray;
 
-        Gizmos.DrawLine(transform.position, target.position);
+        Gizmos.DrawLine(transform.position, Target.transform.position);
 
-        // 타겟 위치 표시
         Gizmos.color = valid ? Color.yellow : Color.gray;
-        Gizmos.DrawWireSphere(target.position, 0.25f);
+        Gizmos.DrawWireSphere(Target.transform.position, 0.25f);
     }
 
     private void DrawAgentPath()
@@ -224,7 +200,6 @@ public class PlayerCharacter : MonoBehaviour
         if (path == null || path.corners == null || path.corners.Length < 2)
             return;
 
-        // pathStatus에 따라 색 구분
         switch (agent.pathStatus)
         {
             case NavMeshPathStatus.PathComplete:
@@ -238,11 +213,9 @@ public class PlayerCharacter : MonoBehaviour
                 break;
         }
 
-        // 코너 연결선
         for (int i = 0; i < path.corners.Length - 1; i++)
             Gizmos.DrawLine(path.corners[i], path.corners[i + 1]);
 
-        // 코너 포인트
         Gizmos.color = Color.blue;
         for (int i = 0; i < path.corners.Length; i++)
             Gizmos.DrawSphere(path.corners[i], cornerSphereRadius);
@@ -250,13 +223,9 @@ public class PlayerCharacter : MonoBehaviour
 
     private void DrawStateLabel()
     {
-        // FSM 상태 이름을 SceneView에 표시
-        // PlayerFSM에 CurrentState가 없다면 아래 라인은 안전하게 "Unknown" 처리됩니다.
         string stateName = "Unknown";
         try
         {
-            // 아래는 흔한 패턴 예시: fsm.CurrentState.GetType().Name
-            // 선생님 PlayerFSM 구현에 맞춰 한 줄만 조정하시면 됩니다.
             var curState = fsm?.CurrentState;
             if (curState != null)
                 stateName = curState.GetType().Name;
@@ -264,8 +233,9 @@ public class PlayerCharacter : MonoBehaviour
         catch { /* ignore */ }
 
         Handles.color = Color.white;
-        Handles.Label(transform.position + Vector3.up * 0.8f, $"State: {stateName}\nTarget: {(target ? target.name : "None")}");
+        Handles.Label(transform.position + Vector3.up * 0.8f, $"State: {stateName}\nTarget: {(Target ? Target.name : "None")}");
     }
+
 #endif
 
 }
