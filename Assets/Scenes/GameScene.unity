@@ -3937,7 +3937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitSummoner
   unitPool:
   - {fileID: 11400000, guid: e9a5edeb542ea5a48b43d3ab76de1a6d, type: 2}
-  - {fileID: 11400000, guid: 1a180102f5dccaf47bc0d9740eb4fadb, type: 2}
+  - {fileID: 11400000, guid: 0ff6c8a40fd56dd43aeec19cc3ab59bd, type: 2}
   unitsRoot: {fileID: 574971171}
   spawnPoint: {fileID: 574971171}
   roster: {fileID: 1413980709}

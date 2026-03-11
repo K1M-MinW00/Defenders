@@ -2,10 +2,10 @@ using UnityEngine;
 
 [System.Serializable]
 [CreateAssetMenu(menuName = "Game/Units/Unit Data")]
-public class UnitData : ScriptableObject
+public class UnitDataSO : ScriptableObject
 {
     [Header("Identity")]
-    [SerializeField] private string unitId;
+    [SerializeField] private UnitCode unitCode;
     [SerializeField] private string displayName;
     [SerializeField] private Sprite icon;
 
@@ -15,9 +15,16 @@ public class UnitData : ScriptableObject
     [Header("Base Stats (Star 1)")]
     [SerializeField] private UnitStats baseStats;
 
-    public string UnitId => unitId;
+    //[Header("Skills")]
+    //[SerializeField] private SkillDataSO activeSkill;
+    //[SerializeField] private SkillDataSO passiveSkill;
+
+    public UnitCode UnitCode => unitCode;
     public string DisplayName => displayName;
     public Sprite Icon => icon;
     public GameObject UnitPrefab => unitPrefab;
     public UnitStats BaseStats => baseStats;
+
+    //public SkillDataSO ActiveSkill => activeSkill;
+    //public SkillDataSO PassiveSkill => PassiveSkill;
 }

@@ -85,7 +85,7 @@ public class UserDataManager : MonoBehaviour
                         CurrentData.Profile = new UserProfileData();
 
                     if (CurrentData.Roster == null)
-                        CurrentData.Roster = new UserRosterData();
+                        CurrentData.Roster = UserDataFactory.CreateDefaultRoster();
 
                     if (CurrentData.Progress == null)
                         CurrentData.Progress = new UserProgressData();

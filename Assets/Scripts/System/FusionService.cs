@@ -33,10 +33,10 @@ public class FusionService : MonoBehaviour
             if (star >= maxStar)
                 break;
 
-            string unitId = seed.Data.UnitId;
+            UnitCode unitCode = seed.Data.UnitCode;
 
             // 같은 (unitId, star)인 "다른 유닛" 찾기
-            UnitInstance other = roster.FindAny(unitId, star, exclude: seed);
+            UnitInstance other = roster.FindAny(unitCode, star, exclude: seed);
             if (other == null)
                 break;
 

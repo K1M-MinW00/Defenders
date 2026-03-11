@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 296b0febbb6cd714f860f6e666ab90f3, type: 3}
-  m_Name: Pink
-  m_EditorClassIdentifier: Assembly-CSharp::UnitData
-  unitId: u2
-  displayName: Pink
-  icon: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Black
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 4
+  displayName: Black
+  icon: {fileID: 3443453390605909122, guid: ee4dba26be4f0f540a43cb12e09698ce, type: 3}
   unitPrefab: {fileID: 8606135018648911609, guid: bdc58187f35cb7d4da26dd8412a53414, type: 3}
   baseStats:
-    atk: 5
-    def: 1
+    atk: 10
+    def: 5
     maxHp: 100
     maxMp: 100
-    attackRange: 8
-    attackPerSec: 3
+    attackRange: 10
+    attackPerSec: 5

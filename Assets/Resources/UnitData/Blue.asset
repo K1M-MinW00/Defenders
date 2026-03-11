@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 296b0febbb6cd714f860f6e666ab90f3, type: 3}
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
   m_Name: Blue
-  m_EditorClassIdentifier: Assembly-CSharp::UnitData
-  unitId: u1
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 0
   displayName: Blue
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a827518ed48549046b6d0735a1f830e9, type: 3}
   unitPrefab: {fileID: 124320340541618209, guid: e7f77842937444b4089e344c4cdce5b4, type: 3}
   baseStats:
-    atk: 10
-    def: 1
+    atk: 20
+    def: 5
     maxHp: 100
-    maxMp: 100
-    attackRange: 5
-    attackPerSec: 5
+    maxMp: 50
+    attackRange: 10
+    attackPerSec: 2

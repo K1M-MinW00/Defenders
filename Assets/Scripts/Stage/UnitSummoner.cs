@@ -3,7 +3,7 @@ using UnityEngine;
 public class UnitSummoner : MonoBehaviour
 {
     [Header("Unit Pool (Inspector)")]
-    [SerializeField] private UnitData[] unitPool;
+    [SerializeField] private UnitDataSO[] unitPool;
 
     [Header("Spawn Settings")]
     [SerializeField] private Transform unitsRoot;          // 생성된 유닛을 담을 부모(없으면 null 가능)
@@ -23,7 +23,7 @@ public class UnitSummoner : MonoBehaviour
         }
 
         // 2) 랜덤 UnitData 선택
-        UnitData data = unitPool[Random.Range(0, unitPool.Length)];
+        UnitDataSO data = unitPool[Random.Range(0, unitPool.Length)];
 
         // 3) 스폰 위치 결정
         Vector3 pos = ResolveSpawnPosition();
