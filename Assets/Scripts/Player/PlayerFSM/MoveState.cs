@@ -4,10 +4,7 @@ public class MoveState : IState
 {
     private PlayerCharacter owner;
     private PlayerFSM fsm;
-
-    private float _nextDestRefreshTime;
-    private float interval = .2f;
-
+    private float _nextRefreshTime;
 
     public MoveState(PlayerCharacter owner, PlayerFSM fsm)
     {
@@ -18,61 +15,52 @@ public class MoveState : IState
     public void Enter()
     {
         owner.agent.isStopped = false;
-
-        if (!owner.HasValidTarget())
-        {
-            fsm.ChangeState(owner.idleState);
-            return;
-        }
-
-        Vector3 destination = owner.Target.transform.position;
-        owner.agent.SetDestination(destination);
-
-        _nextDestRefreshTime = Time.time + interval;
     }
 
     public void Update()
     {
-        MonsterController inRange = owner.GetClosestEnemyInRange();
-
-        if (inRange != null) // 이동 중 사거리 안에 몬스터가 들어오면 즉시 그 몬스터를 타겟으로 Attack
+        if (!owner.HasValidTarget())
         {
-            owner.SetTarget(inRange);
+            if (!owner.TryFindTargetInSensor())
+            {
+                owner.ClearTarget();
+                fsm.ChangeState(owner.idleState);
+                return;
+            }
+        }
+
+        if (owner.IsTargetInAttackRange())
+        {
             fsm.ChangeState(owner.attackState);
             return;
         }
 
-        if (!owner.HasValidTarget())
-        {
-            owner.ClearTarget();
-            fsm.ChangeState(owner.idleState);
-            return;
-        }
+        owner.FaceTo(owner.Target.transform.position);
+        owner.agent.SetDestination(owner.Target.transform.position);
 
-        if (Time.time >= _nextDestRefreshTime)
-        {
-            owner.agent.SetDestination(owner.Target.transform.position);
-            _nextDestRefreshTime = Time.time + interval;
-        }
+        if (owner.animator != null)
+            owner.animator.SetFloat("MoveSpeed", owner.agent.velocity.magnitude);
 
-        if (HasArrived())
+        if (Time.time >= _nextRefreshTime)
         {
-            owner.ClearTarget();
-            fsm.ChangeState(owner.idleState);
-            return;
+            _nextRefreshTime = Time.time + owner.targetRefreshInterval;
+
+            MonsterController closest = owner.GetClosestEnemyInRange();
+
+            if (closest != null && closest != owner.Target)
+            {
+                float currentDist = (owner.Target.transform.position - owner.transform.position).sqrMagnitude;
+                float newDist = (closest.transform.position - owner.transform.position).sqrMagnitude;
+
+                if (newDist < currentDist)
+                    owner.SetTarget(closest);
+            }
         }
     }
 
-    private bool HasArrived()
+    public void Exit()
     {
-        if (owner.agent.pathPending)
-            return false;
-
-        if (float.IsInfinity(owner.agent.remainingDistance))
-            return true;
-
-        return owner.agent.remainingDistance <= owner.agent.stoppingDistance;
+        if (owner.animator != null)
+            owner.animator.SetFloat("MoveSpeed", 0f);
     }
-
-    public void Exit() { }
 }

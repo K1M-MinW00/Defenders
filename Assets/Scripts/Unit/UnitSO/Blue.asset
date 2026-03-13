@@ -9,17 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 296b0febbb6cd714f860f6e666ab90f3, type: 3}
-  m_Name: Blue
-  m_EditorClassIdentifier: Assembly-CSharp::UnitData
-  unitId: u1
-  displayName: Blue
-  icon: {fileID: 0}
-  unitPrefab: {fileID: 124320340541618209, guid: e7f77842937444b4089e344c4cdce5b4, type: 3}
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Knight
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 0
+  displayName: Knight
+  icon: {fileID: -5711848221618334454, guid: b9494408acf6cbe41b220706a5875ca9, type: 3}
+  unitPrefab: {fileID: 8701186199276537277, guid: 3853f4a0cc9151443b2cdbad6f3aa303, type: 3}
   baseStats:
-    atk: 10
-    def: 1
     maxHp: 100
-    maxMp: 100
-    attackRange: 5
-    attackPerSec: 5
+    maxMp: 50
+    speed: 4
+    atk: 10
+    def: 5
+    attackRange: 2
+    detectRange: 10
+    attackPerSec: 4

@@ -5,14 +5,19 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class PlayerCharacter : MonoBehaviour
 {
+    [Header("References")]
+    [HideInInspector] public Animator animator;
+    [HideInInspector] public NavMeshAgent agent;
+    [HideInInspector] public IAttackBehavior attackBehavior;
+    [SerializeField] private Transform visualRoot;
+    private RangeSensor rangeSensor;
+
     [Header("Combat")]
     public float targetRefreshInterval = .2f;
     public MonsterController Target { get; private set; }
+    private bool isFacingRight = true;
 
 
-    [HideInInspector] public NavMeshAgent agent;
-    [HideInInspector] public IAttackBehavior attackBehavior;
-    private RangeSensor rangeSensor;
     // States
     private PlayerFSM fsm;
     public IdleState idleState;
@@ -20,6 +25,9 @@ public class PlayerCharacter : MonoBehaviour
     public AttackState attackState;
 
     public UnitInstance unit;
+
+    public float MoveSpeed => unit.Stats.speed;
+    public float Atk => unit.Stats.atk;
     public float AttackPerSec => unit.Stats.attackPerSec;
 
     private void Awake()
@@ -28,6 +36,7 @@ public class PlayerCharacter : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
+        animator = GetComponentInChildren<Animator>();
         attackBehavior = GetComponent<IAttackBehavior>();
 
         fsm = new PlayerFSM();
@@ -76,7 +85,8 @@ public class PlayerCharacter : MonoBehaviour
             return;
         }
 
-        SetDetectionRange(unit.Stats.attackRange);
+        agent.speed = MoveSpeed;
+        SetDetectionRange(unit.Stats.detectRange);
 
         // 공격 속도, 공격력 등 IAttackBehavior 과 연동 필요
     }
@@ -94,11 +104,22 @@ public class PlayerCharacter : MonoBehaviour
         return Target != null && !Target.Health.IsDead;
     }
 
-    // 사거리 안 후보군에서 가장 가까운 몬스터를 target 으로 설정 (Idle, Attack 에서만 사용)
-    public bool DetectTargetInRange()
+    public bool TryFindTargetInSensor()
     {
-        Target = GetClosestEnemyInRange();
-        return Target != null;
+        MonsterController closest = GetClosestEnemyInRange();
+        SetTarget(closest);
+        return HasValidTarget();
+    }
+
+    public bool IsTargetInAttackRange()
+    {
+        if (!HasValidTarget())
+            return false;
+
+        float distSqr = (Target.transform.position - transform.position).sqrMagnitude;
+        float range = unit.Stats.attackRange;
+
+        return distSqr <= range * range;
     }
 
     public MonsterController GetClosestEnemyInRange()
@@ -133,6 +154,31 @@ public class PlayerCharacter : MonoBehaviour
         SetTarget(m);
 
         return HasValidTarget();
+    }
+
+    public void FaceTo(Vector3 targetPos)
+    {
+        float dx = targetPos.x - transform.position.x;
+
+        if (Mathf.Abs(dx) < 0.01f)
+            return;
+
+        bool shouldFaceRight = dx > 0f;
+
+        if (shouldFaceRight == isFacingRight)
+            return;
+
+        isFacingRight = shouldFaceRight;
+        Transform pivot = visualRoot != null ? visualRoot : transform;
+
+        Vector3 scale = pivot.localScale;
+        scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1f : -1f);
+        pivot.localScale = scale;
+    }
+
+    public Vector2 GetFacingDirection()
+    {
+        return isFacingRight ? Vector2.right : Vector2.left;
     }
 
 #if UNITY_EDITOR

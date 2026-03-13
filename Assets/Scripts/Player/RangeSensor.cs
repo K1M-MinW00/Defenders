@@ -41,7 +41,7 @@ public class RangeSensor : MonoBehaviour
             if (enemy == null || enemy.Health.IsDead)
                 continue;
 
-            float distSqr = (enemy.transform.position - transform.position).sqrMagnitude;
+            float distSqr = (enemy.transform.position - from).sqrMagnitude;
             if (distSqr < closestDistSqr)
             {
                 closestDistSqr = distSqr;

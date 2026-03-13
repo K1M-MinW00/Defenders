@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-
-public interface IAttackBehavior
+﻿public interface IAttackBehavior
 {
-    void TryAttack(Transform target);
+    bool IsAttacking { get; }
+    bool CanAttack();
+
+    bool TryAttack(MonsterController target);
 }

@@ -28,17 +28,14 @@ public class UnitResetService : MonoBehaviour
             // 부활 + 풀피 + 에너지 0
             u.ResetForPrepare();
      
-            // 위치 복구
-            if (preWavePositions.TryGetValue(u, out var pos))
-                u.transform.position = pos;
-
-
-            // (선택) NavMeshAgent 경로 초기화
             var pc = u.GetComponent<PlayerCharacter>();
             if (pc != null && pc.agent != null)
             {
                 pc.ClearTarget();
-                pc.agent.ResetPath();
+
+                if (preWavePositions.TryGetValue(u, out var pos))
+                    pc.agent.Warp(pos);
+
                 pc.agent.isStopped = true;
             }
         }

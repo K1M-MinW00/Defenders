@@ -1,43 +1,64 @@
 using UnityEngine;
 
-public class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
+public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 {
+    [Header("References")]
+    [SerializeField] protected PlayerCharacter owner;
+
     [Header("Combat")]
-    public float attackRange = 4f;
-    public float attackCooldown = 0.5f;
-    public float damage = 10f;
+    protected float Damage => owner.Atk;
+    protected float cooldown => 1f / owner.AttackPerSec;
 
-    [Header("Bullet")]
-    public Bullet bulletPrefab;
-    public Transform firePoint;
-    public float bulletSpeed = 10f;
+    [SerializeField] protected LayerMask targetLayer;
+    [SerializeField] protected string attackTrigger = "Attack";
 
-    private float lastAttackTime;
-    private AmmoHandler ammoHandler;
+    protected Transform pendingTarget;
+    protected float lastAttackTime = -999f;
+    protected bool isAttacking;
+    public bool IsAttacking => isAttacking;
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        ammoHandler = GetComponent<AmmoHandler>();
+        if (owner == null)
+            owner = GetComponent<PlayerCharacter>();
     }
 
-    public void TryAttack(Transform target)
+    public virtual bool CanAttack()
     {
+        if (isAttacking)
+            return false;
 
-        if (!ammoHandler.CanShoot())
-        {
-            StartCoroutine(ammoHandler.Reload());
-            return;
-        }
+        if (Time.time < lastAttackTime + cooldown)
+            return false;
 
-        Fire(target);
-        ammoHandler.ConsumeAmmo();
+        return true;
     }
 
-    private void Fire(Transform target)
+    public virtual bool TryAttack(MonsterController target)
     {
-        Vector2 dir = (target.position - firePoint.position).normalized;
+        if (target == null || target.Health.IsDead)
+            return false;
 
-        Bullet bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        bullet.Init(dir, bulletSpeed, damage);
+        if (!CanAttack())
+            return false;
+
+
+        owner.FaceTo(target.transform.position);
+
+        isAttacking = true;
+        pendingTarget = target.transform;
+        owner.animator.SetTrigger(attackTrigger);
+
+        return true;
     }
+
+    public abstract void OnAttackCast();
+
+    public virtual void OnAttackFinished()
+    {
+        isAttacking = false;
+        pendingTarget = null;
+        lastAttackTime = Time.time;
+    }
+
 }
