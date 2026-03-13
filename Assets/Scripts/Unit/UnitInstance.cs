@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class UnitInstance : MonoBehaviour, IDamageable
 {
-	public UnitData Data { get; private set; }
+	public UnitDataSO Data { get; private set; }
 	public int Star { get; private set; } = 1;
 
 	public UnitStats Stats { get; private set; }
@@ -19,7 +19,7 @@ public class UnitInstance : MonoBehaviour, IDamageable
 	public event Action<UnitInstance> OnHpChanged;
 	public event Action<UnitInstance> OnEnergyChanged;
 
-	public void Initialize(UnitData data, int star = 1)
+	public void Initialize(UnitDataSO data, int star = 1)
 	{
 		Data = data;
 		Star = star;
