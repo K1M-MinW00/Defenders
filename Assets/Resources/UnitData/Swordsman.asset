@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Swordsman
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 7
+  displayName: Swordsman
+  icon: {fileID: 3613407544420638092, guid: 6617a0f66500e434186183372d0898c9, type: 3}
+  unitPrefab: {fileID: 1272179824587458314, guid: 6c37d050c62d3ae459a80b77fc9486d9, type: 3}
+  baseStats:
+    maxHp: 150
+    maxMp: 100
+    speed: 5
+    atk: 15
+    def: 5
+    attackRange: 5
+    detectRange: 10
+    attackPerSec: 3

@@ -146,12 +146,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_0
       rect:
         serializedVersion: 2
-        x: 248
-        y: 60
-        width: 6
-        height: 6
+        x: 200
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -168,12 +168,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_1
       rect:
         serializedVersion: 2
-        x: 251
-        y: 57
-        width: 6
-        height: 7
+        x: 300
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -190,12 +190,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_2
       rect:
         serializedVersion: 2
-        x: 349
-        y: 52
-        width: 8
-        height: 15
+        x: 400
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -212,12 +212,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_3
       rect:
         serializedVersion: 2
-        x: 441
-        y: 51
-        width: 27
-        height: 17
+        x: 500
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -234,12 +234,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_4
       rect:
         serializedVersion: 2
-        x: 537
-        y: 54
-        width: 34
-        height: 9
+        x: 600
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -256,12 +256,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_5
       rect:
         serializedVersion: 2
-        x: 633
-        y: 40
-        width: 159
-        height: 35
+        x: 700
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -278,12 +278,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_6
       rect:
         serializedVersion: 2
-        x: 855
-        y: 40
-        width: 37
-        height: 35
+        x: 800
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -300,12 +300,12 @@ TextureImporter:
       name: Knight-Attack03_Effect_7
       rect:
         serializedVersion: 2
-        x: 884
-        y: 63
-        width: 6
-        height: 7
+        x: 900
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -318,77 +318,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: Knight-Attack03_Effect_8
-      rect:
-        serializedVersion: 2
-        x: 955
-        y: 41
-        width: 38
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 25a2026ee5b0c6fb0800000000000000
-      internalID: -4653331812764865966
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Knight-Attack03_Effect_9
-      rect:
-        serializedVersion: 2
-        x: 248
-        y: 52
-        width: 9
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6c08d7af575006370800000000000000
-      internalID: 8313650916397777094
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Knight-Attack03_Effect_10
-      rect:
-        serializedVersion: 2
-        x: 883
-        y: 40
-        width: 10
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9f1a5572cb7efd560800000000000000
-      internalID: 7340840712936989177
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a02f1ddd5d0ba3f4cb8abbf988be9591
     internalID: 0
     vertices: []
     indices: 
@@ -396,19 +330,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":100.0,"y":100.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       Knight-Attack03_Effect_0: 1299349784572576585
       Knight-Attack03_Effect_1: -6056069079394454475
-      Knight-Attack03_Effect_10: 7340840712936989177
       Knight-Attack03_Effect_2: -52170001521247161
       Knight-Attack03_Effect_3: -2751992730614327115
       Knight-Attack03_Effect_4: -1552644559475302134
       Knight-Attack03_Effect_5: 4310748549429784952
       Knight-Attack03_Effect_6: 4320240680722754332
       Knight-Attack03_Effect_7: 1334124303489836635
-      Knight-Attack03_Effect_8: -4653331812764865966
-      Knight-Attack03_Effect_9: 8313650916397777094
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

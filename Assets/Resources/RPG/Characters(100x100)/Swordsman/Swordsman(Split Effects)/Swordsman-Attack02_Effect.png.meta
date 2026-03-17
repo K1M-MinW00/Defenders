@@ -90,7 +90,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -155,12 +155,12 @@ TextureImporter:
       name: Swordsman-Attack02_Effect_0
       rect:
         serializedVersion: 2
-        x: 356
-        y: 38
-        width: 32
-        height: 32
+        x: 300
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -177,12 +177,12 @@ TextureImporter:
       name: Swordsman-Attack02_Effect_1
       rect:
         serializedVersion: 2
-        x: 471
-        y: 59
-        width: 7
-        height: 11
+        x: 400
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -199,12 +199,12 @@ TextureImporter:
       name: Swordsman-Attack02_Effect_2
       rect:
         serializedVersion: 2
-        x: 870
-        y: 37
-        width: 21
-        height: 22
+        x: 600
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -221,12 +221,12 @@ TextureImporter:
       name: Swordsman-Attack02_Effect_3
       rect:
         serializedVersion: 2
-        x: 1257
-        y: 37
-        width: 39
-        height: 30
+        x: 700
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -243,12 +243,12 @@ TextureImporter:
       name: Swordsman-Attack02_Effect_4
       rect:
         serializedVersion: 2
-        x: 1370
-        y: 54
-        width: 6
-        height: 6
+        x: 800
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -265,12 +265,12 @@ TextureImporter:
       name: Swordsman-Attack02_Effect_5
       rect:
         serializedVersion: 2
-        x: 1385
-        y: 56
-        width: 6
-        height: 6
+        x: 1200
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -287,12 +287,12 @@ TextureImporter:
       name: Swordsman-Attack02_Effect_6
       rect:
         serializedVersion: 2
-        x: 476
-        y: 50
-        width: 8
-        height: 8
+        x: 1300
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -305,165 +305,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: Swordsman-Attack02_Effect_7
-      rect:
-        serializedVersion: 2
-        x: 655
-        y: 39
-        width: 26
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 02e49d51fa10b6720800000000000000
-      internalID: 2840365841484697120
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Swordsman-Attack02_Effect_8
-      rect:
-        serializedVersion: 2
-        x: 669
-        y: 37
-        width: 21
-        height: 20
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e61ad076503e870e0800000000000000
-      internalID: -2271816399665127058
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Swordsman-Attack02_Effect_9
-      rect:
-        serializedVersion: 2
-        x: 739
-        y: 38
-        width: 42
-        height: 19
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3ae2842e3179c7400800000000000000
-      internalID: 323299384920387235
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Swordsman-Attack02_Effect_10
-      rect:
-        serializedVersion: 2
-        x: 776
-        y: 43
-        width: 9
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 22cf589d9bf6455b0800000000000000
-      internalID: -5380552810791830494
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Swordsman-Attack02_Effect_11
-      rect:
-        serializedVersion: 2
-        x: 784
-        y: 52
-        width: 6
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b945522efec742d60800000000000000
-      internalID: 7864548219028853915
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Swordsman-Attack02_Effect_12
-      rect:
-        serializedVersion: 2
-        x: 1358
-        y: 40
-        width: 32
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9612a28e7840d96a0800000000000000
-      internalID: -6440986910307770007
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Swordsman-Attack02_Effect_13
-      rect:
-        serializedVersion: 2
-        x: 481
-        y: 40
-        width: 6
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cffabf03472f541b0800000000000000
-      internalID: -5672861574751342596
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e7f550e6a82b7e54786c46e365e28522
     internalID: 0
     vertices: []
     indices: 
@@ -471,22 +317,17 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":100.0,"y":100.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       Swordsman-Attack02_Effect_0: 5716570746651901812
       Swordsman-Attack02_Effect_1: 1572318352594064110
-      Swordsman-Attack02_Effect_10: -5380552810791830494
-      Swordsman-Attack02_Effect_11: 7864548219028853915
-      Swordsman-Attack02_Effect_12: -6440986910307770007
-      Swordsman-Attack02_Effect_13: -5672861574751342596
       Swordsman-Attack02_Effect_2: -2602799957417535102
       Swordsman-Attack02_Effect_3: -1917791813217035214
       Swordsman-Attack02_Effect_4: -1063731062000818120
       Swordsman-Attack02_Effect_5: -8899730730831885593
       Swordsman-Attack02_Effect_6: 8964920902202768783
-      Swordsman-Attack02_Effect_7: 2840365841484697120
-      Swordsman-Attack02_Effect_8: -2271816399665127058
-      Swordsman-Attack02_Effect_9: 323299384920387235
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

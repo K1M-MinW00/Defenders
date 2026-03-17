@@ -3936,8 +3936,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSummoner
   unitPool:
-  - {fileID: 11400000, guid: e9a5edeb542ea5a48b43d3ab76de1a6d, type: 2}
-  - {fileID: 11400000, guid: 0ff6c8a40fd56dd43aeec19cc3ab59bd, type: 2}
+  - {fileID: 11400000, guid: c003e33c2aa03ff48b093c2809baf32d, type: 2}
+  - {fileID: 11400000, guid: eac385cdf226b304cbdd7a01bcfc951e, type: 2}
+  - {fileID: 11400000, guid: 80624c56eb0c40c4d95dae888164153f, type: 2}
   unitsRoot: {fileID: 574971171}
   spawnPoint: {fileID: 574971171}
   roster: {fileID: 1413980709}
@@ -4565,7 +4566,7 @@ GameObject:
   - component: {fileID: 751159044}
   - component: {fileID: 751159043}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Damage_Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

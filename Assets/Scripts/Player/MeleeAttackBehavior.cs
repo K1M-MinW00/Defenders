@@ -18,6 +18,8 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
     protected float lastAttackTime = -999f;
     protected bool isAttacking;
     public bool IsAttacking => isAttacking;
+    protected MonsterController currentTarget;
+
 
     protected virtual void Awake()
     {
@@ -44,6 +46,8 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
         if (!CanAttack())
             return false;
 
+        currentTarget = target;
+
         owner.FaceTo(target.transform.position);
 
         isAttacking = true;
@@ -58,6 +62,7 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
     {
         isAttacking = false;
         lastAttackTime = Time.time;
+        currentTarget = null;
     }
 
     protected void ApplyDamage(Collider2D[] hits)
@@ -67,5 +72,15 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
             if (hit.TryGetComponent<IDamageable>(out var damageable))
                 damageable.TakeDamage(Damage);
         }
+    }
+    protected Vector2 GetAttackDirection()
+    {
+        if (currentTarget != null && !currentTarget.Health.IsDead)
+        {
+            Vector2 dirToTarget = ((Vector2)currentTarget.transform.position - (Vector2)transform.position);
+            return dirToTarget.normalized;
+        }
+
+        return owner.GetFacingDirection();
     }
 }

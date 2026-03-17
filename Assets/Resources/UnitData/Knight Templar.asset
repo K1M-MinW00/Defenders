@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Knight Templar
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 1
+  displayName: Knight_Templar
+  icon: {fileID: 868370677313445676, guid: fe14ba2c44e51a7488b1e694991d9f25, type: 3}
+  unitPrefab: {fileID: 6463679714893050464, guid: a66f4deb5f8cfd14cbad34d5b6f9e999, type: 3}
+  baseStats:
+    maxHp: 120
+    maxMp: 100
+    speed: 5
+    atk: 15
+    def: 5
+    attackRange: 4
+    detectRange: 10
+    attackPerSec: 4

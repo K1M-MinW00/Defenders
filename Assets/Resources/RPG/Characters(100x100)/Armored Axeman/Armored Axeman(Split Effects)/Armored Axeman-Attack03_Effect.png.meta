@@ -128,12 +128,12 @@ TextureImporter:
       name: Armored Axeman-Attack03_Effect_0
       rect:
         serializedVersion: 2
-        x: 436
-        y: 39
-        width: 130
-        height: 32
+        x: 400
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -150,12 +150,12 @@ TextureImporter:
       name: Armored Axeman-Attack03_Effect_1
       rect:
         serializedVersion: 2
-        x: 735
-        y: 38
-        width: 43
-        height: 33
+        x: 500
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -172,12 +172,12 @@ TextureImporter:
       name: Armored Axeman-Attack03_Effect_2
       rect:
         serializedVersion: 2
-        x: 853
-        y: 38
-        width: 33
-        height: 30
+        x: 700
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -194,12 +194,12 @@ TextureImporter:
       name: Armored Axeman-Attack03_Effect_3
       rect:
         serializedVersion: 2
-        x: 960
-        y: 38
-        width: 34
-        height: 16
+        x: 800
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -216,12 +216,12 @@ TextureImporter:
       name: Armored Axeman-Attack03_Effect_4
       rect:
         serializedVersion: 2
-        x: 1062
-        y: 38
-        width: 35
-        height: 9
+        x: 900
+        y: 0
+        width: 100
+        height: 100
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -234,11 +234,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Armored Axeman-Attack03_Effect_5
+      rect:
+        serializedVersion: 2
+        x: 1000
+        y: 0
+        width: 100
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d907994a701f305468165caa4256d31f
+      internalID: 1308693060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: c964ced08cb125a45b58531acc8d8329
     internalID: 0
     vertices: []
     indices: 
@@ -246,13 +268,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":100.0,"y":100.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       Armored Axeman-Attack03_Effect_0: 5937885046821449125
       Armored Axeman-Attack03_Effect_1: -6457367794502641342
       Armored Axeman-Attack03_Effect_2: -829595239680259424
       Armored Axeman-Attack03_Effect_3: 8292260605193527873
       Armored Axeman-Attack03_Effect_4: -7531825900317642229
+      Armored Axeman-Attack03_Effect_5: 1308693060
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

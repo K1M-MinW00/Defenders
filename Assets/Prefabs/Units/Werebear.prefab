@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &36438053001814645
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 327923888849414929, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 327923888849414929, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_Name
+      value: Werebear
+      objectReference: {fileID: 0}
+    - target: {fileID: 554078112683551583, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 554078112683551583, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 22100000, guid: 60c5a26f5aa50474489d727f28eb8c7a, type: 2}
+    - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 4407900946912368253, guid: edccf73f01498d44887fe1b3a2603654, type: 3}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.21924
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.58577
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603222915755298868, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 612150391459849210}
+  m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+--- !u!1 &308839627680805525 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+  m_PrefabInstance: {fileID: 36438053001814645}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &612150391459849210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308839627680805525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
+  owner: {fileID: 7183520258239668781}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  attackTrigger: Attack
+  hitRadius: 0.6
+  swordAura: {fileID: 0}
+  spawnOffset: 0.6
+  projectileSpeed: 8
+  projectileLifeTime: 0.8
+  pierceCount: 1
+  projectileRadius: 0.35
+  maxTravelDistance: 3
+  forwardOffset: 0.8
+--- !u!114 &7183520258239668781 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7147645447795392600, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+  m_PrefabInstance: {fileID: 36438053001814645}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308839627680805525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter

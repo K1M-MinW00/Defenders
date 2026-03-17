@@ -7,14 +7,12 @@ public class MagicImpact : MonoBehaviour
     [SerializeField] private LayerMask targetLayer;
 
     private float damage;
-    private bool initialized;
 
     public void Initialize(float damamge)
     {
         this.damage= damamge;
-        initialized = true;
 
-        ApplyDamage();
+        //ApplyDamage();
     }
 
     private void ApplyDamage()
@@ -29,5 +27,16 @@ public class MagicImpact : MonoBehaviour
             damageable.TakeDamage(damage);
         }
     }
-    
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (((1 << collision.gameObject.layer) & targetLayer) == 0)
+            return;
+
+        if (collision.TryGetComponent<IDamageable>(out IDamageable damageable))
+        {
+            damageable.TakeDamage(damage);
+
+        }
+    }
 }

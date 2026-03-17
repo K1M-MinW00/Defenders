@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Priest
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 4
+  displayName: Priest
+  icon: {fileID: -4749681873034518491, guid: 1f0c3add7fbade24aaef366a68bb4ba6, type: 3}
+  unitPrefab: {fileID: 8124817616355146090, guid: 93d5a249e97a5da4fa9d26a5046abadd, type: 3}
+  baseStats:
+    maxHp: 100
+    maxMp: 100
+    speed: 3
+    atk: 5
+    def: 5
+    attackRange: 8
+    detectRange: 15
+    attackPerSec: 1
