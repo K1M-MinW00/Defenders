@@ -107,6 +107,7 @@ public class PlayerCharacter : MonoBehaviour
     {
         ClearTarget();
         StopMovement();
+        attackBehavior?.CancelAttack();
 
         if (agent != null)
         {
@@ -122,6 +123,11 @@ public class PlayerCharacter : MonoBehaviour
         fsm.ChangeState(deadState);
     }
 
+    public void CancelAttack()
+    {
+        attackBehavior?.CancelAttack();
+    }
+
     private void ApplyStats()
     {
         if (runtime == null || runtime.Data == null)
@@ -132,7 +138,7 @@ public class PlayerCharacter : MonoBehaviour
 
         if (agent != null)
         {
-            agent.enabled = true;
+            agent.enabled = false;
             agent.isStopped = false;
             agent.speed = MoveSpeed;
         }
@@ -148,19 +154,21 @@ public class PlayerCharacter : MonoBehaviour
 
     public void StopMovement()
     {
-        if (agent == null || !agent.enabled)
+        if (agent == null)
             return;
 
         agent.isStopped = true;
         agent.ResetPath();
+        agent.enabled = false;
     }
 
     public void ResumeMovement()
     {
-        if (agent == null || !agent.enabled)
+        if (agent == null)
             return;
 
         agent.isStopped = false;
+        agent.enabled = true;
     }
 
     public void MoveTo(Vector3 dest)

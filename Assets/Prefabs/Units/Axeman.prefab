@@ -120,7 +120,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  swordAura: {fileID: 849836498599047480, guid: ba0b1a8b6c73ad54abb91a5d09eaae36, type: 3}
+  swordAura: {fileID: 5818103677266498530, guid: a68fccecd3a319b4fae62817bdcfb0ea, type: 3}
   spawnOffset: 0.6
   projectileSpeed: 8
   projectileLifeTime: 0.8

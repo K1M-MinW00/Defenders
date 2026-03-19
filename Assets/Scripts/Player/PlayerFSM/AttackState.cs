@@ -38,5 +38,8 @@ public class AttackState : IState
         owner.TryAttackCurrentTarget();
     }
 
-    public void Exit() { }
+    public void Exit()
+    {
+        owner.CancelAttack();
+    }
 }

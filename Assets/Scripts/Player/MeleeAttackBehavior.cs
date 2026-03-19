@@ -82,4 +82,12 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
 
         return owner.GetFacingDirection();
     }
+
+    public void CancelAttack()
+    {
+        if (!isAttacking)
+            return;
+
+        OnAttackFinished();
+    }
 }

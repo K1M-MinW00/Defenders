@@ -65,6 +65,7 @@ public class PlacementController : MonoBehaviour
             return;
 
         DraggingUnit = unit;
+        DraggingUnit.StopMovement();
         originalPos = unit.transform.position;
 
         int star = 1;
@@ -133,7 +134,9 @@ public class PlacementController : MonoBehaviour
 
     private void FinishDrag()
     {
+        DraggingUnit.ResumeMovement();
         DraggingUnit = null;
+
         stageUIController?.SetUnitDragMode(false);
     }
 

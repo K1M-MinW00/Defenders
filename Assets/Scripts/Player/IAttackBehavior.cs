@@ -4,4 +4,6 @@
     bool CanAttack();
 
     bool TryAttack(MonsterController target);
+
+    void CancelAttack();
 }

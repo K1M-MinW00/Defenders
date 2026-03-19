@@ -12,10 +12,10 @@ public class MagicAttackBehavior : RangedAttackBehavior
             return;
 
         if (pendingTarget == null)
+        {
+            OnAttackFinished();
             return;
-
-        if (magicPrefab == null)
-            return;
+        }
 
         Vector3 spawnPos = pendingTarget.transform.position;
 

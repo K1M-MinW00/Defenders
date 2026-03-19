@@ -14,10 +14,10 @@ public class ArcherAttackBehavior : RangedAttackBehavior
             return;
 
         if (pendingTarget == null)
+        {
+            OnAttackFinished();
             return;
-
-        if (firePoint == null || arrowPrefab == null)
-            return;
+        }
 
         Vector3 spawnPos = firePoint.position;
         Vector3 targetPos = pendingTarget.transform.position;

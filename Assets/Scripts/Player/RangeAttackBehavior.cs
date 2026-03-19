@@ -63,4 +63,11 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
         pendingTarget = null;
     }
 
+    public void CancelAttack()
+    {
+        if (!isAttacking)
+            return;
+        
+        OnAttackFinished();
+    }
 }
