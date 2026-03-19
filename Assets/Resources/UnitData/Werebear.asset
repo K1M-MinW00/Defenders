@@ -15,7 +15,7 @@ MonoBehaviour:
   unitCode: 10
   displayName: Werebear
   icon: {fileID: 4407900946912368253, guid: edccf73f01498d44887fe1b3a2603654, type: 3}
-  unitPrefab: {fileID: 6053776636646679034, guid: e9c296e1c39059b42abbe8b35ef6b376, type: 3}
+  unitPrefab: {fileID: 308839627680805525, guid: d6ea7d2b7b4fd064cad37f4a55ecd562, type: 3}
   baseStats:
     maxHp: 200
     maxMp: 100

@@ -25,5 +25,7 @@ public class ArcherAttackBehavior : RangedAttackBehavior
 
         ArrowProjectile arrow = Instantiate(arrowPrefab, spawnPos, Quaternion.identity);
         arrow.Initialize(Damage, projectileSpeed, dir);
+
+        OnAttackFinished();
     }
 }

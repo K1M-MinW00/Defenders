@@ -10,7 +10,6 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
     protected float cooldown => 1f / owner.AttackPerSec;
 
     [SerializeField] protected LayerMask targetLayer;
-    [SerializeField] protected string attackTrigger = "Attack";
 
     protected Transform pendingTarget;
     protected float lastAttackTime = -999f;
@@ -25,6 +24,9 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 
     public virtual bool CanAttack()
     {
+        if (owner == null || owner.IsDead)
+            return false;
+
         if (isAttacking)
             return false;
 
@@ -43,11 +45,11 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
             return false;
 
 
-        owner.FaceTo(target.transform.position);
-
-        isAttacking = true;
         pendingTarget = target.transform;
-        owner.animator.SetTrigger(attackTrigger);
+
+        owner.FaceTarget();
+        owner.PlayAttack();
+        isAttacking = true;
 
         return true;
     }
@@ -56,9 +58,9 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 
     public virtual void OnAttackFinished()
     {
+        lastAttackTime = Time.time;
         isAttacking = false;
         pendingTarget = null;
-        lastAttackTime = Time.time;
     }
 
 }

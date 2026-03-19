@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 public class MeleeAroundAttackBehavior : MeleeAttackBehavior
 {
+    [SerializeField] private float hitRadius;
     public override void OnAttackHit()
     {
         if (!isAttacking)

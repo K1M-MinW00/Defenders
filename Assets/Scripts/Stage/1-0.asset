@@ -12,6 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33599882a6fc0b94b93c718d0cbafe8a, type: 3}
   m_Name: 1-0
   m_EditorClassIdentifier: Assembly-CSharp::StageData
-  stageName: 
-  stageId: 0
-  waves: []
+  stageName: Test
+  stageId: 1
+  waves:
+  - waveType: 0
+    subWaves:
+    - spawnGroups:
+      - monsterId: Orc
+        count: 5
+      delayAfter: 0
+    totalMonsterCount: 0
+    rewardGold: 0
+  - waveType: 0
+    subWaves: []
+    totalMonsterCount: 0
+    rewardGold: 0
+  - waveType: 0
+    subWaves: []
+    totalMonsterCount: 0
+    rewardGold: 0
+  - waveType: 0
+    subWaves: []
+    totalMonsterCount: 0
+    rewardGold: 0
+  - waveType: 0
+    subWaves: []
+    totalMonsterCount: 0
+    rewardGold: 0
+  - waveType: 0
+    subWaves: []
+    totalMonsterCount: 0
+    rewardGold: 0

@@ -28,6 +28,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2312356317916268574, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.8
+      objectReference: {fileID: 0}
     - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Controller
       value: 
@@ -116,8 +120,6 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackTrigger: Attack
-  hitRadius: 0.6
   swordAura: {fileID: 1607254557857513087, guid: 4092137df183b214abba216fe8072c3a, type: 3}
   spawnOffset: 0.6
   projectileSpeed: 8

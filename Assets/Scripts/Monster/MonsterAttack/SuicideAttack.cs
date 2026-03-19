@@ -19,7 +19,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
     private bool casting;
     private Coroutine _castRoutine;
 
-    private UnitInstance target;
+    private UnitRuntime target;
 
     private void Awake()
     {
@@ -81,7 +81,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         
         for(int i=0;i<hits.Length;i++)
         {
-            var ui = hits[i].GetComponent<UnitInstance>();
+            var ui = hits[i].GetComponent<UnitRuntime>();
             if (ui == null || !ui.IsAlive)
                 continue;
 

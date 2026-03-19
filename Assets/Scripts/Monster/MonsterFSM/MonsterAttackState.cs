@@ -32,7 +32,7 @@ public class MonsterAttackState : IState
 
         if(!owner.IsTargetValid(owner.TargetUnit))
         {
-            UnitInstance newTarget = owner.TargetUnit;
+            UnitRuntime newTarget = owner.TargetUnit;
             if (newTarget != null)
             {
                 owner.SetTarget(newTarget);
@@ -62,7 +62,7 @@ public class MonsterAttackState : IState
 
     public void Exit() { }
 
-    private bool IsTargetInRange(UnitInstance target)
+    private bool IsTargetInRange(UnitRuntime target)
     {
         if (!owner.IsTargetValid(target))
             return false;

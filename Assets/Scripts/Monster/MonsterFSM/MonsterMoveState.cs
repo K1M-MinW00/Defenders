@@ -39,7 +39,7 @@ public sealed class MonsterMoveState : IState
 
         if (!owner.IsTargetValid(owner.TargetUnit))
         {
-            UnitInstance newTarget = owner.FindClosestAliveUnit();
+            UnitRuntime newTarget = owner.FindClosestAliveUnit();
 
             if (newTarget != null)
             {
@@ -53,7 +53,7 @@ public sealed class MonsterMoveState : IState
             }
         }
 
-        UnitInstance candidate = owner.FindClosestAliveUnit();
+        UnitRuntime candidate = owner.FindClosestAliveUnit();
         if (candidate != null && candidate != owner.TargetUnit)
         {
             owner.SetTarget(candidate);
@@ -70,7 +70,7 @@ public sealed class MonsterMoveState : IState
 
     public void Exit() { }
 
-    private bool IsTargetInRange(UnitInstance target)
+    private bool IsTargetInRange(UnitRuntime target)
     {
         if (!owner.IsTargetValid(target))
             return false;

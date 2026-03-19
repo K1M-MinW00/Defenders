@@ -69,7 +69,7 @@ public class PlacementController : MonoBehaviour
 
         int star = 1;
         
-        var inst = unit.GetComponent<UnitInstance>();
+        var inst = unit.GetComponent<UnitRuntime>();
 
         if (inst != null)
             star = inst.Star;
@@ -110,7 +110,7 @@ public class PlacementController : MonoBehaviour
         if (DraggingUnit == null)
             return;
 
-        var inst = DraggingUnit.GetComponent<UnitInstance>();
+        var inst = DraggingUnit.GetComponent<UnitRuntime>();
         int star = inst != null ? inst.Star : 1;
 
         switch (action)

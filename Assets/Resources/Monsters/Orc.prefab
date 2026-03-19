@@ -8,6 +8,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.maxHp
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkRange
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkDamage
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.moveSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385343888076783973, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: stats.atkCoolTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2540078424007288543, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -54,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: m_Name
-      value: Orc Variant
+      value: Orc
       objectReference: {fileID: 0}
     - target: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: m_IsActive

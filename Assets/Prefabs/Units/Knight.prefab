@@ -36,6 +36,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2312356317916268574, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3303460934689142555, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -156,8 +164,6 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackTrigger: Attack
-  hitRadius: 0.6
   swordAura: {fileID: 1693780022653421224, guid: 833ab191e99f4164382ef221fdf43021, type: 3}
   spawnOffset: 0.6
   projectileSpeed: 8

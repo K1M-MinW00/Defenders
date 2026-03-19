@@ -31,7 +31,7 @@ public class MonsterIdleState : IState
 
         _nextAcquireTime = Time.time + interval;
 
-        UnitInstance newTarget = owner.FindClosestAliveUnit();
+        UnitRuntime newTarget = owner.FindClosestAliveUnit();
         if(newTarget != null)
         {
             owner.SetTarget(newTarget);

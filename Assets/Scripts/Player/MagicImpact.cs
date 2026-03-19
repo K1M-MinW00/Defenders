@@ -10,22 +10,13 @@ public class MagicImpact : MonoBehaviour
 
     public void Initialize(float damamge)
     {
-        this.damage= damamge;
-
-        //ApplyDamage();
+        this.damage = damamge;
     }
 
-    private void ApplyDamage()
+    public void OnAnimationEnd()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius,targetLayer);
-
-        foreach(var hit in hits)
-        {
-            if (!hit.TryGetComponent<IDamageable>(out var damageable))
-                continue;
-
-            damageable.TakeDamage(damage);
-        }
+        // gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -36,7 +27,6 @@ public class MagicImpact : MonoBehaviour
         if (collision.TryGetComponent<IDamageable>(out IDamageable damageable))
         {
             damageable.TakeDamage(damage);
-
         }
     }
 }

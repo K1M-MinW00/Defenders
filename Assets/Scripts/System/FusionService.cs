@@ -12,7 +12,7 @@ public class FusionService : MonoBehaviour
 
     // 스폰/리롤 직후 호출
     // changedUnit: 방금 생긴(또는 교체된) 유닛
-    public void TryAutoFuse(UnitInstance changedUnit)
+    public void TryAutoFuse(UnitRuntime changedUnit)
     {
         if (changedUnit == null) return;
         if (changedUnit.Data == null) return;
@@ -25,7 +25,7 @@ public class FusionService : MonoBehaviour
 
         // 연쇄 합성 처리
         // 정책: "기존 유닛을 남기고", changedUnit은 소모될 수 있음
-        UnitInstance seed = changedUnit;
+        UnitRuntime seed = changedUnit;
 
         while (seed != null && seed.Data != null)
         {
@@ -36,14 +36,14 @@ public class FusionService : MonoBehaviour
             UnitCode unitCode = seed.Data.UnitCode;
 
             // 같은 (unitId, star)인 "다른 유닛" 찾기
-            UnitInstance other = roster.FindAny(unitCode, star, exclude: seed);
+            UnitRuntime other = roster.FindAny(unitCode, star, exclude: seed);
             if (other == null)
                 break;
 
             // 남길 유닛 결정:
             // - 연출 고려: 기존(other)을 남기고 seed(새로 뽑은 유닛)를 소모
-            UnitInstance keep = other;
-            UnitInstance consume = seed;
+            UnitRuntime keep = other;
+            UnitRuntime consume = seed;
 
             // 만약 seed가 기존이고 other가 새로 뽑힌 쪽이 되도록 바꾸고 싶으면 정책 변경 가능
             // (현재는 seed=새 유닛으로 들어온다는 가정)

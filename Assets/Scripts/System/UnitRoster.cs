@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class UnitRoster : MonoBehaviour
 {
-    private readonly List<UnitInstance> units = new();
+    private readonly List<UnitRuntime> units = new();
 
-    public IReadOnlyList<UnitInstance> Units => units;
+    public IReadOnlyList<UnitRuntime> Units => units;
 
-    public event Action<UnitInstance> OnUnitAdded;
-    public event Action<UnitInstance> OnUnitRemoved;
+    public event Action<UnitRuntime> OnUnitAdded;
+    public event Action<UnitRuntime> OnUnitRemoved;
 
-    public void Register(UnitInstance unit)
+    public void Register(UnitRuntime unit)
     {
         if (unit == null) return;
         if (units.Contains(unit)) return;
@@ -20,7 +20,7 @@ public class UnitRoster : MonoBehaviour
         OnUnitAdded?.Invoke(unit);
     }
 
-    public void Unregister(UnitInstance unit)
+    public void Unregister(UnitRuntime unit)
     {
         if (unit == null) return;
 
@@ -30,14 +30,14 @@ public class UnitRoster : MonoBehaviour
         }
     }
 
-    public UnitInstance FindClosestAlive(Vector3 from)
+    public UnitRuntime FindClosestAlive(Vector3 from)
     {
-        UnitInstance best = null;
+        UnitRuntime best = null;
         float bestD = float.PositiveInfinity;
 
         for (int i = units.Count - 1; i >= 0; --i)
         {
-            UnitInstance u = units[i];
+            UnitRuntime u = units[i];
 
             if (u == null || !u.IsAlive)
                 continue;
@@ -58,7 +58,7 @@ public class UnitRoster : MonoBehaviour
         return best;
     }
 
-    public UnitInstance FindAny(UnitCode unitCode, int star, UnitInstance exclude = null)
+    public UnitRuntime FindAny(UnitCode unitCode, int star, UnitRuntime exclude = null)
     {
         for (int i = 0; i < units.Count; i++)
         {

@@ -10,10 +10,7 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
     protected float Cooldown => 1f / owner.AttackPerSec;
 
     [SerializeField] protected LayerMask targetLayer;
-    [SerializeField] protected string attackTrigger = "Attack";
 
-    [Header("Hit Direction")]
-    public float hitRadius = .6f;
 
     protected float lastAttackTime = -999f;
     protected bool isAttacking;
@@ -29,6 +26,9 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
 
     public virtual bool CanAttack()
     {
+        if (owner == null || owner.IsDead)
+            return false;
+
         if (isAttacking)
             return false;
 
@@ -48,10 +48,9 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
 
         currentTarget = target;
 
-        owner.FaceTo(target.transform.position);
-
+        owner.FaceTarget();
+        owner.PlayAttack();
         isAttacking = true;
-        owner.animator.SetTrigger(attackTrigger);
 
         return true;
     }

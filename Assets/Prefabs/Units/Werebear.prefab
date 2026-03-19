@@ -105,9 +105,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackTrigger: Attack
-  hitRadius: 0.6
-  swordAura: {fileID: 0}
+  swordAura: {fileID: 4808470190387059024, guid: 1cc63b24ad952d045b43c3fa41e00979, type: 3}
   spawnOffset: 0.6
   projectileSpeed: 8
   projectileLifeTime: 0.8

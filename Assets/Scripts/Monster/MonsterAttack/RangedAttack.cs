@@ -3,10 +3,11 @@ using UnityEngine;
 public class RangedAttack : MonoBehaviour, IMonsterAttack
 {
     [Header("Projectile")]
-    [SerializeField] private ArcProjectile projectilePrefab;
+    [SerializeField] private ArrowProjectile projectilePrefab;
     [SerializeField] private Transform firePoint;
 
     [Header("Attack")]
+    [SerializeField] private float speed = 6f;
     [SerializeField] private float flightTime = 0.6f;
     [SerializeField] private float arcHeight = 1.2f;
 
@@ -32,7 +33,9 @@ public class RangedAttack : MonoBehaviour, IMonsterAttack
         Vector3 start = firePoint != null ? firePoint.position : ctx.transform.position;
         Vector3 end = target.transform.position;
 
+        Vector2 dir = (end - start).normalized;
+
         var proj = Instantiate(projectilePrefab, start, Quaternion.identity); // Object Pool ¿¬µ¿
-        proj.Initialize(end, ctx.AtkDamage, flightTime, arcHeight, splashRadius, targetLayer);
+        proj.Initialize(ctx.AtkDamage, speed, dir);
     }
 }

@@ -13,11 +13,8 @@ public class AttackState : IState
 
     public void Enter()
     {
-        owner.agent.isStopped = true;
-        owner.agent.ResetPath();
-
-        if (owner.animator != null)
-            owner.animator.SetFloat("MoveSpeed", 0f);
+        owner.StopMovement();
+        owner.PlayIdle();
     }
 
     public void Update()
@@ -38,7 +35,7 @@ public class AttackState : IState
             return;
         }
 
-        owner.attackBehavior?.TryAttack(owner.Target);
+        owner.TryAttackCurrentTarget();
     }
 
     public void Exit() { }

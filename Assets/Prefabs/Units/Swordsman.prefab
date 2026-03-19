@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Name
-      value: Unit_Swordsman Variant
+      value: Swordsman
       objectReference: {fileID: 0}
     - target: {fileID: 554078112683551583, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -27,6 +27,10 @@ PrefabInstance:
     - target: {fileID: 554078112683551583, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312356317916268574, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Controller
@@ -79,5 +83,48 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4548178846440578045}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+--- !u!1 &1272179824587458314 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+  m_PrefabInstance: {fileID: 1544731345735178218}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4548178846440578045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272179824587458314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
+  owner: {fileID: 8529383744832575410}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  swordAura: {fileID: 1607254557857513087, guid: 4092137df183b214abba216fe8072c3a, type: 3}
+  spawnOffset: 0.6
+  projectileSpeed: 8
+  projectileLifeTime: 0.8
+  pierceCount: 1
+  projectileRadius: 0.35
+  maxTravelDistance: 3
+  forwardOffset: 0.8
+--- !u!114 &8529383744832575410 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7147645447795392600, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+  m_PrefabInstance: {fileID: 1544731345735178218}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272179824587458314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter

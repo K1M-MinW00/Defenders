@@ -14,7 +14,10 @@ public class MoveState : IState
 
     public void Enter()
     {
-        owner.agent.isStopped = false;
+        owner.PlayMove();
+        owner.ResumeMovement();
+
+        _nextRefreshTime = 0f;
     }
 
     public void Update()
@@ -35,32 +38,17 @@ public class MoveState : IState
             return;
         }
 
-        owner.FaceTo(owner.Target.transform.position);
-        owner.agent.SetDestination(owner.Target.transform.position);
-
-        if (owner.animator != null)
-            owner.animator.SetFloat("MoveSpeed", owner.agent.velocity.magnitude);
+        owner.MoveToCurrentTarget();
 
         if (Time.time >= _nextRefreshTime)
         {
-            _nextRefreshTime = Time.time + owner.targetRefreshInterval;
-
-            MonsterController closest = owner.GetClosestEnemyInRange();
-
-            if (closest != null && closest != owner.Target)
-            {
-                float currentDist = (owner.Target.transform.position - owner.transform.position).sqrMagnitude;
-                float newDist = (closest.transform.position - owner.transform.position).sqrMagnitude;
-
-                if (newDist < currentDist)
-                    owner.SetTarget(closest);
-            }
+            _nextRefreshTime = Time.time + owner.TargetRefreshInterval;
+            owner.RefreshTargetIfCloserInRange();
         }
     }
 
     public void Exit()
     {
-        if (owner.animator != null)
-            owner.animator.SetFloat("MoveSpeed", 0f);
+        owner.StopMovement();
     }
 }

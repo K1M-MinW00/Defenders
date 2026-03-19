@@ -280,7 +280,7 @@ public class StageManager : MonoBehaviour
         if (unit == null)
             return;
 
-        var inst = unit.GetComponent<UnitInstance>();
+        var inst = unit.GetComponent<UnitRuntime>();
         if (inst == null)
             return;
 
@@ -298,7 +298,7 @@ public class StageManager : MonoBehaviour
         if (unit == null)
             return;
 
-        var inst = unit.GetComponent<UnitInstance>();
+        var inst = unit.GetComponent<UnitRuntime>();
         if (inst == null)
             return;
 

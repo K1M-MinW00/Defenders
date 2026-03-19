@@ -10,11 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7603222915755298868}
   - component: {fileID: 1718985036759370307}
-  - component: {fileID: 4835654630859698147}
   - component: {fileID: 9166940152275570120}
   - component: {fileID: 7147645447795392600}
-  - component: {fileID: 8910108345883822628}
   - component: {fileID: 1063986456745519864}
+  - component: {fileID: 1400685650876891374}
   m_Layer: 7
   m_Name: Unit_Base
   m_TagString: Player
@@ -61,33 +60,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!50 &4835654630859698147
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 344609166725255392}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
 --- !u!58 &9166940152275570120
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -136,30 +108,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
-  animator: {fileID: 0}
-  agent: {fileID: 0}
-  visualRoot: {fileID: 1629001870847616044}
-  targetRefreshInterval: 0.2
-  unit: {fileID: 0}
   drawGizmos: 1
   drawAttackRange: 1
   drawTargetLine: 1
   drawNavMeshPath: 1
   drawStateLabel: 1
   cornerSphereRadius: 0.08
---- !u!114 &8910108345883822628
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 344609166725255392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e71bed78b1a5e9f49adb36385836bd90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitInstance
-  energyPerSec: 10
 --- !u!114 &1063986456745519864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,6 +153,18 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1400685650876891374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344609166725255392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3593b01c748ebcd4b93422e448a36fe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitRuntime
 --- !u!1 &2774387734849985176
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,7 +190,7 @@ Transform:
   m_GameObject: {fileID: 2774387734849985176}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.8, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -245,6 +211,7 @@ GameObject:
   - component: {fileID: 2085443474873524018}
   - component: {fileID: 5553442466312461035}
   - component: {fileID: 2343010745250000038}
+  - component: {fileID: 3303460934689142555}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -411,6 +378,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dfba4cafedd5c746b59c362ee9df7e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimationEvent
+--- !u!114 &3303460934689142555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7233890893694382322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bddb601f1e0834c4eade9165aee91229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitView
+  animator: {fileID: 5553442466312461035}
+  visualRoot: {fileID: 1629001870847616044}
 --- !u!1001 &6788753528763274230
 PrefabInstance:
   m_ObjectHideFlags: 0

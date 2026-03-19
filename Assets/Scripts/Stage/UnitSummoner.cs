@@ -30,7 +30,7 @@ public class UnitSummoner : MonoBehaviour
         GameObject go = Instantiate(data.UnitPrefab, pos, Quaternion.identity, unitsRoot);
 
         // 5) 런타임 초기화
-        var instance = go.GetComponent<UnitInstance>();
+        var instance = go.GetComponent<UnitRuntime>();
         if (instance == null)
         {
             Debug.LogError("Summon failed: Unit prefab missing UnitInstance component.");
@@ -39,15 +39,6 @@ public class UnitSummoner : MonoBehaviour
         }
 
         instance.Initialize(data, 1);
-
-        // (선택) 생성 직후 타겟/경로 초기화
-        var pc = go.GetComponent<PlayerCharacter>();
-        if (pc != null)
-        {
-            pc.ClearTarget();
-            pc.agent.ResetPath();
-            pc.agent.isStopped = true; // 준비 단계는 기본 정지
-        }
 
         if(roster != null)
             roster.Register(instance);

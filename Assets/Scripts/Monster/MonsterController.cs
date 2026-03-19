@@ -16,7 +16,7 @@ public class MonsterController : MonoBehaviour, IPoolable
     [SerializeField] private MonoBehaviour attackBehaviour;
 
     public NavMeshAgent Agent { get; private set; }
-    public UnitInstance TargetUnit { get; private set; }
+    public UnitRuntime TargetUnit { get; private set; }
     public IMonsterAttack Attack { get; private set; }
     public MonsterHealth Health { get; private set; }
 
@@ -114,11 +114,11 @@ public class MonsterController : MonoBehaviour, IPoolable
 
 
     // --- Targeting / Movement Helpers ---
-    public bool IsTargetValid(UnitInstance u) => u != null && u.IsAlive;
+    public bool IsTargetValid(UnitRuntime u) => u != null && u.IsAlive;
 
-    public void SetTarget(UnitInstance newTarget) => TargetUnit = newTarget;
+    public void SetTarget(UnitRuntime newTarget) => TargetUnit = newTarget;
 
-    public UnitInstance FindClosestAliveUnit()
+    public UnitRuntime FindClosestAliveUnit()
     {
         if (unitRoster == null)
         {

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class UnitHUDController : MonoBehaviour
 {
     [Header("Binding")]
-    [SerializeField] private UnitInstance unit;
+    [SerializeField] private UnitRuntime unit;
 
     [Header("UI")]
     [SerializeField] private Slider hpSlider;
@@ -15,7 +15,7 @@ public class UnitHUDController : MonoBehaviour
     private void Awake()
     {
         if (unit == null)
-            unit = GetComponentInParent<UnitInstance>();
+            unit = GetComponentInParent<UnitRuntime>();
     }
 
     private void OnEnable()
@@ -23,9 +23,9 @@ public class UnitHUDController : MonoBehaviour
         if (unit == null)
             return;
 
-        unit.OnStarChanged += HandleStarChanged;
+        unit.OnStatsChanged += HandleStarChanged;
         unit.OnHpChanged += HandleHpChanged;
-        unit.OnEnergyChanged += HandleEnergyChanged;
+        unit.OnMpChanged += HandleEnergyChanged;
     }
 
     private void OnDisable()
@@ -33,19 +33,19 @@ public class UnitHUDController : MonoBehaviour
         if (unit == null)
             return;
 
-        unit.OnStarChanged -= HandleStarChanged;
+        unit.OnStatsChanged -= HandleStarChanged;
         unit.OnHpChanged -= HandleHpChanged;
-        unit.OnEnergyChanged -= HandleEnergyChanged;
+        unit.OnMpChanged -= HandleEnergyChanged;
     }
 
-    private void HandleStarChanged(UnitInstance instance) => RefreshAll();
+    private void HandleStarChanged(UnitRuntime instance) => RefreshAll();
 
-    private void HandleHpChanged(UnitInstance instance)
+    private void HandleHpChanged(UnitRuntime instance)
     {
         RefreshHp();
     }
 
-    private void HandleEnergyChanged(UnitInstance instance)
+    private void HandleEnergyChanged(UnitRuntime instance)
     {
         RefreshEnergy();
     }
@@ -53,17 +53,17 @@ public class UnitHUDController : MonoBehaviour
 
     private void RefreshHp()
     {
-        float maxHp = Mathf.Max(1f, unit.Stats.maxHp);
+        float maxHp = Mathf.Max(1f, unit.FinalStats.maxHp);
         hpSlider.minValue = 0f;
         hpSlider.maxValue = maxHp;
-        hpSlider.value = Mathf.Clamp(unit.Hp,0f,maxHp);
+        hpSlider.value = Mathf.Clamp(unit.CurrentHp,0f,maxHp);
     }
     private void RefreshEnergy()
     {
-        float maxE = Mathf.Max(1f, unit.Stats.maxMp);
+        float maxE = Mathf.Max(1f, unit.FinalStats.maxMp);
         energySlider.minValue = 0f;
         energySlider.maxValue = maxE;
-        energySlider.value = Mathf.Clamp(unit.Mp, 0f, maxE);
+        energySlider.value = Mathf.Clamp(unit.CurrentMp, 0f, maxE);
     }
 
     private void RefreshStar()

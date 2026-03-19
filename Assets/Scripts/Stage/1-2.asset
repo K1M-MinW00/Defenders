@@ -18,13 +18,13 @@ MonoBehaviour:
   - waveType: 0
     subWaves:
     - spawnGroups:
-      - monsterId: bb
+      - monsterId: Orc
         count: 3
-      - monsterId: cc
+      - monsterId: Skeleton
         count: 3
       delayAfter: 2
     - spawnGroups:
-      - monsterId: cc
+      - monsterId: Werewolf
         count: 3
       delayAfter: 2
     totalMonsterCount: 0
@@ -32,12 +32,12 @@ MonoBehaviour:
   - waveType: 0
     subWaves:
     - spawnGroups:
-      - monsterId: cc
-        count: 10
+      - monsterId: Orc_Rider
+        count: 3
       delayAfter: 2
     - spawnGroups:
-      - monsterId: cc
-        count: 10
+      - monsterId: Armored_Orc
+        count: 2
       delayAfter: 2
     totalMonsterCount: 0
     rewardGold: 0

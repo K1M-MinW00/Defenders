@@ -21,5 +21,7 @@ public class MagicAttackBehavior : RangedAttackBehavior
 
         MagicImpact impact = Instantiate(magicPrefab,spawnPos, Quaternion.identity);
         impact.Initialize(Damage);
+
+        OnAttackFinished();
     }
 }

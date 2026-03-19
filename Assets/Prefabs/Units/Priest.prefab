@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Name
-      value: Priest Variant
+      value: Priest
       objectReference: {fileID: 0}
     - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_IsActive
@@ -31,6 +31,10 @@ PrefabInstance:
     - target: {fileID: 554078112683551583, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2312356317916268574, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Controller
@@ -88,6 +92,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4946875455347515728}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+--- !u!114 &1673336915382233554 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7147645447795392600, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+  m_PrefabInstance: {fileID: 8361331441009666442}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8124817616355146090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
 --- !u!1 &8124817616355146090 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
@@ -105,9 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c713428f9fb7342ba0fca5c6fdb80f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicAttackBehavior
-  owner: {fileID: 0}
+  owner: {fileID: 1673336915382233554}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackTrigger: Attack
-  magicPrefab: {fileID: 0}
+  magicPrefab: {fileID: 1560764742302552767, guid: ba5938343a7bdc445bb5b26e84604cec, type: 3}

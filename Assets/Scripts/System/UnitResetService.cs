@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class UnitResetService : MonoBehaviour
 {
-    private readonly Dictionary<UnitInstance, Vector3> preWavePositions = new();
+    private readonly Dictionary<UnitRuntime, Vector3> preWavePositions = new();
 
     public void CapturePreWavePositions(UnitRoster roster)
     {
@@ -26,17 +27,15 @@ public class UnitResetService : MonoBehaviour
                 continue;
 
             // 부활 + 풀피 + 에너지 0
-            u.ResetForPrepare();
+            u.RestoreForPrepare();
      
-            var pc = u.GetComponent<PlayerCharacter>();
-            if (pc != null && pc.agent != null)
+            var agent = u.GetComponent<NavMeshAgent>();
+            if (agent != null)
             {
-                pc.ClearTarget();
+                agent.enabled = true;
 
                 if (preWavePositions.TryGetValue(u, out var pos))
-                    pc.agent.Warp(pos);
-
-                pc.agent.isStopped = true;
+                    agent.Warp(pos);
             }
         }
     }

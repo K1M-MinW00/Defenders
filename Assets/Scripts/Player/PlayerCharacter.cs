@@ -1,99 +1,187 @@
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(UnitRuntime))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class PlayerCharacter : MonoBehaviour
 {
     [Header("References")]
-    [HideInInspector] public Animator animator;
-    [HideInInspector] public NavMeshAgent agent;
-    [HideInInspector] public IAttackBehavior attackBehavior;
-    [SerializeField] private Transform visualRoot;
+    private UnitView view;
     private RangeSensor rangeSensor;
 
-    [Header("Combat")]
-    public float targetRefreshInterval = .2f;
-    public MonsterController Target { get; private set; }
-    private bool isFacingRight = true;
+    private IAttackBehavior attackBehavior;
+    private NavMeshAgent agent;
+    private UnitRuntime runtime;
 
+    [Header("Combat")]
+    private float targetRefreshInterval = .2f;
+    private float energyPerSec = 1f;
 
     // States
     private PlayerFSM fsm;
     public IdleState idleState;
     public MoveState moveState;
     public AttackState attackState;
+    public DeadState deadState;
 
-    public UnitInstance unit;
+    public MonsterController Target { get; private set; }
+    public UnitRuntime Runtime => runtime;
+    public float TargetRefreshInterval => targetRefreshInterval;
 
-    public float MoveSpeed => unit.Stats.speed;
-    public float Atk => unit.Stats.atk;
-    public float AttackPerSec => unit.Stats.attackPerSec;
+    public float MoveSpeed => runtime.FinalStats.speed;
+    public float Atk => runtime.FinalStats.atk;
+    public float AttackPerSec => runtime.FinalStats.attackPerSec;
+
+    public bool IsDead => runtime == null || runtime.IsDead;
+
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        runtime = GetComponent<UnitRuntime>();
+
+        if (view == null)
+            view = GetComponentInChildren<UnitView>();
+
+        if (rangeSensor == null)
+            rangeSensor = GetComponentInChildren<RangeSensor>(true);
+
+        if (attackBehavior == null)
+            attackBehavior = GetComponent<IAttackBehavior>();
+
+
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-
-        animator = GetComponentInChildren<Animator>();
-        attackBehavior = GetComponent<IAttackBehavior>();
 
         fsm = new PlayerFSM();
         idleState = new IdleState(this, fsm);
         moveState = new MoveState(this, fsm);
         attackState = new AttackState(this, fsm);
+        deadState = new DeadState(this, fsm);
 
-        if (rangeSensor == null)
-            rangeSensor = GetComponentInChildren<RangeSensor>(true);
 
-        unit = GetComponent<UnitInstance>();
-        unit.OnStarChanged += HandleUnitChanged;
+        runtime.OnStatsChanged += HandleStatsChanged;
+        runtime.OnDied += HandleDead;
     }
 
     private void Start()
     {
+        ApplyStats();
         fsm.ChangeState(idleState);
     }
 
     private void Update()
     {
-        if (!unit.IsAlive)
+        if (IsDead)
             return;
 
+        TickEnergy();
         fsm.Update();
     }
 
     private void OnDestroy()
     {
-        if (unit != null)
+        if (runtime != null)
         {
-            unit.OnStarChanged -= HandleUnitChanged;
+            runtime.OnStatsChanged -= HandleStatsChanged;
+            runtime.OnDied -= HandleDead;
         }
     }
 
-    private void HandleUnitChanged(UnitInstance _)
+    private void TickEnergy()
     {
-        ApplyUnitStats();
+        if (runtime.IsEnergyFull)
+            return;
+
+        runtime.AddMp(energyPerSec * Time.deltaTime);
     }
 
-    private void ApplyUnitStats()
+
+    private void HandleStatsChanged(UnitRuntime _)
     {
-        if (unit == null || unit.Data == null)
+        ApplyStats();
+    }
+    private void HandleDead(UnitRuntime _)
+    {
+        ClearTarget();
+        StopMovement();
+
+        if (agent != null)
+        {
+            agent.ResetPath();
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
+
+        if (rangeSensor != null)
+            rangeSensor.enabled = false;
+
+        view?.PlayDie();
+        fsm.ChangeState(deadState);
+    }
+
+    private void ApplyStats()
+    {
+        if (runtime == null || runtime.Data == null)
         {
             Debug.LogWarning("Unit Null");
             return;
         }
 
-        agent.speed = MoveSpeed;
-        SetDetectionRange(unit.Stats.detectRange);
+        if (agent != null)
+        {
+            agent.enabled = true;
+            agent.isStopped = false;
+            agent.speed = MoveSpeed;
+        }
+
+        if (rangeSensor != null)
+            rangeSensor.SetRadius(runtime.FinalStats.detectRange);
 
         // 공격 속도, 공격력 등 IAttackBehavior 과 연동 필요
+
+        view?.PlayIdle();
+        fsm.ChangeState(idleState);
     }
 
-    public void SetDetectionRange(float newRange)
+    public void StopMovement()
     {
-        rangeSensor.SetRadius(newRange);
+        if (agent == null || !agent.enabled)
+            return;
+
+        agent.isStopped = true;
+        agent.ResetPath();
+    }
+
+    public void ResumeMovement()
+    {
+        if (agent == null || !agent.enabled)
+            return;
+
+        agent.isStopped = false;
+    }
+
+    public void MoveTo(Vector3 dest)
+    {
+        if (agent == null || !agent.enabled)
+            return;
+
+        ResumeMovement();
+        agent.SetDestination(dest);
+    }
+
+    public void PlayIdle() => view?.PlayIdle();
+    public void PlayMove() => view?.PlayMove();
+    public void PlayAttack() => view?.PlayAttack();
+
+    public void FaceTarget()
+    {
+        if (!HasValidTarget())
+            return;
+
+        view?.FaceTo(transform.position, Target.transform.position);
     }
 
     public void SetTarget(MonsterController newTarget) => Target = newTarget;
@@ -111,25 +199,62 @@ public class PlayerCharacter : MonoBehaviour
         return HasValidTarget();
     }
 
+    public MonsterController GetClosestEnemyInRange()
+    {
+        if (rangeSensor == null)
+            return null;
+
+        return rangeSensor.GetClosestAlive(transform.position);
+    }
+
+    public bool FindGlobalAliveMonster()
+    {
+        MonsterController monster = StageManager.Instance.MonsterSpawner.FindClosestAlive(transform.position);
+        SetTarget(monster);
+
+        return HasValidTarget();
+    }
+
     public bool IsTargetInAttackRange()
     {
         if (!HasValidTarget())
             return false;
 
         float distSqr = (Target.transform.position - transform.position).sqrMagnitude;
-        float range = unit.Stats.attackRange;
+        float range = runtime.FinalStats.attackRange;
 
         return distSqr <= range * range;
     }
 
-    public MonsterController GetClosestEnemyInRange()
+    public void MoveToCurrentTarget()
     {
-        return rangeSensor.GetClosestAlive(transform.position);
+        if (!HasValidTarget())
+            return;
+
+        FaceTarget();
+        MoveTo(Target.transform.position);
     }
 
+    public void TryAttackCurrentTarget()
+    {
+        if (!HasValidTarget())
+            return;
+
+        FaceTarget();
+        attackBehavior?.TryAttack(Target);
+    }
+
+    public void RefreshTargetIfCloserInRange()
+    {
+        MonsterController closest = GetClosestEnemyInRange();
+        if (closest == null || closest == Target)
+            return;
+
+        Target = closest;
+    }
     public void EngageRequest()
     {
-        if (unit == null || !unit.IsAlive)
+        if (runtime == null || !runtime.IsAlive)
             return;
 
         if (HasValidTarget())
@@ -148,37 +273,15 @@ public class PlayerCharacter : MonoBehaviour
         }
     }
 
-    public bool FindGlobalAliveMonster()
-    {
-        MonsterController m = StageManager.Instance.MonsterSpawner.FindClosestAlive(transform.position);
-        SetTarget(m);
-
-        return HasValidTarget();
-    }
 
     public void FaceTo(Vector3 targetPos)
     {
-        float dx = targetPos.x - transform.position.x;
-
-        if (Mathf.Abs(dx) < 0.01f)
-            return;
-
-        bool shouldFaceRight = dx > 0f;
-
-        if (shouldFaceRight == isFacingRight)
-            return;
-
-        isFacingRight = shouldFaceRight;
-        Transform pivot = visualRoot != null ? visualRoot : transform;
-
-        Vector3 scale = pivot.localScale;
-        scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1f : -1f);
-        pivot.localScale = scale;
+        view?.FaceTo(transform.position, targetPos);
     }
 
     public Vector2 GetFacingDirection()
     {
-        return isFacingRight ? Vector2.right : Vector2.left;
+        return view != null ? view.GetFacingDirection() : Vector2.right;
     }
 
 #if UNITY_EDITOR
@@ -217,7 +320,7 @@ public class PlayerCharacter : MonoBehaviour
     private void DrawAttackRange()
     {
         Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
-        Gizmos.DrawWireSphere(transform.position, unit.Stats.attackRange);
+        Gizmos.DrawWireSphere(transform.position, runtime.FinalStats.attackRange);
     }
 
     private void DrawTargetLine()

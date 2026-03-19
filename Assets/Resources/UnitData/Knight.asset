@@ -22,6 +22,6 @@ MonoBehaviour:
     speed: 4
     atk: 10
     def: 5
-    attackRange: 3
+    attackRange: 2
     detectRange: 10
     attackPerSec: 4

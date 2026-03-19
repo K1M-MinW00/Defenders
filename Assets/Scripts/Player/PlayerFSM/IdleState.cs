@@ -14,13 +14,10 @@ public class IdleState : IState
 
     public void Enter()
     {
-        owner.agent.isStopped = true;
-        owner.agent.ResetPath();
-
+        owner.StopMovement();
         owner.ClearTarget();
-
-        if (owner.animator != null)
-            owner.animator.SetFloat("MoveSpeed", 0f);
+        owner.PlayIdle();
+        _nextRefreshTime = 0f;
     }
 
     public void Update()
@@ -28,7 +25,7 @@ public class IdleState : IState
         if (Time.time < _nextRefreshTime)
             return;
 
-        _nextRefreshTime = Time.time + owner.targetRefreshInterval;
+        _nextRefreshTime = Time.time + owner.TargetRefreshInterval;
 
         if (!owner.TryFindTargetInSensor())
             return;

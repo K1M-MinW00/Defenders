@@ -23,11 +23,6 @@ public class MeleeArcAttackBehavior : MeleeAttackBehavior
 
         SwordAura aura = Instantiate(swordAura, spawnPos, Quaternion.identity);
         aura.Initialize(Damage,dir,projectileSpeed,projectileLifeTime,maxTravelDistance,projectileRadius,pierceCount,targetLayer );
-        
-        //Vector2 forward = owner.GetFacingDirection();
-        //Vector2 center = (Vector2)transform.position + forward * forwardOffset;
-        //Collider2D[] hits = Physics2D.OverlapCircleAll(center, hitRadius, targetLayer);
-        //ApplyDamage(hits);
     }
 
     private void OnDrawGizmosSelected()

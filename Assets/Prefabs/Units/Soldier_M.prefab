@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Name
-      value: Unit_Soldier_M Variant
+      value: Soldier_M
       objectReference: {fileID: 0}
     - target: {fileID: 554078112683551583, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -28,10 +28,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2312356317916268574, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 2bfe25b2554aa14419f7f9a3f0b25f23, type: 2}
+      objectReference: {fileID: 22100000, guid: 3f828a1764258ec4382844895a14497c, type: 2}
     - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -105,9 +109,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackTrigger: Attack
-  hitRadius: 0.6
-  swordAura: {fileID: 0}
+  swordAura: {fileID: 1995470491787257019, guid: 7004e520e6692554695893e000430b60, type: 3}
   spawnOffset: 0.6
   projectileSpeed: 8
   projectileLifeTime: 0.8

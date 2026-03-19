@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Name
-      value: Wizard Variant
+      value: Wizard
       objectReference: {fileID: 0}
     - target: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_IsActive
@@ -120,5 +120,4 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  attackTrigger: Attack
-  magicPrefab: {fileID: 0}
+  magicPrefab: {fileID: 5543284792219894170, guid: 928dc7b28bfe36545b6af3b36b235366, type: 3}
