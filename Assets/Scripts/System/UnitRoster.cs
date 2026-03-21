@@ -51,10 +51,6 @@ public class UnitRoster : MonoBehaviour
             }
         }
 
-
-        if(best == null) 
-            return null;
-
         return best;
     }
 

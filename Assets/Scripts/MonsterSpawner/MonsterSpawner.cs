@@ -5,8 +5,10 @@ using System;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    public ObjectPool pool;
-    public Transform spawnPoint;
+    private ObjectPool pool;
+    private UnitRoster unitRoster;
+    
+    [SerializeField] private Transform spawnPoint;
 
     private readonly List<MonsterController> aliveMonsters = new();
     public IReadOnlyList<MonsterController> MonsterLists => aliveMonsters;
@@ -18,9 +20,10 @@ public class MonsterSpawner : MonoBehaviour
     private bool isSpawning;
     public bool IsSpawning => isSpawning;
 
-    public void Init(ObjectPool pool)
+    public void Init(ObjectPool pool, UnitRoster unitRoster)
     {
         this.pool = pool;
+        this.unitRoster = unitRoster;
     }
 
     public void StartWave(WaveData waveData)
@@ -54,6 +57,7 @@ public class MonsterSpawner : MonoBehaviour
                 GameObject obj = pool.Spawn(group.monsterId, spawnPoint.position);
 
                 MonsterController monster = obj.GetComponent<MonsterController>();
+                monster.Initialize(unitRoster);
                 monster.SetPoolKey(group.monsterId);
                 monster.OnDead += HandleMonsterDead;
 

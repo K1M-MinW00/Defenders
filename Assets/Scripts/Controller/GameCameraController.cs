@@ -6,6 +6,7 @@ public class GameCameraController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Camera cam;
+    [SerializeField] private StageSessionController stageSession;
 
     [Header("Zoom")]
     [SerializeField] private float zoomSpeedMouse = 5f;
@@ -276,10 +277,10 @@ public class GameCameraController : MonoBehaviour
         if (allowPanInCombat)
             return true;
 
-        if (StageManager.Instance == null)
+        if (stageSession == null)
             return true;
 
-        return StageManager.Instance.CurrentState == StageState.Preparing;
+        return stageSession.CurrentState == StageState.Preparing;
     }
 
 #if UNITY_EDITOR

@@ -1,8 +1,4 @@
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class PlacementController : MonoBehaviour
 {
@@ -11,7 +7,8 @@ public class PlacementController : MonoBehaviour
     [SerializeField] private TilemapPlacementArea placementArea;
     [SerializeField] private UIDropRouter uiDropRouter;
     [SerializeField] private StageUIController stageUIController;
-
+    [SerializeField] private StageSessionController stageSession;
+    
     [Header("Section")]
     [SerializeField] private LayerMask unitLayer; // PlayerUnit 레이어만 포함
 
@@ -117,11 +114,11 @@ public class PlacementController : MonoBehaviour
         switch (action)
         {
             case UnitDropAction.Sell:
-                StageManager.Instance?.TrySellUnit(DraggingUnit);
+                stageSession.RequestSellUnit(DraggingUnit);
                 break;
             case UnitDropAction.Reroll:
                 if(star == 1)
-                    StageManager.Instance?.TryRerollUnit(DraggingUnit);
+                    stageSession.RequestRerollUnit(DraggingUnit);
                 break;
         }
     }

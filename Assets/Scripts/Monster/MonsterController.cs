@@ -55,14 +55,11 @@ public class MonsterController : MonoBehaviour, IPoolable
         moveState = new MonsterMoveState(this, fsm);
         attackState = new MonsterAttackState(this, fsm);
         idleState = new MonsterIdleState(this, fsm);
-
-
-        if (unitRoster == null)
-            unitRoster = StageManager.Instance.UnitRoster;
     }
 
-    private void Start()
+    public void Initialize(UnitRoster unitRoster)
     {
+        this.unitRoster = unitRoster;
     }
 
     private void Update()

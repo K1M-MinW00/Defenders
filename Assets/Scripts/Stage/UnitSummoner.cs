@@ -8,7 +8,8 @@ public class UnitSummoner : MonoBehaviour
     [Header("Spawn Settings")]
     [SerializeField] private Transform unitsRoot;          // 생성된 유닛을 담을 부모(없으면 null 가능)
     [SerializeField] private Transform spawnPoint;         // 우선 스폰 위치(없으면 PlacementArea 중심)
-
+    [SerializeField] private TilemapPlacementArea placementArea;
+    [SerializeField] private MonsterSpawner monsterSpawner;
     [Header("Fusion")]
     [SerializeField] private UnitRoster roster;
     [SerializeField] private FusionService fusionService;
@@ -38,9 +39,11 @@ public class UnitSummoner : MonoBehaviour
             return;
         }
 
+        PlayerCharacter p = go.GetComponent<PlayerCharacter>();
+        p.BindCombatContext(monsterSpawner);
         instance.Initialize(data, 1);
 
-        if(roster != null)
+        if (roster != null)
             roster.Register(instance);
 
         if (fusionService != null)
@@ -57,8 +60,8 @@ public class UnitSummoner : MonoBehaviour
             return spawnPoint.position;
 
         // spawnPoint 미설정이면 PlacementArea 중심에 생성(간단 테스트용)
-        if (StageManager.Instance != null && StageManager.Instance.placementArea != null)
-            return StageManager.Instance.placementArea.transform.position;
+        if (placementArea != null)
+            return placementArea.transform.position;
 
         // 그마저도 없으면 본 스크립트 위치
         return transform.position;

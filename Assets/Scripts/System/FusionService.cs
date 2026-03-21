@@ -3,22 +3,19 @@ using UnityEngine;
 public class FusionService : MonoBehaviour
 {
     [SerializeField] private UnitRoster roster;
-    [SerializeField] private int maxStar = 4;
+    [SerializeField] private StageSessionController stageSession;
+    private const int maxStar = 4;
 
-    private void Awake()
-    {
-        roster = GetComponent<UnitRoster>();
-    }
 
     // 스폰/리롤 직후 호출
     // changedUnit: 방금 생긴(또는 교체된) 유닛
     public void TryAutoFuse(UnitRuntime changedUnit)
     {
-        if (changedUnit == null) return;
-        if (changedUnit.Data == null) return;
+        if (changedUnit == null || changedUnit.Data == null)
+            return;
 
         // 준비 단계에서만 합성되도록 게이트
-        if (StageManager.Instance != null && StageManager.Instance.CurrentState != StageState.Preparing)
+        if (stageSession == null && stageSession.CurrentState != StageState.Preparing)
             return;
 
         roster.CleanupNulls();

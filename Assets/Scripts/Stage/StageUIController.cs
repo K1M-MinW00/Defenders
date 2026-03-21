@@ -15,20 +15,19 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stageInfoText;
     [SerializeField] private TextMeshProUGUI monsterCountText;
 
+    [Header("Result UI")]
+    [SerializeField] private GameObject stageClearPanel;
+    [SerializeField] private GameObject stageFailPanel;
+
     [Header("Prepare UI")]
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI populationText;
 
-    [Header("Wave UI")]
-    //public Transform waveContainer;
-    //public GameObject waveItemPrefab;
-    private List<Image> waveImages = new List<Image>();
-
     [Header("Button")]
-    public Button startButton;
-    public Button summonButton;
-    public Button increasePopButton;
+    [SerializeField] private Button startButton;
+    [SerializeField] private Button summonButton;
+    [SerializeField] private Button increasePopButton;
 
     [Header("Prepare Button Groups")]
     [SerializeField] private GameObject defaultButtonsGroup;
@@ -38,28 +37,59 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private GameObject reRollzone;
     [SerializeField] private GameObject sellZone;
 
-    private StageManager stageManager;
+    [Header("Wave Track UI")]
+    [SerializeField] private Transform waveTrackContainer;
+    [SerializeField] private WaveNodeUI waveNodePrefab;
+    [SerializeField] private GameObject connectorPrefab;
+    [SerializeField] private GameObject ellipsisPrefab;
+
+    [Header("Wave Sprites")]
+    [SerializeField] private Sprite normalWaveSprite;
+    [SerializeField] private Sprite eliteWaveSprite;
+    [SerializeField] private Sprite bossWaveSprite;
+
+    [Header("Wave State Colors")]
+    [SerializeField] private Color clearedNodeTint = new Color(0.4f, 0.4f, 0.4f);
+    [SerializeField] private Color currentNodeTint = Color.white;
+    [SerializeField] private Color upcomingNodeTint = Color.white;
+
+    [Header("Connector Colors")]
+    [SerializeField] private Color clearedConnectorColor = Color.green;
+    [SerializeField] private Color upcomingConnectorColor = Color.gray;
+
+
+    private StageSessionController session;
     private EconomyManager economy;
     private PopulationManager population;
     private MonsterSpawner monsterSpawner;
 
-    private StageState cachedState;
-    public void Initialize(StageManager manager)
+    private StageState cachedState = StageState.None;
+    public void Initialize(StageSessionController controller)
     {
-        stageManager = manager;
-        cachedState = stageManager.CurrentState;
+        session = controller;
 
-        startButton.onClick.AddListener(stageManager.StartBattleEarly);
-        summonButton.onClick.AddListener(stageManager.TrySummonUnit);
-        increasePopButton.onClick.AddListener(stageManager.TryIncreasePopulation);
+        if (session == null)
+        {
+            Debug.LogError("StageUIController initialze failed");
+            return;
+        }
 
+        cachedState = session.CurrentState;
+
+        BindButtons();
         BindEconomy();
         BindPopulation();
         BindMonsterUI();
 
-        SetStageInfo(stageManager.currentStageData.stageName, stageManager.currentStageData.stageId.ToString());
-        CreateWaveUI(stageManager.currentStageData.waves);
-        SetPhase(stageManager.CurrentState);
+        HideAllResultPanels();
+
+        if (session.CurrentStageData != null)
+        {
+            SetStageInfo(session.CurrentStageData.stageName, session.CurrentStageData.stageId.ToString());
+            // CreateWaveUI(session.CurrentStageData.waves);
+        }
+
+        SetPhase(session.CurrentState);
 
         UpdateGoldUI(economy.CurrentGold);
         UpdatePopulationUI(population.CurrentPopulation, population.MaxPopulation);
@@ -68,6 +98,7 @@ public class StageUIController : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnBindButtons();
         UnBindEconomy();
         UnBindPopulation();
         UnBindMonsterUI();
@@ -82,28 +113,39 @@ public class StageUIController : MonoBehaviour
 
         bool isPreparing = state == StageState.Preparing;
         bool isCombat = state == StageState.Combat;
+        bool isResult = state == StageState.StageClear || state == StageState.StageFail;
 
         if (prepare_HUD != null)
             prepare_HUD.SetActive(isPreparing);
 
-        if(combat_HUD != null)
+        if (combat_HUD != null)
             combat_HUD.SetActive(isCombat);
 
         if (isPreparing)
             SetUnitDragMode(false);
 
+        if (isResult)
+        {
+            if (prepare_HUD != null)
+                prepare_HUD.SetActive(false);
+
+            if (combat_HUD != null)
+                combat_HUD.SetActive(false);
+        }
         if (monsterSpawner != null)
             UpdateMonsterCountUI(monsterSpawner.AliveCount);
     }
 
+    private void BindButtons()
+    {
+        startButton.onClick.AddListener(session.StartBattleEarly);
+        summonButton.onClick.AddListener(session.RequestSummonUnit);
+        increasePopButton.onClick.AddListener(session.RequestIncreasePopulation);
+    }
 
-    /// <summary>
-    ///  Bindings
-    /// </summary>
-    /// 
     private void BindMonsterUI()
     {
-        monsterSpawner = stageManager != null ? stageManager.MonsterSpawner : null;
+        monsterSpawner = session != null ? session.MonsterSpawner : null;
 
         if (monsterSpawner == null)
             return;
@@ -114,7 +156,7 @@ public class StageUIController : MonoBehaviour
 
     private void BindPopulation()
     {
-        population = stageManager.PopulationManager;
+        population = session != null ? session.PopulationManager : null;
 
         if (population == null)
             return;
@@ -134,7 +176,12 @@ public class StageUIController : MonoBehaviour
         UpdateGoldUI(economy.CurrentGold);
     }
 
-
+    private void UnBindButtons()
+    {
+        startButton.onClick.RemoveListener(session.StartBattleEarly);
+        summonButton.onClick.RemoveListener(session.RequestSummonUnit);
+        increasePopButton.onClick.RemoveListener(session.RequestIncreasePopulation);
+    }
     private void UnBindMonsterUI()
     {
         if (monsterSpawner == null)
@@ -191,17 +238,24 @@ public class StageUIController : MonoBehaviour
         stageInfoText.text = $"{stageName} - {stageId}";
     }
 
-    public void CreateWaveUI(List<WaveData> waves)
+    public void ShowStageClear()
     {
+        if (stageClearPanel != null)
+            stageClearPanel.SetActive(true);
     }
 
-    public void UpdateCurrentWave(int currentIndex)
+    public void ShowStageFail()
     {
-        for (int i = 0; i < waveImages.Count; i++)
-        {
-            if (i == currentIndex)
-                waveImages[i].color = new Color(0.4f, 0.2f, 0f); // 갈색
-        }
+        if (stageFailPanel != null)
+            stageFailPanel.SetActive(true);
+    }
+    public void HideAllResultPanels()
+    {
+        if (stageClearPanel != null)
+            stageClearPanel.SetActive(false);
+
+        if (stageFailPanel != null)
+            stageFailPanel.SetActive(false);
     }
 
     public void UpdatePrepTimer(float time)
@@ -209,28 +263,142 @@ public class StageUIController : MonoBehaviour
         timerText.text = $"{time:F1}";
     }
 
-    private Color GetWaveColor(WaveType type)
-    {
-        switch (type)
-        {
-            case WaveType.Normal:
-                return Color.gray;
-            case WaveType.Elite:
-                return new Color(0.6f, 0f, 0.8f); // 보라
-            case WaveType.Boss:
-                return Color.red;
-        }
-        return Color.white;
-    }
-
     public void SetUnitDragMode(bool isDraggingUnit, bool canReroll = true)
     {
         defaultButtonsGroup?.SetActive(!isDraggingUnit);
         unitActionButtonsGroup?.SetActive(isDraggingUnit);
 
-        if(isDraggingUnit)
+        if (isDraggingUnit)
         {
             reRollzone.SetActive(canReroll);
+        }
+    }
+
+    public void RefreshWaveUI(List<WaveData> waves, int currentIndex)
+    {
+        if (waveTrackContainer == null || waveNodePrefab == null || waves == null || waves.Count == 0)
+            return;
+
+        ClearWaveTrack();
+
+        List<int> visibleIndices = BuildVisibleWaveIndices(waves.Count, currentIndex);
+        bool showEllipsis = ShouldShowEllipsis(visibleIndices);
+
+        for (int i = 0; i < visibleIndices.Count; i++)
+        {
+            int waveIndex = visibleIndices[i];
+
+            WaveNodeUI node = Instantiate(waveNodePrefab, waveTrackContainer);
+            node.Setup(GetWaveSprite(waves[waveIndex].waveType), waveIndex + 1);
+
+            if (waveIndex == currentIndex)
+                node.SetAsCurrent(currentNodeTint);
+            else
+            {
+                node.SetAsUpcoming();
+                node.SetIconTint(upcomingNodeTint);
+            }
+
+            bool needConnector = i < visibleIndices.Count - 1;
+            if (!needConnector)
+                continue;
+
+            // 3번째와 4번째 사이가 많이 떨어져 있으면 ... 출력
+            bool insertEllipsisHere = showEllipsis && i == 2 && visibleIndices.Count == 4;
+
+            if (insertEllipsisHere)
+            {
+                if (ellipsisPrefab != null)
+                    Instantiate(ellipsisPrefab, waveTrackContainer);
+            }
+            else
+            {
+                if (connectorPrefab != null)
+                {
+                    GameObject connectorObj = Instantiate(connectorPrefab, waveTrackContainer);
+                    Image connectorImage = connectorObj.GetComponent<Image>();
+
+                    if (connectorImage != null)
+                    {
+                        int leftWaveIndex = visibleIndices[i];
+                        int rightWaveIndex = visibleIndices[i + 1];
+
+                        bool isClearedConnector = currentIndex >= rightWaveIndex;
+                        connectorImage.color = isClearedConnector
+                            ? clearedConnectorColor
+                            : upcomingConnectorColor;
+                    }
+                }
+            }
+        }
+    }
+    private bool ShouldShowEllipsis(List<int> visibleIndices)
+    {
+        if (visibleIndices == null || visibleIndices.Count < 4)
+            return false;
+
+        // 예: 1,2,3,10 처럼 마지막 직전이 끊겨 있으면 ... 표시
+        int third = visibleIndices[2];
+        int fourth = visibleIndices[3];
+
+        return fourth - third > 1;
+    }
+    private void ClearWaveTrack()
+    {
+        for (int i = waveTrackContainer.childCount - 1; i >= 0; i--)
+            Destroy(waveTrackContainer.GetChild(i).gameObject);
+    }
+
+    private List<int> BuildVisibleWaveIndices(int totalCount, int currentIndex)
+    {
+        List<int> result = new();
+
+        if (totalCount <= 0)
+            return result;
+
+        currentIndex = Mathf.Clamp(currentIndex, 0, totalCount - 1);
+
+        // 4개 이하: 전부 표시
+        if (totalCount <= 4)
+        {
+            for (int i = 0; i < totalCount; i++)
+                result.Add(i);
+
+            return result;
+        }
+
+        int lastWindowStart = totalCount - 4;
+
+        if (currentIndex >= lastWindowStart)
+        {
+            for (int i = lastWindowStart; i < totalCount; i++)
+                result.Add(i);
+
+            return result;
+        }
+
+        int blockStart = (currentIndex / 3) * 3;
+
+        result.Add(blockStart);
+        result.Add(blockStart + 1);
+        result.Add(blockStart + 2);
+        result.Add(totalCount - 1);
+
+        return result;
+    }
+
+    private Sprite GetWaveSprite(WaveType type)
+    {
+        switch (type)
+        {
+            case WaveType.Normal:
+                return normalWaveSprite;
+            case WaveType.Elite:
+                return eliteWaveSprite;
+            case WaveType.Boss:
+                return bossWaveSprite;
+            default:
+                return normalWaveSprite;
         }
     }
 }

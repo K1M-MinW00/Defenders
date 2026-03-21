@@ -10,6 +10,8 @@ public class EconomyManager : MonoBehaviour
     public int CurrentGold { get; private set; }
 
     public event Action<int> OnGoldChanged;
+    public bool IsInitialized => config != null;
+
 
     private void Awake()
     {
@@ -23,24 +25,25 @@ public class EconomyManager : MonoBehaviour
 
     public void Init(EconomyConfig config)
     {
+        if (config == null)
+        {
+            Debug.LogError("EconomyConfig is null");
+            return;
+        }
+
         this.config = config;
         CurrentGold = config.initialGold;
-        OnGoldChanged?.Invoke(CurrentGold);
+        NotifyGoldChanged();
     }
 
-    public void ApplyWaveClearReward(WaveType waveType)
+    public void ApplyWaveReward(WaveType waveType)
     {
         int before = CurrentGold;
-
         int bonus = config.CalculateBonus(before);
+        int waveReward = config.GetWaveReward(waveType);
 
-        if (bonus > 0)
-            AddGold(bonus);
-
-        int reward = config.GetWaveReward(waveType);
-
-        if (reward > 0)
-            AddGold(reward);
+        AddGold(bonus);
+        AddGold(waveReward);
     }
 
     private void AddGold(int amount)
@@ -49,7 +52,7 @@ public class EconomyManager : MonoBehaviour
             return;
 
         CurrentGold += amount;
-        OnGoldChanged?.Invoke(CurrentGold);
+        NotifyGoldChanged();
     }
 
     public bool TrySpendGold(int cost)
@@ -61,7 +64,7 @@ public class EconomyManager : MonoBehaviour
             return false;
 
         CurrentGold -= cost;
-        OnGoldChanged?.Invoke(CurrentGold);
+        NotifyGoldChanged();
 
         return true;
     }
@@ -73,5 +76,10 @@ public class EconomyManager : MonoBehaviour
     {
         int price = config.CalculateSellUnit(star);
         AddGold(price);
+    }
+
+    private void NotifyGoldChanged()
+    {
+        OnGoldChanged?.Invoke(CurrentGold);
     }
 }

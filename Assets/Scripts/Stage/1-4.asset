@@ -10,56 +10,64 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33599882a6fc0b94b93c718d0cbafe8a, type: 3}
-  m_Name: 1-0
+  m_Name: 1-4
   m_EditorClassIdentifier: Assembly-CSharp::StageData
-  stageName: 1-1
-  stageId: 1
+  stageName: Test_Stage
+  stageId: 10
   waves:
   - waveType: 0
     subWaves:
     - spawnGroups:
       - monsterId: Orc
-        count: 5
-      delayAfter: 1
-    totalMonsterCount: 0
-    rewardGold: 14
-  - waveType: 1
-    subWaves:
-    - spawnGroups:
-      - monsterId: Orc_Rider
         count: 3
-      delayAfter: 0
-    totalMonsterCount: 0
-    rewardGold: 20
-  - waveType: 2
-    subWaves:
+      - monsterId: Skeleton
+        count: 3
+      delayAfter: 2
     - spawnGroups:
-      - monsterId: Orc
-        count: 5
-      delayAfter: 0
+      - monsterId: Werewolf
+        count: 3
+      delayAfter: 2
     totalMonsterCount: 0
-    rewardGold: 0
+    rewardGold: 10
   - waveType: 0
     subWaves:
     - spawnGroups:
       - monsterId: Orc
-        count: 1
-      delayAfter: 0
-    totalMonsterCount: 0
-    rewardGold: 0
-  - waveType: 1
-    subWaves:
-    - spawnGroups:
-      - monsterId: Orc_Rider
-        count: 2
-      delayAfter: 0
-    totalMonsterCount: 0
-    rewardGold: 0
-  - waveType: 2
-    subWaves:
-    - spawnGroups:
-      - monsterId: Orc_Rider
         count: 3
-      delayAfter: 0
+      - monsterId: Skeleton
+        count: 3
+      delayAfter: 2
+    - spawnGroups:
+      - monsterId: Werewolf
+        count: 3
+      delayAfter: 2
     totalMonsterCount: 0
-    rewardGold: 0
+    rewardGold: 10
+  - waveType: 0
+    subWaves:
+    - spawnGroups:
+      - monsterId: Orc
+        count: 3
+      - monsterId: Skeleton
+        count: 3
+      delayAfter: 2
+    - spawnGroups:
+      - monsterId: Werewolf
+        count: 3
+      delayAfter: 2
+    totalMonsterCount: 0
+    rewardGold: 10
+  - waveType: 0
+    subWaves:
+    - spawnGroups:
+      - monsterId: Orc
+        count: 3
+      - monsterId: Skeleton
+        count: 3
+      delayAfter: 2
+    - spawnGroups:
+      - monsterId: Werewolf
+        count: 3
+      delayAfter: 2
+    totalMonsterCount: 0
+    rewardGold: 10

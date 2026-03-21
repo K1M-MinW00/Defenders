@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,6 +9,7 @@ public class PlayerCharacter : MonoBehaviour
     [Header("References")]
     private UnitView view;
     private RangeSensor rangeSensor;
+    private MonsterSpawner monsterSpawner;
 
     private IAttackBehavior attackBehavior;
     private NavMeshAgent agent;
@@ -64,6 +64,11 @@ public class PlayerCharacter : MonoBehaviour
 
         runtime.OnStatsChanged += HandleStatsChanged;
         runtime.OnDied += HandleDead;
+    }
+
+    public void BindCombatContext(MonsterSpawner monsterSpawner)
+    {
+        this.monsterSpawner = monsterSpawner;
     }
 
     private void Start()
@@ -138,7 +143,7 @@ public class PlayerCharacter : MonoBehaviour
 
         if (agent != null)
         {
-            agent.enabled = false;
+            agent.enabled = true;
             agent.isStopped = false;
             agent.speed = MoveSpeed;
         }
@@ -154,7 +159,7 @@ public class PlayerCharacter : MonoBehaviour
 
     public void StopMovement()
     {
-        if (agent == null)
+        if (agent == null || agent.enabled == false)
             return;
 
         agent.isStopped = true;
@@ -164,11 +169,11 @@ public class PlayerCharacter : MonoBehaviour
 
     public void ResumeMovement()
     {
-        if (agent == null)
+        if (agent == null || agent.enabled == true)
             return;
 
-        agent.isStopped = false;
         agent.enabled = true;
+        agent.isStopped = false;
     }
 
     public void MoveTo(Vector3 dest)
@@ -217,7 +222,7 @@ public class PlayerCharacter : MonoBehaviour
 
     public bool FindGlobalAliveMonster()
     {
-        MonsterController monster = StageManager.Instance.MonsterSpawner.FindClosestAlive(transform.position);
+        MonsterController monster = monsterSpawner.FindClosestAlive(transform.position);
         SetTarget(monster);
 
         return HasValidTarget();
