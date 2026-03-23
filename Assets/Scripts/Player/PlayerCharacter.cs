@@ -63,7 +63,7 @@ public class PlayerCharacter : MonoBehaviour
 
 
         runtime.OnStatsChanged += HandleStatsChanged;
-        runtime.OnDied += HandleDead;
+        runtime.OnDead += HandleDead;
     }
 
     public void BindCombatContext(MonsterSpawner monsterSpawner)
@@ -91,7 +91,7 @@ public class PlayerCharacter : MonoBehaviour
         if (runtime != null)
         {
             runtime.OnStatsChanged -= HandleStatsChanged;
-            runtime.OnDied -= HandleDead;
+            runtime.OnDead -= HandleDead;
         }
     }
 
@@ -114,7 +114,7 @@ public class PlayerCharacter : MonoBehaviour
         StopMovement();
         attackBehavior?.CancelAttack();
 
-        if (agent != null)
+        if (agent != null && agent.enabled == true)
         {
             agent.ResetPath();
             agent.isStopped = true;

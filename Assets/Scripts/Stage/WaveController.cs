@@ -10,6 +10,7 @@ public class WaveController : MonoBehaviour
     public MonsterSpawner MonsterSpawner => monsterSpawner;
 
     private bool waveEnded;
+    private bool allMonstersSpawned;
     private Action onWaveWin;
     private Action onWaveLose;
 
@@ -19,6 +20,7 @@ public class WaveController : MonoBehaviour
             return;
 
         waveEnded = false;
+        allMonstersSpawned = false;
         onWaveWin = onWin;
         onWaveLose = onLose;
 
@@ -26,7 +28,8 @@ public class WaveController : MonoBehaviour
 
         monsterSpawner.OnAliveCountChanged += HandleMonsterAliveChanged;
         monsterSpawner.OnAllMonstersSpawned += HandleAllMonstersSpawned;
-
+        unitRoster.OnAliveCountChanged += HandleUnitAliveChanged;
+        
         monsterSpawner.StartWave(waveData);
     }
 
@@ -36,6 +39,12 @@ public class WaveController : MonoBehaviour
     }
 
     private void HandleAllMonstersSpawned()
+    {
+        allMonstersSpawned = true;
+        EvaluateWaveResult();
+    }
+
+    private void HandleUnitAliveChanged()
     {
         EvaluateWaveResult();
     }
@@ -48,14 +57,14 @@ public class WaveController : MonoBehaviour
         int aliveUnits = unitRoster.CountAliveUnits();
         int aliveMonsters = monsterSpawner.AliveCount;
 
-        if (aliveUnits == 0 && (monsterSpawner.IsSpawning || aliveMonsters > 0))
+        if (aliveUnits == 0)
         {
             waveEnded = true;
             FinishWave(false);
             return;
         }
 
-        if (aliveMonsters == 0 && !monsterSpawner.IsSpawning && aliveUnits > 0)
+        if (aliveMonsters == 0 && allMonstersSpawned && aliveUnits > 0)
         {
             waveEnded = true;
             FinishWave(true);
@@ -66,6 +75,7 @@ public class WaveController : MonoBehaviour
     {
         monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
         monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
+        unitRoster.OnAliveCountChanged -= HandleUnitAliveChanged;
 
         if (isWin)
         {

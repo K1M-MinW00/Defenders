@@ -12,54 +12,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33599882a6fc0b94b93c718d0cbafe8a, type: 3}
   m_Name: 1-0
   m_EditorClassIdentifier: Assembly-CSharp::StageData
-  stageName: 1-1
+  stageName: 1
   stageId: 1
   waves:
   - waveType: 0
     subWaves:
     - spawnGroups:
-      - monsterId: Orc
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
         count: 5
-      delayAfter: 1
-    totalMonsterCount: 0
-    rewardGold: 14
+      delayAfter: 3
+    - spawnGroups:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 5
+      delayAfter: 3
+    rewardGold: 0
   - waveType: 1
     subWaves:
     - spawnGroups:
-      - monsterId: Orc_Rider
+      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
         count: 3
-      delayAfter: 0
-    totalMonsterCount: 0
-    rewardGold: 20
-  - waveType: 2
+      delayAfter: 3
+    rewardGold: 0
+  - waveType: 1
     subWaves:
     - spawnGroups:
-      - monsterId: Orc
-        count: 5
-      delayAfter: 0
-    totalMonsterCount: 0
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
+        count: 3
+      delayAfter: 3
+    - spawnGroups:
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 3
+      delayAfter: 3
     rewardGold: 0
   - waveType: 0
     subWaves:
     - spawnGroups:
-      - monsterId: Orc
-        count: 1
-      delayAfter: 0
-    totalMonsterCount: 0
-    rewardGold: 0
-  - waveType: 1
-    subWaves:
-    - spawnGroups:
-      - monsterId: Orc_Rider
-        count: 2
-      delayAfter: 0
-    totalMonsterCount: 0
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 3
+      delayAfter: 3
     rewardGold: 0
   - waveType: 2
     subWaves:
     - spawnGroups:
-      - monsterId: Orc_Rider
-        count: 3
-      delayAfter: 0
-    totalMonsterCount: 0
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 15
+      delayAfter: 3
     rewardGold: 0

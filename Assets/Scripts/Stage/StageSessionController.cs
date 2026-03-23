@@ -12,9 +12,11 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StagePreparationService preparationService;
     [SerializeField] private StageBootstrapper bootstrapper;
     [SerializeField] private StageUIController stageUI;
+    [SerializeField] private MonsterPrewarmService monsterPrewarmService;
 
     public MonsterSpawner MonsterSpawner => waveController.MonsterSpawner;
     public PopulationManager PopulationManager => preparationService.PopulationManager;
+    public UnitRoster UnitRoster => preparationService.UnitRoster;
     public StageState CurrentState { get; private set; } = StageState.None;
     public StageData CurrentStageData => currentStageData;
     public int CurrentWaveIndex { get; private set; }
@@ -27,11 +29,10 @@ public class StageSessionController : MonoBehaviour
     private void Start()
     {
         // currentStageData = StageContext.SelectedStageData; // 로비에서 전달된 데이터
-        bootstrapper.Initialize(currentStageData);
+        bootstrapper.Initialize();
 
         stageUI.Initialize(this);
         stageUI.RefreshWaveUI(currentStageData.waves, CurrentWaveIndex);
-        // stageUI.CreateWaveUI(currentStageData.waves);
 
         EnterPreparePhase();
     }
@@ -41,7 +42,10 @@ public class StageSessionController : MonoBehaviour
         CurrentState = StageState.Preparing;
         stageUI.SetPhase(CurrentState);
 
+        monsterPrewarmService.PrewarmForWave(CurrentWave);
+        MonsterSpawner.WaveHpTracker.PrepareWave(CurrentWave);
         flowController.StartPreparePhase(OnPrepareFinished);
+        
         preparationService.SetPrepareMode(true);
     }
 
@@ -66,7 +70,6 @@ public class StageSessionController : MonoBehaviour
         preparationService.SetPrepareMode(false);
 
         waveController.StartWave(CurrentWave, OnWaveWin, OnWaveLose);
-        // stageUI.UpdateCurrentWave(CurrentWaveIndex);
     }
 
     private void OnWaveWin()
@@ -75,12 +78,15 @@ public class StageSessionController : MonoBehaviour
 
         CurrentWaveIndex++;
 
-        stageUI.RefreshWaveUI(currentStageData.waves, CurrentWaveIndex);
 
         if (CurrentWave == null)
+        {
             HandleStageClear();
-        else
-            EnterPreparePhase();
+            return;
+        }
+        
+        EnterPreparePhase();
+        stageUI.RefreshWaveUI(currentStageData.waves, CurrentWaveIndex);
     }
 
     private void OnWaveLose()

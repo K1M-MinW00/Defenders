@@ -6,13 +6,14 @@ using UnityEngine.AI;
 [RequireComponent(typeof(MonsterHealth))]
 public class MonsterController : MonoBehaviour, IPoolable
 {
-    [SerializeField] private MonsterStats stats;
+    public MonsterDataSO Data { get; private set; }
+    public MonsterStats FinalStats {  get; private set; }
 
     [Header("AI")]
     [SerializeField] private float navSampleRadius = 1.0f;
 
     [Header("References")]
-    [SerializeField] private UnitRoster unitRoster;
+    private UnitRoster unitRoster;
     [SerializeField] private MonoBehaviour attackBehaviour;
 
     public NavMeshAgent Agent { get; private set; }
@@ -20,9 +21,9 @@ public class MonsterController : MonoBehaviour, IPoolable
     public IMonsterAttack Attack { get; private set; }
     public MonsterHealth Health { get; private set; }
 
-    public float AttackRange => (stats != null) ? stats.atkRange : 0f;
-    public float AttackCooldown => (stats != null && stats.atkCoolTime > 0f) ? (1f / stats.atkCoolTime) : 999f;
-    public float AtkDamage => (stats != null) ? stats.atkDamage : 0f;
+    public float AttackRange => FinalStats.atkRange;
+    public float AttackCooldown => 1f / FinalStats.atkPerSec;
+    public float AtkDamage => FinalStats.atkDamage;
 
     private string poolKey;
     public string PoolKey => poolKey;
@@ -57,9 +58,14 @@ public class MonsterController : MonoBehaviour, IPoolable
         idleState = new MonsterIdleState(this, fsm);
     }
 
-    public void Initialize(UnitRoster unitRoster)
+    public void Initialize(UnitRoster unitRoster, MonsterDataSO data)
     {
+        Data = data;
+        FinalStats = data.Stats;
+        Health.Initialize(FinalStats);
         this.unitRoster = unitRoster;
+
+        fsm.ChangeState(idleState);
     }
 
     private void Update()
@@ -78,11 +84,6 @@ public class MonsterController : MonoBehaviour, IPoolable
 
         Agent.isStopped = false;
         Agent.ResetPath();
-
-        Health.Initialize(stats);
-        Health.ResetHealth();
-
-        fsm.ChangeState(idleState);
     }
 
     public void OnDespawn()
@@ -94,10 +95,10 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     private void ApplyStats()
     {
-        if (stats == null)
+        if (FinalStats == null)
             return;
 
-        Agent.speed = stats.moveSpeed;
+        Agent.speed = FinalStats.moveSpeed;
 
         // TODO : 공격 관련 Attack Behaviour 에서 stats 참조하여 적용
     }

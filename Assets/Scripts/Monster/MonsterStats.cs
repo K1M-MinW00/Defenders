@@ -1,9 +1,9 @@
 [System.Serializable]
 public class MonsterStats
 {
-    public float maxHp;
-    public float moveSpeed;
-    public float atkDamage;
-    public float atkRange;
-    public float atkCoolTime;
+    public float maxHp = 30f;
+    public float moveSpeed = 3f;
+    public float atkDamage = 10f;
+    public float atkRange = 2f;
+    public float atkPerSec = 2f;
 }

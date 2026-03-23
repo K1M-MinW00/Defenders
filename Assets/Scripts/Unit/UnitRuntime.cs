@@ -7,6 +7,7 @@ public class UnitRuntime : MonoBehaviour, IDamageable
     public int Star { get; private set; } = 1;
 
     public UnitStats FinalStats { get; private set; }
+    public float MaxHp {  get; private set; }
     public float CurrentHp { get; private set; }
     public float CurrentMp { get; private set; }
 
@@ -16,9 +17,9 @@ public class UnitRuntime : MonoBehaviour, IDamageable
 
     public event Action<UnitRuntime> OnInitialized;
     public event Action<UnitRuntime> OnStatsChanged;
-    public event Action<UnitRuntime> OnHpChanged;
+    public event Action<UnitRuntime, float, float> OnHpChanged;
     public event Action<UnitRuntime> OnMpChanged;
-    public event Action<UnitRuntime> OnDied;
+    public event Action<UnitRuntime> OnDead;
 
     public void Initialize(UnitDataSO data, int star = 1)
     {
@@ -39,11 +40,12 @@ public class UnitRuntime : MonoBehaviour, IDamageable
         Star++;
         RecalculateStats();
 
+        MaxHp = FinalStats.maxHp;
         CurrentHp = Mathf.Min(CurrentHp, FinalStats.maxHp);
         CurrentMp = Mathf.Min(CurrentMp, FinalStats.maxMp);
 
         OnStatsChanged?.Invoke(this);
-        OnHpChanged?.Invoke(this);
+        OnHpChanged?.Invoke(this, CurrentHp, MaxHp);
         OnMpChanged?.Invoke(this);
     }
 
@@ -52,8 +54,9 @@ public class UnitRuntime : MonoBehaviour, IDamageable
         if (IsDead || damage <= 0f)
             return;
 
+
         CurrentHp = Mathf.Max(0f, CurrentHp - damage);
-        OnHpChanged?.Invoke(this);
+        OnHpChanged?.Invoke(this, CurrentHp, MaxHp);
 
         if (CurrentHp <= 0f)
             Die();
@@ -70,7 +73,7 @@ public class UnitRuntime : MonoBehaviour, IDamageable
             return;
 
         CurrentHp = nextHp;
-        OnHpChanged?.Invoke(this);
+        OnHpChanged?.Invoke(this, CurrentHp, MaxHp);
     }
 
     public void AddMp(float amount)
@@ -95,11 +98,13 @@ public class UnitRuntime : MonoBehaviour, IDamageable
     public void RestoreForPrepare()
     {
         IsDead = false;
+
+        MaxHp = FinalStats.maxHp;
         CurrentHp = FinalStats.maxHp;
         CurrentMp = 0f;
 
         OnStatsChanged?.Invoke(this);
-        OnHpChanged?.Invoke(this);
+        OnHpChanged?.Invoke(this, CurrentHp, MaxHp);
         OnMpChanged?.Invoke(this);
     }
 
@@ -109,7 +114,7 @@ public class UnitRuntime : MonoBehaviour, IDamageable
             return;
 
         IsDead = true;
-        OnDied?.Invoke(this);
+        OnDead?.Invoke(this);
     }
 
     private void RecalculateStats()

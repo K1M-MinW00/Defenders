@@ -15,6 +15,13 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stageInfoText;
     [SerializeField] private TextMeshProUGUI monsterCountText;
 
+    [Header("HP Summary UI")]
+    [SerializeField] private Slider unit_Slider;
+    [SerializeField] private TextMeshProUGUI unitHP_Text;
+
+    [SerializeField] private Slider enemy_Slider;
+    [SerializeField] private TextMeshProUGUI enemyHP_Text;
+
     [Header("Result UI")]
     [SerializeField] private GameObject stageClearPanel;
     [SerializeField] private GameObject stageFailPanel;
@@ -48,11 +55,6 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private Sprite eliteWaveSprite;
     [SerializeField] private Sprite bossWaveSprite;
 
-    [Header("Wave State Colors")]
-    [SerializeField] private Color clearedNodeTint = new Color(0.4f, 0.4f, 0.4f);
-    [SerializeField] private Color currentNodeTint = Color.white;
-    [SerializeField] private Color upcomingNodeTint = Color.white;
-
     [Header("Connector Colors")]
     [SerializeField] private Color clearedConnectorColor = Color.green;
     [SerializeField] private Color upcomingConnectorColor = Color.gray;
@@ -62,6 +64,7 @@ public class StageUIController : MonoBehaviour
     private EconomyManager economy;
     private PopulationManager population;
     private MonsterSpawner monsterSpawner;
+    private UnitRoster unitRoster;
 
     private StageState cachedState = StageState.None;
     public void Initialize(StageSessionController controller)
@@ -80,7 +83,9 @@ public class StageUIController : MonoBehaviour
         BindEconomy();
         BindPopulation();
         BindMonsterUI();
-
+        BindUnitRoster();
+        
+        
         HideAllResultPanels();
 
         if (session.CurrentStageData != null)
@@ -90,11 +95,8 @@ public class StageUIController : MonoBehaviour
         }
 
         SetPhase(session.CurrentState);
-
-        UpdateGoldUI(economy.CurrentGold);
-        UpdatePopulationUI(population.CurrentPopulation, population.MaxPopulation);
-        UpdateMonsterCountUI(monsterSpawner.AliveCount);
     }
+
 
     private void OnDestroy()
     {
@@ -102,6 +104,7 @@ public class StageUIController : MonoBehaviour
         UnBindEconomy();
         UnBindPopulation();
         UnBindMonsterUI();
+        UnBindUnitRoster();
     }
 
     public void SetPhase(StageState state)
@@ -131,9 +134,12 @@ public class StageUIController : MonoBehaviour
 
             if (combat_HUD != null)
                 combat_HUD.SetActive(false);
+
+            return;
         }
+
         if (monsterSpawner != null)
-            UpdateMonsterCountUI(monsterSpawner.AliveCount);
+            UpdateMonsterCountUI(session.CurrentWave.TotalMonsterCount);
     }
 
     private void BindButtons()
@@ -151,7 +157,8 @@ public class StageUIController : MonoBehaviour
             return;
 
         monsterSpawner.OnAliveCountChanged += UpdateMonsterCountUI;
-        UpdateMonsterCountUI(monsterSpawner.AliveCount);
+        monsterSpawner.WaveHpTracker.OnWaveHpChanged += HandleEnemySlider;
+        UpdateMonsterCountUI(session.CurrentWave.TotalMonsterCount);
     }
 
     private void BindPopulation()
@@ -175,6 +182,13 @@ public class StageUIController : MonoBehaviour
         economy.OnGoldChanged += UpdateGoldUI;
         UpdateGoldUI(economy.CurrentGold);
     }
+    private void BindUnitRoster()
+    {
+        unitRoster = session != null ? session.UnitRoster : null;
+
+        unitRoster.OnTotalHpChanged += HandleUnitSlider;
+        unitRoster.ForceRefreshHp();
+    }
 
     private void UnBindButtons()
     {
@@ -188,6 +202,7 @@ public class StageUIController : MonoBehaviour
             return;
 
         monsterSpawner.OnAliveCountChanged -= UpdateMonsterCountUI;
+        monsterSpawner.WaveHpTracker.OnWaveHpChanged -= HandleEnemySlider;
         monsterSpawner = null;
     }
 
@@ -208,6 +223,10 @@ public class StageUIController : MonoBehaviour
         population.OnPopulationChanged -= UpdatePopulationUI;
         population = null;
     }
+    private void UnBindUnitRoster()
+    {
+        unitRoster.OnTotalHpChanged -= HandleUnitSlider;
+    }
 
     /// <summary>
     /// Update UI
@@ -223,16 +242,37 @@ public class StageUIController : MonoBehaviour
         populationText.text = $"{current}/{max}";
     }
 
-    private void UpdateMonsterCountUI(int aliveCount)
+
+    private void UpdateMonsterCountUI(int remainCount)
     {
         if (cachedState == StageState.Preparing)
-            monsterCountText.text = $"Expected : {aliveCount.ToString()}";
+        {
+            monsterCountText.text = $"출현 예정 : {remainCount: 00}";
+            monsterCountText.text = $"출현 예정 : {remainCount: 00}";
+        }
         else if (cachedState == StageState.Combat)
-            monsterCountText.text = $"Remained : {aliveCount.ToString()}";
+        {
+            monsterCountText.text = $"남은 몬스터 수 : {remainCount : 00}";
+        }
         else
-            monsterCountText.text = aliveCount.ToString();
+            monsterCountText.text = string.Empty;
     }
 
+    private void HandleUnitSlider(float curHp, float maxHp)
+    {
+        unit_Slider.value = unitRoster.GetHpRatio();
+        Debug.Log("HandleUnitSlider : " + curHp + " , " + maxHp);
+        if(unitHP_Text != null)
+            unitHP_Text.text = curHp.ToString();
+    }
+
+    private void HandleEnemySlider(float curHp, float maxHp)
+    {
+        enemy_Slider.value = monsterSpawner.WaveHpTracker.GetHpRatio();
+
+        if(enemyHP_Text != null)
+            enemyHP_Text.text = curHp.ToString();
+    }
     public void SetStageInfo(string stageName, string stageId)
     {
         stageInfoText.text = $"{stageName} - {stageId}";
@@ -292,12 +332,10 @@ public class StageUIController : MonoBehaviour
             node.Setup(GetWaveSprite(waves[waveIndex].waveType), waveIndex + 1);
 
             if (waveIndex == currentIndex)
-                node.SetAsCurrent(currentNodeTint);
+                node.SetAsCurrent();
             else
-            {
                 node.SetAsUpcoming();
-                node.SetIconTint(upcomingNodeTint);
-            }
+            
 
             bool needConnector = i < visibleIndices.Count - 1;
             if (!needConnector)

@@ -8,10 +8,6 @@ public class WaveNodeUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI numberText;
     [SerializeField] private GameObject currentArrow;
 
-    [Header("Colors")]
-    [SerializeField] private Color normalTextColor = Color.white;
-    [SerializeField] private Color clearedTextColor = Color.gray;
-    [SerializeField] private Color currentTextColor = Color.white;
 
     public void Setup(Sprite iconSprite, int waveNumber)
     {
@@ -24,35 +20,14 @@ public class WaveNodeUI : MonoBehaviour
         SetAsUpcoming();
     }
 
-    public void SetAsCleared(Color iconTint)
+    public void SetAsCurrent()
     {
-        if (iconImage != null)
-            iconImage.color = iconTint;
-
-        if (numberText != null)
-            numberText.color = clearedTextColor;
-
-        if (currentArrow != null)
-            currentArrow.SetActive(false);
-    }
-
-    public void SetAsCurrent(Color iconTint)
-    {
-        if (iconImage != null)
-            iconImage.color = iconTint;
-
-        if (numberText != null)
-            numberText.color = currentTextColor;
-
         if (currentArrow != null)
             currentArrow.SetActive(true);
     }
 
     public void SetAsUpcoming()
     {
-        if (numberText != null)
-            numberText.color = normalTextColor;
-
         if (currentArrow != null)
             currentArrow.SetActive(false);
     }

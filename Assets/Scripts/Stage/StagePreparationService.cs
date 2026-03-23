@@ -10,6 +10,7 @@ public class StagePreparationService : MonoBehaviour
     [SerializeField] private PlacementController placementController;
 
     public PopulationManager PopulationManager => populationManager;
+    public UnitRoster UnitRoster => unitRoster;
     private bool isPrepareMode;
 
     public void SetPrepareMode(bool enabled)

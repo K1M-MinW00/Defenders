@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -86,5 +87,13 @@ public class ObjectPool : MonoBehaviour
 
         obj.SetActive(false);
         pool[key].Enqueue(obj);
+    }
+
+    public int GetInactiveCount(string monsterId)
+    {
+        if(pool.ContainsKey(monsterId))
+            return pool[monsterId].Count;
+        
+        return 0;
     }
 }

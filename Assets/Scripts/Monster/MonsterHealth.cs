@@ -5,31 +5,38 @@ public class MonsterHealth : MonoBehaviour, IDamageable
 {
     private MonsterStats stats;
 
+    public float MaxHp {  get; private set; }
     public float CurrentHp { get; private set; }
     public bool IsDead { get; private set; }
 
     public event Action<MonsterHealth> OnDead;
+    public event Action<MonsterHealth, float> OnHpChanged;
 
     public void Initialize(MonsterStats s)
     {
         stats = s;
+        ResetHealth();
     }
 
     public void ResetHealth()
     {
         IsDead = false;
-        CurrentHp = (stats != null) ? stats.maxHp : 1f;
+
+        MaxHp = stats.maxHp;
+        CurrentHp = MaxHp;
     }
 
     public void TakeDamage(float damage)
     {
         if (IsDead || damage <= 0f)
             return;
-        
+
+        damage = Mathf.Min(damage, CurrentHp);
         CurrentHp -= damage;
 
         DamageUIService.Instance?.Show(transform.position, damage);
 
+        OnHpChanged?.Invoke(this, damage);
         if (CurrentHp <= 0f)
             Die();
     }

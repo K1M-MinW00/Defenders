@@ -7,18 +7,22 @@ public class MonsterSpawner : MonoBehaviour
 {
     private ObjectPool pool;
     private UnitRoster unitRoster;
-    
+    [SerializeField] private MonsterWaveHpTracker waveHpTracker;
+    public MonsterWaveHpTracker WaveHpTracker => waveHpTracker;
     [SerializeField] private Transform spawnPoint;
 
     private readonly List<MonsterController> aliveMonsters = new();
     public IReadOnlyList<MonsterController> MonsterLists => aliveMonsters;
     public int AliveCount => aliveMonsters.Count;
-
+    
+    private WaveData currentWave;
+    private int plannedMonsterCount => currentWave != null ? currentWave.TotalMonsterCount : 0;
+    private int deadMonsterCount;
+    public int RemainingCount => Mathf.Max(0, plannedMonsterCount - deadMonsterCount);
+    
     public event Action OnAllMonstersSpawned;
     public event Action<int> OnAliveCountChanged;
 
-    private bool isSpawning;
-    public bool IsSpawning => isSpawning;
 
     public void Init(ObjectPool pool, UnitRoster unitRoster)
     {
@@ -28,15 +32,17 @@ public class MonsterSpawner : MonoBehaviour
 
     public void StartWave(WaveData waveData)
     {
+        currentWave  = waveData;
         StopAllCoroutines();
+
+        deadMonsterCount = 0;
         StartCoroutine(SpawnWaveRoutine(waveData));
     }
 
     private IEnumerator SpawnWaveRoutine(WaveData waveData)
     {
-        isSpawning = true;
         aliveMonsters.Clear();
-        OnAliveCountChanged?.Invoke(aliveMonsters.Count);
+        OnAliveCountChanged?.Invoke(RemainingCount);
 
         foreach (var subWave in waveData.subWaves)
         {
@@ -44,7 +50,6 @@ public class MonsterSpawner : MonoBehaviour
             yield return new WaitForSeconds(subWave.delayAfter);
         }
 
-        isSpawning = false;
         OnAllMonstersSpawned?.Invoke();
     }
 
@@ -54,30 +59,39 @@ public class MonsterSpawner : MonoBehaviour
         {
             for (int i = 0; i < group.count; i++)
             {
-                GameObject obj = pool.Spawn(group.monsterId, spawnPoint.position);
-
-                MonsterController monster = obj.GetComponent<MonsterController>();
-                monster.Initialize(unitRoster);
-                monster.SetPoolKey(group.monsterId);
-                monster.OnDead += HandleMonsterDead;
-
-                monster.OnSpawn();
-
-                aliveMonsters.Add(monster);
-                OnAliveCountChanged?.Invoke(aliveMonsters.Count);
-
+                SpawnMonster(group.data, spawnPoint.position);
+                yield return new WaitForSeconds(0.1f);
             }
 
             yield return new WaitForSeconds(subWave.delayAfter);
         }
     }
 
+
+    private MonsterController SpawnMonster(MonsterDataSO data , Vector3 spawnPos)
+    {
+        string monsterId = data.monsterId;
+        GameObject go = pool.Spawn(monsterId, spawnPos);
+        MonsterController monster = go.GetComponent<MonsterController>();
+
+        monster.Initialize(unitRoster, data);
+        monster.SetPoolKey(monsterId);
+        monster.OnDead += HandleMonsterDead;
+
+        waveHpTracker?.RegisterSpawnedMonster(monster);
+        aliveMonsters.Add(monster);
+        return monster;
+    }
+
     private void HandleMonsterDead(MonsterController monster)
     {
         monster.OnDead -= HandleMonsterDead;
+        waveHpTracker?.UnregisterMonster(monster);
         aliveMonsters.Remove(monster);
-        OnAliveCountChanged?.Invoke(aliveMonsters.Count);
 
+        deadMonsterCount++;
+
+        OnAliveCountChanged?.Invoke(RemainingCount);
         pool.Despawn(monster.PoolKey, monster.gameObject);
     }
 

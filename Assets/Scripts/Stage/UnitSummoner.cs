@@ -45,13 +45,10 @@ public class UnitSummoner : MonoBehaviour
 
         if (roster != null)
             roster.Register(instance);
-
+        
         if (fusionService != null)
             fusionService.TryAutoFuse(instance);
 
-        // (선택) 드래그 배치 컨트롤러에 등록
-        // 필요 시 PlacementController.Register(...) 형태로 확장 권장
-        // StageManager.Instance.placementController?.Register( ... );
     }
 
     private Vector3 ResolveSpawnPosition()

@@ -40,7 +40,7 @@ public class UnitHUDController : MonoBehaviour
 
     private void HandleStarChanged(UnitRuntime instance) => RefreshAll();
 
-    private void HandleHpChanged(UnitRuntime instance)
+    private void HandleHpChanged(UnitRuntime instance, float curHp, float maxHp)
     {
         RefreshHp();
     }

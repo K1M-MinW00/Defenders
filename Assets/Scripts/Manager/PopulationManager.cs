@@ -29,10 +29,16 @@ public class PopulationManager : MonoBehaviour
     {
         if(unitRoster != null)
         {
-            unitRoster.OnUnitAdded += _ => Notify();
-            unitRoster.OnUnitRemoved += _ => Notify();
+            unitRoster.OnRosterChanged += Notify;
         }
     }
+
+    private void OnDestroy()
+    {
+        if(unitRoster != null )
+            unitRoster.OnRosterChanged -= Notify;
+    }
+
     public void Init()
     {
         MaxPopulation = initialMax;
