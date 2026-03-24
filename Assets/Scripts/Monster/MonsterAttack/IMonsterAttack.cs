@@ -1,4 +1,5 @@
 public interface IMonsterAttack
 {
-    void Execute(MonsterController ctx);
+    bool CanAttack();
+    bool TryAttack(UnitRuntime unit);
 }

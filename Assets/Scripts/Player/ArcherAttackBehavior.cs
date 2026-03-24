@@ -24,7 +24,7 @@ public class ArcherAttackBehavior : RangedAttackBehavior
         Vector2 dir = (targetPos - spawnPos).normalized;
 
         ArrowProjectile arrow = Instantiate(arrowPrefab, spawnPos, Quaternion.identity);
-        arrow.Initialize(Damage, projectileSpeed, dir);
+        arrow.Initialize(Damage, projectileSpeed, dir, targetLayer);
 
         OnAttackFinished();
     }

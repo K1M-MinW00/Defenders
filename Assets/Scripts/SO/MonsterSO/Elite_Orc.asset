@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f28b45379dfab014f9fd00e5e20df9d7, type: 3}
+  m_Name: Elite_Orc
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
+  monsterId: Elite_Orc
+  displayName: Elite_Orc
+  prefab: {fileID: 1101139171250549184, guid: f8d3676b92fbc4d44b6c6f811f32ca25, type: 3}
+  baseStats:
+    maxHp: 40
+    moveSpeed: 4
+    atkDamage: 25
+    atkRange: 2
+    atkPerSec: 2

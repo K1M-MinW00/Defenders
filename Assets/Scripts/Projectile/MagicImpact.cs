@@ -3,19 +3,19 @@
 public class MagicImpact : MonoBehaviour
 {
     [Header("Impact")]
-    [SerializeField] private float radius = .8f;
     [SerializeField] private LayerMask targetLayer;
 
     private float damage;
 
-    public void Initialize(float damamge)
+    public void Initialize(float damamge, LayerMask target)
     {
         this.damage = damamge;
+        targetLayer = target;
     }
 
     public void OnAnimationEnd()
     {
-        // gameObject.SetActive(false);
+        // TODO - object pool 반환
         Destroy(gameObject);
     }
 

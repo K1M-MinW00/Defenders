@@ -250,7 +250,6 @@ public class PlayerCharacter : MonoBehaviour
         if (!HasValidTarget())
             return;
 
-        FaceTarget();
         attackBehavior?.TryAttack(Target);
     }
 

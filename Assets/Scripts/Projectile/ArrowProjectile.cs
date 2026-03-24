@@ -4,17 +4,18 @@
 public class ArrowProjectile : MonoBehaviour
 {
     [Header("Projectile")]
-    [SerializeField] private float lifeTime = 5f;
+    [SerializeField] private float lifeTime = 3f;
     [SerializeField] private LayerMask targetLayer;
     private float damage;
     private float speed;
     private Vector2 direction;
 
-    public void Initialize(float damage, float speed, Vector2 dir)
+    public void Initialize(float damage, float speed, Vector2 dir, LayerMask target)
     {
         this.damage = damage;
         this.speed = speed;
         this.direction = dir;
+        targetLayer = target;
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);

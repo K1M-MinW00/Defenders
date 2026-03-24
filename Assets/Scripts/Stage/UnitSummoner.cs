@@ -28,6 +28,7 @@ public class UnitSummoner : MonoBehaviour
 
         // 3) 스폰 위치 결정
         Vector3 pos = ResolveSpawnPosition();
+        pos.z = 0;
         GameObject go = Instantiate(data.UnitPrefab, pos, Quaternion.identity, unitsRoot);
 
         // 5) 런타임 초기화

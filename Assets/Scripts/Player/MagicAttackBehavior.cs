@@ -20,7 +20,7 @@ public class MagicAttackBehavior : RangedAttackBehavior
         Vector3 spawnPos = pendingTarget.transform.position;
 
         MagicImpact impact = Instantiate(magicPrefab,spawnPos, Quaternion.identity);
-        impact.Initialize(Damage);
+        impact.Initialize(Damage, targetLayer);
 
         OnAttackFinished();
     }

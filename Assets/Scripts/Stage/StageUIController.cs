@@ -261,7 +261,6 @@ public class StageUIController : MonoBehaviour
     private void HandleUnitSlider(float curHp, float maxHp)
     {
         unit_Slider.value = unitRoster.GetHpRatio();
-        Debug.Log("HandleUnitSlider : " + curHp + " , " + maxHp);
         if(unitHP_Text != null)
             unitHP_Text.text = curHp.ToString();
     }

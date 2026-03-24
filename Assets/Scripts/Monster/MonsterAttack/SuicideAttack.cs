@@ -1,10 +1,10 @@
 using System.Collections;
-using System.Net.NetworkInformation;
-using System.Xml;
 using UnityEngine;
 
 public class SuicideAttack : MonoBehaviour, IMonsterAttack
 {
+    protected MonsterController owner;
+
     [Header("Cast")]
     [SerializeField] private float castTime = .8f;
 
@@ -23,6 +23,9 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
 
     private void Awake()
     {
+        if (owner == null)
+            owner = GetComponent<MonsterController>();
+
         if (bodySrdr == null)
             bodySrdr = GetComponentInChildren<SpriteRenderer>();
     }
@@ -34,18 +37,6 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         target = null;
     }
 
-    public void Execute(MonsterController ctx)
-    {
-        if (ctx == null || casting)
-            return;
-
-        target = ctx.Target;
-        if (target == null || !target.IsAlive)
-            return;
-
-        casting = true;
-        _castRoutine = ctx.StartCoroutine(CastAndExplode(ctx));
-    }
 
     private IEnumerator CastAndExplode(MonsterController ctx)
     {
@@ -106,5 +97,30 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         casting = false;
         ResetVisual();
         target = null;
+    }
+
+    public bool CanAttack()
+    {
+        if (owner == null || owner.Health.IsDead)
+            return false;
+
+        if (!owner.IsTargetInAttackRange())
+            return false;
+
+        return true;
+    }
+
+    public bool TryAttack(UnitRuntime target)
+    {
+        if (!CanAttack())
+            return false;
+
+        if (target == null || !target.IsAlive)
+            return false;
+
+        casting = true;
+        _castRoutine = owner.StartCoroutine(CastAndExplode(owner));
+
+        return true;
     }
 }

@@ -163,7 +163,7 @@ public class MonsterController : MonoBehaviour, IPoolable
             return;
 
         FaceTarget();
-        attackBehavior?.Execute(this);
+        attackBehavior?.TryAttack(Target);
     }
 
     public void FaceTarget()

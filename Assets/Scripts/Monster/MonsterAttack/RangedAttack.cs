@@ -2,40 +2,57 @@ using UnityEngine;
 
 public class RangedAttack : MonoBehaviour, IMonsterAttack
 {
+    protected MonsterController owner;
+
     [Header("Projectile")]
     [SerializeField] private ArrowProjectile projectilePrefab;
     [SerializeField] private Transform firePoint;
 
     [Header("Attack")]
     [SerializeField] private float speed = 6f;
-    [SerializeField] private float flightTime = 0.6f;
-    [SerializeField] private float arcHeight = 1.2f;
-
-    [Header("Splash")]
-    [SerializeField] private float splashRadius = 0f;
     [SerializeField] private LayerMask targetLayer;
 
-    public void Execute(MonsterController ctx)
+    protected virtual void Awake()
     {
-        if (ctx == null)
-            return;
-
-        var target = ctx.Target;
-        if (target == null || !target.IsAlive)
-            return;
+        if (owner == null)
+            owner = GetComponent<MonsterController>();
 
         if (projectilePrefab == null)
         {
             Debug.LogWarning("Ranged Attack : bullet is null.");
             return;
         }
+    }
 
-        Vector3 start = firePoint != null ? firePoint.position : ctx.transform.position;
-        Vector3 end = target.transform.position;
+    public bool CanAttack()
+    {
+        if (owner == null || owner.Health.IsDead)
+            return false;
 
-        Vector2 dir = (end - start).normalized;
+        if (!owner.IsTargetInAttackRange())
+            return false;
 
-        var proj = Instantiate(projectilePrefab, start, Quaternion.identity); // Object Pool 연동
-        proj.Initialize(ctx.AtkDamage, speed, dir);
+        return true;
+    }
+
+    public bool TryAttack(UnitRuntime target)
+    {
+        if (target == null || target.IsDead)
+            return false;
+
+        if (!CanAttack())
+            return false;
+
+        owner.PlayAttack();
+
+        Vector3 spawnPos = firePoint.position;
+        Vector3 targetPos = target.transform.position;
+        Vector2 dir = (targetPos - spawnPos).normalized;
+
+        // TODO: Object Pool 연동
+        ArrowProjectile proj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+        proj.Initialize(owner.AtkDamage, speed, dir, targetLayer);
+
+        return true;
     }
 }
