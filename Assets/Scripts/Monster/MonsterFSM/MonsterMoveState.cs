@@ -5,7 +5,7 @@ public sealed class MonsterMoveState : IState
     private MonsterController owner;
     private MonsterFSM fsm;
 
-    private float _nextTickTime;
+    private float _nextRefreshTime;
     private float interval = .25f;
 
     public MonsterMoveState(MonsterController owner, MonsterFSM fsm)
@@ -16,68 +16,43 @@ public sealed class MonsterMoveState : IState
 
     public void Enter()
     {
-        _nextTickTime = Time.time;
+        owner.PlayMove();
+        owner.ResumeMovement();
 
-        if (owner.IsTargetValid(owner.TargetUnit))
-        {
-            Vector3 destination = owner.TargetUnit.transform.position;
-            owner.MoveTo(destination);
-        }
-        else
-        {
-            fsm.ChangeState(owner.idleState);
-        }
+        _nextRefreshTime = Time.time;
+
+        owner.MoveToTarget();
     }
 
 
     public void Update()
     {
-        if (Time.time < _nextTickTime)
-            return;
-
-        _nextTickTime = Time.time + interval;
-
-        if (!owner.IsTargetValid(owner.TargetUnit))
+        if (!owner.HasValidTarget())
         {
-            UnitRuntime newTarget = owner.FindClosestAliveUnit();
-
-            if (newTarget != null)
-            {
-                owner.SetTarget(newTarget);
-                owner.MoveTo(owner.TargetUnit.transform.position);
-            }
-            else
+            if (!owner.TryFindClosestAliveUnit())
             {
                 fsm.ChangeState(owner.idleState);
                 return;
             }
         }
 
-        UnitRuntime candidate = owner.FindClosestAliveUnit();
-        if (candidate != null && candidate != owner.TargetUnit)
-        {
-            owner.SetTarget(candidate);
-            owner.MoveTo(candidate.transform.position);
-        }
-
-        if (IsTargetInRange(owner.TargetUnit))
+        if(owner.IsTargetInAttackRange())
         {
             fsm.ChangeState(owner.attackState);
             return;
         }
 
+        if (Time.time >= _nextRefreshTime)
+        {
+            _nextRefreshTime = Time.time + interval;
+            owner.TryFindClosestAliveUnit();
+        }
     }
 
-    public void Exit() { }
-
-    private bool IsTargetInRange(UnitRuntime target)
+    public void Exit() 
     {
-        if (!owner.IsTargetValid(target))
-            return false;
-
-        float r = owner.AttackRange;
-        float d2 = (target.transform.position - owner.transform.position).sqrMagnitude;
-
-        return d2 <= r * r;
+        owner.StopMovement();
     }
+
+
 }

@@ -134,14 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36e08d0fa2ca99e46ac65ac950b63cf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterController
-  stats:
-    maxHp: 0
-    moveSpeed: 0
-    atkDamage: 0
-    atkRange: 0
-    atkCoolTime: 0
   navSampleRadius: 1
-  unitRoster: {fileID: 0}
   attackBehaviour: {fileID: 0}
 --- !u!114 &4173038608186531338
 MonoBehaviour:
@@ -165,6 +158,8 @@ GameObject:
   m_Component:
   - component: {fileID: 982547969679316628}
   - component: {fileID: 2540078424007288543}
+  - component: {fileID: 4277420300358080374}
+  - component: {fileID: 2462862775648873224}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -246,3 +241,39 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &4277420300358080374
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5829918057703837809}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2462862775648873224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5829918057703837809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bddb601f1e0834c4eade9165aee91229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ModelView
+  animator: {fileID: 4277420300358080374}
+  visualRoot: {fileID: 982547969679316628}

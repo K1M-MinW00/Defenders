@@ -18,10 +18,10 @@ public class MonsterIdleState : IState
     public void Enter()
     {
         owner.StopMovement();
+        owner.ClearTarget();
+        owner.PlayIdle();
 
         _nextAcquireTime = Time.time;
-
-        // TODO : 애니메이션 세팅
     }
 
     public void Update()
@@ -31,16 +31,10 @@ public class MonsterIdleState : IState
 
         _nextAcquireTime = Time.time + interval;
 
-        UnitRuntime newTarget = owner.FindClosestAliveUnit();
-        if(newTarget != null)
-        {
-            owner.SetTarget(newTarget);
+        if (owner.TryFindClosestAliveUnit())
             fsm.ChangeState(owner.moveState);
-        }
+        
     }
 
-    public void Exit()
-    {
-
-    }
+    public void Exit() { }
 }

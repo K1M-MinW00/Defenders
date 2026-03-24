@@ -7,17 +7,11 @@ public class MeleeAttack : MonoBehaviour, IMonsterAttack
         if (ctx == null)
             return;
 
-        var target = ctx.TargetUnit;
 
-        if(target == null || !target.IsAlive)
-                return;
-
-        float range = ctx.AttackRange;
-        float sqr = (target.transform.position - ctx.transform.position).sqrMagnitude;
-
-        if (sqr > range * range)
+        if (!ctx.IsTargetInAttackRange())
             return;
 
-        target.TakeDamage(ctx.AtkDamage);
+        ctx.PlayAttack();
+        ctx.Target.TakeDamage(ctx.AtkDamage);
     }
 }

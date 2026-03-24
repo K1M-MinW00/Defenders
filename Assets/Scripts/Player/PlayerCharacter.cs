@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class PlayerCharacter : MonoBehaviour
 {
     [Header("References")]
-    private UnitView view;
+    private ModelView view;
     private RangeSensor rangeSensor;
     private MonsterSpawner monsterSpawner;
 
@@ -43,7 +43,7 @@ public class PlayerCharacter : MonoBehaviour
         runtime = GetComponent<UnitRuntime>();
 
         if (view == null)
-            view = GetComponentInChildren<UnitView>();
+            view = GetComponentInChildren<ModelView>();
 
         if (rangeSensor == null)
             rangeSensor = GetComponentInChildren<RangeSensor>(true);
@@ -169,9 +169,6 @@ public class PlayerCharacter : MonoBehaviour
 
     public void ResumeMovement()
     {
-        if (agent == null || agent.enabled == true)
-            return;
-
         agent.enabled = true;
         agent.isStopped = false;
     }
@@ -265,6 +262,7 @@ public class PlayerCharacter : MonoBehaviour
 
         Target = closest;
     }
+
     public void EngageRequest()
     {
         if (runtime == null || !runtime.IsAlive)
@@ -286,118 +284,8 @@ public class PlayerCharacter : MonoBehaviour
         }
     }
 
-
-    public void FaceTo(Vector3 targetPos)
-    {
-        view?.FaceTo(transform.position, targetPos);
-    }
-
     public Vector2 GetFacingDirection()
     {
         return view != null ? view.GetFacingDirection() : Vector2.right;
     }
-
-#if UNITY_EDITOR
-    [Header("Debug Gizmos")]
-    [SerializeField] private bool drawGizmos = true;
-    [SerializeField] private bool drawAttackRange = true;
-    [SerializeField] private bool drawTargetLine = true;
-    [SerializeField] private bool drawNavMeshPath = true;
-    [SerializeField] private bool drawStateLabel = true;
-    [SerializeField] private float cornerSphereRadius = 0.08f;
-
-    private void OnDrawGizmosSelected()
-    {
-        if (!drawGizmos)
-            return;
-
-        if (!Application.isPlaying)
-            return;
-
-        if (agent == null)
-            agent = GetComponent<NavMeshAgent>();
-
-        if (drawAttackRange)
-            DrawAttackRange();
-
-        if (drawTargetLine)
-            DrawTargetLine();
-
-        if (drawNavMeshPath)
-            DrawAgentPath();
-
-        if (drawStateLabel)
-            DrawStateLabel();
-    }
-
-    private void DrawAttackRange()
-    {
-        Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
-        Gizmos.DrawWireSphere(transform.position, runtime.FinalStats.attackRange);
-    }
-
-    private void DrawTargetLine()
-    {
-        if (Target == null)
-            return;
-
-        bool valid = HasValidTarget();
-        Gizmos.color = valid ? Color.red : Color.gray;
-
-        Gizmos.DrawLine(transform.position, Target.transform.position);
-
-        Gizmos.color = valid ? Color.yellow : Color.gray;
-        Gizmos.DrawWireSphere(Target.transform.position, 0.25f);
-    }
-
-    private void DrawAgentPath()
-    {
-        if (agent == null)
-            return;
-
-        if (!agent.hasPath)
-            return;
-
-        var path = agent.path;
-        if (path == null || path.corners == null || path.corners.Length < 2)
-            return;
-
-        switch (agent.pathStatus)
-        {
-            case NavMeshPathStatus.PathComplete:
-                Gizmos.color = Color.cyan;
-                break;
-            case NavMeshPathStatus.PathPartial:
-                Gizmos.color = Color.yellow;
-                break;
-            case NavMeshPathStatus.PathInvalid:
-                Gizmos.color = Color.red;
-                break;
-        }
-
-        for (int i = 0; i < path.corners.Length - 1; i++)
-            Gizmos.DrawLine(path.corners[i], path.corners[i + 1]);
-
-        Gizmos.color = Color.blue;
-        for (int i = 0; i < path.corners.Length; i++)
-            Gizmos.DrawSphere(path.corners[i], cornerSphereRadius);
-    }
-
-    private void DrawStateLabel()
-    {
-        string stateName = "Unknown";
-        try
-        {
-            var curState = fsm?.CurrentState;
-            if (curState != null)
-                stateName = curState.GetType().Name;
-        }
-        catch { /* ignore */ }
-
-        Handles.color = Color.white;
-        Handles.Label(transform.position + Vector3.up * 0.8f, $"State: {stateName}\nTarget: {(Target ? Target.name : "None")}");
-    }
-
-#endif
-
 }

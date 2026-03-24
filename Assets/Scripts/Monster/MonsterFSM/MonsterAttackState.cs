@@ -6,8 +6,6 @@ public class MonsterAttackState : IState
     private MonsterFSM fsm;
 
     private float _nextAttackTime;
-    private float _nextCheckTime;
-    private float checkInterval = .1f;
 
     public MonsterAttackState(MonsterController owner, MonsterFSM fsm)
     {
@@ -18,34 +16,23 @@ public class MonsterAttackState : IState
     public void Enter()
     {
         owner.StopMovement();
+        owner.PlayIdle();
 
         _nextAttackTime = Time.time;
-        _nextCheckTime = Time.time;
     }
 
     public void Update()
     {
-        if (Time.time < _nextCheckTime)
-            return;
-
-        _nextCheckTime = Time.time + checkInterval;
-
-        if(!owner.IsTargetValid(owner.TargetUnit))
+        if(!owner.HasValidTarget())
         {
-            UnitRuntime newTarget = owner.TargetUnit;
-            if (newTarget != null)
+            if (!owner.TryFindClosestAliveUnit())
             {
-                owner.SetTarget(newTarget);
                 fsm.ChangeState(owner.moveState);
+                return;
             }
-            else
-            {
-                fsm.ChangeState(owner.idleState);
-            }
-            return;
         }
 
-        if(!IsTargetInRange(owner.TargetUnit))
+        if(!owner.IsTargetInAttackRange())
         {
             fsm.ChangeState(owner.moveState);
             return;
@@ -54,22 +41,11 @@ public class MonsterAttackState : IState
         if (Time.time < _nextAttackTime)
             return;
 
-        if (owner.Attack != null)
-            owner.Attack.Execute(owner);
+        owner.TryAttackCurrentTarget();
 
         _nextAttackTime = Time.time + owner.AttackCooldown;
     }
 
     public void Exit() { }
 
-    private bool IsTargetInRange(UnitRuntime target)
-    {
-        if (!owner.IsTargetValid(target))
-            return false;
-
-        float r = owner.AttackRange;
-        float d2 = (target.transform.position - owner.transform.position).sqrMagnitude;
-
-        return d2 <= r * r;
-    }
 }

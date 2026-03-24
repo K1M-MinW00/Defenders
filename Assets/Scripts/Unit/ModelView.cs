@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class UnitView : MonoBehaviour
+public class ModelView : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private Transform visualRoot;

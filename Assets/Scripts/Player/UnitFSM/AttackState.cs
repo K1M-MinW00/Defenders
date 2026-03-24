@@ -23,7 +23,6 @@ public class AttackState : IState
         {
             if (!owner.TryFindTargetInSensor())
             {
-                owner.ClearTarget();
                 fsm.ChangeState(owner.idleState);
                 return;
             }

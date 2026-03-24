@@ -20,7 +20,7 @@ public class RangedAttack : MonoBehaviour, IMonsterAttack
         if (ctx == null)
             return;
 
-        var target = ctx.TargetUnit;
+        var target = ctx.Target;
         if (target == null || !target.IsAlive)
             return;
 

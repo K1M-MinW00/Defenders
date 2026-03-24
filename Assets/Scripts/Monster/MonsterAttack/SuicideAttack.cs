@@ -39,7 +39,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         if (ctx == null || casting)
             return;
 
-        target = ctx.TargetUnit;
+        target = ctx.Target;
         if (target == null || !target.IsAlive)
             return;
 

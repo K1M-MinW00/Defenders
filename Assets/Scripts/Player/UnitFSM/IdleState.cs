@@ -17,7 +17,7 @@ public class IdleState : IState
         owner.StopMovement();
         owner.ClearTarget();
         owner.PlayIdle();
-        _nextRefreshTime = 0f;
+        _nextRefreshTime = Time.time;
     }
 
     public void Update()

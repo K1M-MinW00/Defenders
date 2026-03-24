@@ -6,28 +6,23 @@ using UnityEngine.AI;
 [RequireComponent(typeof(MonsterHealth))]
 public class MonsterController : MonoBehaviour, IPoolable
 {
-    public MonsterDataSO Data { get; private set; }
-    public MonsterStats FinalStats {  get; private set; }
-
-    [Header("AI")]
-    [SerializeField] private float navSampleRadius = 1.0f;
-
     [Header("References")]
+    private ModelView view;
     private UnitRoster unitRoster;
-    [SerializeField] private MonoBehaviour attackBehaviour;
+    private IMonsterAttack attackBehavior;
+
+    public MonsterDataSO Data { get; private set; }
+    public MonsterStats FinalStats { get; private set; }
 
     public NavMeshAgent Agent { get; private set; }
-    public UnitRuntime TargetUnit { get; private set; }
-    public IMonsterAttack Attack { get; private set; }
+    public UnitRuntime Target { get; private set; }
     public MonsterHealth Health { get; private set; }
 
     public float AttackRange => FinalStats.atkRange;
     public float AttackCooldown => 1f / FinalStats.atkPerSec;
     public float AtkDamage => FinalStats.atkDamage;
-
-    private string poolKey;
     public string PoolKey => poolKey;
-
+    private string poolKey;
 
     public void SetPoolKey(string key) => poolKey = key;
 
@@ -41,16 +36,18 @@ public class MonsterController : MonoBehaviour, IPoolable
     private void Awake()
     {
         Agent = GetComponent<NavMeshAgent>();
-        Agent.updateRotation = false;
-        Agent.updateUpAxis = false;
 
-        Attack = attackBehaviour as IMonsterAttack;
+        if (view == null)
+            view = GetComponentInChildren<ModelView>();
 
-        if (Attack == null)
-            Attack = GetComponent<IMonsterAttack>();
+        if (attackBehavior == null)
+            attackBehavior = GetComponent<IMonsterAttack>();
 
         Health = GetComponent<MonsterHealth>();
         Health.OnDead += HandleDead;
+
+        Agent.updateRotation = false;
+        Agent.updateUpAxis = false;
 
         fsm = new MonsterFSM();
         moveState = new MonsterMoveState(this, fsm);
@@ -62,10 +59,9 @@ public class MonsterController : MonoBehaviour, IPoolable
     {
         Data = data;
         FinalStats = data.Stats;
-        Health.Initialize(FinalStats);
         this.unitRoster = unitRoster;
 
-        fsm.ChangeState(idleState);
+        ApplyStats();
     }
 
     private void Update()
@@ -79,18 +75,13 @@ public class MonsterController : MonoBehaviour, IPoolable
     public void OnSpawn()
     {
         ApplyStats();
-
-        TargetUnit = null;
-
-        Agent.isStopped = false;
-        Agent.ResetPath();
+        fsm.ChangeState(idleState);
     }
 
     public void OnDespawn()
     {
-        TargetUnit = null;
-        Agent.ResetPath();
-        Agent.isStopped = true;
+        Target = null;
+        StopMovement();
     }
 
     private void ApplyStats()
@@ -98,44 +89,56 @@ public class MonsterController : MonoBehaviour, IPoolable
         if (FinalStats == null)
             return;
 
+        Health.Initialize(FinalStats);
         Agent.speed = FinalStats.moveSpeed;
-
-        // TODO : 공격 관련 Attack Behaviour 에서 stats 참조하여 적용
     }
 
 
     private void HandleDead(MonsterHealth health)
     {
+        ClearTarget();
         StopMovement();
         OnDead?.Invoke(this);
     }
 
 
     // --- Targeting / Movement Helpers ---
-    public bool IsTargetValid(UnitRuntime u) => u != null && u.IsAlive;
-
-    public void SetTarget(UnitRuntime newTarget) => TargetUnit = newTarget;
-
-    public UnitRuntime FindClosestAliveUnit()
-    {
-        if (unitRoster == null)
-        {
-            Debug.LogWarning("UnitRoster Null");
-            return null;
-        }
-
-        return unitRoster.FindClosestAlive(transform.position);
+    public void ClearTarget() => Target = null;
+    public void SetTarget(UnitRuntime newTarget) => Target = newTarget;
+    public bool HasValidTarget()
+    { 
+        return Target != null && Target.IsAlive;
     }
 
-    public void MoveTo(Vector3 targetPos)
+    public bool TryFindClosestAliveUnit()
     {
-        if (Agent.isStopped)
-            Agent.isStopped = false;
-
-        if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, navSampleRadius, NavMesh.AllAreas))
-            Agent.SetDestination(hit.position);
+        UnitRuntime closest = unitRoster.FindClosestAlive(transform.position);
+        SetTarget(closest);
+        return HasValidTarget();
     }
 
+    public void MoveTo(Vector3 dest)
+    {
+        if (Agent == null || !Agent.enabled)
+            return;
+
+        ResumeMovement();
+        Agent.SetDestination(dest);
+    }
+
+    public void MoveToTarget()
+    {
+        if (!HasValidTarget())
+            return;
+        FaceTarget();
+        MoveTo(Target.transform.position);
+    }
+
+    public void ResumeMovement()
+    {
+        Agent.enabled = true;
+        Agent.isStopped = false;
+    }
     public void StopMovement()
     {
         Agent.isStopped = true;
@@ -143,57 +146,35 @@ public class MonsterController : MonoBehaviour, IPoolable
         Agent.ResetPath();
     }
 
-    // TODO : 기즈모 따로 분리
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
+    public bool IsTargetInAttackRange()
     {
-        if (!Application.isPlaying)
-            return;
+        if (!HasValidTarget())
+            return false;
 
-        if (Agent == null)
-            return;
+        float distSqr = (Target.transform.position - transform.position).sqrMagnitude;
+        float range = AttackRange;
 
-        DrawNavMeshPath();
-        DrawTargetGizmo();
+        return distSqr <= range * range;
     }
 
-    private void DrawNavMeshPath()
+    public void TryAttackCurrentTarget()
     {
-        if (!Agent.hasPath)
+        if (!HasValidTarget())
             return;
 
-        NavMeshPath path = Agent.path;
-        if (path == null || path.corners.Length < 2)
-            return;
-
-        Gizmos.color = Color.cyan;
-
-        for (int i = 0; i < path.corners.Length - 1; i++)
-        {
-            Gizmos.DrawLine(path.corners[i], path.corners[i + 1]);
-        }
-
-        // 코너 포인트 표시
-        Gizmos.color = Color.blue;
-        foreach (var corner in path.corners)
-        {
-            Gizmos.DrawSphere(corner, 0.1f);
-        }
+        FaceTarget();
+        attackBehavior?.Execute(this);
     }
 
-    private void DrawTargetGizmo()
+    public void FaceTarget()
     {
-        if (TargetUnit == null)
+        if (!HasValidTarget())
             return;
 
-        // 타겟 라인
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, TargetUnit.transform.position);
-
-        // 공격 사거리
-        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
-        Gizmos.DrawWireSphere(transform.position, AttackRange);
+        view?.FaceTo(transform.position, Target.transform.position);
     }
 
-#endif
+    public void PlayIdle() => view?.PlayIdle();
+    public void PlayMove() => view?.PlayMove();
+    public void PlayAttack() => view?.PlayAttack();
 }

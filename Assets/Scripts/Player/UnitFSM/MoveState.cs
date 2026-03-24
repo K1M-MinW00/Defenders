@@ -16,8 +16,7 @@ public class MoveState : IState
     {
         owner.PlayMove();
         owner.ResumeMovement();
-
-        _nextRefreshTime = 0f;
+        _nextRefreshTime = Time.time;
     }
 
     public void Update()
@@ -26,7 +25,6 @@ public class MoveState : IState
         {
             if (!owner.TryFindTargetInSensor())
             {
-                owner.ClearTarget();
                 fsm.ChangeState(owner.idleState);
                 return;
             }
