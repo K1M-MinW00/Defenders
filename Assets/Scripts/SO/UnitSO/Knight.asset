@@ -16,12 +16,75 @@ MonoBehaviour:
   displayName: Knight
   icon: {fileID: -5711848221618334454, guid: b9494408acf6cbe41b220706a5875ca9, type: 3}
   unitPrefab: {fileID: 8701186199276537277, guid: 3853f4a0cc9151443b2cdbad6f3aa303, type: 3}
+  passiveSkill: {fileID: 0}
+  activeSkill: {fileID: 11400000, guid: 7c980074a44403d4aa62e922e816ed22, type: 2}
   baseStats:
-    maxHp: 100
-    maxMp: 100
-    speed: 4
-    atk: 10
-    def: 5
-    attackRange: 2
-    detectRange: 10
-    attackPerSec: 4
+    Attack: 88
+    MaxHp: 100
+    AttackPerSec: 3
+    CritChance: 0
+    EnergyRecovery: 10
+    DetectRange: 4
+  attackGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hpGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  starAttackMultipliers:
+  - 1
+  - 1.2
+  - 1.5
+  - 2
+  starHpMultipliers:
+  - 1
+  - 1.2
+  - 1.5
+  - 2
+  starDetectRangeMultipliers:
+  - 1
+  - 1.5
+  - 1.75
+  - 2

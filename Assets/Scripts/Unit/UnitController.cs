@@ -16,8 +16,7 @@ public class UnitController : MonoBehaviour, IDamageable
     [SerializeField] private RangeSensor rangeSensor;
     [SerializeField] private UnitRangeIndicator rangeIndicator;
 
-   //  [SerializeField] private UnitSkillController skillController;
-    [SerializeField] private MonoBehaviour attackBehaviorSource;
+    [SerializeField] private UnitSkillController skillController;
 
     private IAttackBehavior attackBehavior;
     private MonsterSpawner monsterSpawner;
@@ -27,7 +26,6 @@ public class UnitController : MonoBehaviour, IDamageable
 
     [Header("Combat")]
     [SerializeField] private float targetRefreshInterval = 0.2f;
-    public float TargetRefreshInterval => targetRefreshInterval;
 
     [Header("FSM")]
     private UnitFSM fsm;
@@ -37,7 +35,9 @@ public class UnitController : MonoBehaviour, IDamageable
     public SkillState skillState;
     public DeadState deadState;
 
+    #region Property
     public MonsterController Target { get; private set; }
+    public float TargetRefreshInterval => targetRefreshInterval;
 
     public UnitDataSO UnitData => unitData;
     public StageUnitRuntime Runtime => runtime;
@@ -70,6 +70,8 @@ public class UnitController : MonoBehaviour, IDamageable
     public bool PassiveTier3Unlocked => runtime != null && runtime.PassiveTier3Unlocked;
     public bool ActiveTier4Unlocked => runtime != null && runtime.ActiveTier4Unlocked;
 
+    #endregion Property
+
     public event Action<UnitController> OnInitialized;
     public event Action<UnitController> OnStatsChanged;
     public event Action<UnitController, float, float> OnHpChanged;
@@ -87,11 +89,11 @@ public class UnitController : MonoBehaviour, IDamageable
         if (rangeSensor == null)
             rangeSensor = GetComponentInChildren<RangeSensor>();
 
-        if (attackBehaviorSource != null)
-            attackBehavior = attackBehaviorSource as IAttackBehavior;
-
         if (attackBehavior == null)
             attackBehavior = GetComponent<IAttackBehavior>();
+
+        if(skillController == null)
+            skillController = GetComponent<UnitSkillController>();
 
         if (agent != null)
         {
@@ -135,8 +137,7 @@ public class UnitController : MonoBehaviour, IDamageable
         RecalculateStats(resetHp: true);
         RestoreForPrepare();
 
-        // TODO : SKILL CONTROLLER
-        // skillController?.Initialize(this);
+        skillController?.Initialize(this);
 
         OnInitialized?.Invoke(this);
         OnStatsChanged?.Invoke(this);
@@ -154,6 +155,7 @@ public class UnitController : MonoBehaviour, IDamageable
 
         AddEnergy(EnergyRecovery * Time.deltaTime);
     }
+
 
     public void RecalculateStats(bool resetHp = false)
     {
@@ -246,10 +248,16 @@ public class UnitController : MonoBehaviour, IDamageable
 
     public void AddEnergy(float amount)
     {
-        if (runtime == null || IsDead || !CanRecoverEnergy || amount <= 0f)
+        if (runtime == null || amount <= 0f)
             return;
 
         runtime.CurrentEnergy = Mathf.Clamp(runtime.CurrentEnergy + amount, 0f, runtime.MaxEnergy);
+        
+        if(CurrentEnergy == MaxEnergy)
+        {
+            fsm.ChangeState(skillState);
+        }
+
         OnEnergyChanged?.Invoke(this);
     }
 
@@ -359,6 +367,16 @@ public class UnitController : MonoBehaviour, IDamageable
         view?.FaceTo(transform.position, Target.transform.position);
     }
 
+    public Vector2 GetAttackDirection()
+    {
+        if (Target != null && !Target.Health.IsDead)
+        {
+            Vector2 dirToTarget = ((Vector2)Target.transform.position - (Vector2)transform.position);
+            return dirToTarget.normalized;
+        }
+        return GetFacingDirection();
+    }
+
     public void SetTarget(MonsterController target) => Target = target;
     public void ClearTarget() => Target = null;
 
@@ -466,4 +484,27 @@ public class UnitController : MonoBehaviour, IDamageable
     {
         rangeIndicator?.Hide();
     }
+
+    #region SkillController
+    public void OnBeginActiveSkill()
+    {
+        skillController?.BeginActiveSkill();
+    }
+
+    public void OnActiveSkillHit()
+    {
+        skillController?.OnActiveSkillHit();
+    }
+
+    public void OnEndActiveSkill()
+    {
+        skillController?.EndActiveSkill();
+
+        if (HasValidTarget())
+            fsm.ChangeState(attackState);
+        else
+            fsm.ChangeState(idleState);
+
+    }
+    #endregion SkillController
 }

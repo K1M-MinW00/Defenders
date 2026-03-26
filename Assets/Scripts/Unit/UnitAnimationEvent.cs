@@ -3,38 +3,30 @@ using UnityEngine;
 public class UnitAnimationEvent : MonoBehaviour
 {
     private IAttackBehavior attackBehavior;
-    private MeleeAttackBehavior meleeAttackBehavior;
-    private RangedAttackBehavior rangedAttacKBehavior;
+    private UnitController unitController;
 
     private void Awake()
     {
         attackBehavior = GetComponentInParent<IAttackBehavior>();
+        unitController = GetComponentInParent<UnitController>();
     }
 
     public void OnAttackHit()
     {
-        if (attackBehavior != null)
-        {
-            meleeAttackBehavior = attackBehavior as MeleeAttackBehavior;
-            meleeAttackBehavior?.OnAttackHit();
-        }
-    }
-
-    public void OnAttackCast()
-    {
-        if (attackBehavior != null)
-        {
-            rangedAttacKBehavior = attackBehavior as RangedAttackBehavior;
-            rangedAttacKBehavior?.OnAttackCast();
-        }
+        attackBehavior?.OnAttackHit();
     }
 
     public void OnAttackFinished()
     {
-        if (meleeAttackBehavior != null)
-            meleeAttackBehavior.OnAttackFinished();
+        attackBehavior?.OnAttackFinished();
+    }
+    public void OnSkillHit()
+    {
+        unitController?.OnActiveSkillHit();
+    }
 
-        if (rangedAttacKBehavior != null)
-            rangedAttacKBehavior.OnAttackFinished();
+    public void OnSkillFinished()
+    {
+        unitController?.OnEndActiveSkill();
     }
 }

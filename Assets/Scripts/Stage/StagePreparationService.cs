@@ -54,13 +54,8 @@ public class StagePreparationService : MonoBehaviour
         if (!isPrepareMode || unit == null)
             return false;
 
-        var runtime = unit.GetComponent<UnitController>();
-
-        if (runtime == null)
-            return false;
-
-        unitRoster?.Unregister(runtime);
-        EconomyManager.Instance.SellUnit(runtime.Star);
+        unitRoster?.Unregister(unit);
+        EconomyManager.Instance.SellUnit(unit.Star);
         Destroy(unit.gameObject);
 
         return true;
@@ -71,14 +66,10 @@ public class StagePreparationService : MonoBehaviour
         if (!isPrepareMode || unit == null)
             return false;
 
-        var runtime = unit.GetComponent<UnitController>();
-        if (runtime == null)
-            return false;
-
         if (!EconomyManager.Instance.TryReroll())
             return false;
 
-        unitRoster?.Unregister(runtime);
+        unitRoster?.Unregister(unit);
         Destroy(unit.gameObject);
 
         unitSummoner.SummonRandomUnit();

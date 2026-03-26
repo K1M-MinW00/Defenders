@@ -11,10 +11,8 @@ public class SkillState : IState
 
     public void Enter()
     {
-        owner.StopMovement();
         owner.CancelAttack();
-
-        owner.PlayIdle();
+        owner.PlaySkill();
     }
 
 
@@ -22,5 +20,8 @@ public class SkillState : IState
     {
         
     }
-    public void Exit() { }
+    public void Exit()
+    {
+
+    }
 }

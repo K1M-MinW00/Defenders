@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 9166940152275570120}
   - component: {fileID: 1063986456745519864}
   - component: {fileID: 4470774158927102257}
+  - component: {fileID: 3992691419751906388}
   m_Layer: 7
   m_Name: Unit_Base
   m_TagString: Player
@@ -279,8 +280,21 @@ MonoBehaviour:
   view: {fileID: 3303460934689142555}
   rangeSensor: {fileID: 2085443474873524018}
   rangeIndicator: {fileID: 8571101271341991098}
-  attackBehaviorSource: {fileID: 0}
+  skillController: {fileID: 0}
   targetRefreshInterval: 0.2
+--- !u!114 &3992691419751906388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344609166725255392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d453f7ebc42a92f48a9b5bb2ee2a91bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitSkillController
+  owner: {fileID: 0}
 --- !u!1 &2774387734849985176
 GameObject:
   m_ObjectHideFlags: 0

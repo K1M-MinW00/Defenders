@@ -13,9 +13,6 @@ public class Cleave_SkillData : ActiveSkillDataSO
     public float baseDamageMultiplier = 1.5f;
     public float promDamageMultiplier = 2f;
 
-    [Header("")]
-    public float damageMultiplier = .5f;
-
     public override IActiveSkill CreateRuntimeSkill()
     {
         return new Cleave_Skill();

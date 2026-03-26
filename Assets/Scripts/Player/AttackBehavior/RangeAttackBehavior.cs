@@ -54,7 +54,7 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
         return true;
     }
 
-    public abstract void OnAttackCast();
+    public abstract void OnAttackHit();
 
     public virtual void OnAttackFinished()
     {

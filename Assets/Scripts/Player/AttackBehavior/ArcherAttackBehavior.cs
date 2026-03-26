@@ -8,7 +8,7 @@ public class ArcherAttackBehavior : RangedAttackBehavior
     [SerializeField] private ArrowProjectile arrowPrefab;
     [SerializeField] private float projectileSpeed = 8f;
 
-    public override void OnAttackCast()
+    public override void OnAttackHit()
     {
         if (!isAttacking)
             return;

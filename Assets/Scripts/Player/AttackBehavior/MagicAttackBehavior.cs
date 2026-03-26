@@ -6,7 +6,7 @@ public class MagicAttackBehavior : RangedAttackBehavior
     [Header("Magic")]
     [SerializeField] private MagicImpact magicPrefab;
 
-    public override void OnAttackCast()
+    public override void OnAttackHit()
     {
         if (!IsAttacking)
             return;

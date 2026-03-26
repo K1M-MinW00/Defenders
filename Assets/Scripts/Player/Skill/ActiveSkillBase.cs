@@ -1,51 +1,37 @@
-﻿using UnityEditor.MPE;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class ActiveSkillBase : MonoBehaviour, IActiveSkill
 {
     protected UnitController owner;
     protected ActiveSkillDataSO data;
-    protected int promotionLevel;
 
-    protected bool isUsingSkill;
-    public bool IsUsingSkill => isUsingSkill;
+    protected bool ActiveTier2Unlocked;
+    protected bool ActiveTier4Unlocked;
 
-    public virtual void Initialize(UnitController owner, ActiveSkillDataSO data, int promotionLevel)
+
+    public virtual void Initialize(UnitController owner, ActiveSkillDataSO data)
     {
         this.owner = owner;
         this.data = data;
-        this.promotionLevel = promotionLevel;
+
+        ActiveTier2Unlocked = owner.ActiveTier2Unlocked;
+        ActiveTier4Unlocked = owner.ActiveTier4Unlocked;
     }
 
     public virtual bool CanUseSkill()
     {
-        if (owner == null || owner.IsDead)
-            return false;
-
-        if (isUsingSkill)
+        if (owner == null || data == null || owner.IsDead)
             return false;
 
         return true;
     }
 
-    public virtual void BeginSkill()
-    {
-        isUsingSkill = true;
-        owner.PlaySkill();
-    }
-
-
-    public virtual void CancelSkill()
-    {
-        if (!isUsingSkill)
-            return;
-
-        isUsingSkill = false;
-    }
+    public virtual void BeginSkill() { }
+    public virtual void CancelSkill() { }
 
     public virtual void EndSkill()
     {
-        isUsingSkill = false;
+        owner.ConsumeAllEnergy();
     }
 
     public abstract void OnSkillHit();
