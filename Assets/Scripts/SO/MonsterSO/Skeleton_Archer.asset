@@ -19,5 +19,5 @@ MonoBehaviour:
     maxHp: 30
     moveSpeed: 3
     atkDamage: 10
-    atkRange: 6
+    atkRange: 4
     atkPerSec: 1

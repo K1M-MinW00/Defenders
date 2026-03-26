@@ -13,7 +13,7 @@ public class UnitRuntime : MonoBehaviour, IDamageable
 
     public bool IsDead { get; private set; }
     public bool IsAlive => !IsDead;
-    public bool IsEnergyFull => CurrentMp >= FinalStats.maxMp;
+    // public bool IsEnergyFull => CurrentMp >= FinalStats.maxMp;
 
     public event Action<UnitRuntime> OnInitialized;
     public event Action<UnitRuntime> OnStatsChanged;
@@ -40,9 +40,9 @@ public class UnitRuntime : MonoBehaviour, IDamageable
         Star++;
         RecalculateStats();
 
-        MaxHp = FinalStats.maxHp;
-        CurrentHp = Mathf.Min(CurrentHp, FinalStats.maxHp);
-        CurrentMp = Mathf.Min(CurrentMp, FinalStats.maxMp);
+        //MaxHp = FinalStats.maxHp;
+        CurrentHp = Mathf.Min(CurrentHp, FinalStats.MaxHp);
+        //CurrentMp = Mathf.Min(CurrentMp, FinalStats.maxMp);
 
         OnStatsChanged?.Invoke(this);
         OnHpChanged?.Invoke(this, CurrentHp, MaxHp);
@@ -67,7 +67,7 @@ public class UnitRuntime : MonoBehaviour, IDamageable
         if (IsDead || amount <= 0f)
             return;
 
-        float nextHp = Mathf.Min(FinalStats.maxHp, CurrentHp + amount);
+        float nextHp = Mathf.Min(FinalStats.MaxHp, CurrentHp + amount);
 
         if (Mathf.Approximately(nextHp, CurrentHp))
             return;
@@ -81,11 +81,11 @@ public class UnitRuntime : MonoBehaviour, IDamageable
         if (IsDead || amount <= 0f)
             return;
 
-        float nextMp = Mathf.Min(FinalStats.maxMp, CurrentMp + amount);
-        if (Mathf.Approximately(nextMp, CurrentMp))
-            return;
+        //float nextMp = Mathf.Min(FinalStats.maxMp, CurrentMp + amount);
+        //if (Mathf.Approximately(nextMp, CurrentMp))
+            //return;
 
-        CurrentMp = nextMp;
+        //CurrentMp = nextMp;
         OnMpChanged?.Invoke(this);
     }
 
@@ -99,8 +99,8 @@ public class UnitRuntime : MonoBehaviour, IDamageable
     {
         IsDead = false;
 
-        MaxHp = FinalStats.maxHp;
-        CurrentHp = FinalStats.maxHp;
+        MaxHp = FinalStats.MaxHp;
+        CurrentHp = FinalStats.MaxHp;
         CurrentMp = 0f;
 
         OnStatsChanged?.Invoke(this);

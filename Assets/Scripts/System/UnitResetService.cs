@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 public class UnitResetService : MonoBehaviour
 {
-    private readonly Dictionary<UnitRuntime, Vector3> preWavePositions = new();
+    private readonly Dictionary<UnitController, Vector3> preWavePositions = new();
 
     public void CapturePreWavePositions(UnitRoster roster)
     {

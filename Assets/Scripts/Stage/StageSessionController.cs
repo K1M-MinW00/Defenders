@@ -122,12 +122,12 @@ public class StageSessionController : MonoBehaviour
         preparationService.TryIncreasePopulation();
     }
 
-    public void RequestSellUnit(PlayerCharacter unit)
+    public void RequestSellUnit(UnitController unit)
     {
         preparationService.TrySellUnit(unit);
     }
 
-    public void RequestRerollUnit(PlayerCharacter unit)
+    public void RequestRerollUnit(UnitController unit)
     {
         preparationService.TryRerollUnit(unit);
     }

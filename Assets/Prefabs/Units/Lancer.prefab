@@ -32,6 +32,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 1.8
       objectReference: {fileID: 0}
+    - target: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: attackBehaviorSource
+      value: 
+      objectReference: {fileID: 2926321029953996352}
     - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Controller
       value: 
@@ -88,17 +92,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2926321029953996352}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
---- !u!114 &3745464760522158402 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7147645447795392600, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
-  m_PrefabInstance: {fileID: 5821775465142219034}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6053776636646679034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
 --- !u!1 &6053776636646679034 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
@@ -116,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 3745464760522158402}
+  owner: {fileID: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -124,7 +117,5 @@ MonoBehaviour:
   spawnOffset: 0.6
   projectileSpeed: 8
   projectileLifeTime: 1
-  pierceCount: 1
   projectileRadius: 0.35
   maxTravelDistance: 3
-  forwardOffset: 0.8

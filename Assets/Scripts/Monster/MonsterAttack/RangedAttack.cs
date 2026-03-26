@@ -35,7 +35,7 @@ public class RangedAttack : MonoBehaviour, IMonsterAttack
         return true;
     }
 
-    public bool TryAttack(UnitRuntime target)
+    public bool TryAttack(UnitController target)
     {
         if (target == null || target.IsDead)
             return false;

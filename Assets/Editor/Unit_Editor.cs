@@ -2,14 +2,14 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-[CustomEditor(typeof(PlayerCharacter))]
+[CustomEditor(typeof(UnitController))]
 public class Unit_Editor : Editor
 {
     private const float CornerRadius = 0.08f;
 
     private void OnSceneGUI()
     {
-        PlayerCharacter unit = (PlayerCharacter)target;
+        UnitController unit = (UnitController)target;
 
         if (unit == null)
             return;
@@ -23,18 +23,18 @@ public class Unit_Editor : Editor
         DrawStateLabel(unit);
     }
 
-    private void DrawAttackRange(PlayerCharacter unit)
+    private void DrawAttackRange(UnitController unit)
     {
         if (unit.Runtime == null)
             return;
 
-        float range = unit.Runtime.FinalStats.attackRange;
+        float range = unit.Runtime.FinalStats.DetectRange;
 
         Handles.color = new Color(0f, 1f, 0f, 0.15f);
         Handles.DrawWireDisc(unit.transform.position, Vector3.forward, range);
     }
 
-    private void DrawTargetLine(PlayerCharacter unit)
+    private void DrawTargetLine(UnitController unit)
     {
         if (unit.Target == null)
             return;
@@ -54,7 +54,7 @@ public class Unit_Editor : Editor
         );
     }
 
-    private void DrawNavMeshPath(PlayerCharacter unit)
+    private void DrawNavMeshPath(UnitController unit)
     {
         NavMeshAgent agent = unit.GetComponent<NavMeshAgent>();
 
@@ -90,13 +90,13 @@ public class Unit_Editor : Editor
         }
     }
 
-    private void DrawStateLabel(PlayerCharacter unit)
+    private void DrawStateLabel(UnitController unit)
     {
         string stateName = "Unknown";
 
         try
         {
-            var fsmField = typeof(PlayerCharacter).GetField("fsm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var fsmField = typeof(UnitController).GetField("fsm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var fsm = fsmField?.GetValue(unit);
 
             var currentStateProp = fsm?.GetType().GetProperty("CurrentState");

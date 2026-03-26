@@ -48,6 +48,5 @@ public class DropSpawnVFX2D : MonoBehaviour
         body.localPosition = endPos;
         body.localScale = endScale;
 
-        // TODO: 착지 파티클/사운드 트리거
     }
 }

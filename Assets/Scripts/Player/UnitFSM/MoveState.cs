@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class MoveState : IState
 {
-    private PlayerCharacter owner;
-    private PlayerFSM fsm;
+    private UnitController owner;
+    private UnitFSM fsm;
     private float _nextRefreshTime;
 
-    public MoveState(PlayerCharacter owner, PlayerFSM fsm)
+    public MoveState(UnitController owner, UnitFSM fsm)
     {
         this.owner = owner;
         this.fsm = fsm;

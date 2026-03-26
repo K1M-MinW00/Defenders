@@ -19,7 +19,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
     private bool casting;
     private Coroutine _castRoutine;
 
-    private UnitRuntime target;
+    private UnitController target;
 
     private void Awake()
     {
@@ -72,7 +72,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         
         for(int i=0;i<hits.Length;i++)
         {
-            var ui = hits[i].GetComponent<UnitRuntime>();
+            var ui = hits[i].GetComponent<UnitController>();
             if (ui == null || !ui.IsAlive)
                 continue;
 
@@ -110,7 +110,7 @@ public class SuicideAttack : MonoBehaviour, IMonsterAttack
         return true;
     }
 
-    public bool TryAttack(UnitRuntime target)
+    public bool TryAttack(UnitController target)
     {
         if (!CanAttack())
             return false;

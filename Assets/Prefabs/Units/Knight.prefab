@@ -44,6 +44,14 @@ PrefabInstance:
       propertyPath: animator
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: unitData
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: runtime.Star
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -132,17 +140,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2249854929904604421 stripped
+--- !u!114 &4756926970056463468 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7147645447795392600, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 8937567773063140701}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8701186199276537277}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
+  m_Script: {fileID: 11500000, guid: 5bb1c8876531b964797b514ce3c2c171, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
+  m_EditorClassIdentifier: Assembly-CSharp::UnitController
 --- !u!1 &8701186199276537277 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
@@ -160,7 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 2249854929904604421}
+  owner: {fileID: 4756926970056463468}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -168,7 +176,6 @@ MonoBehaviour:
   spawnOffset: 0.6
   projectileSpeed: 8
   projectileLifeTime: 0.8
-  pierceCount: 1
   projectileRadius: 0.35
   maxTravelDistance: 4
   forwardOffset: 0.8

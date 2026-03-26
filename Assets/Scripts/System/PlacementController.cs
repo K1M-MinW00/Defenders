@@ -13,7 +13,7 @@ public class PlacementController : MonoBehaviour
     [SerializeField] private LayerMask unitLayer; // PlayerUnit 레이어만 포함
 
     private bool placementEnabled;
-    public PlayerCharacter DraggingUnit { get;private set; }
+    public UnitController DraggingUnit { get;private set; }
     private Vector3 originalPos;
 
 
@@ -57,17 +57,18 @@ public class PlacementController : MonoBehaviour
         if (hit == null)
             return;
 
-        var unit = hit.GetComponent<PlayerCharacter>();
+        var unit = hit.GetComponent<UnitController>();
         if (unit == null)
             return;
 
         DraggingUnit = unit;
         DraggingUnit.StopMovement();
+        DraggingUnit.ShowRange();
         originalPos = unit.transform.position;
 
         int star = 1;
         
-        var inst = unit.GetComponent<UnitRuntime>();
+        var inst = unit.GetComponent<UnitController>();
 
         if (inst != null)
             star = inst.Star;
@@ -108,7 +109,7 @@ public class PlacementController : MonoBehaviour
         if (DraggingUnit == null)
             return;
 
-        var inst = DraggingUnit.GetComponent<UnitRuntime>();
+        var inst = DraggingUnit.GetComponent<UnitController>();
         int star = inst != null ? inst.Star : 1;
 
         switch (action)
@@ -132,6 +133,7 @@ public class PlacementController : MonoBehaviour
     private void FinishDrag()
     {
         DraggingUnit.ResumeMovement();
+        DraggingUnit.HideRange();
         DraggingUnit = null;
 
         stageUIController?.SetUnitDragMode(false);

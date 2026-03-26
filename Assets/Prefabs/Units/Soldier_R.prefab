@@ -126,17 +126,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6122405951272604593}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
---- !u!114 &2859761622892502535 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7147645447795392600, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
-  m_PrefabInstance: {fileID: 4944498985693159007}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4635945194083421887}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
 --- !u!1 &4635945194083421887 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
@@ -154,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ad8e807d3a65b544a713126464df6d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArcherAttackBehavior
-  owner: {fileID: 2859761622892502535}
+  owner: {fileID: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64

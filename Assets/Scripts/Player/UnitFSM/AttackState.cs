@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class AttackState : IState
 {
-    private PlayerCharacter owner;
-    private PlayerFSM fsm;
+    private UnitController owner;
+    private UnitFSM fsm;
 
-    public AttackState(PlayerCharacter owner, PlayerFSM fsm)
+    public AttackState(UnitController owner, UnitFSM fsm)
     {
         this.owner = owner;
         this.fsm = fsm;

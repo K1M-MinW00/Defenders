@@ -3,10 +3,9 @@
 [FirestoreData]
 public class UserUnitData
 {
-
     [FirestoreProperty] public int UnitCodeValue { get; set; }
     [FirestoreProperty] public int Level { get; set; } = 1;
-    [FirestoreProperty] public int Promotion { get; set; } = 1;
+    [FirestoreProperty] public int Promotion { get; set; } = 0;
     [FirestoreProperty] public int LimitBreak { get; set; } = 0;
 
     // TODO : 장비

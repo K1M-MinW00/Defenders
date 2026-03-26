@@ -3,10 +3,10 @@ using UnityEngine;
 public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 {
     [Header("References")]
-    [SerializeField] protected PlayerCharacter owner;
+    [SerializeField] protected UnitController owner;
 
     [Header("Combat")]
-    protected float Damage => owner.Atk;
+    protected float Damage => owner.Attack;
     protected float cooldown => 1f / owner.AttackPerSec;
 
     [SerializeField] protected LayerMask targetLayer;
@@ -19,7 +19,7 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
     protected virtual void Awake()
     {
         if (owner == null)
-            owner = GetComponent<PlayerCharacter>();
+            owner = GetComponent<UnitController>();
     }
 
     public virtual bool CanAttack()

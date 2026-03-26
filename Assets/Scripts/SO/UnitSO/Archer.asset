@@ -16,12 +16,75 @@ MonoBehaviour:
   displayName: Archer
   icon: {fileID: -7132172409892320828, guid: 492d92066580385478f702636c89f8fb, type: 3}
   unitPrefab: {fileID: 8000201301124123185, guid: adbd41c60b30c044493d5eebd1e38b25, type: 3}
+  passiveSkill: {fileID: 0}
+  activeSkill: {fileID: 0}
   baseStats:
-    maxHp: 80
-    maxMp: 100
-    speed: 4
-    atk: 10
-    def: 5
-    attackRange: 8
-    detectRange: 15
-    attackPerSec: 3
+    Attack: 88
+    MaxHp: 100
+    AttackPerSec: 3
+    CritChance: 0
+    EnergyRecovery: 1
+    DetectRange: 8
+  attackGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hpGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  starAttackMultipliers:
+  - 1
+  - 1.35
+  - 1.8
+  - 2.4
+  starHpMultipliers:
+  - 1
+  - 1.35
+  - 1.8
+  - 2.4
+  starDetectRangeMultipliers:
+  - 1
+  - 1
+  - 1.1
+  - 1.2

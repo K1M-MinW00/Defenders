@@ -7,11 +7,8 @@ public class MeleeArcAttackBehavior : MeleeAttackBehavior
     [SerializeField] private float spawnOffset = .6f;
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float projectileLifeTime = .8f;
-    [SerializeField] private int pierceCount = 1;
     [SerializeField] private float projectileRadius = .35f;
     [SerializeField] private float maxTravelDistance = 3f;
-
-    [SerializeField] private float forwardOffset = .8f;
 
     public override void OnAttackHit()
     {
@@ -22,7 +19,7 @@ public class MeleeArcAttackBehavior : MeleeAttackBehavior
         Vector2 spawnPos = (Vector2)transform.position + dir * spawnOffset;
 
         SwordAura aura = Instantiate(swordAura, spawnPos, Quaternion.identity);
-        aura.Initialize(Damage,dir,projectileSpeed,projectileLifeTime,maxTravelDistance,projectileRadius,pierceCount,targetLayer );
+        aura.Initialize(Damage,dir,projectileSpeed,projectileLifeTime,targetLayer );
     }
 
     private void OnDrawGizmosSelected()

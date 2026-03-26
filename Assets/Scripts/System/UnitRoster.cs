@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class UnitRoster : MonoBehaviour
 {
-    private readonly List<UnitRuntime> units = new();
-    public IReadOnlyList<UnitRuntime> Units => units;
+    private readonly List<UnitController> units = new();
+    public IReadOnlyList<UnitController> Units => units;
 
-    private readonly Dictionary<UnitRuntime, HpSnapshot> hpSnapshots = new();
+    private readonly Dictionary<UnitController, HpSnapshot> hpSnapshots = new();
 
     public event Action OnRosterChanged; // PopulationManager 인원수 관리
     public event Action<float, float> OnTotalHpChanged;
@@ -28,7 +28,7 @@ public class UnitRoster : MonoBehaviour
         }
     }
 
-    public void Register(UnitRuntime unit)
+    public void Register(UnitController unit)
     {
         if (unit == null || units.Contains(unit)) 
             return;
@@ -48,7 +48,7 @@ public class UnitRoster : MonoBehaviour
         OnTotalHpChanged?.Invoke(totalCurrentHp, totalMaxHp);
     }
 
-    public void Unregister(UnitRuntime unit)
+    public void Unregister(UnitController unit)
     {
         if (unit == null) return;
 
@@ -68,7 +68,7 @@ public class UnitRoster : MonoBehaviour
         OnTotalHpChanged?.Invoke(totalCurrentHp,totalMaxHp);
     }
 
-    private void HandleUnitHpChanged(UnitRuntime unit, float curHp,float maxHp)
+    private void HandleUnitHpChanged(UnitController unit, float curHp,float maxHp)
     {
         if(unit == null) 
             return;
@@ -87,7 +87,7 @@ public class UnitRoster : MonoBehaviour
         OnTotalHpChanged?.Invoke(totalCurrentHp, totalMaxHp);
     }
 
-    private void HandleUnitDead(UnitRuntime runtime)
+    private void HandleUnitDead(UnitController runtime)
     {
         OnAliveCountChanged?.Invoke();
     }
@@ -104,7 +104,7 @@ public class UnitRoster : MonoBehaviour
         totalCurrentHp = 0f;
         totalMaxHp = 0f;
 
-        foreach (UnitRuntime unit in units)
+        foreach (UnitController unit in units)
         {
             if (unit == null)
                 continue;
@@ -120,14 +120,14 @@ public class UnitRoster : MonoBehaviour
         OnTotalHpChanged?.Invoke(totalCurrentHp, totalMaxHp);
     }
 
-    public UnitRuntime FindClosestAlive(Vector3 from)
+    public UnitController FindClosestAlive(Vector3 from)
     {
-        UnitRuntime best = null;
+        UnitController best = null;
         float bestD = float.PositiveInfinity;
 
         for (int i = units.Count - 1; i >= 0; --i)
         {
-            UnitRuntime u = units[i];
+            UnitController u = units[i];
 
             if (u == null || !u.IsAlive)
                 continue;
@@ -144,17 +144,17 @@ public class UnitRoster : MonoBehaviour
         return best;
     }
 
-    public UnitRuntime FindAny(UnitCode unitCode, int star, UnitRuntime exclude = null)
+    public UnitController FindAny(UnitCode unitCode, int star, UnitController exclude = null)
     {
         for (int i = 0; i < units.Count; i++)
         {
             var u = units[i];
             if (u == null || u == exclude) continue;
-            if (u.Data == null) continue;
-
-            if (u.Data.UnitCode == unitCode && u.Star == star)
+            
+            if (u.UnitCode == unitCode && u.Star == star)
                 return u;
         }
+
         return null;
     }
 

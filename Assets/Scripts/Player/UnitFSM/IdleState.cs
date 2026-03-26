@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class IdleState : IState
 {
-    private PlayerCharacter owner;
-    private PlayerFSM fsm;
+    private UnitController owner;
+    private UnitFSM fsm;
     private float _nextRefreshTime;
 
-    public IdleState(PlayerCharacter owner, PlayerFSM fsm)
+    public IdleState(UnitController owner, UnitFSM fsm)
     {
         this.owner = owner;
         this.fsm = fsm;

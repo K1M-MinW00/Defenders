@@ -9,13 +9,13 @@ public class MonsterController : MonoBehaviour, IPoolable
     [Header("References")]
     private ModelView view;
     private UnitRoster unitRoster;
+    private NavMeshAgent agent;
     private IMonsterAttack attackBehavior;
 
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
-
-    public NavMeshAgent Agent { get; private set; }
-    public UnitRuntime Target { get; private set; }
+    public NavMeshAgent Agent => agent;
+    public UnitController Target { get; private set; }
     public MonsterHealth Health { get; private set; }
 
     public float AttackRange => FinalStats.atkRange;
@@ -35,7 +35,7 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     private void Awake()
     {
-        Agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
 
         if (view == null)
             view = GetComponentInChildren<ModelView>();
@@ -46,8 +46,8 @@ public class MonsterController : MonoBehaviour, IPoolable
         Health = GetComponent<MonsterHealth>();
         Health.OnDead += HandleDead;
 
-        Agent.updateRotation = false;
-        Agent.updateUpAxis = false;
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
 
         fsm = new MonsterFSM();
         moveState = new MonsterMoveState(this, fsm);
@@ -90,7 +90,7 @@ public class MonsterController : MonoBehaviour, IPoolable
             return;
 
         Health.Initialize(FinalStats);
-        Agent.speed = FinalStats.moveSpeed;
+        agent.speed = FinalStats.moveSpeed;
     }
 
 
@@ -104,7 +104,7 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     // --- Targeting / Movement Helpers ---
     public void ClearTarget() => Target = null;
-    public void SetTarget(UnitRuntime newTarget) => Target = newTarget;
+    public void SetTarget(UnitController newTarget) => Target = newTarget;
     public bool HasValidTarget()
     { 
         return Target != null && Target.IsAlive;
@@ -112,18 +112,18 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     public bool TryFindClosestAliveUnit()
     {
-        UnitRuntime closest = unitRoster.FindClosestAlive(transform.position);
+        UnitController closest = unitRoster.FindClosestAlive(transform.position);
         SetTarget(closest);
         return HasValidTarget();
     }
 
     public void MoveTo(Vector3 dest)
     {
-        if (Agent == null || !Agent.enabled)
+        if (agent == null || !agent.enabled)
             return;
 
         ResumeMovement();
-        Agent.SetDestination(dest);
+        agent.SetDestination(dest);
     }
 
     public void MoveToTarget()
@@ -136,14 +136,14 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     public void ResumeMovement()
     {
-        Agent.enabled = true;
-        Agent.isStopped = false;
+        agent.enabled = true;
+        agent.isStopped = false;
     }
     public void StopMovement()
     {
-        Agent.isStopped = true;
-        Agent.velocity = Vector3.zero;
-        Agent.ResetPath();
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        agent.ResetPath();
     }
 
     public bool IsTargetInAttackRange()

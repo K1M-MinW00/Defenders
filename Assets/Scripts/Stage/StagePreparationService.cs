@@ -49,12 +49,12 @@ public class StagePreparationService : MonoBehaviour
         return true;
     }
 
-    public bool TrySellUnit(PlayerCharacter unit)
+    public bool TrySellUnit(UnitController unit)
     {
         if (!isPrepareMode || unit == null)
             return false;
 
-        var runtime = unit.GetComponent<UnitRuntime>();
+        var runtime = unit.GetComponent<UnitController>();
 
         if (runtime == null)
             return false;
@@ -66,12 +66,12 @@ public class StagePreparationService : MonoBehaviour
         return true;
     }
 
-    public bool TryRerollUnit(PlayerCharacter unit)
+    public bool TryRerollUnit(UnitController unit)
     {
         if (!isPrepareMode || unit == null)
             return false;
 
-        var runtime = unit.GetComponent<UnitRuntime>();
+        var runtime = unit.GetComponent<UnitController>();
         if (runtime == null)
             return false;
 

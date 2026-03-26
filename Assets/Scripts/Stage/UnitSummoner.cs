@@ -28,28 +28,30 @@ public class UnitSummoner : MonoBehaviour
 
         // 3) 스폰 위치 결정
         Vector3 pos = ResolveSpawnPosition();
-        pos.z = 0;
         GameObject go = Instantiate(data.UnitPrefab, pos, Quaternion.identity, unitsRoot);
 
         // 5) 런타임 초기화
-        var instance = go.GetComponent<UnitRuntime>();
-        if (instance == null)
-        {
-            Debug.LogError("Summon failed: Unit prefab missing UnitInstance component.");
-            Destroy(go);
-            return;
-        }
+        // var instance = go.GetComponent<UnitRuntime>();
+        //if (instance == null)
+        //{
+        //    Debug.LogError("Summon failed: Unit prefab missing UnitInstance component.");
+        //    Destroy(go);
+        //    return;
+        //}
 
-        PlayerCharacter p = go.GetComponent<PlayerCharacter>();
-        p.BindCombatContext(monsterSpawner);
-        instance.Initialize(data, 1);
+        UnitController unit = go.GetComponent<UnitController>();
 
+        UserUnitData userData = new UserUnitData(data.UnitCode);
+        StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
+
+        unit.BindCombatContext(monsterSpawner);
+        unit.Initialize(initData);
+        
         if (roster != null)
-            roster.Register(instance);
+            roster.Register(unit);
         
         if (fusionService != null)
-            fusionService.TryAutoFuse(instance);
-
+            fusionService.TryAutoFuse(unit);
     }
 
     private Vector3 ResolveSpawnPosition()

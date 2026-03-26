@@ -1,9 +1,9 @@
 ﻿public class DeadState : IState
 {
-    private PlayerCharacter owner;
-    private PlayerFSM fsm;
+    private UnitController owner;
+    private UnitFSM fsm;
 
-    public DeadState(PlayerCharacter owner, PlayerFSM fsm)
+    public DeadState(UnitController owner, UnitFSM fsm)
     {
         this.owner = owner;
         this.fsm = fsm;

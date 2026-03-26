@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 6498733048974058355}
+  owner: {fileID: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -113,18 +113,5 @@ MonoBehaviour:
   spawnOffset: 0.6
   projectileSpeed: 8
   projectileLifeTime: 0.8
-  pierceCount: 1
   projectileRadius: 0.35
   maxTravelDistance: 3
-  forwardOffset: 0.8
---- !u!114 &6498733048974058355 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7147645447795392600, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
-  m_PrefabInstance: {fileID: 4107752267916567339}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4452343533218067403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddbb23e35d1dca24ab1c4a658b58a15d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
