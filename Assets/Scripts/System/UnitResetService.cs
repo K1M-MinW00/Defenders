@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,43 +11,42 @@ public class UnitResetService : MonoBehaviour
     {
         preWavePositions.Clear();
 
-        foreach (var u in roster.Units)
+        if (roster == null)
+            return;
+
+        foreach (UnitController unit in roster.Units)
         {
-            if (u == null) 
+            if (unit == null) 
                 continue;
 
-            preWavePositions[u] = u.transform.position;
+            preWavePositions[unit] = unit.transform.position;
         }
     }
 
-    public void ResetUnitsForPrepare(UnitRoster roster)
+    public void RestoreAll(UnitRoster roster)
     {
-        foreach (var u in roster.Units)
+        if (roster == null)
+            return;
+
+        foreach (UnitController unit in roster.Units)
         {
-            if (u == null) 
+            if (unit == null) 
                 continue;
 
-            // 부활 + 풀피 + 에너지 0
-            u.RestoreForPrepare();
+            unit.RestoreForPrepare();
      
-            var agent = u.GetComponent<NavMeshAgent>();
-            if (agent != null)
-            {
+            NavMeshAgent agent = unit.Agent != null ? unit.Agent : unit.GetComponent<NavMeshAgent>();
+            if (agent == null)
+                continue;
+
+            if(!agent.enabled)
                 agent.enabled = true;
 
-                if (preWavePositions.TryGetValue(u, out var pos))
-                    agent.Warp(pos);
-            }
-        }
-    }
+            agent.isStopped = true;
+            agent.ResetPath();
 
-    public bool HasAnyAlive(UnitRoster roster)
-    {
-        foreach (var u in roster.Units)
-        {
-            if (u != null && u.IsAlive)
-                return true;
+            if (preWavePositions.TryGetValue(unit, out Vector3 pos))
+                agent.Warp(pos);
         }
-        return false;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PopulationManager : MonoBehaviour
@@ -12,37 +13,27 @@ public class PopulationManager : MonoBehaviour
 
     [Header("Reference")]
     [SerializeField] private UnitRoster unitRoster;
+    [SerializeField] private EconomyManager economyManager;
 
     public int MaxPopulation { get; private set; }
+    public int CurrentPopulation => unitRoster.Units.Count;
 
-    public int CurrentPopulation => unitRoster != null ? unitRoster.Units.Count : 0;
+    public event Action<int, int> OnPopulationChanged;
 
-    public event Action<int, int> OnPopulationChanged; // (current, max)
-
-    private void Awake()
+    public void Init(UnitRoster unitRoster, EconomyManager economyManager)
     {
-        if (unitRoster == null)
-            unitRoster = FindFirstObjectByType<UnitRoster>();
-    }
+        this.unitRoster = unitRoster;
+        this.economyManager = economyManager;
 
-    private void Start()
-    {
-        if(unitRoster != null)
-        {
-            unitRoster.OnRosterChanged += Notify;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if(unitRoster != null )
-            unitRoster.OnRosterChanged -= Notify;
-    }
-
-    public void Init()
-    {
-        MaxPopulation = initialMax;
+        unitRoster.OnRosterChanged += Notify;
+        MaxPopulation = Mathf.Clamp(initialMax,0,hardMax);
         Notify();
+    }
+
+    private void OnDisable()
+    {
+        if (unitRoster != null)
+            unitRoster.OnRosterChanged -= Notify;
     }
 
     public bool CanSummon()
@@ -60,16 +51,13 @@ public class PopulationManager : MonoBehaviour
         if (!CanIncreaseMax())
             return -1;
 
-        // MaxPopulation이 5면 index 0 (5->6), 6이면 index 1 ...
-        int idx = MaxPopulation - initialMax;
-        if (idx < 0) idx = 0;
-        if (increaseCosts == null || increaseCosts.Length == 0) return -1;
+        if (increaseCosts == null || increaseCosts.Length == 0) 
+            return -1;
 
-        // 안전: 배열 길이 넘어가면 마지막 값 유지
-        if (idx >= increaseCosts.Length)
-            idx = increaseCosts.Length - 1;
-
-        return increaseCosts[idx];
+        int index = MaxPopulation - initialMax;
+        index = Mathf.Clamp(index, 0, increaseCosts.Length - 1);
+        
+        return increaseCosts[index];
     }
 
     public bool TryIncreaseMax()
@@ -81,7 +69,7 @@ public class PopulationManager : MonoBehaviour
         if (cost < 0)
             return false;
 
-        if (!EconomyManager.Instance.TrySpendGold(cost))
+        if (!economyManager.TrySpendGold(cost))
             return false;
 
         MaxPopulation++;
@@ -89,7 +77,7 @@ public class PopulationManager : MonoBehaviour
         return true;
     }
 
-    public void Notify()
+    private void Notify()
     {
         OnPopulationChanged?.Invoke(CurrentPopulation, MaxPopulation);
     }

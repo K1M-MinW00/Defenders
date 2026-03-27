@@ -5,11 +5,16 @@ using UnityEngine;
 public class StageFlowController : MonoBehaviour
 {
     [SerializeField] private float prepareDuration = 10f;
-    [SerializeField] private StageUIController stageUI;
 
     private Coroutine prepareRoutine;
     private Action onPrepareFinished;
     private float timer;
+
+    public float PrepareDuration => prepareDuration;
+    public float CurrentTimer => timer;
+    public bool IsPreparing => prepareRoutine != null;
+
+    public event Action<float> OnPrepareTimerChanged;
 
     public void StartPreparePhase(Action finishedCallback)
     {
@@ -17,6 +22,8 @@ public class StageFlowController : MonoBehaviour
 
         onPrepareFinished = finishedCallback;
         timer = prepareDuration;
+
+        OnPrepareTimerChanged?.Invoke(timer);
         prepareRoutine = StartCoroutine(CoPrepare());
     }
 
@@ -40,7 +47,12 @@ public class StageFlowController : MonoBehaviour
         while (timer > 0f)
         {
             timer -= Time.deltaTime;
-            stageUI?.UpdatePrepTimer(timer);
+            
+            if (timer < 0f)
+                timer = 0f;
+
+            OnPrepareTimerChanged?.Invoke(timer);
+
             yield return null;
         }
 

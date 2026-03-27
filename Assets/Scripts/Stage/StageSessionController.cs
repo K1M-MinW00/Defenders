@@ -12,11 +12,16 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StagePreparationService preparationService;
     [SerializeField] private StageBootstrapper bootstrapper;
     [SerializeField] private StageUIController stageUI;
+    [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
 
-    public MonsterSpawner MonsterSpawner => waveController.MonsterSpawner;
-    public PopulationManager PopulationManager => preparationService.PopulationManager;
-    public UnitRoster UnitRoster => preparationService.UnitRoster;
+    // [SerializeField] private EconomyManager economyManager;
+
+    //public UnitRosterHpTracker UnitRosterHpTracker => unitRosterHpTracker;
+    //public MonsterSpawner MonsterSpawner => waveController.MonsterSpawner;
+    //public EconomyManager EconomyManager => economyManager;
+    //public PopulationManager PopulationManager => preparationService.PopulationManager;
+
     public StageState CurrentState { get; private set; } = StageState.None;
     public StageData CurrentStageData => currentStageData;
     public int CurrentWaveIndex { get; private set; }
@@ -31,8 +36,8 @@ public class StageSessionController : MonoBehaviour
         // currentStageData = StageContext.SelectedStageData; // 로비에서 전달된 데이터
         bootstrapper.Initialize();
 
-        stageUI.Initialize(this);
-        stageUI.RefreshWaveUI(currentStageData.waves, CurrentWaveIndex);
+        stageUI.Initialize();
+        stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         EnterPreparePhase();
     }
@@ -40,13 +45,15 @@ public class StageSessionController : MonoBehaviour
     public void EnterPreparePhase()
     {
         CurrentState = StageState.Preparing;
+
         stageUI.SetPhase(CurrentState);
+        stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         monsterPrewarmService.PrewarmForWave(CurrentWave);
-        MonsterSpawner.WaveHpTracker.PrepareWave(CurrentWave);
+        monsterSpawner.WaveHpTracker.PrepareWave(CurrentWave);
+
+        preparationService.EnterPrepareMode();
         flowController.StartPreparePhase(OnPrepareFinished);
-        
-        preparationService.SetPrepareMode(true);
     }
 
     private void OnPrepareFinished()
@@ -56,19 +63,12 @@ public class StageSessionController : MonoBehaviour
 
     public void EnterCombatPhase()
     {
-        if (CurrentWave == null)
-        {
-            HandleStageClear();
-            return;
-        }
-
         CurrentState = StageState.Combat;
 
         stageUI.SetPhase(CurrentState);
-        stageUI.RefreshWaveUI(CurrentStageData.waves, CurrentWaveIndex);
+        stageUI.RefreshWaveUI(CurrentWaveIndex);
 
-        preparationService.SetPrepareMode(false);
-
+        preparationService.ExitPrepareMode();
         waveController.StartWave(CurrentWave, OnWaveWin, OnWaveLose);
     }
 
@@ -78,7 +78,6 @@ public class StageSessionController : MonoBehaviour
 
         CurrentWaveIndex++;
 
-
         if (CurrentWave == null)
         {
             HandleStageClear();
@@ -86,7 +85,7 @@ public class StageSessionController : MonoBehaviour
         }
         
         EnterPreparePhase();
-        stageUI.RefreshWaveUI(currentStageData.waves, CurrentWaveIndex);
+        stageUI.RefreshWaveUI(CurrentWaveIndex);
     }
 
     private void OnWaveLose()
@@ -102,33 +101,5 @@ public class StageSessionController : MonoBehaviour
         rewardService.GiveStageClearReward(currentStageData);
         stageUI.SetPhase(CurrentState);
         stageUI.ShowStageClear();
-    }
-
-    public void StartBattleEarly()
-    {
-        if (CurrentState != StageState.Preparing)
-            return;
-
-        flowController.ForceFinishPrepare();
-    }
-
-    public void RequestSummonUnit()
-    {
-        preparationService.TrySummonUnit();
-    }
-
-    public void RequestIncreasePopulation()
-    {
-        preparationService.TryIncreasePopulation();
-    }
-
-    public void RequestSellUnit(UnitController unit)
-    {
-        preparationService.TrySellUnit(unit);
-    }
-
-    public void RequestRerollUnit(UnitController unit)
-    {
-        preparationService.TryRerollUnit(unit);
     }
 }

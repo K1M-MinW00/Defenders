@@ -1,24 +1,52 @@
 ﻿using UnityEngine;
-
 public class StagePreparationService : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private UnitSummoner unitSummoner;
     [SerializeField] private UnitRoster unitRoster;
+    [SerializeField] private UnitResetService unitResetService;
     [SerializeField] private PopulationManager populationManager;
-    [SerializeField] private TilemapPlacementArea placementArea;
+    [SerializeField] private EconomyManager economyManager;
     [SerializeField] private PlacementController placementController;
 
-    public PopulationManager PopulationManager => populationManager;
-    public UnitRoster UnitRoster => unitRoster;
     private bool isPrepareMode;
 
-    public void SetPrepareMode(bool enabled)
+    private void OnEnable()
     {
-        isPrepareMode = enabled;
+        if (placementController != null)
+        {
+            placementController.OnSellRequested += HandleSellRequested;
+            placementController.OnRerollRequested += HandleRerollRequested;
+        }
+    }
 
-        placementController?.EnablePlacement(enabled);
-        placementArea?.SetVisible(enabled);
+    private void OnDisable()
+    {
+        if(placementController != null)
+        {
+            placementController.OnSellRequested -= HandleSellRequested;
+            placementController.OnRerollRequested -= HandleRerollRequested;
+        }
+    }
+
+    public void EnterPrepareMode()
+    {
+        isPrepareMode = true;
+
+        placementController.EnablePlacement(true);
+
+        unitResetService.RestoreAll(unitRoster);
+        SetUnitsCombatPhase(false);
+    }
+
+    public void ExitPrepareMode()
+    {
+        isPrepareMode = false;
+
+        placementController.EnablePlacement(false);
+
+        unitResetService.CapturePreWavePositions(unitRoster);
+        SetUnitsCombatPhase(true);
     }
 
     public bool TrySummonUnit()
@@ -26,27 +54,39 @@ public class StagePreparationService : MonoBehaviour
         if (!isPrepareMode)
             return false;
 
-        if (populationManager != null && !populationManager.CanSummon())
+        if (!populationManager.CanSummon())
             return false;
 
-        if (!EconomyManager.Instance.TrySummonUnit())
+        if (!economyManager.TrySummonUnit())
             return false;
 
-        unitSummoner.SummonRandomUnit();
-        populationManager?.Notify();
+        bool success = unitSummoner.SummonRandomUnit();
+
+        if (!success)
+            return false;
+
         return true;
     }
 
     public bool TryIncreasePopulation()
     {
-        if (!isPrepareMode || populationManager == null)
+        if (!isPrepareMode)
             return false;
 
         if (!populationManager.TryIncreaseMax())
             return false;
 
-        populationManager.Notify();
         return true;
+    }
+
+    private void HandleSellRequested(UnitController unit)
+    {
+        TrySellUnit(unit);
+    }
+
+    private void HandleRerollRequested(UnitController unit)
+    {
+        TryRerollUnit(unit);
     }
 
     public bool TrySellUnit(UnitController unit)
@@ -54,8 +94,10 @@ public class StagePreparationService : MonoBehaviour
         if (!isPrepareMode || unit == null)
             return false;
 
-        unitRoster?.Unregister(unit);
-        EconomyManager.Instance.SellUnit(unit.Star);
+        unitRoster.Unregister(unit);
+
+        economyManager.SellUnit(unit.Star);
+
         Destroy(unit.gameObject);
 
         return true;
@@ -63,16 +105,37 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TryRerollUnit(UnitController unit)
     {
-        if (!isPrepareMode || unit == null)
+        if (!isPrepareMode)
             return false;
 
-        if (!EconomyManager.Instance.TryReroll())
+        if (unit == null || unit.Star != 1)
             return false;
 
-        unitRoster?.Unregister(unit);
+        if (!economyManager.TryReroll())
+            return false;
+
+        unitRoster.Unregister(unit);
         Destroy(unit.gameObject);
 
-        unitSummoner.SummonRandomUnit();
+
+        bool success = unitSummoner.SummonRandomUnit();
+        if (!success)
+            return false;
+
         return true;
+    }
+
+    private void SetUnitsCombatPhase(bool isCombat)
+    {
+        if (unitRoster == null)
+            return;
+
+        foreach (UnitController unit in unitRoster.Units)
+        {
+            if (unit == null)
+                continue;
+
+            unit.SetCombatPhase(isCombat);
+        }
     }
 }

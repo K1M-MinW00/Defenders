@@ -5,9 +5,6 @@ public class WaveController : MonoBehaviour
 {
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private UnitRoster unitRoster;
-    [SerializeField] private UnitResetService unitResetService;
-
-    public MonsterSpawner MonsterSpawner => monsterSpawner;
 
     private bool waveEnded;
     private bool allMonstersSpawned;
@@ -23,8 +20,6 @@ public class WaveController : MonoBehaviour
         allMonstersSpawned = false;
         onWaveWin = onWin;
         onWaveLose = onLose;
-
-        unitResetService?.CapturePreWavePositions(unitRoster);
 
         monsterSpawner.OnAliveCountChanged += HandleMonsterAliveChanged;
         monsterSpawner.OnAllMonstersSpawned += HandleAllMonstersSpawned;
@@ -59,27 +54,29 @@ public class WaveController : MonoBehaviour
 
         if (aliveUnits == 0)
         {
-            waveEnded = true;
             FinishWave(false);
             return;
         }
 
         if (aliveMonsters == 0 && allMonstersSpawned && aliveUnits > 0)
         {
-            waveEnded = true;
             FinishWave(true);
         }
     }
 
     private void FinishWave(bool isWin)
     {
+        if (waveEnded)
+            return;
+
+        waveEnded = true;
+
         monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
         monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
         unitRoster.OnAliveCountChanged -= HandleUnitAliveChanged;
 
         if (isWin)
         {
-            unitResetService?.ResetUnitsForPrepare(unitRoster);
             onWaveWin?.Invoke();
         }
         else

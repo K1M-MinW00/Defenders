@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlacementController : MonoBehaviour
@@ -7,25 +8,27 @@ public class PlacementController : MonoBehaviour
     [SerializeField] private TilemapPlacementArea placementArea;
     [SerializeField] private UIDropRouter uiDropRouter;
     [SerializeField] private StageUIController stageUIController;
-    [SerializeField] private StageSessionController stageSession;
-    
+
     [Header("Section")]
-    [SerializeField] private LayerMask unitLayer; // PlayerUnit 레이어만 포함
+    [SerializeField] private LayerMask unitLayer;
 
     private bool placementEnabled;
-    public UnitController DraggingUnit { get;private set; }
+    public UnitController DraggingUnit { get; private set; }
     private Vector3 originalPos;
 
+    public event Action<UnitController> OnSellRequested;
+    public event Action<UnitController> OnRerollRequested;
 
     private void Awake()
     {
-        if (mainCam == null) 
+        if (mainCam == null)
             mainCam = Camera.main;
     }
 
     public void EnablePlacement(bool enable)
     {
         placementEnabled = enable;
+        placementArea.SetVisible(enable);
 
         // 전투 시작 시 드래그 중이던 게 있으면 정리
         if (!placementEnabled && DraggingUnit != null)
@@ -36,7 +39,8 @@ public class PlacementController : MonoBehaviour
 
     private void Update()
     {
-        if (!placementEnabled) return;
+        if (!placementEnabled)
+            return;
 
         if (Input.GetMouseButtonDown(0))
             TryBeginDrag();
@@ -66,29 +70,22 @@ public class PlacementController : MonoBehaviour
         DraggingUnit.ShowRange();
         originalPos = unit.transform.position;
 
-        int star = 1;
-        
-        var inst = unit.GetComponent<UnitController>();
-
-        if (inst != null)
-            star = inst.Star;
+        int star = unit.Star;
 
         bool canReroll = (star == 1);
-        stageUIController?.SetUnitDragMode(true, canReroll);
+        stageUIController.SetUnitDragMode(true, canReroll);
     }
 
     private void Dragging()
     {
         Vector2 world = GetMouseWorld2D();
 
-        // (선택) 영역 밖이면 드래그는 하되, 드랍만 실패 처리할 수도 있고
-        // 여기서 Clamp 처리를 할 수도 있습니다.
         DraggingUnit.transform.position = new Vector3(world.x, world.y, DraggingUnit.transform.position.z);
     }
 
     private void EndDrag(Vector2 screenPos)
     {
-        if(uiDropRouter != null && uiDropRouter.TryGetDropAction(screenPos,out var action))
+        if (uiDropRouter != null && uiDropRouter.TryGetDropAction(screenPos, out var action))
         {
             HandleDropAction(action);
             FinishDrag();
@@ -109,17 +106,14 @@ public class PlacementController : MonoBehaviour
         if (DraggingUnit == null)
             return;
 
-        var inst = DraggingUnit.GetComponent<UnitController>();
-        int star = inst != null ? inst.Star : 1;
-
         switch (action)
         {
             case UnitDropAction.Sell:
-                stageSession.RequestSellUnit(DraggingUnit);
+                OnSellRequested?.Invoke(DraggingUnit);
                 break;
+
             case UnitDropAction.Reroll:
-                if(star == 1)
-                    stageSession.RequestRerollUnit(DraggingUnit);
+                OnRerollRequested?.Invoke(DraggingUnit);
                 break;
         }
     }
@@ -127,7 +121,7 @@ public class PlacementController : MonoBehaviour
     private void CancelDrag()
     {
         DraggingUnit.transform.position = originalPos;
-        FinishDrag();    
+        FinishDrag();
     }
 
     private void FinishDrag()
@@ -136,7 +130,7 @@ public class PlacementController : MonoBehaviour
         DraggingUnit.HideRange();
         DraggingUnit = null;
 
-        stageUIController?.SetUnitDragMode(false);
+        stageUIController.SetUnitDragMode(false);
     }
 
     private Vector2 GetMouseWorld2D()

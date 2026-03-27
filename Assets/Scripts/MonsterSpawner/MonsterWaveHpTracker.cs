@@ -6,21 +6,21 @@ public class MonsterWaveHpTracker : MonoBehaviour
 {
     public event Action<float, float> OnWaveHpChanged;
 
+    private float totalCurrentHp;
     private float totalMaxHp;
-    private float remainingHp;
 
     private readonly Dictionary<MonsterHealth, float> lastKnownHp = new();
 
-    public float TotalMaxHp => totalMaxHp;
-    public float RemainingHp => remainingHp;
+    public float CurrentHp => totalCurrentHp;
+    public float MaxHp => totalMaxHp;
 
     public void PrepareWave(WaveData waveData)
     {
         totalMaxHp = CalculateWaveTotalMaxHp(waveData);
-        remainingHp = totalMaxHp;
+        totalCurrentHp = totalMaxHp;
         lastKnownHp.Clear();
 
-        OnWaveHpChanged?.Invoke(remainingHp, totalMaxHp);
+        OnWaveHpChanged?.Invoke(totalCurrentHp, totalMaxHp);
     }
 
     public void RegisterSpawnedMonster(MonsterController monster)
@@ -53,7 +53,7 @@ public class MonsterWaveHpTracker : MonoBehaviour
         if (totalMaxHp <= 0f)
             return 0f;
 
-        return RemainingHp / totalMaxHp;
+        return totalCurrentHp / totalMaxHp;
     }
     private void HandleMonsterHpChanged(MonsterHealth monster, float damage)
     {
@@ -63,10 +63,10 @@ public class MonsterWaveHpTracker : MonoBehaviour
         if (!lastKnownHp.TryGetValue(monster, out float previousHp))
             return;
 
-        remainingHp = Mathf.Max(0f, remainingHp - damage);
+        totalCurrentHp = Mathf.Max(0f, totalCurrentHp - damage);
         lastKnownHp[monster] = previousHp - damage;
 
-        OnWaveHpChanged?.Invoke(remainingHp, totalMaxHp);
+        OnWaveHpChanged?.Invoke(totalCurrentHp, totalMaxHp);
     }
 
     private void HandleMonsterDead(MonsterController monster)

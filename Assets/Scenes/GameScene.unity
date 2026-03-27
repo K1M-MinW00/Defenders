@@ -665,7 +665,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageFlowController
   prepareDuration: 90
-  stageUI: {fileID: 1749784780}
 --- !u!1 &173197328
 GameObject:
   m_ObjectHideFlags: 0
@@ -860,7 +859,6 @@ MonoBehaviour:
   placementArea: {fileID: 556208431}
   uiDropRouter: {fileID: 198655607}
   stageUIController: {fileID: 1749784780}
-  stageSession: {fileID: 1704192573}
   unitLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -1861,6 +1859,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1704192572}
+  - {fileID: 1947879230}
   - {fileID: 168522198}
   - {fileID: 2031020137}
   - {fileID: 1993195383}
@@ -1868,6 +1867,7 @@ Transform:
   - {fileID: 1609928813}
   - {fileID: 1353128550}
   - {fileID: 646030656}
+  - {fileID: 888358437}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &465300743
@@ -2464,8 +2464,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StagePreparationService
   unitSummoner: {fileID: 574971172}
   unitRoster: {fileID: 1413980709}
+  unitResetService: {fileID: 876056775}
   populationManager: {fileID: 1168692028}
-  placementArea: {fileID: 556208431}
+  economyManager: {fileID: 1947879229}
   placementController: {fileID: 206569086}
 --- !u!1 &547188674
 GameObject:
@@ -6963,11 +6964,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: faa184ffc77758046a9d0f72f5336312, type: 2}
   - {fileID: 11400000, guid: c5351fee9edd22642807fe013acb5f9c, type: 2}
   unitsRoot: {fileID: 574971171}
-  spawnPoint: {fileID: 574971171}
-  placementArea: {fileID: 556208431}
   monsterSpawner: {fileID: 1990264462}
   roster: {fileID: 1413980709}
   fusionService: {fileID: 1413980708}
+  placementArea: {fileID: 556208431}
+  spawnPoint: {fileID: 574971171}
 --- !u!1 &584157921
 GameObject:
   m_ObjectHideFlags: 0
@@ -9218,6 +9219,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1948512358}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &888358435
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 888358437}
+  - component: {fileID: 888358436}
+  m_Layer: 0
+  m_Name: UnitHpTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &888358436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888358435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d49027406353e3847b378b8a13d63645, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitRosterHpTracker
+--- !u!4 &888358437
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888358435}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 459441619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &892461791
 GameObject:
   m_ObjectHideFlags: 0
@@ -10869,6 +10914,7 @@ MonoBehaviour:
   hardMax: 10
   increaseCosts: 050000000a0000000f0000001400000019000000
   unitRoster: {fileID: 1413980709}
+  economyManager: {fileID: 1947879229}
 --- !u!4 &1168692029
 Transform:
   m_ObjectHideFlags: 0
@@ -49319,10 +49365,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageBootstrapper
   economyConfig: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}
-  objectPool: {fileID: 173197329}
-  monsterSpawner: {fileID: 1990264462}
+  economyManager: {fileID: 1947879229}
   populationManager: {fileID: 1168692028}
   unitRoster: {fileID: 1413980709}
+  unitHpTracker: {fileID: 888358436}
+  pool: {fileID: 173197329}
+  monsterSpawner: {fileID: 1990264462}
 --- !u!1 &1688927458
 GameObject:
   m_ObjectHideFlags: 0
@@ -49511,6 +49559,7 @@ MonoBehaviour:
   preparationService: {fileID: 546958804}
   bootstrapper: {fileID: 1609928814}
   stageUI: {fileID: 1749784780}
+  monsterSpawner: {fileID: 1990264462}
   monsterPrewarmService: {fileID: 1353128549}
 --- !u!1 &1705177124
 GameObject:
@@ -49755,6 +49804,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1749784781}
   - component: {fileID: 1749784780}
+  - component: {fileID: 1749784784}
+  - component: {fileID: 1749784783}
+  - component: {fileID: 1749784782}
   m_Layer: 5
   m_Name: UI_Root
   m_TagString: Untagged
@@ -49774,17 +49826,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9041c95fd19c5f42be3118e8c9f37b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageUIController
-  common_HUD: {fileID: 823461320}
-  prepare_HUD: {fileID: 2070660521}
-  combat_HUD: {fileID: 507427555}
+  commonHUD: {fileID: 823461320}
+  prepareHUD: {fileID: 2070660521}
+  combatHUD: {fileID: 507427555}
   stageInfoText: {fileID: 2056535593}
   monsterCountText: {fileID: 1424186491}
-  unit_Slider: {fileID: 64614360}
-  unitHP_Text: {fileID: 436630502}
-  enemy_Slider: {fileID: 768927050}
-  enemyHP_Text: {fileID: 1129125566}
-  stageClearPanel: {fileID: 465300743}
-  stageFailPanel: {fileID: 1236393643}
   timerText: {fileID: 2008052526}
   goldText: {fileID: 1048252348}
   populationText: {fileID: 542714143}
@@ -49793,17 +49839,19 @@ MonoBehaviour:
   increasePopButton: {fileID: 752057667}
   defaultButtonsGroup: {fileID: 1168564548}
   unitActionButtonsGroup: {fileID: 771617382}
-  reRollzone: {fileID: 709322601}
+  rerollZone: {fileID: 709322601}
   sellZone: {fileID: 1862168056}
-  waveTrackContainer: {fileID: 117334532}
-  waveNodePrefab: {fileID: 4868863406675919488, guid: 77a2c09a121de6846b72cfe6ec2c8b5f, type: 3}
-  connectorPrefab: {fileID: 5345734486824457999, guid: 80cad65adf72b2449a877ae2fa5602ea, type: 3}
-  ellipsisPrefab: {fileID: 2137174644080039108, guid: 92abd38fab02c5e42961904fb5dc76cc, type: 3}
-  normalWaveSprite: {fileID: 399003294078880119, guid: dafcc51cec77e5446b8b789c4db8534f, type: 3}
-  eliteWaveSprite: {fileID: 2273149499340012153, guid: be269b76a753ee04a9eada0ea0361318, type: 3}
-  bossWaveSprite: {fileID: -801787526469749126, guid: dafcc51cec77e5446b8b789c4db8534f, type: 3}
-  clearedConnectorColor: {r: 0, g: 1, b: 0, a: 1}
-  upcomingConnectorColor: {r: 1, g: 1, b: 1, a: 1}
+  waveTrackUI: {fileID: 1749784784}
+  hpSummaryUI: {fileID: 1749784783}
+  resultUI: {fileID: 1749784782}
+  session: {fileID: 1704192573}
+  flowController: {fileID: 168522199}
+  economy: {fileID: 1947879229}
+  population: {fileID: 1168692028}
+  monsterSpawner: {fileID: 1990264462}
+  unitHpTracker: {fileID: 888358436}
+  monsterHpTracker: {fileID: 646030657}
+  preparationService: {fileID: 546958804}
 --- !u!224 &1749784781
 RectTransform:
   m_ObjectHideFlags: 0
@@ -49828,6 +49876,57 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1749784782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749784779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49da11b2a32afd44783e35c64c90e690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageResultUI
+  stageClearPanel: {fileID: 465300743}
+  stageFailPanel: {fileID: 1236393643}
+--- !u!114 &1749784783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749784779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e709376eb77010546b43c639bfa12a06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageHpSummaryUI
+  unitSlider: {fileID: 64614360}
+  unitHpText: {fileID: 436630502}
+  enemySlider: {fileID: 768927050}
+  enemyHpText: {fileID: 1129125566}
+--- !u!114 &1749784784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749784779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6537b5ad247b32449b088b1ca24ea966, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageWaveTrackUI
+  waveTrackContainer: {fileID: 117334532}
+  waveNodePrefab: {fileID: 4868863406675919488, guid: 77a2c09a121de6846b72cfe6ec2c8b5f, type: 3}
+  connectorPrefab: {fileID: 5345734486824457999, guid: 80cad65adf72b2449a877ae2fa5602ea, type: 3}
+  ellipsisPrefab: {fileID: 2137174644080039108, guid: 92abd38fab02c5e42961904fb5dc76cc, type: 3}
+  normalWaveSprite: {fileID: 399003294078880119, guid: dafcc51cec77e5446b8b789c4db8534f, type: 3}
+  eliteWaveSprite: {fileID: 2273149499340012153, guid: dafcc51cec77e5446b8b789c4db8534f, type: 3}
+  bossWaveSprite: {fileID: -801787526469749126, guid: dafcc51cec77e5446b8b789c4db8534f, type: 3}
+  clearedConnectorColor: {r: 0, g: 1, b: 0, a: 1}
+  upcomingConnectorColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &1791930460
 GameObject:
   m_ObjectHideFlags: 0
@@ -50205,6 +50304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f17109323e13948988d19e2050298b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EconomyManager
+  config: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}
 --- !u!4 &1947879230
 Transform:
   m_ObjectHideFlags: 0
@@ -50213,12 +50313,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1947879228}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 459441619}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1948512357
 GameObject:
@@ -50414,6 +50514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd695d7a8e346b045b8d0b0106447d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageRewardService
+  economyManager: {fileID: 1947879229}
 --- !u!1 &2008052524
 GameObject:
   m_ObjectHideFlags: 0
@@ -50599,7 +50700,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveController
   monsterSpawner: {fileID: 1990264462}
   unitRoster: {fileID: 1413980709}
-  unitResetService: {fileID: 876056775}
 --- !u!1 &2056535591
 GameObject:
   m_ObjectHideFlags: 0
@@ -51212,6 +51312,5 @@ SceneRoots:
   - {fileID: 751159044}
   - {fileID: 1498418698}
   - {fileID: 739194023}
-  - {fileID: 1947879230}
   - {fileID: 459441619}
   - {fileID: 1948512358}

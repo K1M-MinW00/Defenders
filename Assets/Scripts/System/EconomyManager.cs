@@ -3,27 +3,14 @@ using UnityEngine;
 
 public class EconomyManager : MonoBehaviour
 {
-    public static EconomyManager Instance { get; private set; }
-
-    private EconomyConfig config;
+    [SerializeField] private EconomyConfig config;
 
     public int CurrentGold { get; private set; }
 
     public event Action<int> OnGoldChanged;
     public bool IsInitialized => config != null;
 
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-    }
-
-    public void Init(EconomyConfig config)
+    public void Init(EconomyConfig config = null)
     {
         if (config == null)
         {
@@ -33,11 +20,15 @@ public class EconomyManager : MonoBehaviour
 
         this.config = config;
         CurrentGold = config.initialGold;
+
         NotifyGoldChanged();
     }
 
     public void ApplyWaveReward(WaveType waveType)
     {
+        if (config == null)
+            return;
+
         int before = CurrentGold;
         int bonus = config.CalculateBonus(before);
         int waveReward = config.GetWaveReward(waveType);
@@ -71,6 +62,9 @@ public class EconomyManager : MonoBehaviour
 
     public bool TrySummonUnit() => TrySpendGold(config.summonUnit);
     public bool TryReroll() => TrySpendGold(config.reRollUnit);
+
+    public int GetSummonCost() => config.summonUnit;
+    public int GetRerollCost() => config.reRollUnit;
 
     public void SellUnit(int star)
     {

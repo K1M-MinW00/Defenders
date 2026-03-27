@@ -1,19 +1,22 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StageBootstrapper : MonoBehaviour
 {
     [SerializeField] private EconomyConfig economyConfig;
-    [SerializeField] private ObjectPool objectPool;
-    [SerializeField] private MonsterSpawner monsterSpawner;
+
+    [SerializeField] private EconomyManager economyManager;
     [SerializeField] private PopulationManager populationManager;
     [SerializeField] private UnitRoster unitRoster;
+    [SerializeField] private UnitRosterHpTracker unitHpTracker;
+    [SerializeField] private ObjectPool pool;
+    [SerializeField] private MonsterSpawner monsterSpawner;
 
     public void Initialize()
     {
-        EconomyManager.Instance.Init(economyConfig);
-        populationManager.Init();
-        monsterSpawner.Init(objectPool,unitRoster);
-        DamageUIService.Instance.Init(objectPool);
+        economyManager.Init(economyConfig);
+        populationManager.Init(unitRoster,economyManager);
+        unitHpTracker.Init(unitRoster);
+        monsterSpawner.Init(pool,unitRoster);
+        DamageUIService.Instance.Init(pool);
     }
 }

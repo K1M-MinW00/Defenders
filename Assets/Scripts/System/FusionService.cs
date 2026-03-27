@@ -6,9 +6,6 @@ public class FusionService : MonoBehaviour
     [SerializeField] private StageSessionController stageSession;
     private const int maxStar = 4;
 
-
-    // 스폰/리롤 직후 호출
-    // changedUnit: 방금 생긴(또는 교체된) 유닛
     public void TryAutoFuse(UnitController changedUnit)
     {
         if (changedUnit == null || changedUnit.UnitData == null)
@@ -17,8 +14,6 @@ public class FusionService : MonoBehaviour
         // 준비 단계에서만 합성되도록 게이트
         if (stageSession == null || stageSession.CurrentState != StageState.Preparing)
             return;
-
-        roster.CleanupNulls();
 
         // 연쇄 합성 처리
         // 정책: "기존 유닛을 남기고", changedUnit은 소모될 수 있음

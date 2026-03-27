@@ -15,12 +15,12 @@ public class UnitController : MonoBehaviour, IDamageable
     [SerializeField] private ModelView view;
     [SerializeField] private RangeSensor rangeSensor;
     [SerializeField] private UnitRangeIndicator rangeIndicator;
-
     [SerializeField] private UnitSkillController skillController;
 
     private IAttackBehavior attackBehavior;
     private MonsterSpawner monsterSpawner;
     private NavMeshAgent agent;
+    private bool isCombatPhase;
 
     public NavMeshAgent Agent => agent;
 
@@ -34,6 +34,7 @@ public class UnitController : MonoBehaviour, IDamageable
     public AttackState attackState;
     public SkillState skillState;
     public DeadState deadState;
+
 
     #region Property
     public MonsterController Target { get; private set; }
@@ -138,7 +139,7 @@ public class UnitController : MonoBehaviour, IDamageable
         RestoreForPrepare();
 
         skillController?.Initialize(this);
-
+        isCombatPhase = false;
         OnInitialized?.Invoke(this);
         OnStatsChanged?.Invoke(this);
 
@@ -148,6 +149,9 @@ public class UnitController : MonoBehaviour, IDamageable
     private void TickEnergy()
     {
         if (!CanRecoverEnergy)
+            return;
+
+        if (!isCombatPhase)
             return;
 
         if (IsEnergyFull)
@@ -261,6 +265,10 @@ public class UnitController : MonoBehaviour, IDamageable
         OnEnergyChanged?.Invoke(this);
     }
 
+    public void SetCombatPhase(bool v)
+    {
+        isCombatPhase = v;
+    }
     public void ConsumeAllEnergy()
     {
         if (runtime == null)
