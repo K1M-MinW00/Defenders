@@ -107,7 +107,7 @@ public class MonsterController : MonoBehaviour, IPoolable
     public void SetTarget(UnitController newTarget) => Target = newTarget;
     public bool HasValidTarget()
     { 
-        return Target != null && Target.IsAlive;
+        return Target != null && !Target.IsDead;
     }
 
     public bool TryFindClosestAliveUnit()

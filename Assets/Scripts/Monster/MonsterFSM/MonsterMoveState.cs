@@ -27,11 +27,18 @@ public sealed class MonsterMoveState : IState
 
     public void Update()
     {
+        owner.FaceTarget();
+
         if (!owner.HasValidTarget())
         {
             if (!owner.TryFindClosestAliveUnit())
             {
                 fsm.ChangeState(owner.idleState);
+                return;
+            }
+            else
+            {
+                owner.MoveToTarget();
                 return;
             }
         }
@@ -46,6 +53,7 @@ public sealed class MonsterMoveState : IState
         {
             _nextRefreshTime = Time.time + interval;
             owner.TryFindClosestAliveUnit();
+            owner.MoveToTarget();
         }
     }
 

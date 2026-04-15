@@ -63,7 +63,7 @@ public class UnitSkillController : MonoBehaviour
         if (activeSkill == null)
             return false;
 
-        if (!owner.IsAlive)
+        if (owner.IsDead)
             return false;
 
         if (!owner.CanUseActive)

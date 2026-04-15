@@ -95,7 +95,7 @@ public class UnitRoster : MonoBehaviour
     public UnitController GetLowestHpAliveUnit()
     {
         return units
-            .Where(u => u != null && u.IsAlive)
+            .Where(u => u != null && !u.IsDead)
             .OrderBy(u => u.CurrentHp)
             .FirstOrDefault();
     }
@@ -103,7 +103,7 @@ public class UnitRoster : MonoBehaviour
     public List<UnitController> GetLowestHpAliveUnits(int count)
     {
         return units
-            .Where(u => u != null && u.IsAlive)
+            .Where(u => u != null && !u.IsDead)
             .OrderBy(u => u.CurrentHp)
             .Take(count)
             .ToList();

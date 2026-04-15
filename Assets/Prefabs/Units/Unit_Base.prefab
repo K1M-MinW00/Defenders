@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 5495357012777275260}
   - component: {fileID: 1838466798527487007}
   - component: {fileID: 7431971341929807749}
+  - component: {fileID: 3215718443639412451}
   m_Layer: 7
   m_Name: Unit_Base
   m_TagString: Player
@@ -255,6 +256,7 @@ MonoBehaviour:
   combat: {fileID: 6445384252813261213}
   rangeIndicator: {fileID: 8571101271341991098}
   skillController: {fileID: 7431971341929807749}
+  buffController: {fileID: 0}
 --- !u!114 &6445384252813261213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -366,6 +368,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4700edf9e2de23a44a00a699fd5dbf12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkillController
+--- !u!114 &3215718443639412451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344609166725255392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 921ffd94e10d42149a6acefa3075f9ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitBuffController
 --- !u!1 &2774387734849985176
 GameObject:
   m_ObjectHideFlags: 0

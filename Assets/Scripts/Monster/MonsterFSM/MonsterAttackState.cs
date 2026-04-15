@@ -25,7 +25,7 @@ public class MonsterAttackState : IState
     {
         if(!owner.HasValidTarget())
         {
-            if (!owner.TryFindClosestAliveUnit())
+            if (owner.TryFindClosestAliveUnit())
             {
                 fsm.ChangeState(owner.moveState);
                 return;

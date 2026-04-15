@@ -50,8 +50,8 @@ public class UnitController : MonoBehaviour
     public float DetectRange => runtime.FinalStats.DetectRange;
     public float CurrentEnergy => runtime.CurrentEnergy;
 
-    public bool IsDead => runtime == null || runtime.IsDead;
-    public bool IsAlive => runtime != null && !runtime.IsDead;
+    // 수정 필요
+    public bool IsDead => runtime.IsDead;
     public bool IsEnergyFull => runtime != null && runtime.CurrentEnergy >= runtime.MaxEnergy;
 
     public bool CanUseActive => runtime != null && runtime.CanUseActive;

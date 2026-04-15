@@ -51,7 +51,7 @@ public class Priest_Heal_Skill : ActiveSkillBase
             return;
 
         UnitController target = context.AllyTargets[0];
-        if (target == null || !target.IsAlive)
+        if (target == null || target.IsDead)
             return;
 
         float healAmount = owner.Attack * healMultiplier;
