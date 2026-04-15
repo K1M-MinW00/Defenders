@@ -5,6 +5,8 @@ public class AttackState : IState
     private UnitController owner;
     private UnitFSM fsm;
 
+    private float lastRefreshTime;
+
     public AttackState(UnitController owner, UnitFSM fsm)
     {
         this.owner = owner;
@@ -13,32 +15,53 @@ public class AttackState : IState
 
     public void Enter()
     {
-        owner.StopMovement();
-        owner.PlayIdle();
+        owner.Movement.Stop();
+        owner.Animation.PlayIdle();
+
+        lastRefreshTime = -999f;
     }
 
     public void Update()
     {
-        if (!owner.HasValidTarget())
+        if (owner.IsDead)
+            return;
+
+        if(owner.SkillController.CanStartSkill())
         {
-            if (!owner.TryFindTargetInSensor())
+            owner.FSMController.ChangeToSkill();
+            return;
+        }
+
+        if (!owner.Targeting.HasValidTarget())
+        {
+            bool found = owner.Targeting.TryFindTargetInSensor();
+            if (!found)
+                found = owner.Targeting.FindGlobalAliveMonster();
+            
+            if(!found)
             {
-                fsm.ChangeState(owner.idleState);
+                owner.FSMController.ChangeToIdle();
                 return;
             }
         }
 
-        if (!owner.IsTargetInAttackRange())
+        if(Time.time - lastRefreshTime >= owner.Combat.TargetRefreshInterval)
         {
-            fsm.ChangeState(owner.moveState);
+            owner.Targeting.RefreshTargetIfCloserInRange();
+            lastRefreshTime = Time.time;
+        }
+
+        if (!owner.Targeting.IsTargetInRange())
+        {
+            owner.FSMController.ChangeToMove();
             return;
         }
 
-        owner.TryAttackCurrentTarget();
+        owner.Combat.TryAttackCurrentTarget();
     }
 
     public void Exit()
     {
-        owner.CancelAttack();
+        owner.Combat.CancelAttack();
     }
 }

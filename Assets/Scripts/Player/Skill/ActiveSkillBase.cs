@@ -1,39 +1,24 @@
 ﻿using UnityEngine;
 
-public abstract class ActiveSkillBase : MonoBehaviour, IActiveSkill
+public abstract class ActiveSkillBase : MonoBehaviour
 {
     protected UnitController owner;
-    protected ActiveSkillDataSO data;
+    protected UnitSkillController skillController;
 
-    protected bool ActiveTier2Unlocked;
-    protected bool ActiveTier4Unlocked;
+    public abstract ActiveSkillTargetType TargetType { get; }
+    public virtual SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
+    public virtual int TargetCount => 1;
 
-
-    public virtual void Initialize(UnitController owner, ActiveSkillDataSO data)
+    public virtual void Initialize(UnitController owner, UnitSkillController skillController)
     {
         this.owner = owner;
-        this.data = data;
-
-        ActiveTier2Unlocked = owner.ActiveTier2Unlocked;
-        ActiveTier4Unlocked = owner.ActiveTier4Unlocked;
+        this.skillController = skillController;
     }
 
-    public virtual bool CanUseSkill()
-    {
-        if (owner == null || data == null || owner.IsDead)
-            return false;
+    public abstract bool TryBuildContext(out SkillExecutionContext context);
 
-        return true;
-    }
-
-    public virtual void BeginSkill() { }
+    public virtual void OnSkillStart(SkillExecutionContext context) { }
+    public abstract void OnSkillApply(SkillExecutionContext context);
+    public virtual void OnSkillEnd(SkillExecutionContext context) { }
     public virtual void CancelSkill() { }
-
-    public virtual void EndSkill()
-    {
-        owner.ConsumeAllEnergy();
-    }
-
-    public abstract void OnSkillHit();
-
 }

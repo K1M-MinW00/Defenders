@@ -4,7 +4,6 @@ public class IdleState : IState
 {
     private UnitController owner;
     private UnitFSM fsm;
-    private float _nextRefreshTime;
 
     public IdleState(UnitController owner, UnitFSM fsm)
     {
@@ -14,26 +13,28 @@ public class IdleState : IState
 
     public void Enter()
     {
-        owner.StopMovement();
-        owner.ClearTarget();
-        owner.PlayIdle();
-        _nextRefreshTime = Time.time;
+        owner.Movement.Stop();
+        owner.Animation.PlayIdle();
     }
 
     public void Update()
     {
-        if (Time.time < _nextRefreshTime)
+        if (owner.IsDead)
             return;
 
-        _nextRefreshTime = Time.time + owner.TargetRefreshInterval;
+        if(owner.SkillController.CanStartSkill())
+        {
+            owner.FSMController.ChangeToSkill();
+            return;
+        }
 
-        if (!owner.TryFindTargetInSensor())
+        if (!owner.Targeting.TryFindTargetInSensor())
             return;
 
-        if (owner.IsTargetInAttackRange())
-            fsm.ChangeState(owner.attackState);
+        if (owner.Targeting.IsTargetInRange())
+            owner.FSMController.ChangeToAttack();
         else
-            fsm.ChangeState(owner.moveState);
+            owner.FSMController.ChangeToMove();
     }
 
     public void Exit() { }

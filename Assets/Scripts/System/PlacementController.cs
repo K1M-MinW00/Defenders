@@ -66,7 +66,7 @@ public class PlacementController : MonoBehaviour
             return;
 
         DraggingUnit = unit;
-        DraggingUnit.StopMovement();
+        DraggingUnit.Movement.Stop();
         DraggingUnit.ShowRange();
         originalPos = unit.transform.position;
 
@@ -126,7 +126,7 @@ public class PlacementController : MonoBehaviour
 
     private void FinishDrag()
     {
-        DraggingUnit.ResumeMovement();
+        DraggingUnit.Movement.Resume();
         DraggingUnit.HideRange();
         DraggingUnit = null;
 

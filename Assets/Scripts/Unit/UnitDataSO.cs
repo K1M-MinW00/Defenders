@@ -11,8 +11,8 @@ public class UnitDataSO : ScriptableObject
     [SerializeField] private GameObject unitPrefab;
 
     [Header("Skills")]
-    [SerializeField] private PassiveSkillDataSO passiveSkill;
-    [SerializeField] private ActiveSkillDataSO activeSkill;
+    [SerializeField] private SkillDataSO passiveSkill;
+    [SerializeField] private SkillDataSO activeSkill;
 
     [Header("Base Stats (Star 1)")]
     [SerializeField] private UnitStats baseStats = new UnitStats(88f,100f, 3f, 4f,0f,1f);
@@ -41,8 +41,8 @@ public class UnitDataSO : ScriptableObject
     public string DisplayName => displayName;
     public Sprite Icon => icon;
     public GameObject UnitPrefab => unitPrefab;
-    public PassiveSkillDataSO PassiveSkill => passiveSkill;
-    public ActiveSkillDataSO ActiveSkill => activeSkill;
+    public SkillDataSO PassiveSkill => passiveSkill;
+    public SkillDataSO ActiveSkill => activeSkill;
     public UnitStats BaseStats => baseStats;
 
     public float BaseAttack => baseStats.Attack;

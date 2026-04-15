@@ -39,12 +39,10 @@ public class Unit_Editor : Editor
         if (unit.Target == null)
             return;
 
-        bool valid = unit.HasValidTarget();
-
-        Handles.color = valid ? Color.red : Color.gray;
+        Handles.color = Color.red;
         Handles.DrawLine(unit.transform.position, unit.Target.transform.position);
 
-        Handles.color = valid ? Color.yellow : Color.gray;
+        Handles.color = Color.yellow;
         Handles.SphereHandleCap(
             0,
             unit.Target.transform.position,

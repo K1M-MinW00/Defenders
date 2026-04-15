@@ -16,12 +16,75 @@ MonoBehaviour:
   displayName: Soldier_Range
   icon: {fileID: -3868812660829053132, guid: 1c4a5a9b2ede32e4c8f7c30754ba0665, type: 3}
   unitPrefab: {fileID: 4635945194083421887, guid: da061a48600fb0640ad4b7377b9f53db, type: 3}
+  passiveSkill: {fileID: 0}
+  activeSkill: {fileID: 0}
   baseStats:
-    maxHp: 100
-    maxMp: 100
-    speed: 3
-    atk: 10
-    def: 5
-    attackRange: 8
-    detectRange: 12
-    attackPerSec: 2
+    Attack: 5
+    MaxHp: 100
+    AttackPerSec: 3
+    CritChance: 0
+    EnergyRecovery: 20
+    DetectRange: 4
+  attackGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hpGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  starAttackMultipliers:
+  - 1
+  - 1.35
+  - 1.8
+  - 2.4
+  starHpMultipliers:
+  - 1
+  - 1.35
+  - 1.8
+  - 2.4
+  starDetectRangeMultipliers:
+  - 1
+  - 1
+  - 1.1
+  - 1.2

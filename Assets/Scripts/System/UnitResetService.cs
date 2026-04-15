@@ -35,7 +35,7 @@ public class UnitResetService : MonoBehaviour
 
             unit.RestoreForPrepare();
      
-            NavMeshAgent agent = unit.Agent != null ? unit.Agent : unit.GetComponent<NavMeshAgent>();
+            NavMeshAgent agent = unit.Movement.Agent != null ? unit.Movement.Agent : unit.GetComponent<NavMeshAgent>();
             if (agent == null)
                 continue;
 

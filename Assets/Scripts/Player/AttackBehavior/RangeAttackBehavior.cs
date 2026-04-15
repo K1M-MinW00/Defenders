@@ -3,7 +3,7 @@ using UnityEngine;
 public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 {
     [Header("References")]
-    [SerializeField] protected UnitController owner;
+    protected UnitController owner;
 
     [Header("Combat")]
     protected float Damage => owner.Attack;
@@ -48,7 +48,7 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
         pendingTarget = target.transform;
 
         owner.FaceTarget();
-        owner.PlayAttack();
+        owner.Animation.PlayAttack();
         isAttacking = true;
 
         return true;

@@ -87,6 +87,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1426257485782251658}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2076126867488570909}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &4452343533218067403 stripped
 GameObject:
@@ -115,3 +118,20 @@ MonoBehaviour:
   projectileLifeTime: 0.8
   projectileRadius: 0.35
   maxTravelDistance: 3
+--- !u!114 &2076126867488570909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4452343533218067403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 952ba5c17c910ed40b5abb3eb0f5c130, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoldierMLeapSlashSkill
+  damageMultiplier: 2.2
+  impactRadius: 1.2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64

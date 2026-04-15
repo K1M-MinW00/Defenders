@@ -17,13 +17,13 @@ MonoBehaviour:
   icon: {fileID: -5711848221618334454, guid: b9494408acf6cbe41b220706a5875ca9, type: 3}
   unitPrefab: {fileID: 8701186199276537277, guid: 3853f4a0cc9151443b2cdbad6f3aa303, type: 3}
   passiveSkill: {fileID: 0}
-  activeSkill: {fileID: 11400000, guid: 7c980074a44403d4aa62e922e816ed22, type: 2}
+  activeSkill: {fileID: 0}
   baseStats:
-    Attack: 88
+    Attack: 5
     MaxHp: 100
     AttackPerSec: 3
     CritChance: 0
-    EnergyRecovery: 10
+    EnergyRecovery: 20
     DetectRange: 4
   attackGrowthCurve:
     serializedVersion: 2

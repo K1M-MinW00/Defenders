@@ -3,7 +3,7 @@
 public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
 {
     [Header("References")]
-    [SerializeField] protected UnitController owner;
+    protected UnitController owner;
 
     [Header("Combat")]
     protected float Damage => owner.Attack;
@@ -49,7 +49,7 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
         currentTarget = target;
 
         owner.FaceTarget();
-        owner.PlayAttack();
+        owner.Animation.PlayAttack();
         isAttacking = true;
 
         return true;
@@ -80,7 +80,7 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
             return dirToTarget.normalized;
         }
 
-        return owner.GetFacingDirection();
+        return owner.Animation.GetFacingDirection();
     }
 
     public void CancelAttack()

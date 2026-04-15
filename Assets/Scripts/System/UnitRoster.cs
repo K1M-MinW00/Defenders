@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UnitRoster : MonoBehaviour
 {
     private readonly List<UnitController> units = new();
     public IReadOnlyList<UnitController> Units => units;
-
 
     public event Action OnRosterChanged;
     public event Action OnAliveCountChanged;
@@ -18,7 +18,7 @@ public class UnitRoster : MonoBehaviour
 
         units.Add(unit);
 
-        unit.OnDead += HandleUnitDead;
+        unit.Health.OnDead += HandleUnitDead;
         OnRosterChanged?.Invoke();
     }
 
@@ -29,7 +29,7 @@ public class UnitRoster : MonoBehaviour
         if (!units.Remove(unit))
             return;
 
-        unit.OnDead -= HandleUnitDead;
+        unit.Health.OnDead -= HandleUnitDead;
         OnRosterChanged?.Invoke();
     }
 
@@ -91,5 +91,21 @@ public class UnitRoster : MonoBehaviour
         }
 
         return aliveCount;
+    }
+    public UnitController GetLowestHpAliveUnit()
+    {
+        return units
+            .Where(u => u != null && u.IsAlive)
+            .OrderBy(u => u.CurrentHp)
+            .FirstOrDefault();
+    }
+
+    public List<UnitController> GetLowestHpAliveUnits(int count)
+    {
+        return units
+            .Where(u => u != null && u.IsAlive)
+            .OrderBy(u => u.CurrentHp)
+            .Take(count)
+            .ToList();
     }
 }

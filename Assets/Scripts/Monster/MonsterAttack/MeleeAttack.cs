@@ -31,7 +31,7 @@ public class MeleeAttack : MonoBehaviour, IMonsterAttack
 
         owner.PlayAttack();
 
-        target.TakeDamage(owner.AtkDamage);
+        target.Health.TakeDamage(owner.AtkDamage);
 
         return true;
     }

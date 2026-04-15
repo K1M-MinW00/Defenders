@@ -16,12 +16,75 @@ MonoBehaviour:
   displayName: Axeman
   icon: {fileID: -1467410003536780371, guid: 0e79c1b62fb1051479145acc3f56f8f1, type: 3}
   unitPrefab: {fileID: 7769852123241821866, guid: 7674b273a43d64543af82fb3524fe104, type: 3}
+  passiveSkill: {fileID: 0}
+  activeSkill: {fileID: 0}
   baseStats:
-    maxHp: 150
-    maxMp: 100
-    speed: 3
-    atk: 20
-    def: 5
-    attackRange: 2
-    detectRange: 5
-    attackPerSec: 2
+    Attack: 5
+    MaxHp: 100
+    AttackPerSec: 3
+    CritChance: 0
+    EnergyRecovery: 20
+    DetectRange: 4
+  attackGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hpGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  starAttackMultipliers:
+  - 1
+  - 1.35
+  - 1.8
+  - 2.4
+  starHpMultipliers:
+  - 1
+  - 1.35
+  - 1.8
+  - 2.4
+  starDetectRangeMultipliers:
+  - 1
+  - 1
+  - 1.1
+  - 1.2

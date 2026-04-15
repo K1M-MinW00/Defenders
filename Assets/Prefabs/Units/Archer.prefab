@@ -72,6 +72,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 22100000, guid: 602773442a6bd124bb12c3d7857aef5f, type: 2}
     - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_Size.x
+      value: 6.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_Size.y
+      value: 6.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -7132172409892320828, guid: 492d92066580385478f702636c89f8fb, type: 3}
@@ -125,6 +133,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8561150949703890159}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2203527637517740254}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &8000201301124123185 stripped
 GameObject:
@@ -143,13 +154,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ad8e807d3a65b544a713126464df6d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArcherAttackBehavior
-  owner: {fileID: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
   firePoint: {fileID: 4170962860527868160}
   arrowPrefab: {fileID: 2110337582513762589, guid: 0a6ae7ef37f45004bab5ad11bfbfa3f5, type: 3}
   projectileSpeed: 15
+--- !u!114 &2203527637517740254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8000201301124123185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 601e3efaa8d0b1547b691a7185b308fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Archer_PowerShot_Skill
+  damageMultiplier: 3.5
+  arrowProjectilePrefab: {fileID: 8658175204345088709, guid: 49b258c4b295863468f9cd390f99ed59, type: 3}
+  projectileSpeed: 12
+  projectileLifeTime: 3
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!4 &9031195092308606717 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1629001870847616044, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}

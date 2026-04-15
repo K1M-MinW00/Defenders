@@ -11,7 +11,7 @@ public class MeleeLineAttackBehavior : MeleeAttackBehavior
         if (!isAttacking)
             return;
 
-        Vector2 forward = owner.GetFacingDirection();
+        Vector2 forward = owner.Animation.GetFacingDirection();
         Vector2 center = (Vector2)transform.position + forward * forwardOffset;
 
         Collider2D[] hits = Physics2D.OverlapBoxAll(center, boxSize, 0, targetLayer);

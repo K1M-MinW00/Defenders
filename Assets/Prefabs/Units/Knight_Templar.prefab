@@ -83,6 +83,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3369176414787069438}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 266032272738655654}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &6463679714893050464 stripped
 GameObject:
@@ -111,3 +114,22 @@ MonoBehaviour:
   projectileLifeTime: 0.8
   projectileRadius: 0.35
   maxTravelDistance: 3
+--- !u!114 &266032272738655654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463679714893050464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d63e19a951f3f64ca794d53eb49888f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TemplarKnight_LightBeam_Skill
+  damageMultiplier: 2.5
+  beamLength: 40
+  beamWidth: 1.2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  beamEffectPrefab: {fileID: 8556144927267406452, guid: f4cbf35e8411fee42970a2907345ff06, type: 3}

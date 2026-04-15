@@ -87,6 +87,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4548178846440578045}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3200639304502927206}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &1272179824587458314 stripped
 GameObject:
@@ -115,3 +118,23 @@ MonoBehaviour:
   projectileLifeTime: 0.8
   projectileRadius: 0.35
   maxTravelDistance: 3
+--- !u!114 &-3200639304502927206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272179824587458314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 416cc26cd8269e94d83bd5fe2af27878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Swordsman_Piercing_Skill
+  hitDamageMultiplier: 2
+  boxSize: {x: 3, y: 3}
+  forwardOffset: 0.9
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  multCnt: 4
+  hitEffectPrefab: {fileID: 6941096045168117609, guid: 91cede1602e24ad47b8d7e600cb6f12a, type: 3}

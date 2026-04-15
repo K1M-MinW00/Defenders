@@ -87,6 +87,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4636321869820526799}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3704186839640977958}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &7769852123241821866 stripped
 GameObject:
@@ -115,3 +118,21 @@ MonoBehaviour:
   projectileLifeTime: 0.8
   projectileRadius: 0.35
   maxTravelDistance: 3
+--- !u!114 &-3704186839640977958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7769852123241821866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd6a2debfe208244ca8acc4e0114941e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Armored_Axeman_SpinSlash_Skill
+  damageMultiplier: 3
+  radius: 2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  spinEffectPrefab: {fileID: 7789440468828688536, guid: bec11ab7892dbba4da925950920bb65b, type: 3}

@@ -4,7 +4,6 @@ public class MoveState : IState
 {
     private UnitController owner;
     private UnitFSM fsm;
-    private float _nextRefreshTime;
 
     public MoveState(UnitController owner, UnitFSM fsm)
     {
@@ -14,39 +13,41 @@ public class MoveState : IState
 
     public void Enter()
     {
-        owner.PlayMove();
-        owner.ResumeMovement();
-        _nextRefreshTime = Time.time;
+        owner.Animation.PlayMove();
+        owner.Movement.Resume();
     }
 
     public void Update()
     {
-        if (!owner.HasValidTarget())
+        if (owner.IsDead)
+            return;
+
+        if(owner.SkillController.CanStartSkill())
         {
-            if (!owner.TryFindTargetInSensor())
+            owner.FSMController.ChangeToSkill();
+            return;
+        }
+
+        if (!owner.Targeting.HasValidTarget())
+        {
+            if (!owner.Targeting.TryFindTargetInSensor())
             {
-                fsm.ChangeState(owner.idleState);
+                owner.FSMController.ChangeToIdle();
                 return;
             }
         }
 
-        if (owner.IsTargetInAttackRange())
+        if (owner.Targeting.IsTargetInRange())
         {
-            fsm.ChangeState(owner.attackState);
+            owner.FSMController.ChangeToAttack();
             return;
         }
 
         owner.MoveToCurrentTarget();
-
-        if (Time.time >= _nextRefreshTime)
-        {
-            _nextRefreshTime = Time.time + owner.TargetRefreshInterval;
-            owner.RefreshTargetIfCloserInRange();
-        }
     }
 
     public void Exit()
     {
-        owner.StopMovement();
+        owner.Movement.Stop();
     }
 }

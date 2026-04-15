@@ -11,14 +11,13 @@
 
     public void Enter()
     {
-        owner.StopMovement();
+        owner.Movement.Stop();
+        owner.Combat.CancelAttack();
+        owner.SkillController.CancelSkill();
+        owner.Animation.PlayDie();
     }
 
-    public void Exit()
-    {
-    }
+    public void Exit() { }
 
-    public void Update()
-    {
-    }
+    public void Update() { }
 }

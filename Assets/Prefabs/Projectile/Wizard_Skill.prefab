@@ -123,9 +123,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 302017861803960044}
-  - component: {fileID: 4901748820531989774}
   - component: {fileID: 7679180830182537087}
   - component: {fileID: 9124219083327973421}
+  - component: {fileID: 6453844778351835197}
   m_Layer: 0
   m_Name: Wizard_Skill
   m_TagString: Untagged
@@ -149,21 +149,6 @@ Transform:
   - {fileID: 8061680533921692215}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4901748820531989774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2394154420839144201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c22bf696af7acc4eb71eaffd5e37ff4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MagicImpact
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!58 &7679180830182537087
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -227,3 +212,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6453844778351835197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2394154420839144201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2787439b10327094a9c953dd60595746, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeteorProjectile

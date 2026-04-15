@@ -73,8 +73,8 @@ public class UnitRosterHpTracker : MonoBehaviour
             if (unit == null)
                 continue;
 
-            unit.OnHpChanged += HandleUnitHpChanged;
-            unit.OnDead += HandleUnitDead;
+            unit.Health.OnHpChanged += HandleUnitHpChanged;
+            unit.Health.OnDead += HandleUnitDead;
 
             float currentHp = unit.CurrentHp;
             float maxHp = unit.MaxHp;
@@ -124,8 +124,8 @@ public class UnitRosterHpTracker : MonoBehaviour
             if (unit == null)
                 continue;
 
-            unit.OnHpChanged -= HandleUnitHpChanged;
-            unit.OnDead -= HandleUnitDead;
+            unit.Health.OnHpChanged -= HandleUnitHpChanged;
+            unit.Health.OnDead -= HandleUnitDead;
         }
     }
 }
