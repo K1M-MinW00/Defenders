@@ -11,6 +11,7 @@ public static class UnitStatCalculator
         float critChance = CalculateCritChance(data, runtime);
         float energyRecovery = CalculateEnergyRecovery(data, runtime);
         float detectRange = CalculateDetectRange(data, runtime);
+
         return new UnitStats(
             attack,
             maxHp,

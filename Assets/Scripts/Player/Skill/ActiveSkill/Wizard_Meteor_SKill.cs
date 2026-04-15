@@ -8,7 +8,6 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
     [SerializeField] private float spawnHeight = 3f;
     [SerializeField] private float explosionRadius = 1.5f;
     [SerializeField] private float projectileSpeed = 10f;
-    [SerializeField] private float lifeTime = 3f;
     [SerializeField] private LayerMask enemyLayer;
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;

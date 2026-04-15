@@ -20,6 +20,7 @@ public class UnitController : MonoBehaviour
     [SerializeField] private UnitCombatController combat;
     [SerializeField] private UnitRangeIndicator rangeIndicator;
     [SerializeField] private UnitSkillController skillController;
+    [SerializeField] private UnitBuffController buffController;
     private UnitRoster unitRoster;
     #region Property
     public UnitDataSO UnitData => unitData;
@@ -33,6 +34,8 @@ public class UnitController : MonoBehaviour
     public UnitCombatController Combat => combat;
     public UnitFSMController FSMController => fsmController;
     public UnitSkillController SkillController => skillController;
+    public UnitStatService StatService => statService;
+    public UnitBuffController BuffController => buffController;
     public MonsterController Target => targeting.CurrentTarget;
     public UnitCode UnitCode => runtime.UnitCode;
     public int Level => runtime.Level;
@@ -97,7 +100,7 @@ public class UnitController : MonoBehaviour
         combat.Initialize(this);
         fsmController.Initialize(this);
         skillController.Initialize(this);
-        // buffController.Initialize(this);
+        buffController.Initialize(this);
 
         statService.Recalculate(resetHp: true);
         RestoreForPrepare();
@@ -119,7 +122,7 @@ public class UnitController : MonoBehaviour
         if (combat == null) combat = GetComponent<UnitCombatController>();
         if (rangeIndicator == null) rangeIndicator = GetComponent<UnitRangeIndicator>();
         if(skillController == null) skillController = GetComponent<UnitSkillController>();
-        // if (buffController == null) buffController = GetComponent<UnitBuffController>();
+        if (buffController == null) buffController = GetComponent<UnitBuffController>();
     }
 
     public void RestoreForPrepare()
