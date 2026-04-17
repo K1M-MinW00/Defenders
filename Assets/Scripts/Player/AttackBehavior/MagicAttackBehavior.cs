@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MagicAttackBehavior : RangedAttackBehavior
 {
@@ -11,13 +10,13 @@ public class MagicAttackBehavior : RangedAttackBehavior
         if (!IsAttacking)
             return;
 
-        if (pendingTarget == null)
+        if (currentTarget == null)
         {
             OnAttackFinished();
             return;
         }
 
-        Vector3 spawnPos = pendingTarget.transform.position;
+        Vector3 spawnPos = currentTarget.transform.position;
 
         MagicImpact impact = Instantiate(magicPrefab,spawnPos, Quaternion.identity);
         impact.Initialize(Damage, targetLayer);

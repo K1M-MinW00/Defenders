@@ -108,10 +108,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2249985430858106596}
+      addedObject: {fileID: 3137260071248987493}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3137260071248987493}
+      addedObject: {fileID: 6823234824349399524}
     - targetCorrespondingSourceObject: {fileID: 7233890893694382322, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1561983152388788419}
@@ -143,44 +143,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4756926970056463468 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
-  m_PrefabInstance: {fileID: 8937567773063140701}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8701186199276537277}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bb1c8876531b964797b514ce3c2c171, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitController
 --- !u!1 &8701186199276537277 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 8937567773063140701}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2249985430858106596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8701186199276537277}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 4756926970056463468}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  swordAura: {fileID: 1693780022653421224, guid: 833ab191e99f4164382ef221fdf43021, type: 3}
-  spawnOffset: 0.6
-  projectileSpeed: 8
-  projectileLifeTime: 0.8
-  projectileRadius: 0.35
-  maxTravelDistance: 4
 --- !u!114 &3137260071248987493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,3 +167,21 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &6823234824349399524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8701186199276537277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 964355903a5edbe4d84e635c82977c3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwordAttackBehavior
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  slashHitboxPrefab: {fileID: 557064785834601686, guid: 726d72f63c788d04c83832af8e579873, type: 3}
+  boxSize: {x: 2.2, y: 1.6}
+  forwardOffset: 1.62

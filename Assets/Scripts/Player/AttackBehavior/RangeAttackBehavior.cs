@@ -2,18 +2,15 @@ using UnityEngine;
 
 public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
 {
-    [Header("References")]
     protected UnitController owner;
-
-    [Header("Combat")]
-    protected float Damage => owner.Attack;
-    protected float cooldown => 1f / owner.AttackPerSec;
+    protected MonsterController currentTarget;
+    protected float lastAttackTime = -999f;
+    protected bool isAttacking;
 
     [SerializeField] protected LayerMask targetLayer;
 
-    protected Transform pendingTarget;
-    protected float lastAttackTime = -999f;
-    protected bool isAttacking;
+    protected float Damage => owner.Attack;
+    protected float Cooldown => 1f / owner.AttackPerSec;
     public bool IsAttacking => isAttacking;
 
     protected virtual void Awake()
@@ -30,7 +27,7 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
         if (isAttacking)
             return false;
 
-        if (Time.time < lastAttackTime + cooldown)
+        if (Time.time < lastAttackTime + Cooldown)
             return false;
 
         return true;
@@ -44,9 +41,7 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
         if (!CanAttack())
             return false;
 
-
-        pendingTarget = target.transform;
-
+        currentTarget = target;
         owner.FaceTarget();
         owner.Animation.PlayAttack();
         isAttacking = true;
@@ -60,14 +55,14 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
     {
         lastAttackTime = Time.time;
         isAttacking = false;
-        pendingTarget = null;
+        currentTarget = null;
     }
 
     public void CancelAttack()
     {
         if (!isAttacking)
             return;
-        
+
         OnAttackFinished();
     }
 }

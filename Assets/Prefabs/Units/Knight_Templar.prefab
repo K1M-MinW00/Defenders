@@ -82,38 +82,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3369176414787069438}
+      addedObject: {fileID: 266032272738655654}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 266032272738655654}
+      addedObject: {fileID: 3459411922831007167}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &6463679714893050464 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 6736213248717726336}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3369176414787069438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6463679714893050464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 0}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  swordAura: {fileID: 1607254557857513087, guid: 4092137df183b214abba216fe8072c3a, type: 3}
-  spawnOffset: 0.6
-  projectileSpeed: 8
-  projectileLifeTime: 0.8
-  projectileRadius: 0.35
-  maxTravelDistance: 3
 --- !u!114 &266032272738655654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,3 +111,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   beamEffectPrefab: {fileID: 8556144927267406452, guid: f4cbf35e8411fee42970a2907345ff06, type: 3}
+--- !u!114 &3459411922831007167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463679714893050464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c17762ca1c4bbef45ae5e9b604bd736e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpearAttackBehavior
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  targetMode: 1
+  slashHitboxPrefab: {fileID: 264106673820794301, guid: e5f841c53b6305542a4b072b73ee05a6, type: 3}
+  boxSize: {x: 2.56, y: 1.88}
+  forwardOffset: 1.59

@@ -2,21 +2,17 @@
 
 public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
 {
-    [Header("References")]
     protected UnitController owner;
-
-    [Header("Combat")]
-    protected float Damage => owner.Attack;
-    protected float Cooldown => 1f / owner.AttackPerSec;
-
-    [SerializeField] protected LayerMask targetLayer;
-
-
+    protected MonsterController currentTarget;
     protected float lastAttackTime = -999f;
     protected bool isAttacking;
-    public bool IsAttacking => isAttacking;
-    protected MonsterController currentTarget;
 
+    [SerializeField] protected LayerMask targetLayer;
+    [SerializeField] protected TargetSelectionMode targetMode = TargetSelectionMode.Single;
+
+    protected float Damage => owner.Attack;
+    protected float Cooldown => 1f / owner.AttackPerSec;
+    public bool IsAttacking => isAttacking;
 
     protected virtual void Awake()
     {
@@ -47,7 +43,6 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
             return false;
 
         currentTarget = target;
-
         owner.FaceTarget();
         owner.Animation.PlayAttack();
         isAttacking = true;
@@ -55,23 +50,6 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
         return true;
     }
 
-    public abstract void OnAttackHit();
-
-    public virtual void OnAttackFinished()
-    {
-        isAttacking = false;
-        lastAttackTime = Time.time;
-        currentTarget = null;
-    }
-
-    protected void ApplyDamage(Collider2D[] hits)
-    {
-        foreach (var hit in hits)
-        {
-            if (hit.TryGetComponent<IDamageable>(out var damageable))
-                damageable.TakeDamage(Damage);
-        }
-    }
     protected Vector2 GetAttackDirection()
     {
         if (currentTarget != null && !currentTarget.Health.IsDead)
@@ -83,11 +61,35 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
         return owner.Animation.GetFacingDirection();
     }
 
+    public abstract void OnAttackHit();
+    
+    public virtual void OnAttackFinished()
+    {
+        isAttacking = false;
+        lastAttackTime = Time.time;
+        currentTarget = null;
+    }
+
     public void CancelAttack()
     {
         if (!isAttacking)
             return;
 
         OnAttackFinished();
+    }
+
+    protected virtual void ApplyDamage(MonsterController hit)
+    {
+        if (hit.TryGetComponent<IDamageable>(out var damageable))
+            damageable.TakeDamage(Damage);
+    }
+
+    protected virtual void ApplyDamage(Collider2D[] hits)
+    {
+        foreach (var hit in hits)
+        {
+            if (hit.TryGetComponent<IDamageable>(out var damageable))
+                damageable.TakeDamage(Damage);
+        }
     }
 }

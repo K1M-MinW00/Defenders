@@ -32,10 +32,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 1.8
       objectReference: {fileID: 0}
-    - target: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
-      propertyPath: attackBehaviorSource
-      value: 
-      objectReference: {fileID: 2926321029953996352}
     - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Controller
       value: 
@@ -90,38 +86,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2926321029953996352}
+      addedObject: {fileID: 315164876122975898}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 315164876122975898}
+      addedObject: {fileID: 779641583578722407}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &6053776636646679034 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 5821775465142219034}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2926321029953996352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6053776636646679034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 0}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  swordAura: {fileID: 1607254557857513087, guid: 4092137df183b214abba216fe8072c3a, type: 3}
-  spawnOffset: 0.6
-  projectileSpeed: 8
-  projectileLifeTime: 1
-  projectileRadius: 0.35
-  maxTravelDistance: 3
 --- !u!114 &315164876122975898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,3 +115,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   chargeTrailEffectPrefab: {fileID: 0}
+--- !u!114 &779641583578722407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6053776636646679034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c17762ca1c4bbef45ae5e9b604bd736e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpearAttackBehavior
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  targetMode: 1
+  slashHitboxPrefab: {fileID: 6948581144379448196, guid: dc573e1fb026d454c9adc0b28c82ed56, type: 3}
+  boxSize: {x: 3.5, y: 0.8}
+  forwardOffset: 2.1
