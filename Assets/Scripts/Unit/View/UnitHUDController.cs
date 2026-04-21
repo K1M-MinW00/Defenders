@@ -53,17 +53,17 @@ public class UnitHUDController : MonoBehaviour
 
     private void RefreshHp()
     {
-        float maxHp = Mathf.Max(1f, unit.MaxHp);
+        float maxHp = Mathf.Max(1f, unit.Health.MaxHp);
         hpSlider.minValue = 0f;
         hpSlider.maxValue = maxHp;
-        hpSlider.value = Mathf.Clamp(unit.CurrentHp,0f,maxHp);
+        hpSlider.value = Mathf.Clamp(unit.Health.CurrentHp,0f,maxHp);
     }
     private void RefreshEnergy()
     {
         float maxE = 100f;
         energySlider.minValue = 0f;
         energySlider.maxValue = maxE;
-        energySlider.value = Mathf.Clamp(unit.CurrentEnergy, 0f, maxE);
+        energySlider.value = Mathf.Clamp(unit.Energy.CurrentEnergy, 0f, maxE);
     }
 
     private void RefreshStar()

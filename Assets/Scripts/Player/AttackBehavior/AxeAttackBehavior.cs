@@ -60,7 +60,12 @@ public class AxeAttackBehavior : MeleeAttackBehavior
             if (hit.TryGetComponent<IDamageable>(out var damageable))
             {
                 if (damagedTargets.Add(damageable))
-                    damageable.TakeDamage(Damage);
+                {
+                    float damage = Damage;
+                    var target = hit.GetComponent<MonsterController>();
+                    owner.SkillController.NotifyAttackHit(target, ref damage);
+                    damageable.TakeDamage(damage);
+                }
             }
         }
     }

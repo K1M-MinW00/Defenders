@@ -1,14 +1,13 @@
 ﻿using Firebase.Firestore;
+using System;
 
 [FirestoreData]
+[Serializable]
 public class UserUnitData
 {
     [FirestoreProperty] public int UnitCodeValue { get; set; }
     [FirestoreProperty] public int Level { get; set; } = 1;
-    [FirestoreProperty] public int Promotion { get; set; } = 0;
-    [FirestoreProperty] public int LimitBreak { get; set; } = 0;
 
-    // TODO : 장비
 
     public UnitCode UnitCode
     {
@@ -18,11 +17,9 @@ public class UserUnitData
 
     public UserUnitData() { }
 
-    public UserUnitData(UnitCode unitCode)
+    public UserUnitData(UnitCode unitCode, int level = 1)
     {
         UnitCode = unitCode;
-        Level = 1;
-        Promotion = 1;
-        LimitBreak = 0;
+        Level = level;
     }
 }

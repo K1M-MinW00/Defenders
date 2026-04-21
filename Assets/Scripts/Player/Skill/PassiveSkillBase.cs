@@ -1,19 +1,49 @@
 ﻿using UnityEngine;
 
-public abstract class PassiveSkillBase : MonoBehaviour
+public abstract class PassiveSkillBase : MonoBehaviour, IPassiveSkill
 {
     protected UnitController owner;
+    protected UnitSkillController skillController;
 
-    public virtual void Initialize(UnitController owner)
+    public UnitController Owner => owner;
+    public bool IsInitialized => owner != null;
+
+    public virtual void Initialize(UnitController owner, UnitSkillController skillController)
     {
         this.owner = owner;
+        this.skillController = skillController;
+        ResetRuntimeState();
     }
 
-    public virtual void OnBattleStart() { }
-    public virtual void OnAttackHit(IDamageable target) { }
-    public virtual void OnTakeDamage(float damage) { }
-    public virtual void OnHpChanged(float currentHp, float maxHp) { }
-    public virtual void OnActiveSkillCast() { }
-    public virtual void OnKillEnemy(MonsterController enemy) { }
-    public virtual void Cleanup() { }
+
+    protected virtual void ResetRuntimeState() { }
+
+    protected bool CanUsePassive()
+    {
+        return owner != null && !owner.IsDead;
+    }
+
+    public virtual void OnBattleStart()
+    {
+        ResetRuntimeState();
+    }
+
+    public virtual void OnBattleEnd()
+    {
+        ResetRuntimeState();
+    }
+
+    public virtual void OnAttackStarted(MonsterController target) { }
+
+    public virtual void OnAttackHit(MonsterController target, ref float damage) { }
+
+    public virtual void OnBeforeTakeDamage(ref float damage) { }
+
+    public virtual void OnAfterTakeDamage(float finalDamage) { }
+
+    public virtual void OnActiveSkillStarted() { }
+
+    public virtual void OnActiveSkillApplied() { }
+
+    public virtual void OnActiveSkillEnded() { }
 }

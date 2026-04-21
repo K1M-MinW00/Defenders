@@ -108,10 +108,13 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 6823234824349399524}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 3137260071248987493}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6823234824349399524}
+      addedObject: {fileID: 2973044799271656291}
     - targetCorrespondingSourceObject: {fileID: 7233890893694382322, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1561983152388788419}
@@ -148,6 +151,25 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 8937567773063140701}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6823234824349399524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8701186199276537277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 964355903a5edbe4d84e635c82977c3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwordAttackBehavior
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  targetMode: 0
+  slashHitboxPrefab: {fileID: 557064785834601686, guid: 726d72f63c788d04c83832af8e579873, type: 3}
+  boxSize: {x: 2.2, y: 1.6}
+  forwardOffset: 1.62
 --- !u!114 &3137260071248987493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +189,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &6823234824349399524
+--- !u!114 &2973044799271656291
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,12 +198,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8701186199276537277}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 964355903a5edbe4d84e635c82977c3c, type: 3}
+  m_Script: {fileID: 11500000, guid: 8e420b1e3d718374b95f5978c605f32c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwordAttackBehavior
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  slashHitboxPrefab: {fileID: 557064785834601686, guid: 726d72f63c788d04c83832af8e579873, type: 3}
-  boxSize: {x: 2.2, y: 1.6}
-  forwardOffset: 1.62
+  m_EditorClassIdentifier: Assembly-CSharp::Knight_Shield
+  procChance: 0.25
+  damageReductionPercent: 0.4
+  attackBonusPercent: 0.2

@@ -43,6 +43,8 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
             return false;
 
         currentTarget = target;
+        owner.SkillController.NotifyAttackStarted(target);
+
         owner.FaceTarget();
         owner.Animation.PlayAttack();
         isAttacking = true;
@@ -81,7 +83,11 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
     protected virtual void ApplyDamage(MonsterController hit)
     {
         if (hit.TryGetComponent<IDamageable>(out var damageable))
-            damageable.TakeDamage(Damage);
+        {
+            float damage = Damage;
+            owner.SkillController.NotifyAttackHit(hit,ref damage);
+            damageable.TakeDamage(damage);
+        }
     }
 
     protected virtual void ApplyDamage(Collider2D[] hits)
@@ -89,7 +95,12 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
         foreach (var hit in hits)
         {
             if (hit.TryGetComponent<IDamageable>(out var damageable))
-                damageable.TakeDamage(Damage);
+            {
+                float damage = Damage;
+                var target = hit.GetComponent<MonsterController>();
+                owner.SkillController.NotifyAttackHit(target, ref damage);
+                damageable.TakeDamage(damage);
+            }
         }
     }
 }

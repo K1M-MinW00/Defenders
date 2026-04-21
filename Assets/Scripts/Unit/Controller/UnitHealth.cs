@@ -4,58 +4,83 @@ using UnityEngine;
 public class UnitHealth : MonoBehaviour, IDamageable
 {
     private UnitController owner;
+    private float currentHp;
+    private float maxHp;
+    private bool isDead;
+
+    public float CurrentHp => currentHp;
+    public float MaxHp => maxHp;
+    public bool IsDead => isDead;
 
     public event Action<UnitController, float, float> OnHpChanged;
     public event Action<UnitController> OnDead;
 
-    public float CurrentHp => owner.Runtime.CurrentHp;
-    public float MaxHp => owner.Runtime.FinalStats.MaxHp;
-    public bool IsDead => owner.Runtime == null || owner.Runtime.IsDead;
-
     public void Initialize(UnitController owner)
     {
         this.owner = owner;
+
+        maxHp = owner.Runtime.FinalStats.MaxHp;
+        RestoreFull();
+    }
+
+    public void ApplyStatRefresh(float newMaxHp)
+    {
+        if (maxHp == newMaxHp)
+            return;
+
+        newMaxHp = Mathf.Max(maxHp,newMaxHp);
+
+        maxHp = newMaxHp;
+        RestoreFull() ;
     }
 
     public void RestoreFull()
     {
-        if (owner.Runtime == null) return;
-
-        owner.Runtime.CurrentHp = owner.Runtime.FinalStats.MaxHp;
-        OnHpChanged?.Invoke(owner,CurrentHp, MaxHp);
+        isDead = false;
+        currentHp = maxHp;
+        OnHpChanged?.Invoke(owner,currentHp, maxHp);
     }
 
     public void TakeDamage(float damage)
     {
-        if (owner.Runtime == null || IsDead || damage <= 0f)
+        if (isDead || damage <= 0f)
             return;
 
-        owner.Runtime.CurrentHp = Mathf.Max(0f, owner.Runtime.CurrentHp - damage);
+        float finalDamage = damage;
+
+        owner.SkillController.NotifyBeforeTakeDamage(ref finalDamage);
+
+        finalDamage = Mathf.Max(0f,finalDamage);
+        currentHp = Mathf.Max(0f, currentHp - finalDamage);
+        
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
 
-        if (owner.Runtime.CurrentHp <= 0f)
+        owner.SkillController.NotifyAfterTakeDamage(finalDamage);
+
+        if (currentHp <= 0f)
             Die();
     }
 
     public void Heal(float amount)
     {
-        if (owner.Runtime == null || IsDead || amount <= 0f)
+        if (isDead || amount <= 0f)
             return;
 
-        float nextHp = Mathf.Min(MaxHp, CurrentHp + amount);
-        if (Mathf.Approximately(nextHp, CurrentHp))
+        float nextHp = Mathf.Min(maxHp, currentHp + amount);
+
+        if (Mathf.Approximately(nextHp, currentHp))
             return;
 
-        owner.Runtime.CurrentHp = nextHp;
-        OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
+        currentHp = nextHp;
+        OnHpChanged?.Invoke(owner, currentHp, maxHp);
     }
 
     private void Die()
     {
-        if (owner.Runtime.IsDead)
+        if (isDead)
             return;
 
-        owner.Runtime.IsDead = true;
+        isDead = true;
 
         owner.Movement.EnableMovement(false);
         owner.Targeting.ClearTarget();

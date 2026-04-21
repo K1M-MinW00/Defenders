@@ -19,12 +19,11 @@ MonoBehaviour:
   passiveSkill: {fileID: 0}
   activeSkill: {fileID: 0}
   baseStats:
-    Attack: 5
+    Attack: 10
     MaxHp: 100
-    AttackPerSec: 3
-    CritChance: 0
-    EnergyRecovery: 20
+    AttackPerSec: 2
     DetectRange: 4
+  maxLevel: 100
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -88,3 +87,8 @@ MonoBehaviour:
   - 1
   - 1.1
   - 1.2
+  starAttackPerSecondMultipliers:
+  - 1
+  - 1.5
+  - 1.8
+  - 2

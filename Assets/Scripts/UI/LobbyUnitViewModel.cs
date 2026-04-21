@@ -4,6 +4,6 @@ public class LobbyUnitViewModel
 {
     public UnitCode UnitCode;
     public Sprite Icon;
-    public int Level;
-    public int Promotion;
+    //public int Level;
+    //public int Promotion;
 }

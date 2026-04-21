@@ -4,7 +4,7 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
 {
     [Header("Power Shot")]
     [SerializeField] private float damageMultiplier = 3.5f;
-    [SerializeField] private GameObject arrowProjectilePrefab;
+    [SerializeField] private Arrow_Power_Projectile arrow_Power_Projectile;
     [SerializeField] private float projectileSpeed = 12f;
     [SerializeField] private float projectileLifeTime = 3f;
     [SerializeField] private LayerMask enemyLayer;
@@ -48,13 +48,10 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
 
         dir.Normalize();
 
-        GameObject obj = Instantiate(arrowProjectilePrefab, spawnPos, Quaternion.identity);
+        Arrow_Power_Projectile arrow = Instantiate(arrow_Power_Projectile, spawnPos, Quaternion.identity);
 
-        if (obj.TryGetComponent<Arrow_Power_Projectile>(out var projectile))
-        {
-            float damage = owner.Attack * damageMultiplier;
-            projectile.Initialize(damage, projectileSpeed, dir, enemyLayer, projectileLifeTime);
-        }
+        float damage = owner.Attack * damageMultiplier;
+        arrow.Initialize(damage, projectileSpeed, dir, enemyLayer, projectileLifeTime);
     }
 
     public override void OnSkillEnd(SkillExecutionContext context) { }

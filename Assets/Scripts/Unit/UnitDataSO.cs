@@ -5,94 +5,61 @@ using UnityEngine;
 public class UnitDataSO : ScriptableObject
 {
     [Header("Identity")]
-    [SerializeField] private UnitCode unitCode;
-    [SerializeField] private string displayName;
-    [SerializeField] private Sprite icon;
-    [SerializeField] private GameObject unitPrefab;
+    public UnitCode unitCode;
+    public string displayName;
+    public Sprite icon;
+    public GameObject unitPrefab;
 
     [Header("Skills")]
-    [SerializeField] private SkillDataSO passiveSkill;
-    [SerializeField] private SkillDataSO activeSkill;
+    public SkillDataSO passiveSkill;
+    public SkillDataSO activeSkill;
 
-    [Header("Base Stats (Star 1)")]
-    [SerializeField] private UnitStats baseStats = new UnitStats(88f,100f, 3f, 4f,0f,1f);
+    [Header("Base Stats (Lv1, 1성)")]
+    public UnitStats baseStats = new UnitStats(10f,50f, 3f, 4f);
 
-    [Tooltip("1레벨~최대레벨 공격력 성장 배율 곡선. 1레벨에서 보통 1.0")]
-    [SerializeField]
-    private AnimationCurve attackGrowthCurve =
-        AnimationCurve.Linear(0f, 1f, 1f, 2f);
+    [Header("Level Growth")]
+    public int maxLevel = 100;
+    public AnimationCurve attackGrowthCurve = AnimationCurve.Linear(0f, 1f, 1f, 2f);
+    public AnimationCurve hpGrowthCurve = AnimationCurve.Linear(0f, 1f, 1f, 2f);
 
-    [Tooltip("1레벨~최대레벨 체력 성장 배율 곡선. 1레벨에서 보통 1.0")]
-    [SerializeField]
-    private AnimationCurve hpGrowthCurve =
-        AnimationCurve.Linear(0f, 1f, 1f, 2f);
-
-    [Header("Star Multipliers")]
+    [Header("Star Growth")]
     [Tooltip("인덱스 0 = 1성, 1 = 2성, 2 = 3성, 3 = 4성")]
-    [SerializeField] private float[] starAttackMultipliers = { 1f, 1.35f, 1.8f, 2.4f };
+    public float[] starAttackMultipliers = { 1f, 1.35f, 1.8f, 2.4f };
+    public float[] starHpMultipliers = { 1f, 1.35f, 1.8f, 2.4f };
+    public float[] starDetectRangeMultipliers = { 1f, 1.2f, 1.5f, 2f };
+    public float[] starAttackPerSecondMultipliers = { 1f, 1.5f, 1.8f, 2f };
 
-    [Tooltip("인덱스 0 = 1성, 1 = 2성, 2 = 3성, 3 = 4성")]
-    [SerializeField] private float[] starHpMultipliers = { 1f, 1.35f, 1.8f, 2.4f };
-
-    [Tooltip("인덱스 0 = 1성, 1 = 2성, 2 = 3성, 3 = 4성")]
-    [SerializeField] private float[] starDetectRangeMultipliers = { 1f, 1f, 1.1f, 1.2f };
-
-    public UnitCode UnitCode => unitCode;
-    public string DisplayName => displayName;
-    public Sprite Icon => icon;
-    public GameObject UnitPrefab => unitPrefab;
-    public SkillDataSO PassiveSkill => passiveSkill;
-    public SkillDataSO ActiveSkill => activeSkill;
-    public UnitStats BaseStats => baseStats;
-
-    public float BaseAttack => baseStats.Attack;
-    public float BaseMaxHp => baseStats.MaxHp;
-    public float BaseAttackPerSec => baseStats.AttackPerSec;
-    public float BaseDetectRange => baseStats.DetectRange;
-    public float BaseCritChance => baseStats.CritChance;
-    public float BaseEnergyRecovery => baseStats.EnergyRecovery;
-
-    public float GetAttackByLevel(int level)
+    public UnitStats GetOriginStats(int level)
     {
-        float growth = EvaluateGrowthCurve(attackGrowthCurve, level);
-        return baseStats.Attack * growth;
+        level = Mathf.Clamp(level, 1, maxLevel);
+
+        float t = Mathf.InverseLerp(1, maxLevel, level);
+
+        UnitStats stats = baseStats;
+
+        stats.Attack = baseStats.Attack * attackGrowthCurve.Evaluate(t);
+        stats.MaxHp = baseStats.MaxHp * hpGrowthCurve.Evaluate(t);
+
+        return stats;
     }
 
-    public float GetHpByLevel(int level)
+    public UnitStats ApplyStar(UnitStats stats, int star)
     {
-        float growth = EvaluateGrowthCurve(hpGrowthCurve, level);
-        return baseStats.MaxHp * growth;
+        int index = Mathf.Clamp(star, 1, 4) - 1;
+
+        UnitStats result = stats;
+
+        result.Attack *= GetMultiplier(starAttackMultipliers, index);
+        result.MaxHp *= GetMultiplier(starHpMultipliers, index);
+        result.DetectRange *= GetMultiplier(starDetectRangeMultipliers, index);
+        result.AttackPerSec *= GetMultiplier(starAttackPerSecondMultipliers, index);
+        return result;
     }
 
-    public float GetStarAttackMultiplier(int star)
-    {
-        return GetStarMultiplier(starAttackMultipliers, star);
-    }
-
-    public float GetStarHpMultiplier(int star)
-    {
-        return GetStarMultiplier(starHpMultipliers, star);
-    }
-
-    public float GetStarDetectRangeMultiplier(int star)
-    {
-        return GetStarMultiplier(starDetectRangeMultipliers, star);
-    }
-
-    private float EvaluateGrowthCurve(AnimationCurve curve, int level)
-    {
-        if (curve == null || curve.length == 0)
-            return 1f;
-
-        return curve.Evaluate(level);
-    }
-
-    private float GetStarMultiplier(float[] table, int star)
+    private float GetMultiplier(float[] table, int index)
     {
         if (table == null || table.Length == 0)
             return 1f;
-
-        int index = Mathf.Clamp(star, 1, 4) - 1;
 
         if (index >= table.Length)
             return table[table.Length - 1];

@@ -4,7 +4,6 @@ public class UnitSummoner : MonoBehaviour
 {
     [Header("Unit Pool (Inspector)")]
     [SerializeField] private UnitDataSO[] unitPool;
-
     [Header("Spawn Settings")]
     [SerializeField] private Transform unitsRoot;
     [SerializeField] private MonsterSpawner monsterSpawner;
@@ -24,16 +23,16 @@ public class UnitSummoner : MonoBehaviour
 
         UnitDataSO data = unitPool[Random.Range(0, unitPool.Length)];
 
-        if (data == null || data.UnitPrefab == null)
+        if (data == null || data.unitPrefab == null)
             return false;
 
         Vector3 pos = ResolveSpawnPosition();
-        GameObject go = Instantiate(data.UnitPrefab, pos, Quaternion.identity, unitsRoot);
+        GameObject go = Instantiate(data.unitPrefab, pos, Quaternion.identity, unitsRoot);
 
         UnitController unit = go.GetComponent<UnitController>();
 
-        // TODO : UserUnitData 정보 받아오기
-        UserUnitData userData = new UserUnitData(data.UnitCode);
+        // TODO : UserUnitData 정보 받아와 유닛 기본 스탯 계산 및 생성
+        UserUnitData userData = new UserUnitData(data.unitCode);
         StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
 
         unit.BindCombatContext(monsterSpawner,roster);

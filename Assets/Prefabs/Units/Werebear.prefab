@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &566673704580335675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4529788353428264967}
+  m_Layer: 0
+  m_Name: muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4529788353428264967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566673704580335675}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.47, y: -0.13, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1592608118459287129}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &36438053001814645
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78,42 +109,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1629001870847616044, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4529788353428264967}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 612150391459849210}
+      addedObject: {fileID: 5277567523795421967}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5277567523795421967}
+      addedObject: {fileID: 6408899640983901185}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &308839627680805525 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 36438053001814645}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &612150391459849210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 308839627680805525}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 0}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  swordAura: {fileID: 4808470190387059024, guid: 1cc63b24ad952d045b43c3fa41e00979, type: 3}
-  spawnOffset: 0.6
-  projectileSpeed: 8
-  projectileLifeTime: 0.8
-  projectileRadius: 0.35
-  maxTravelDistance: 3
 --- !u!114 &5277567523795421967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,3 +144,29 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   impactEffectPrefab: {fileID: 7594024207365824745, guid: 1a5089cf42928014e8028a0c29112f9b, type: 3}
+--- !u!114 &6408899640983901185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308839627680805525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d2167f2903d11541a98b78c599730dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaveAttackBehavior
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  wavePrefab: {fileID: 4217187379047539310, guid: 1cc63b24ad952d045b43c3fa41e00979, type: 3}
+  firePoint: {fileID: 4529788353428264967}
+  projectileSpeed: 6
+  maxDistance: 3.5
+  pierceTargets: 1
+  maxHitCount: 99
+--- !u!4 &1592608118459287129 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1629001870847616044, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+  m_PrefabInstance: {fileID: 36438053001814645}
+  m_PrefabAsset: {fileID: 0}

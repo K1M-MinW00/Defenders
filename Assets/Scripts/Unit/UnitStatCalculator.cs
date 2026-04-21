@@ -1,94 +1,27 @@
-﻿using System;
-using UnityEngine;
+﻿//public static class UnitStatCalculator
+//{
+//    public static UnitStats CalculateRuntimeBase(UnitStats origin, UnitDataSO data, int star)
+//    {
+//        return data.ApplyStar(origin, star);
+//    }
 
-public static class UnitStatCalculator
-{
-    public static UnitStats Calculate(UnitDataSO data, StageUnitRuntime runtime)
-    {
-        float attack = CalculateAttack(data, runtime);
-        float maxHp = CalculateHp(data, runtime);
-        float attackPerSec = CalculateAttackPerSec(data, runtime);
-        float critChance = CalculateCritChance(data, runtime);
-        float energyRecovery = CalculateEnergyRecovery(data, runtime);
-        float detectRange = CalculateDetectRange(data, runtime);
+//    public static UnitStats CalculateFinal(UnitStats baseStats, UnitBuffController buff)
+//    {
+//        UnitStats result = baseStats;
 
-        return new UnitStats(
-            attack,
-            maxHp,
-            attackPerSec,
-            detectRange,
-            critChance,
-            energyRecovery
-        );
-    }
+//        result.Attack = Apply(buff, BuffStatType.Attack, baseStats.Attack);
+//        result.MaxHp = Apply(buff, BuffStatType.MaxHp, baseStats.MaxHp);
+//        result.AttackPerSec = Apply(buff, BuffStatType.AttackPerSec, baseStats.AttackPerSec);
+//        result.DetectRange = Apply(buff, BuffStatType.DetectRange, baseStats.DetectRange);
 
-    private static float CalculateDetectRange(UnitDataSO data, StageUnitRuntime runtime)
-    {
-        float value = data.BaseDetectRange;
+//        return result;
+//    }
 
-        if (runtime.Star >= 2)
-            value *= data.GetStarDetectRangeMultiplier(runtime.Star);
+//    private static float Apply(UnitBuffController buff, BuffStatType statType, float baseValue)
+//    {
+//        float add = buff.GetAdditive(statType);
+//        float mul = buff.GetMultiplier(statType);
 
-        return value;
-    }
-
-    private static float CalculateAttack(UnitDataSO data, StageUnitRuntime runtime)
-    {
-        float value = data.GetAttackByLevel(runtime.Level);
-
-        if (runtime.Promotion >= 4)
-            value *= 1.1f;
-
-        value *= data.GetStarAttackMultiplier(runtime.Star);
-
-        if (runtime.LimitBreak >= 4)
-            value *= 1.05f;
-
-        return value;
-    }
-
-    private static float CalculateHp(UnitDataSO data, StageUnitRuntime runtime)
-    {
-        float value = data.GetHpByLevel(runtime.Level);
-
-        if (runtime.Promotion >= 4)
-            value *= 1.1f;
-
-        value *= data.GetStarHpMultiplier(runtime.Star);
-
-        if (runtime.LimitBreak >= 2)
-            value *= 1.05f;
-
-        return value;
-    }
-
-    private static float CalculateAttackPerSec(UnitDataSO data, StageUnitRuntime runtime)
-    {
-        float value = data.BaseAttackPerSec;
-
-        if (runtime.LimitBreak >= 3)
-            value *= 1.05f;
-
-        return value;
-    }
-
-    private static float CalculateCritChance(UnitDataSO data, StageUnitRuntime runtime)
-    {
-        float value = data.BaseCritChance;
-
-        if (runtime.LimitBreak >= 1)
-            value += 0.05f;
-
-        return value;
-    }
-
-    private static float CalculateEnergyRecovery(UnitDataSO data, StageUnitRuntime runtime)
-    {
-        float value = data.BaseEnergyRecovery;
-
-        if (runtime.LimitBreak >= 5)
-            value *= 1.05f;
-
-        return value;
-    }
-}
+//        return (baseValue + add) * mul;
+//    }
+//}

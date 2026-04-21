@@ -6,6 +6,7 @@ public class UnitAnimationController : MonoBehaviour
     [SerializeField] private ModelView view;
 
     private UnitController owner;
+    private static readonly int AttackSpeedMultiplierHash = Animator.StringToHash("AttackSpeedMultiplier");
 
     public void Initialize(UnitController owner)
     {
@@ -17,9 +18,16 @@ public class UnitAnimationController : MonoBehaviour
 
     public void PlayIdle() => view?.PlayIdle();
     public void PlayMove() => view?.PlayMove();
-    public void PlayAttack() => view?.PlayAttack();
     public void PlaySkill() => view?.PlaySkill();
     public void PlayDie() => view?.PlayDie();
+    
+    public void PlayAttack()
+    {
+        float attackAnimSpeed = owner.AttackPerSec;
+        Debug.Log(attackAnimSpeed);
+        view.SetAnimSpeed(AttackSpeedMultiplierHash, attackAnimSpeed);
+        view?.PlayAttack();
+    }
 
     public void FaceTarget(MonsterController target)
     {
@@ -36,4 +44,6 @@ public class UnitAnimationController : MonoBehaviour
     {
         view?.FaceTo(from, to);
     }
+
+
 }

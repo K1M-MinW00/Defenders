@@ -21,10 +21,9 @@ MonoBehaviour:
   baseStats:
     Attack: 5
     MaxHp: 100
-    AttackPerSec: 3
-    CritChance: 0
-    EnergyRecovery: 20
+    AttackPerSec: 1
     DetectRange: 4
+  maxLevel: 100
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -87,4 +86,9 @@ MonoBehaviour:
   - 1
   - 1.4
   - 1.6
+  - 2
+  starAttackPerSecondMultipliers:
+  - 1
+  - 1.5
+  - 1.8
   - 2

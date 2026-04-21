@@ -94,6 +94,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3258943762263822361}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9164100410522855438}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &8124817616355146090 stripped
 GameObject:
@@ -112,7 +115,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c713428f9fb7342ba0fca5c6fdb80f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicAttackBehavior
-  owner: {fileID: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -131,3 +133,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Priest_Heal_Skill
   healMultiplier: 2
   healEffectPrefab: {fileID: 8325364069265900872, guid: 12170ab12b9c0424d92be317f3b00cae, type: 3}
+--- !u!114 &9164100410522855438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8124817616355146090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df0131bf5f7129946b7bd4c905b4fb29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Priest_HealingEcho
+  requiredHits: 4
+  healPercent: 0.05

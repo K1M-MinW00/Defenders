@@ -5,7 +5,8 @@ public class ArrowProjectile : MonoBehaviour
 {
     [Header("Projectile")]
     [SerializeField] private float lifeTime = 3f;
-    [SerializeField] private LayerMask targetLayer;
+    
+    private LayerMask targetLayer;
     private float damage;
     private float speed;
     private Vector2 direction;

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TemplarKnight_LightBeam_Skill : ActiveSkillBase
+public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
 {
     [Header("Light Beam")]
     [SerializeField] private float damageMultiplier = 2.5f;

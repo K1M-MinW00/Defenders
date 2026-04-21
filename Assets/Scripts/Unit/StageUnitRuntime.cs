@@ -3,69 +3,43 @@
 [System.Serializable]
 public class StageUnitRuntime
 {
-    [Header("Identity")]
-    public UnitCode UnitCode;
+    public UnitCode UnitCode { get; private set; }
+    public int Star { get; private set; }
 
-    [Header("Persistent Progress")]
-    public int Level;
-    public int Promotion;
-    public int LimitBreak;
-
-    [Header("Stage Progress")]
-    [Range(1, 4)] public int Star = 1;
-
-    [Header("Combat Stats")]
-    public UnitStats FinalStats;
-
-    [Header("Runtime State")]
-    public float CurrentHp;
-    public float CurrentEnergy;
-    public float MaxEnergy = 100f;
-    public bool IsDead;
-
-    [Header("Unlock Flags")]
-    public bool CanUsePassive;
-    public bool CanUseActive;
-    public bool CanRecoverEnergy;
-
-    public bool ActiveTier2Unlocked;
-    public bool PassiveTier3Unlocked;
-    public bool ActiveTier4Unlocked;
+    public UnitStats OriginStats { get; private set; } // 1성 기준 기본 스탯
+    public UnitStats StageBaseStats { get; private set; } // 스테이지 안에서 구조적으로 변한 기본 스탯
+    public UnitStats FinalStats { get; private set; } // 실제 전투에 쓰이는 최종 스탯
+    
+    public bool CanUseActive => Star >= 3;
 
     public StageUnitRuntime(StageUnitInitData initData)
     {
         UnitCode = initData.UserData.UnitCode;
-        Level = initData.UserData.Level;
-        Promotion = initData.UserData.Promotion;
-        LimitBreak = initData.UserData.LimitBreak;
-
-        Star = initData.InitialStar;
-        CurrentEnergy = 0f;
-        IsDead = false;
-
-        RefreshPersistentFlags();
-        RefreshStageFlags();
-    }
-    public void RefreshPersistentFlags()
-    {
-        CanUsePassive = Promotion >= 1;
-        ActiveTier2Unlocked = Promotion >= 2;
-        PassiveTier3Unlocked = Promotion >= 3;
-        ActiveTier4Unlocked = Promotion >= 4;
+        Star = Mathf.Max(1,initData.InitialStar);
     }
 
-    public void RefreshStageFlags()
+    public void SetOriginStats(UnitStats stats)
     {
-        CanUseActive = Star >= 3;
-        CanRecoverEnergy = Star >= 3;
-
-        if (!CanRecoverEnergy)
-            CurrentEnergy = 0f;
+        OriginStats = stats;
     }
 
-    public void RefreshAllFlags()
+    public void SetRuntimeBaseStats(UnitStats stats)
     {
-        RefreshPersistentFlags();
-        RefreshStageFlags();
+        StageBaseStats = stats;
+    }
+
+    public void SetFinalStats(UnitStats stats)
+    {
+        FinalStats = stats;
+    }
+
+    public void UpgradeStar()
+    {
+        SetStar(Star + 1);
+    }
+
+    public void SetStar(int star)
+    {
+        Star = Mathf.Max(1, star);
     }
 }

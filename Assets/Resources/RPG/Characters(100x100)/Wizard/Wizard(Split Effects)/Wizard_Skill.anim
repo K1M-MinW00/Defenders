@@ -30,7 +30,7 @@ AnimationClip:
       value: {fileID: -7832166424982032702, guid: 367c371cc852b4148ae4e63b2f7b209f, type: 3}
     - time: 0.6666667
       value: {fileID: -1287752934658873349, guid: 367c371cc852b4148ae4e63b2f7b209f, type: 3}
-    - time: 0.8333333
+    - time: 1
       value: {fileID: 3512104325056310729, guid: 367c371cc852b4148ae4e63b2f7b209f, type: 3}
     attribute: m_Sprite
     path: 
@@ -65,7 +65,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.84999996
+    m_StopTime: 1.0166667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -92,7 +92,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.8333333
+  - time: 1
     functionName: OnSkillFinishedEvent
     data: 
     objectReferenceParameter: {fileID: 0}

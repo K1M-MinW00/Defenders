@@ -9,26 +9,51 @@ public class UnitStatService : MonoBehaviour
         this.owner = owner;
     }
 
-    public void Recalculate(bool resetHp)
+    public void BuildInitialStats(StageUnitInitData initData)
     {
-        if (owner.UnitData == null || owner.Runtime == null)
-            return;
+        UnitDataSO data = initData.UnitData;
+        int level = initData.UserData.Level;
 
-        owner.Runtime.RefreshStageFlags();
+        UnitStats origin = data.GetOriginStats(level);
+        owner.Runtime.SetOriginStats(origin);
 
-        // 나중에는 버프까지 포함한 최종 계산으로 확장
-        owner.Runtime.FinalStats = UnitStatCalculator.Calculate(owner.UnitData, owner.Runtime);
-
-        if (resetHp)
-            owner.Runtime.CurrentHp = owner.Runtime.FinalStats.MaxHp;
-        else
-            owner.Runtime.CurrentHp = Mathf.Min(owner.Runtime.CurrentHp, owner.Runtime.FinalStats.MaxHp);
-
-        ApplyDerivedValues();
+        Recalculate(StatRefreshPolicy.FullHeal);
     }
 
-    public void ApplyDerivedValues()
+    public void Recalculate(StatRefreshPolicy statRefreshPolicy)
     {
+        UnitStats stageBaseStats = owner.UnitData.ApplyStar(owner.Runtime.OriginStats, owner.Runtime.Star);
+        UnitStats finalStats = CalculateFinalStats(stageBaseStats);
+
+        owner.Runtime.SetRuntimeBaseStats(stageBaseStats);
+        owner.Runtime.SetFinalStats(finalStats);
+        
+        owner.Health.ApplyStatRefresh(finalStats.MaxHp);
         owner.Targeting.ApplyRange(owner.Runtime.FinalStats.DetectRange);
     }
+
+    private UnitStats CalculateFinalStats(UnitStats stageBaseStats)
+    {
+        UnitStats result = stageBaseStats;
+
+        result.Attack = CalculateBuffedValue(BuffStatType.Attack, stageBaseStats.Attack);
+        result.MaxHp = CalculateBuffedValue(BuffStatType.MaxHp, stageBaseStats.MaxHp);
+        result.AttackPerSec = CalculateBuffedValue(BuffStatType.AttackPerSec, stageBaseStats.AttackPerSec);
+        result.DetectRange = CalculateBuffedValue(BuffStatType.DetectRange, stageBaseStats.DetectRange);
+
+        return result;
+    }
+
+    private float CalculateBuffedValue(BuffStatType statType, float baseValue)
+    {
+        float additive = owner.BuffController.GetAdditive(statType);
+        float multiplier = owner.BuffController.GetMultiplier(statType);
+        return (baseValue + additive) * multiplier;
+    }
+}
+
+public enum StatRefreshPolicy
+{
+    FullHeal,
+    KeepRatio,
 }

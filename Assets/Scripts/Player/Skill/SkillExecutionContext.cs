@@ -4,10 +4,8 @@ using UnityEngine;
 public class SkillExecutionContext
 {
     public UnitController Caster { get; private set; }
-
     public MonsterController EnemyTarget { get; private set; }
     public readonly List<MonsterController> EnemyTargets = new();
-
     public readonly List<UnitController> AllyTargets = new();
 
     public Vector3 CastPosition { get; private set; }
@@ -59,6 +57,11 @@ public class SkillExecutionContext
             AllyTargets.AddRange(targets);
 
         IsValid = AllyTargets.Count > 0;
+    }
+
+    public void AddAllyTarget(UnitController target)
+    {
+        AllyTargets.Add(target);
     }
 
     public void SetCastPosition(Vector3 pos)

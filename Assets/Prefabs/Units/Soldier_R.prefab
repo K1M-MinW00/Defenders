@@ -128,6 +128,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: -5954493186918161628}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3471045351191771853}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &4635945194083421887 stripped
 GameObject:
@@ -146,7 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ad8e807d3a65b544a713126464df6d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArcherAttackBehavior
-  owner: {fileID: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -175,6 +177,20 @@ MonoBehaviour:
   fallingArrowPrefab: {fileID: 1796473401046290145, guid: d26a49802432cb543aa8f70f4979e99e, type: 3}
   spawnHeight: 3.5
   horizontalScatter: 0.15
+--- !u!114 &-3471045351191771853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4635945194083421887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cde3b9f0bb6f71439eece2c14f401c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoliderR_DetectWeakness
+  procChance: 0.25
+  bonusDamagePercent: 0.4
 --- !u!4 &5910133605599066739 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1629001870847616044, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}

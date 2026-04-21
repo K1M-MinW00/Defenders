@@ -86,9 +86,9 @@ public class LobbyUnitTabUI : MonoBehaviour
         return new LobbyUnitViewModel
         {
             UnitCode = userUnit.UnitCode,
-            Icon = unitData.Icon,
-            Level = userUnit.Level,
-            Promotion = userUnit.Promotion
+            Icon = unitData.icon,
+            //Level = userUnit.Level,
+            //Promotion = userUnit.Promotion
         };
     }
 

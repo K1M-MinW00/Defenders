@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class UnitCombatController : MonoBehaviour
 {
@@ -29,5 +30,11 @@ public class UnitCombatController : MonoBehaviour
     public void CancelAttack()
     {
         attackBehavior?.CancelAttack();
+    }
+
+    public void TryAttackTargetImmediate(MonsterController target)
+    {
+        owner.Animation.FaceTarget(target);
+        attackBehavior?.OnAttackHit();
     }
 }

@@ -5,6 +5,7 @@ public class UnitFSMController : MonoBehaviour
     private UnitController owner;
     private UnitFSM fsm;
 
+    public bool IsIdleState => fsm.CurrentState == idleState;
     private IdleState idleState;
     private MoveState moveState;
     private AttackState attackState;

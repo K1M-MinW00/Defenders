@@ -223,29 +223,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitController
   unitData: {fileID: 0}
-  runtime:
-    UnitCode: 0
-    Level: 0
-    Promotion: 0
-    LimitBreak: 0
-    Star: 0
-    FinalStats:
-      Attack: 0
-      MaxHp: 0
-      AttackPerSec: 0
-      CritChance: 0
-      EnergyRecovery: 0
-      DetectRange: 0
-    CurrentHp: 0
-    CurrentEnergy: 0
-    MaxEnergy: 0
-    IsDead: 0
-    CanUsePassive: 0
-    CanUseActive: 0
-    CanRecoverEnergy: 0
-    ActiveTier2Unlocked: 0
-    PassiveTier3Unlocked: 0
-    ActiveTier4Unlocked: 0
   fsmController: {fileID: 3840189056346183932}
   statService: {fileID: 1838466798527487007}
   health: {fileID: 4355781461577551962}
@@ -256,7 +233,7 @@ MonoBehaviour:
   combat: {fileID: 6445384252813261213}
   rangeIndicator: {fileID: 8571101271341991098}
   skillController: {fileID: 7431971341929807749}
-  buffController: {fileID: 0}
+  buffController: {fileID: 3215718443639412451}
 --- !u!114 &6445384252813261213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,6 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c88c82e9dc7e6d40ba96f3ea7deec71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitEnergy
+  energyRecovery: 10
 --- !u!114 &3840189056346183932
 MonoBehaviour:
   m_ObjectHideFlags: 0

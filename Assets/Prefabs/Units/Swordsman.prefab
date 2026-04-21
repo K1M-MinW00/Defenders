@@ -86,7 +86,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4548178846440578045}
+      addedObject: {fileID: 1710694810913216919}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3200639304502927206}
@@ -96,7 +96,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 1544731345735178218}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4548178846440578045
+--- !u!114 &1710694810913216919
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -105,19 +105,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1272179824587458314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 790d15717ca9f5943900bf75fd10994e, type: 3}
+  m_Script: {fileID: 11500000, guid: 964355903a5edbe4d84e635c82977c3c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeArcAttackBehavior
-  owner: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::SwordAttackBehavior
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  swordAura: {fileID: 1607254557857513087, guid: 4092137df183b214abba216fe8072c3a, type: 3}
-  spawnOffset: 0.6
-  projectileSpeed: 8
-  projectileLifeTime: 0.8
-  projectileRadius: 0.35
-  maxTravelDistance: 3
+  targetMode: 1
+  slashHitboxPrefab: {fileID: 7070787661158587470, guid: 66491d2920529ef4b8d8d10b5d12aa55, type: 3}
+  boxSize: {x: 2.5, y: 1}
+  forwardOffset: 1.8
 --- !u!114 &-3200639304502927206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,7 +129,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Swordsman_Piercing_Skill
   hitDamageMultiplier: 2
   boxSize: {x: 3, y: 3}
-  forwardOffset: 0.9
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64

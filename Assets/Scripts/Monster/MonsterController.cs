@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,7 +12,6 @@ public class MonsterController : MonoBehaviour, IPoolable
     private UnitRoster unitRoster;
     private NavMeshAgent agent;
     private IMonsterAttack attackBehavior;
-
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
     public NavMeshAgent Agent => agent;
@@ -32,6 +32,8 @@ public class MonsterController : MonoBehaviour, IPoolable
     public MonsterIdleState idleState;
 
     public event Action<MonsterController> OnDead;
+    private Coroutine knockbackRoutine;
+
 
     private void Awake()
     {
@@ -177,4 +179,43 @@ public class MonsterController : MonoBehaviour, IPoolable
     public void PlayIdle() => view?.PlayIdle();
     public void PlayMove() => view?.PlayMove();
     public void PlayAttack() => view?.PlayAttack();
+
+    public void ApplyKnockback(Vector2 direction, float distance, float duration)
+    {
+        if (knockbackRoutine != null)
+            StopCoroutine(knockbackRoutine);
+
+        knockbackRoutine = StartCoroutine(KnockbackRoutine(direction, distance, duration));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector2 direction, float distance, float duration)
+    {
+        if (agent != null)
+            agent.isStopped = true;
+
+        Vector3 start = transform.position;
+        Vector3 end = start + (Vector3)(direction.normalized * distance);
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            transform.position = Vector3.Lerp(start, end, t);
+            yield return null;
+        }
+
+        transform.position = end;
+
+        if (agent != null)
+        {
+            agent.Warp(transform.position);
+            agent.ResetPath();
+            agent.isStopped = false;
+        }
+
+        knockbackRoutine = null;
+    }
 }

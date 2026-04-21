@@ -76,8 +76,8 @@ public class UnitRosterHpTracker : MonoBehaviour
             unit.Health.OnHpChanged += HandleUnitHpChanged;
             unit.Health.OnDead += HandleUnitDead;
 
-            float currentHp = unit.CurrentHp;
-            float maxHp = unit.MaxHp;
+            float currentHp = unit.Health.CurrentHp;
+            float maxHp = unit.Health.MaxHp;
 
             hpSnapshots[unit] = new HpSnapshot(currentHp, maxHp);
             totalCurrentHp += currentHp;
@@ -114,7 +114,7 @@ public class UnitRosterHpTracker : MonoBehaviour
         if (unit == null)
             return;
 
-        HandleUnitHpChanged(unit, unit.CurrentHp, unit.MaxHp);
+        HandleUnitHpChanged(unit, unit.Health.CurrentHp, unit.Health.MaxHp);
     }
 
     private void UnsubscribeAll()

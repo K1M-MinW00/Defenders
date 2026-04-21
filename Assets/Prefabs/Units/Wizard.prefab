@@ -108,7 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c713428f9fb7342ba0fca5c6fdb80f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicAttackBehavior
-  owner: {fileID: 0}
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -130,7 +129,6 @@ MonoBehaviour:
   spawnHeight: 3
   explosionRadius: 1.5
   projectileSpeed: 10
-  lifeTime: 3
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64

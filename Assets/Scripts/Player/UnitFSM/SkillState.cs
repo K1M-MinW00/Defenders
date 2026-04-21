@@ -54,7 +54,7 @@ public class SkillState : IState
                 return;
             }
 
-            if(!owner.IsEnergyFull)
+            if(!owner.Energy.IsFull)
             {
                 isWaitingForTarget = false;
                 owner.FSMController.ChangeToIdle();

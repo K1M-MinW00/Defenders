@@ -64,4 +64,9 @@ public class ModelView : MonoBehaviour
     {
         return isFacingRight ? Vector2.right : Vector2.left;
     }
+
+    public void SetAnimSpeed(int stringHash, float speed)
+    {
+        animator.SetFloat(stringHash, speed);
+    }
 }

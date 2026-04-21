@@ -7,7 +7,7 @@ public class UnitController : MonoBehaviour
 {
     [Header("Data")]
     [SerializeField] private UnitDataSO unitData;
-    [SerializeField] private StageUnitRuntime runtime;
+    private StageUnitRuntime runtime;
 
     [Header("References")]
     [SerializeField] private UnitFSMController fsmController;
@@ -38,29 +38,14 @@ public class UnitController : MonoBehaviour
     public UnitBuffController BuffController => buffController;
     public MonsterController Target => targeting.CurrentTarget;
     public UnitCode UnitCode => runtime.UnitCode;
-    public int Level => runtime.Level;
-    public int Promotion => runtime.Promotion;
-    public int LimitBreak => runtime.LimitBreak;
     public int Star => runtime.Star;
-
+     
     public float Attack => runtime.FinalStats.Attack;
-    public float MaxHp => runtime.FinalStats.MaxHp;
-    public float CurrentHp => runtime.CurrentHp;
     public float AttackPerSec => runtime.FinalStats.AttackPerSec;
     public float DetectRange => runtime.FinalStats.DetectRange;
-    public float CurrentEnergy => runtime.CurrentEnergy;
 
-    // 수정 필요
-    public bool IsDead => runtime.IsDead;
-    public bool IsEnergyFull => runtime != null && runtime.CurrentEnergy >= runtime.MaxEnergy;
-
-    public bool CanUseActive => runtime != null && runtime.CanUseActive;
-    public bool CanRecoverEnergy => runtime != null && runtime.CanRecoverEnergy;
-
-    public bool ActiveTier2Unlocked => runtime != null && runtime.ActiveTier2Unlocked;
-    public bool PassiveTier3Unlocked => runtime != null && runtime.PassiveTier3Unlocked;
-    public bool ActiveTier4Unlocked => runtime != null && runtime.ActiveTier4Unlocked;
-
+    public bool IsDead => Health.IsDead;
+  
     #endregion Property
 
     public event Action<UnitController> OnInitialized;
@@ -102,7 +87,7 @@ public class UnitController : MonoBehaviour
         skillController.Initialize(this);
         buffController.Initialize(this);
 
-        statService.Recalculate(resetHp: true);
+        statService.BuildInitialStats(initData);
         RestoreForPrepare();
 
         OnInitialized?.Invoke(this);
@@ -127,9 +112,8 @@ public class UnitController : MonoBehaviour
 
     public void RestoreForPrepare()
     {
-        runtime.IsDead = false;
         health.RestoreFull();
-        energy.ResetToZero();
+        energy.ConsumeAll();
 
         movement.Stop();
         movement.EnableMovement(true);
@@ -140,9 +124,27 @@ public class UnitController : MonoBehaviour
         combat.CancelAttack();
         skillController.CancelSkill();
 
-        statService.ApplyDerivedValues();
+        targeting.ApplyRange(runtime.FinalStats.DetectRange);
 
         fsmController.ChangeToIdle();
+    }
+
+    public void ReceiveCombatAlert()
+    {
+        if (IsDead)
+            return;
+
+        if (!fsmController.IsIdleState)
+            return;
+
+        bool found = Targeting.FindGlobalAliveMonster();
+        if (!found)
+            return;
+
+        if (Targeting.IsTargetInRange())
+            FSMController.ChangeToAttack();
+        else
+            FSMController.ChangeToMove();
     }
 
     public void ApplyStarUp()
@@ -153,10 +155,9 @@ public class UnitController : MonoBehaviour
         if (runtime.Star >= 4)
             return;
 
-        runtime.Star++;
-        runtime.RefreshStageFlags();
+        runtime.UpgradeStar();
 
-        statService.Recalculate(resetHp: true);
+        statService.Recalculate(StatRefreshPolicy.FullHeal);
         OnStatsChanged?.Invoke(this);
     }
 

@@ -27,14 +27,8 @@ public class UnitSkillController : MonoBehaviour
         activeSkill = GetComponent<ActiveSkillBase>();
         passiveSkill = GetComponent<PassiveSkillBase>();
 
-        if (activeSkill == null)
-            activeSkill = GetComponentInChildren<ActiveSkillBase>();
-
-        if (passiveSkill == null)
-            passiveSkill = GetComponentInChildren<PassiveSkillBase>();
-
         activeSkill?.Initialize(owner, this);
-        passiveSkill?.Initialize(owner);
+        passiveSkill?.Initialize(owner, this);
 
         owner.Energy.OnEnergyFull += HandleEnergyFull;
     }
@@ -42,6 +36,11 @@ public class UnitSkillController : MonoBehaviour
     public void SetCombatPhase(bool active)
     {
         isCombatPhase = active;
+
+        if(active)
+            NotifyBattleStart();
+        else
+            NotifyBattleEnd();
     }
 
     private void HandleEnergyFull()
@@ -66,15 +65,15 @@ public class UnitSkillController : MonoBehaviour
         if (owner.IsDead)
             return false;
 
-        if (!owner.CanUseActive)
+        if (!owner.Runtime.CanUseActive)
             return false;
 
-        if (!owner.IsEnergyFull)
+        if (!owner.Energy.IsFull)
             return false;
 
         return true;
     }
-    
+
     public bool ShouldWaitForTarget()
     {
         return activeSkill.TargetFailPolicy == SkillTargetFailPolicy.WaitUntilFound;
@@ -114,8 +113,8 @@ public class UnitSkillController : MonoBehaviour
         isSkillRunning = true;
 
         activeSkill.OnSkillStart(currentContext);
-        //passiveSkill?.OnActiveSkillStarted();
         OnSkillStarted?.Invoke();
+        NotifyActiveSkillStarted();
 
         owner.Animation.PlaySkill();
 
@@ -131,8 +130,8 @@ public class UnitSkillController : MonoBehaviour
         owner.Energy.ConsumeAll();
 
         activeSkill.OnSkillApply(currentContext);
-        //passiveSkill?.OnActiveSkillApplied();
         OnSkillApplied?.Invoke();
+        NotifyActiveSkillApplied();
     }
 
     public void EndSkill()
@@ -141,8 +140,8 @@ public class UnitSkillController : MonoBehaviour
             return;
 
         activeSkill.OnSkillEnd(currentContext);
-        //passiveSkill?.OnActiveSkillEnded();
         OnSkillEnded?.Invoke();
+        NotifyActiveSkillEnded();
 
         currentContext = null;
         isSkillRunning = false;
@@ -155,33 +154,47 @@ public class UnitSkillController : MonoBehaviour
         isSkillRunning = false;
     }
 
-    //public void NotifyBattleStart()
-    //{
-    //    passiveSkill?.OnBattleStart();
-    //}
+    public void NotifyBattleStart()
+    {
+        passiveSkill?.OnBattleStart();
+    }
 
-    //public void NotifyBattleEnd()
-    //{
-    //    passiveSkill?.OnBattleEnd();
-    //}
+    public void NotifyBattleEnd()
+    {
+        passiveSkill?.OnBattleEnd();
+    }
 
-    //public void NotifyAttackStarted(MonsterController target)
-    //{
-    //    passiveSkill?.OnAttackStarted(target);
-    //}
+    public void NotifyAttackStarted(MonsterController target)
+    {
+        passiveSkill?.OnAttackStarted(target);
+    }
 
-    //public void NotifyAttackHit(MonsterController target, ref float damage)
-    //{
-    //    passiveSkill?.OnAttackHit(target, ref damage);
-    //}
+    public void NotifyAttackHit(MonsterController target, ref float damage)
+    {
+        passiveSkill?.OnAttackHit(target, ref damage);
+    }
 
-    //public void NotifyBeforeTakeDamage(ref float damage, MonsterController attacker)
-    //{
-    //    passiveSkill?.OnBeforeTakeDamage(ref damage, attacker);
-    //}
+    public void NotifyBeforeTakeDamage(ref float damage)
+    {
+        passiveSkill?.OnBeforeTakeDamage(ref damage);
+    }
 
-    //public void NotifyAfterTakeDamage(float finalDamage, MonsterController attacker)
-    //{
-    //    passiveSkill?.OnAfterTakeDamage(finalDamage, attacker);
-    //}
+    public void NotifyAfterTakeDamage(float finalDamage)
+    {
+        passiveSkill?.OnAfterTakeDamage(finalDamage);
+    }
+    public void NotifyActiveSkillStarted()
+    {
+        passiveSkill?.OnActiveSkillStarted();
+    }
+
+    public void NotifyActiveSkillApplied()
+    {
+        passiveSkill?.OnActiveSkillApplied();
+    }
+
+    public void NotifyActiveSkillEnded()
+    {
+        passiveSkill?.OnActiveSkillEnded();
+    }
 }

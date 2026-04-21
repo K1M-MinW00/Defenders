@@ -122,7 +122,7 @@ public class UnitRuntime : MonoBehaviour, IDamageable
         if (Data == null)
             return;
 
-        FinalStats = Data.BaseStats;
+        FinalStats = Data.baseStats;
         // TODO : 합성 스탯 업그레이드
 
     }

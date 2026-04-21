@@ -90,16 +90,38 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 6395596576903134142}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
       addedObject: {fileID: -3704186839640977958}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6395596576903134142}
+      addedObject: {fileID: -2165534159755768019}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &7769852123241821866 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 8006348321082058314}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6395596576903134142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7769852123241821866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1769f1b284def8498981a74322bc566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AxeAttackBehavior
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  targetMode: 0
+  slashHitboxPrefab: {fileID: 1383628206955395719, guid: 149d6dd52e9dd9d40b5692475a666645, type: 3}
+  hitRadius: 4
+  attackAngle: 60
 --- !u!114 &-3704186839640977958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,7 +140,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   spinEffectPrefab: {fileID: 8647539937358380245, guid: a68fccecd3a319b4fae62817bdcfb0ea, type: 3}
---- !u!114 &6395596576903134142
+--- !u!114 &-2165534159755768019
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,12 +149,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7769852123241821866}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1769f1b284def8498981a74322bc566, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c846c32faec6ac4da2ad8dea28f16fa, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AxeAttackBehavior
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  slashHitboxPrefab: {fileID: 1383628206955395719, guid: 149d6dd52e9dd9d40b5692475a666645, type: 3}
-  hitRadius: 4
-  attackAngle: 60
+  m_EditorClassIdentifier: Assembly-CSharp::Axeman_BerserkerInstinct
+  attackBonusPercent: 0.2
+  attackSpeedBonusPercent: 0.2
+  duration: 3
+  cooldown: 4
+  attackBuffId: Axeman_BerserkInstinct_Attack
+  attackSpeedBuffId: Axeman_BerserkInstinct_AttackSpeed

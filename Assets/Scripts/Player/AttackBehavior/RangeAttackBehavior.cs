@@ -42,9 +42,13 @@ public abstract class RangedAttackBehavior : MonoBehaviour, IAttackBehavior
             return false;
 
         currentTarget = target;
+
+        isAttacking = true;
+
+        owner.SkillController.NotifyAttackStarted(target);
+        
         owner.FaceTarget();
         owner.Animation.PlayAttack();
-        isAttacking = true;
 
         return true;
     }

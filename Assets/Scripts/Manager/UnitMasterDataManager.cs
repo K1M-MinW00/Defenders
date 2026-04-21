@@ -37,13 +37,13 @@ public class UnitMasterDataManager : MonoBehaviour
             if (unitData == null)
                 continue;
 
-            if (unitDataMap.ContainsKey(unitData.UnitCode))
+            if (unitDataMap.ContainsKey(unitData.unitCode))
             {
-                Debug.LogError($"[UnitMasterDataManager] Duplicate UnitCode : {unitData.UnitCode}");
+                Debug.LogError($"[UnitMasterDataManager] Duplicate UnitCode : {unitData.unitCode}");
                 continue;
             }
 
-            unitDataMap.Add(unitData.UnitCode, unitData);
+            unitDataMap.Add(unitData.unitCode, unitData);
         }
     }
 
