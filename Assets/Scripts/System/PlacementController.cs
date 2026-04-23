@@ -73,7 +73,7 @@ public class PlacementController : MonoBehaviour
         int star = unit.Star;
 
         bool canReroll = (star == 1);
-        stageUIController.SetUnitDragMode(true, canReroll);
+        stageUIController.SetUnitDragMode(true, canReroll,star);
     }
 
     private void Dragging()

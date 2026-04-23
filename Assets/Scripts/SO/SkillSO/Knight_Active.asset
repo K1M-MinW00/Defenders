@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1308368e53fa951488e3b270f62caf3c, type: 3}
+  m_Name: Knight_Active
+  m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
+  skillName: "\uCC38\uACA9\uC758 \uD30C\uB3D9"
+  description: "\uAC80\uAE30\uB97C \uBC29\uCD9C\uD574 \uC804\uBC29\uC758 \uC801\uC744
+    \uBCA0\uC5B4\uB0B8\uB2E4."
+  icon: {fileID: -8493543951446748844, guid: 96460c55c5a814045a192f741ea727c4, type: 3}

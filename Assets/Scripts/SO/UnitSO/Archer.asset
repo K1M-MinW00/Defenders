@@ -16,14 +16,14 @@ MonoBehaviour:
   displayName: Archer
   icon: {fileID: -7132172409892320828, guid: 492d92066580385478f702636c89f8fb, type: 3}
   unitPrefab: {fileID: 8000201301124123185, guid: adbd41c60b30c044493d5eebd1e38b25, type: 3}
-  passiveSkill: {fileID: 0}
-  activeSkill: {fileID: 0}
+  passiveSkill: {fileID: 11400000, guid: 322ccfa29607b9f418541f849e1aa5ad, type: 2}
+  activeSkill: {fileID: 11400000, guid: f903df8c89b83bf4381e5fc0a71cfc3b, type: 2}
   baseStats:
     Attack: 5
     MaxHp: 100
     AttackPerSec: 2
     DetectRange: 8
-  maxLevel: 100
+  maxLevel: 50
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -84,11 +84,11 @@ MonoBehaviour:
   - 2.4
   starDetectRangeMultipliers:
   - 1
-  - 1
-  - 1.1
-  - 1.2
+  - 1.25
+  - 1.5
+  - 2
   starAttackPerSecondMultipliers:
   - 1
+  - 1.2
   - 1.5
-  - 1.8
   - 2

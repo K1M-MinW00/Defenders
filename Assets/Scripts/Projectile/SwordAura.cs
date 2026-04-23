@@ -2,12 +2,11 @@
 
 public class SwordAura : MonoBehaviour
 {
-    [Header("Runtime")]
-    [SerializeField] private float damage;
-    [SerializeField] private Vector2 direction;
-    [SerializeField] private float speed;
-    [SerializeField] private float lifeTime;
-    [SerializeField] private LayerMask targetLayer;
+    private float damage;
+    private Vector2 direction;
+    private float speed;
+    private float lifeTime;
+    private LayerMask targetLayer;
 
     private float spawnTime;
 
@@ -26,8 +25,8 @@ public class SwordAura : MonoBehaviour
 
     private void RotateVisual()
     {
-        float angle = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f,0f,angle);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     private void Update()
@@ -38,7 +37,7 @@ public class SwordAura : MonoBehaviour
 
     private void CheckDestroyCondition()
     {
-        if(Time.time >= spawnTime + lifeTime)
+        if (Time.time >= spawnTime + lifeTime)
         {
             Destroy(gameObject);
             return;
@@ -55,10 +54,10 @@ public class SwordAura : MonoBehaviour
         if (((1 << collision.gameObject.layer) & targetLayer) == 0)
             return;
 
-        if(collision.TryGetComponent<IDamageable>(out IDamageable damageable))
+        if (collision.TryGetComponent<IDamageable>(out IDamageable damageable))
         {
             damageable.TakeDamage(damage);
-            
+
         }
     }
 }

@@ -85,7 +85,7 @@ public class UnitSkillController : MonoBehaviour
             return false;
 
         if (activeSkill.TryBuildContext(out currentContext))
-            return true;
+                return true;
 
         switch (activeSkill.TargetFailPolicy)
         {
@@ -141,10 +141,11 @@ public class UnitSkillController : MonoBehaviour
 
         activeSkill.OnSkillEnd(currentContext);
         OnSkillEnded?.Invoke();
-        NotifyActiveSkillEnded();
 
         currentContext = null;
         isSkillRunning = false;
+
+        NotifyActiveSkillEnded();
     }
 
     public void CancelSkill()

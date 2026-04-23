@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1308368e53fa951488e3b270f62caf3c, type: 3}
+  m_Name: Axeman_Passive
+  m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
+  skillName: "\uAD11\uC804\uC0AC \uBCF8\uB2A5"
+  description: "\uD53C\uD574\uB97C \uBC1B\uC744 \uB54C\uB9C8\uB2E4, \uC77C\uC815
+    \uC2DC\uAC04\uB3D9\uC548 \uACF5\uACA9\uB825\uACFC \uACF5\uACA9 \uC18D\uB3C4\uAC00
+    \uC99D\uAC00\uD55C\uB2E4."
+  icon: {fileID: 1836674831482744328, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}

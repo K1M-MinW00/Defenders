@@ -16,14 +16,14 @@ MonoBehaviour:
   displayName: Soldier_Melee
   icon: {fileID: -3868812660829053132, guid: 1c4a5a9b2ede32e4c8f7c30754ba0665, type: 3}
   unitPrefab: {fileID: 4452343533218067403, guid: 5c8fb23d3cd6a8042b0b7f08b8658c12, type: 3}
-  passiveSkill: {fileID: 0}
-  activeSkill: {fileID: 0}
+  passiveSkill: {fileID: 11400000, guid: 1af022547620e0940bddf2dc7bcb8192, type: 2}
+  activeSkill: {fileID: 11400000, guid: 80dc85c604ed324489da6eef8a759cd3, type: 2}
   baseStats:
     Attack: 5
     MaxHp: 100
     AttackPerSec: 1
-    DetectRange: 4
-  maxLevel: 100
+    DetectRange: 3
+  maxLevel: 50
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -84,11 +84,11 @@ MonoBehaviour:
   - 2.4
   starDetectRangeMultipliers:
   - 1
+  - 1.1
   - 1.2
-  - 1.5
-  - 2
+  - 1.25
   starAttackPerSecondMultipliers:
   - 1
+  - 1.2
   - 1.5
-  - 1.8
   - 2

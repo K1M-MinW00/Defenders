@@ -62,13 +62,15 @@ public class EconomyManager : MonoBehaviour
 
     public bool TrySummonUnit() => TrySpendGold(config.summonUnit);
     public bool TryReroll() => TrySpendGold(config.reRollUnit);
+    
 
     public int GetSummonCost() => config.summonUnit;
     public int GetRerollCost() => config.reRollUnit;
+    public int GetSellCost(int star) => config.CalculateSellUnit(star);
 
     public void SellUnit(int star)
     {
-        int price = config.CalculateSellUnit(star);
+        int price = GetSellCost(star);
         AddGold(price);
     }
 

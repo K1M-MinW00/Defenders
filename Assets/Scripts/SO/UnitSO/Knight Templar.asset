@@ -16,14 +16,14 @@ MonoBehaviour:
   displayName: Knight_Templar
   icon: {fileID: 868370677313445676, guid: fe14ba2c44e51a7488b1e694991d9f25, type: 3}
   unitPrefab: {fileID: 6463679714893050464, guid: a66f4deb5f8cfd14cbad34d5b6f9e999, type: 3}
-  passiveSkill: {fileID: 0}
-  activeSkill: {fileID: 0}
+  passiveSkill: {fileID: 11400000, guid: ee497796788aedf4e8836f93492b3e3e, type: 2}
+  activeSkill: {fileID: 11400000, guid: 458d8c43800de7640a593b8e3beb27d6, type: 2}
   baseStats:
     Attack: 10
     MaxHp: 100
     AttackPerSec: 2
     DetectRange: 4
-  maxLevel: 100
+  maxLevel: 50
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -84,11 +84,11 @@ MonoBehaviour:
   - 2.4
   starDetectRangeMultipliers:
   - 1
-  - 1
   - 1.1
   - 1.2
+  - 1.5
   starAttackPerSecondMultipliers:
   - 1
+  - 1.2
   - 1.5
-  - 1.8
   - 2

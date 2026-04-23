@@ -90,6 +90,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3200639304502927206}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9042563855952981031}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &1272179824587458314 stripped
 GameObject:
@@ -111,10 +114,9 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  targetMode: 1
-  slashHitboxPrefab: {fileID: 7070787661158587470, guid: 66491d2920529ef4b8d8d10b5d12aa55, type: 3}
-  boxSize: {x: 2.5, y: 1}
-  forwardOffset: 1.8
+  multiTargetUnlockStar: 3
+  hitboxPrefab: {fileID: 7070787661158587470, guid: 66491d2920529ef4b8d8d10b5d12aa55, type: 3}
+  boxSize: {x: 3, y: 2}
 --- !u!114 &-3200639304502927206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,3 +136,19 @@ MonoBehaviour:
     m_Bits: 64
   multCnt: 4
   hitEffectPrefab: {fileID: 6941096045168117609, guid: 91cede1602e24ad47b8d7e600cb6f12a, type: 3}
+--- !u!114 &9042563855952981031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272179824587458314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455b33c29d2e3ae41aca2ec3b5ee6cf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Swordsman_BladeDance
+  maxStacks: 5
+  attackSpeedBonusPerStack: 0.06
+  stackDuration: 2
+  buffId: Swordsman_BladeDance

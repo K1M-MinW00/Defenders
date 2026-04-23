@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1308368e53fa951488e3b270f62caf3c, type: 3}
+  m_Name: Wizard_Active
+  m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
+  skillName: "\uBA54\uD14C\uC624"
+  description: "\uD558\uB298\uC5D0\uC11C \uBD88\uB369\uC774\uB97C \uC18C\uD658\uD574
+    \uC801\uC5D0\uAC8C \uBC94\uC704 \uD53C\uD574\uB97C \uC785\uD78C\uB2E4."
+  icon: {fileID: -4359082602864699174, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}

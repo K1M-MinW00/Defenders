@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1308368e53fa951488e3b270f62caf3c, type: 3}
+  m_Name: Werebear_Active
+  m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
+  skillName: "\uB300\uC9C0 \uBD95\uAD34"
+  description: "\uB545\uC744 \uAC15\uD0C0\uD574 \uC8FC\uBCC0 \uC801\uC5D0\uAC8C \uAC15\uD55C
+    \uD53C\uD574\uB97C \uC785\uD78C\uB2E4."
+  icon: {fileID: 7277063725690680602, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}

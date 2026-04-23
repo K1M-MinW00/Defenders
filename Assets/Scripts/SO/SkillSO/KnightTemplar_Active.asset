@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1308368e53fa951488e3b270f62caf3c, type: 3}
+  m_Name: KnightTemplar_Active
+  m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
+  skillName: "\uC2EC\uD310\uC758 \uAD11\uC120"
+  description: "\uC131\uC2A4\uB7EC\uC6B4 \uBE5B\uC73C\uB85C \uC9C1\uC120\uC0C1\uC758
+    \uC801\uC744 \uAD00\uD1B5\uD55C\uB2E4."
+  icon: {fileID: 7489532123578355346, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}

@@ -116,16 +116,38 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 9195278610523689136}
+    - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 5277567523795421967}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6408899640983901185}
+      addedObject: {fileID: 2020778206256075707}
   m_SourcePrefab: {fileID: 100100000, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
 --- !u!1 &308839627680805525 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 36438053001814645}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9195278610523689136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308839627680805525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1769f1b284def8498981a74322bc566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConeAttackBehavior
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  multiTargetUnlockStar: 3
+  hitboxPrefab: {fileID: 7640123193787790951, guid: 1cc63b24ad952d045b43c3fa41e00979, type: 3}
+  attackAngle: 60
+  hitRadius: 3
 --- !u!114 &5277567523795421967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,12 +161,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Werebear_EarthSlam_Skill
   damageMultiplier: 2.4
-  impactRadius: 1.6
+  impactRadius: 3
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
   impactEffectPrefab: {fileID: 7594024207365824745, guid: 1a5089cf42928014e8028a0c29112f9b, type: 3}
---- !u!114 &6408899640983901185
+--- !u!114 &2020778206256075707
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,18 +175,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 308839627680805525}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d2167f2903d11541a98b78c599730dc, type: 3}
+  m_Script: {fileID: 11500000, guid: e617be3f7e38b894588e68fe53635445, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WaveAttackBehavior
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  wavePrefab: {fileID: 4217187379047539310, guid: 1cc63b24ad952d045b43c3fa41e00979, type: 3}
-  firePoint: {fileID: 4529788353428264967}
-  projectileSpeed: 6
-  maxDistance: 3.5
-  pierceTargets: 1
-  maxHitCount: 99
+  m_EditorClassIdentifier: Assembly-CSharp::Werebear_BloodThirst
+  healRatio: 0.2
 --- !u!4 &1592608118459287129 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1629001870847616044, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}

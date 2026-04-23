@@ -11,7 +11,7 @@ public class UnitEnergy : MonoBehaviour
 
     public float CurrentEnergy => currentEnergy;
     public float MaxEnergy => maxEnergy;
-    public bool IsFull => CurrentEnergy >= MaxEnergy;
+    public bool IsFull => currentEnergy >= maxEnergy;
 
     public event Action<float, float> OnEnergyChanged;
     public event Action OnEnergyFull;
@@ -44,7 +44,8 @@ public class UnitEnergy : MonoBehaviour
             return;
 
         float prev = currentEnergy;
-        currentEnergy = Mathf.Clamp(prev + amount, 0f, MaxEnergy);
+
+        currentEnergy = Mathf.Clamp(prev + amount, 0f, maxEnergy);
 
         OnEnergyChanged?.Invoke(currentEnergy, maxEnergy);
 

@@ -114,10 +114,9 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  targetMode: 0
-  slashHitboxPrefab: {fileID: 8526793392125579738, guid: 8380673f8f0bd9f409865b8a7d5508c5, type: 3}
-  boxSize: {x: 1.3, y: 0.8}
-  forwardOffset: 1.09
+  multiTargetUnlockStar: 3
+  hitboxPrefab: {fileID: 8526793392125579738, guid: 8380673f8f0bd9f409865b8a7d5508c5, type: 3}
+  boxSize: {x: 2, y: 2}
 --- !u!114 &2076126867488570909
 MonoBehaviour:
   m_ObjectHideFlags: 0

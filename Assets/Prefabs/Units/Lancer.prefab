@@ -28,6 +28,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1718985036759370307, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_Height
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1718985036759370307, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_BaseOffset
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2312356317916268574, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.8
@@ -80,6 +88,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9166940152275570120, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -114,10 +126,9 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  targetMode: 1
-  slashHitboxPrefab: {fileID: 6948581144379448196, guid: dc573e1fb026d454c9adc0b28c82ed56, type: 3}
-  boxSize: {x: 3.5, y: 0.8}
-  forwardOffset: 2.1
+  multiTargetUnlockStar: 2
+  hitboxPrefab: {fileID: 4535731998355591496, guid: 4092137df183b214abba216fe8072c3a, type: 3}
+  boxSize: {x: 4, y: 2}
 --- !u!114 &315164876122975898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6858a1514a83f94d903479f0062d7f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lancer_Breakthrough_Skill
+  flagPrefab: {fileID: 7976678530230565780, guid: ef53f4e73ff3c594daec23e955467ff7, type: 3}
   radius: 4
   duration: 5
   attackBonusPercent: 0.2
@@ -137,9 +149,6 @@ MonoBehaviour:
   allyLayer:
     serializedVersion: 2
     m_Bits: 128
-  attackBuffId: Lancer_BattleStandard_Attack
-  attackSpeedBuffId: Lancer_BattleStandard_AttackSpeed
-  auraEffectPrefab: {fileID: 3266118974904442374, guid: fa92aa02a1bd0f54a90982c4aa28d38a, type: 3}
 --- !u!114 &-3964268695463157188
 MonoBehaviour:
   m_ObjectHideFlags: 0

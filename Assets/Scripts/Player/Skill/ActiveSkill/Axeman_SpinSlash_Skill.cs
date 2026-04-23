@@ -4,7 +4,7 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
 {
     [Header("Spin Slash")]
     [SerializeField] private float damageMultiplier = 2.0f;
-    [SerializeField] private float radius = 1.5f;
+    [SerializeField] private float radius = 2f;
     [SerializeField] private LayerMask enemyLayer;
 
     [Header("Effect")]

@@ -82,7 +82,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3459411922831007167}
+      addedObject: {fileID: 9152023660996061474}
     - targetCorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 266032272738655654}
@@ -95,7 +95,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 344609166725255392, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
   m_PrefabInstance: {fileID: 6736213248717726336}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3459411922831007167
+--- !u!114 &9152023660996061474
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,14 +106,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c17762ca1c4bbef45ae5e9b604bd736e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpearAttackBehavior
+  m_EditorClassIdentifier: Assembly-CSharp::LinearBoxAttackBehavior
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  targetMode: 1
-  slashHitboxPrefab: {fileID: 264106673820794301, guid: e5f841c53b6305542a4b072b73ee05a6, type: 3}
-  boxSize: {x: 2.56, y: 1.88}
-  forwardOffset: 1.59
+  multiTargetUnlockStar: 2
+  hitboxPrefab: {fileID: 4535731998355591496, guid: 4092137df183b214abba216fe8072c3a, type: 3}
+  boxSize: {x: 4, y: 2}
 --- !u!114 &266032272738655654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,6 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c84b28a090d1c0418ad705420047bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnightTemplar_SpearFormation
-  maxStacks: 3
-  attackBonusPerStack: 0.1
-  bonusDamageOnMaxStack: 0.3
+  knockbackDistance: 0.6
+  knockbackDuration: 0.12
+  cooldown: 0.5

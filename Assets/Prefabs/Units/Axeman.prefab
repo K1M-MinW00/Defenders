@@ -80,10 +80,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8104079232257518155, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -118,10 +114,10 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
-  targetMode: 0
-  slashHitboxPrefab: {fileID: 1383628206955395719, guid: 149d6dd52e9dd9d40b5692475a666645, type: 3}
-  hitRadius: 4
+  multiTargetUnlockStar: 3
+  hitboxPrefab: {fileID: 1383628206955395719, guid: 149d6dd52e9dd9d40b5692475a666645, type: 3}
   attackAngle: 60
+  hitRadius: 4
 --- !u!114 &-3704186839640977958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,11 +131,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Armored_Axeman_SpinSlash_Skill
   damageMultiplier: 3
-  radius: 4
+  radius: 3
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  spinEffectPrefab: {fileID: 8647539937358380245, guid: a68fccecd3a319b4fae62817bdcfb0ea, type: 3}
+  spinEffectPrefab: {fileID: 7789440468828688536, guid: bec11ab7892dbba4da925950920bb65b, type: 3}
 --- !u!114 &-2165534159755768019
 MonoBehaviour:
   m_ObjectHideFlags: 0

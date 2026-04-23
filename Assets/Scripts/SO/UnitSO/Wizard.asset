@@ -16,14 +16,14 @@ MonoBehaviour:
   displayName: Wizard
   icon: {fileID: 1457491203435894738, guid: 367c371cc852b4148ae4e63b2f7b209f, type: 3}
   unitPrefab: {fileID: 8164363347632917002, guid: 8a290fb8d46757443ac11ca29a3c9a4a, type: 3}
-  passiveSkill: {fileID: 0}
-  activeSkill: {fileID: 0}
+  passiveSkill: {fileID: 11400000, guid: 8fecc58d38a9d3847bbdfd69ff161032, type: 2}
+  activeSkill: {fileID: 11400000, guid: 23b343ba68fb3f149a66e2c6a04331c2, type: 2}
   baseStats:
     Attack: 5
     MaxHp: 100
     AttackPerSec: 1
-    DetectRange: 4
-  maxLevel: 100
+    DetectRange: 6
+  maxLevel: 50
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -84,11 +84,11 @@ MonoBehaviour:
   - 2.4
   starDetectRangeMultipliers:
   - 1
-  - 1.4
-  - 1.6
-  - 2
+  - 1.1
+  - 1.25
+  - 1.5
   starAttackPerSecondMultipliers:
   - 1
+  - 1.2
   - 1.5
-  - 1.8
   - 2

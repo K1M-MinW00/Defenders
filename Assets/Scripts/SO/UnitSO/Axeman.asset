@@ -16,14 +16,14 @@ MonoBehaviour:
   displayName: Axeman
   icon: {fileID: -1467410003536780371, guid: 0e79c1b62fb1051479145acc3f56f8f1, type: 3}
   unitPrefab: {fileID: 7769852123241821866, guid: 7674b273a43d64543af82fb3524fe104, type: 3}
-  passiveSkill: {fileID: 0}
-  activeSkill: {fileID: 0}
+  passiveSkill: {fileID: 11400000, guid: 0d52e1d08a49bbd448963d094c6a481d, type: 2}
+  activeSkill: {fileID: 11400000, guid: 62e1fe0ef143df548af7926400fb39e1, type: 2}
   baseStats:
     Attack: 5
     MaxHp: 100
     AttackPerSec: 1
-    DetectRange: 4
-  maxLevel: 100
+    DetectRange: 2.5
+  maxLevel: 50
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -84,11 +84,11 @@ MonoBehaviour:
   - 2.4
   starDetectRangeMultipliers:
   - 1
-  - 1
   - 1.1
   - 1.2
+  - 1.25
   starAttackPerSecondMultipliers:
   - 1
+  - 1.2
   - 1.5
-  - 1.8
   - 2

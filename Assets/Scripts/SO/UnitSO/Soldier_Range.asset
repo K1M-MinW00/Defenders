@@ -16,14 +16,14 @@ MonoBehaviour:
   displayName: Soldier_Range
   icon: {fileID: -3868812660829053132, guid: 1c4a5a9b2ede32e4c8f7c30754ba0665, type: 3}
   unitPrefab: {fileID: 4635945194083421887, guid: da061a48600fb0640ad4b7377b9f53db, type: 3}
-  passiveSkill: {fileID: 0}
-  activeSkill: {fileID: 0}
+  passiveSkill: {fileID: 11400000, guid: d7d0c7b32010b564cb48b90c15f6f001, type: 2}
+  activeSkill: {fileID: 11400000, guid: 25a8efc4898a8694da176639e18a65d5, type: 2}
   baseStats:
     Attack: 5
     MaxHp: 100
     AttackPerSec: 1
-    DetectRange: 4
-  maxLevel: 100
+    DetectRange: 5
+  maxLevel: 50
   attackGrowthCurve:
     serializedVersion: 2
     m_Curve:
@@ -84,11 +84,11 @@ MonoBehaviour:
   - 2.4
   starDetectRangeMultipliers:
   - 1
-  - 1
-  - 1.1
-  - 1.2
+  - 1.25
+  - 1.5
+  - 2
   starAttackPerSecondMultipliers:
   - 1
+  - 1.2
   - 1.5
-  - 1.8
   - 2

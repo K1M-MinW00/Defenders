@@ -24,8 +24,6 @@ public class RangeSensor : MonoBehaviour
             col = GetComponent<CircleCollider2D>();
         
         col.radius = radius;
-
-        Debug.Log($"SetDetctionRange {radius}");
     }
 
     public MonsterController GetClosestAlive(Vector3 from)

@@ -1,17 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
 {
+    [Header("References")]
     protected UnitController owner;
     protected MonsterController currentTarget;
-    protected float lastAttackTime = -999f;
-    protected bool isAttacking;
 
+    [Header("Combat")]
     [SerializeField] protected LayerMask targetLayer;
-    [SerializeField] protected TargetSelectionMode targetMode = TargetSelectionMode.Single;
+
+    [Header("Target")]
+    [SerializeField] protected int multiTargetUnlockStar = 3;
 
     protected float Damage => owner.Attack;
     protected float Cooldown => 1f / owner.AttackPerSec;
+    
+    protected float lastAttackTime = -999f;
+    protected bool isAttacking;
     public bool IsAttacking => isAttacking;
 
     protected virtual void Awake()
@@ -19,6 +25,12 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
         if (owner == null)
             owner = GetComponent<UnitController>();
     }
+
+
+    protected TargetSelectionMode CurrentTargetMode =>
+        owner != null && owner.Star >= multiTargetUnlockStar
+        ? TargetSelectionMode.Multi 
+        : TargetSelectionMode.Single;
 
     public virtual bool CanAttack()
     {
@@ -43,28 +55,16 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
             return false;
 
         currentTarget = target;
-        owner.SkillController.NotifyAttackStarted(target);
+        isAttacking = true;
 
+        owner.SkillController.NotifyAttackStarted(target);
         owner.FaceTarget();
         owner.Animation.PlayAttack();
-        isAttacking = true;
 
         return true;
     }
-
-    protected Vector2 GetAttackDirection()
-    {
-        if (currentTarget != null && !currentTarget.Health.IsDead)
-        {
-            Vector2 dirToTarget = ((Vector2)currentTarget.transform.position - (Vector2)transform.position);
-            return dirToTarget.normalized;
-        }
-
-        return owner.Animation.GetFacingDirection();
-    }
-
     public abstract void OnAttackHit();
-    
+
     public virtual void OnAttackFinished()
     {
         isAttacking = false;
@@ -80,27 +80,48 @@ public abstract class MeleeAttackBehavior : MonoBehaviour, IAttackBehavior
         OnAttackFinished();
     }
 
-    protected virtual void ApplyDamage(MonsterController hit)
+    protected virtual void ApplyDamage(MonsterController target)
     {
-        if (hit.TryGetComponent<IDamageable>(out var damageable))
-        {
-            float damage = Damage;
-            owner.SkillController.NotifyAttackHit(hit,ref damage);
-            damageable.TakeDamage(damage);
-        }
+        if (target == null || target.Health.IsDead)
+            return;
+
+        float damage = Damage;
+        owner.SkillController.NotifyAttackHit(target, ref damage);
+        target.Health.TakeDamage(damage);
     }
 
     protected virtual void ApplyDamage(Collider2D[] hits)
     {
+        if (hits == null || hits.Length == 0)
+            return;
+
+        HashSet<IDamageable> damagedTargets = new();
+
         foreach (var hit in hits)
         {
-            if (hit.TryGetComponent<IDamageable>(out var damageable))
-            {
-                float damage = Damage;
-                var target = hit.GetComponent<MonsterController>();
-                owner.SkillController.NotifyAttackHit(target, ref damage);
-                damageable.TakeDamage(damage);
-            }
+            if (!hit.TryGetComponent<IDamageable>(out var damageable))
+                continue;
+
+            if (!damagedTargets.Add(damageable))
+                continue;
+
+            var target = hit.GetComponent<MonsterController>();
+
+            float damage = Damage;
+            owner.SkillController.NotifyAttackHit(target, ref damage);
+            damageable.TakeDamage(damage);
         }
     }
+
+    protected Vector2 GetAttackDirection()
+    {
+        if (currentTarget != null && !currentTarget.Health.IsDead)
+        {
+            Vector2 dirToTarget = ((Vector2)currentTarget.transform.position - (Vector2)transform.position);
+            return dirToTarget.normalized;
+        }
+
+        return owner.Animation.GetFacingDirection();
+    }
+
 }

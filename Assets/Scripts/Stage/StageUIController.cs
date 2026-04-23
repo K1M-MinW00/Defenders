@@ -36,6 +36,13 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private StageHpSummaryUI hpSummaryUI;
     [SerializeField] private StageResultUI resultUI;
 
+    [Header("Gold Texts")]
+    [SerializeField] private TextMeshProUGUI summon_Text;
+    [SerializeField] private TextMeshProUGUI reRoll_Text;
+    [SerializeField] private TextMeshProUGUI increase_Text;
+    [SerializeField] private TextMeshProUGUI sell_Text;
+
+    [Header("References")]
     [SerializeField] private StageSessionController session;
     [SerializeField] private StageFlowController flowController;
     [SerializeField] private EconomyManager economy;
@@ -142,19 +149,17 @@ public class StageUIController : MonoBehaviour
             stageInfoText.text = $"{stageName} - {stageId}";
     }
 
-    public void SetUnitDragMode(bool isDraggingUnit, bool canReroll = true)
+    public void SetUnitDragMode(bool isDraggingUnit, bool canReroll = true, int star = 1)
     {
         defaultButtonsGroup?.SetActive(!isDraggingUnit);
         unitActionButtonsGroup?.SetActive(isDraggingUnit);
 
-        if (isDraggingUnit && rerollZone != null)
-            rerollZone.SetActive(canReroll);
 
-        if (!isDraggingUnit && rerollZone != null)
-            rerollZone.SetActive(false);
-
-        if (sellZone != null)
-            sellZone.SetActive(isDraggingUnit);
+        bool showRerollZone = isDraggingUnit && canReroll;
+        
+        rerollZone.SetActive(showRerollZone);
+        sellZone.SetActive(isDraggingUnit);
+        sell_Text.text = economy.GetSellCost(star).ToString();
     }
 
     private void BindButtons()
@@ -175,6 +180,9 @@ public class StageUIController : MonoBehaviour
     {
         if (economy == null) return;
         economy.OnGoldChanged += UpdateGoldUI;
+
+        summon_Text.text = economy.GetSummonCost().ToString();
+        reRoll_Text.text = economy.GetRerollCost().ToString();
         UpdateGoldUI(economy.CurrentGold);
     }
 
@@ -188,6 +196,7 @@ public class StageUIController : MonoBehaviour
     {
         if (population == null) return;
         population.OnPopulationChanged += UpdatePopulationUI;
+
         UpdatePopulationUI(population.CurrentPopulation, population.MaxPopulation);
     }
 
@@ -231,6 +240,10 @@ public class StageUIController : MonoBehaviour
     {
         if (populationText != null)
             populationText.text = $"{current}/{max}";
+
+        if(increase_Text != null)
+            increase_Text.text = population.GetNextIncreaseCost().ToString();
+
     }
 
     private void UpdatePrepTimer(float time)
