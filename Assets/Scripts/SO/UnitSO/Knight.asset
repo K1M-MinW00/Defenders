@@ -19,76 +19,30 @@ MonoBehaviour:
   passiveSkill: {fileID: 11400000, guid: 15ba8de14841daa4eb39692afd60fb04, type: 2}
   activeSkill: {fileID: 11400000, guid: c30e24e053c093a42a961d7a1cc9b6db, type: 2}
   baseStats:
-    Attack: 5
-    MaxHp: 100
-    AttackPerSec: 1
-    DetectRange: 3
+    Attack: 25
+    MaxHp: 420
+    AttackPerSec: 0.75
+    DetectRange: 1.2
   maxLevel: 50
-  attackGrowthCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 1
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 2
-      inSlope: 1
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  hpGrowthCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 1
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 2
-      inSlope: 1
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  attackGrowthValue: 3
+  hpGrowthValue: 28
   starAttackMultipliers:
   - 1
-  - 1.2
-  - 1.5
-  - 2
+  - 1.25
+  - 1.6
+  - 2.05
   starHpMultipliers:
   - 1
-  - 1.2
-  - 1.5
-  - 2
+  - 1.35
+  - 1.85
+  - 2.45
   starDetectRangeMultipliers:
   - 1
+  - 1.05
   - 1.1
   - 1.2
-  - 1.25
   starAttackPerSecondMultipliers:
   - 1
-  - 1.2
-  - 1.5
-  - 2
+  - 1.03
+  - 1.06
+  - 1.1

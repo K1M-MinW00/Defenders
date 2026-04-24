@@ -182,9 +182,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Knight_Cleave_Skill
   swordAuraPrefab: {fileID: 1461256047603450798, guid: 4f7f3383bdfc1d941bb9905610e18937, type: 3}
-  damageMultiplier: 2
-  projectileSpeed: 8
-  lifeTime: 2
+  damageMultiplier: 1.35
+  projectileSpeed: 7
+  lifeTime: 1.5
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -200,6 +200,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e420b1e3d718374b95f5978c605f32c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Knight_Shield
-  requiredHits: 3
+  requiredHits: 4
   duration: 3
-  damageReductionPercent: 0.4
+  damageReductionPercent: 0.3

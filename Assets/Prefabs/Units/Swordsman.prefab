@@ -129,12 +129,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 416cc26cd8269e94d83bd5fe2af27878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Swordsman_Piercing_Skill
-  hitDamageMultiplier: 2
-  boxSize: {x: 3, y: 3}
+  hitDamageMultiplier: 0.75
+  boxSize: {x: 1.8, y: 1.1}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  multCnt: 4
+  multCnt: 3
   hitEffectPrefab: {fileID: 6941096045168117609, guid: 91cede1602e24ad47b8d7e600cb6f12a, type: 3}
 --- !u!114 &9042563855952981031
 MonoBehaviour:
@@ -149,6 +149,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Swordsman_BladeDance
   maxStacks: 5
-  attackSpeedBonusPerStack: 0.06
-  stackDuration: 2
+  attackSpeedBonusPerStack: 0.04
+  stackDuration: 3
   buffId: Swordsman_BladeDance

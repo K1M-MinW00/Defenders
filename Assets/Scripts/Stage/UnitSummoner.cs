@@ -12,6 +12,7 @@ public class UnitSummoner : MonoBehaviour
     
     [SerializeField] private TilemapPlacementArea placementArea;
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] private float spawnRadius = 2.5f;
 
     public bool SummonRandomUnit()
     {
@@ -47,12 +48,8 @@ public class UnitSummoner : MonoBehaviour
 
     private Vector3 ResolveSpawnPosition()
     {
-        if (spawnPoint != null)
-            return spawnPoint.position;
-
-        if (placementArea != null)
-            return placementArea.transform.position;
-
-        return transform.position;
+        Vector2 offset = Random.insideUnitCircle * spawnRadius;
+        Vector3 pos = spawnPoint.transform.position + (Vector3)offset;
+        return pos;
     }
 }

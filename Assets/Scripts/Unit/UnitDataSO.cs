@@ -19,8 +19,8 @@ public class UnitDataSO : ScriptableObject
 
     [Header("Level Growth")]
     public int maxLevel = 100;
-    public AnimationCurve attackGrowthCurve = AnimationCurve.Linear(0f, 1f, 1f, 2f);
-    public AnimationCurve hpGrowthCurve = AnimationCurve.Linear(0f, 1f, 1f, 2f);
+    public int attackGrowthValue= 5;
+    public int hpGrowthValue = 20;
 
     [Header("Star Growth")]
     [Tooltip("牢郸胶 0 = 1己, 1 = 2己, 2 = 3己, 3 = 4己")]
@@ -33,12 +33,10 @@ public class UnitDataSO : ScriptableObject
     {
         level = Mathf.Clamp(level, 1, maxLevel);
 
-        float t = Mathf.InverseLerp(1, maxLevel, level);
-
         UnitStats stats = baseStats;
 
-        stats.Attack = baseStats.Attack * attackGrowthCurve.Evaluate(t);
-        stats.MaxHp = baseStats.MaxHp * hpGrowthCurve.Evaluate(t);
+        stats.Attack = baseStats.Attack + attackGrowthValue * (level - 1);
+        stats.MaxHp = baseStats.MaxHp + hpGrowthValue * (level - 1);
 
         return stats;
     }

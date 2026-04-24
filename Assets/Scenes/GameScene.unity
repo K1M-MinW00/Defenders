@@ -1868,6 +1868,7 @@ Transform:
   - {fileID: 1353128550}
   - {fileID: 646030656}
   - {fileID: 888358437}
+  - {fileID: 1947656517}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &465300743
@@ -6932,6 +6933,7 @@ MonoBehaviour:
   fusionService: {fileID: 1413980708}
   placementArea: {fileID: 556208431}
   spawnPoint: {fileID: 574971171}
+  spawnRadius: 2.5
 --- !u!1 &584157921
 GameObject:
   m_ObjectHideFlags: 0
@@ -33306,6 +33308,7 @@ GameObject:
   - component: {fileID: 1253051990}
   - component: {fileID: 1253051994}
   - component: {fileID: 1253051993}
+  - component: {fileID: 1253051995}
   m_Layer: 5
   m_Name: Speed_Btn
   m_TagString: Untagged
@@ -33371,6 +33374,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1253051989}
   m_CullTransparentMesh: 1
+--- !u!114 &1253051995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253051989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1253051993}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1749784785}
+        m_TargetAssemblyTypeName: StageTimeUI, Assembly-CSharp
+        m_MethodName: OnClickSpeedButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1279264146
 GameObject:
   m_ObjectHideFlags: 0
@@ -36067,7 +36126,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1442367742}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1749784785}
+        m_TargetAssemblyTypeName: StageTimeUI, Assembly-CSharp
+        m_MethodName: OnTogglePauseButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1442367742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49473,6 +49544,7 @@ MonoBehaviour:
   stageUI: {fileID: 1749784780}
   monsterSpawner: {fileID: 1990264462}
   monsterPrewarmService: {fileID: 1353128549}
+  stageTimeController: {fileID: 1947656518}
 --- !u!1 &1705177124
 GameObject:
   m_ObjectHideFlags: 0
@@ -49719,6 +49791,7 @@ GameObject:
   - component: {fileID: 1749784784}
   - component: {fileID: 1749784783}
   - component: {fileID: 1749784782}
+  - component: {fileID: 1749784785}
   m_Layer: 5
   m_Name: UI_Root
   m_TagString: Untagged
@@ -49843,6 +49916,19 @@ MonoBehaviour:
   bossWaveSprite: {fileID: 3434086634727231013, guid: 25431b7bc0c8a5d47a10821d4223c1ab, type: 3}
   clearedConnectorColor: {r: 0, g: 1, b: 0, a: 1}
   upcomingConnectorColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+--- !u!114 &1749784785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749784779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d394e43534305464b8fc9dd51fa0178a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageTimeUI
+  timeController: {fileID: 1947656518}
 --- !u!1 &1791930460
 GameObject:
   m_ObjectHideFlags: 0
@@ -50191,6 +50277,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1862168056}
   m_CullTransparentMesh: 1
+--- !u!1 &1947656516
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1947656517}
+  - component: {fileID: 1947656518}
+  m_Layer: 0
+  m_Name: StageTimeController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1947656517
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947656516}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 459441619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1947656518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947656516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b93fcbb00eaf814458f229afab5f629c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageTimeController
+  normalSpeed: 1
+  fastSpeed: 2
 --- !u!1 &1947879228
 GameObject:
   m_ObjectHideFlags: 0

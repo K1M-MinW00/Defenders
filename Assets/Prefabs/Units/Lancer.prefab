@@ -142,10 +142,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lancer_Breakthrough_Skill
   flagPrefab: {fileID: 7976678530230565780, guid: ef53f4e73ff3c594daec23e955467ff7, type: 3}
-  radius: 4
+  radius: 3
   duration: 5
-  attackBonusPercent: 0.2
-  attackSpeedBonusPercent: 0.15
+  attackBonusPercent: 0.15
+  attackSpeedBonusPercent: 0.1
   allyLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -161,6 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 995c7c82acce71c4788702a476b16fd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lancer_BattleInstinct
-  maxStacks: 3
-  attackBonusPerStack: 0.1
+  maxStacks: 5
+  attackBonusPerStack: 0.04
   bonusDamageOnMaxStack: 0.3

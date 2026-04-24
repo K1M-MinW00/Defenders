@@ -34,6 +34,7 @@ public class MonsterHealth : MonoBehaviour, IDamageable
         damage = Mathf.Min(damage, CurrentHp);
         CurrentHp -= damage;
 
+        int finalDamage = (int)damage;
         DamageUIService.Instance?.Show(transform.position, damage);
 
         OnHpChanged?.Invoke(this, damage);

@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d63e19a951f3f64ca794d53eb49888f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TemplarKnight_LightBeam_Skill
-  damageMultiplier: 2.5
+  damageMultiplier: 1.85
   beamLength: 40
   beamWidth: 1.2
   enemyLayer:
@@ -144,6 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c84b28a090d1c0418ad705420047bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnightTemplar_SpearFormation
-  knockbackDistance: 0.6
-  knockbackDuration: 0.12
-  cooldown: 0.5
+  knockbackDistance: 1.2
+  knockbackDuration: 0.25
+  cooldown: 1

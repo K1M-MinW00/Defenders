@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82a5ddcf9c40ad64c99088d592f75a18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Priest_Heal_Skill
-  healMultiplier: 2
+  healMultiplier: 1.2
   healEffectPrefab: {fileID: 8325364069265900872, guid: 12170ab12b9c0424d92be317f3b00cae, type: 3}
 --- !u!114 &9164100410522855438
 MonoBehaviour:
@@ -145,5 +145,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df0131bf5f7129946b7bd4c905b4fb29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Priest_HealingEcho
-  requiredHits: 4
-  healPercent: 0.05
+  requiredHits: 5
+  healPercent: 0.08

@@ -128,10 +128,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Wizard_Meteor_Skill
   meteorPrefab: {fileID: 2394154420839144201, guid: 30ddcbf10669509479d86f654f857e12, type: 3}
-  damageMultiplier: 3
-  spawnHeight: 3
-  explosionRadius: 1.5
-  projectileSpeed: 10
+  damageMultiplier: 2.4
+  spawnHeight: 5
+  explosionRadius: 2
+  projectileSpeed: 9
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -147,5 +147,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee254fa07dc4b5c4a936a0a984925000, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Wizard_ArcaneEcho
-  procChance: 0.5
-  refundEnergy: 50
+  procChance: 0.25
+  refundEnergy: 25

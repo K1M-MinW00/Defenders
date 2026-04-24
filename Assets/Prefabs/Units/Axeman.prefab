@@ -130,8 +130,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd6a2debfe208244ca8acc4e0114941e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Armored_Axeman_SpinSlash_Skill
-  damageMultiplier: 3
-  radius: 3
+  damageMultiplier: 1.45
+  radius: 1.8
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Axeman_BerserkerInstinct
   attackBonusPercent: 0.2
-  attackSpeedBonusPercent: 0.2
-  duration: 3
-  cooldown: 4
+  attackSpeedBonusPercent: 0.15
+  duration: 4
+  cooldown: 10
   attackBuffId: Axeman_BerserkInstinct_Attack
   attackSpeedBuffId: Axeman_BerserkInstinct_AttackSpeed

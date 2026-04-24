@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e3175fa17a1f324b978c753dd38ef6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Werebear_EarthSlam_Skill
-  damageMultiplier: 2.4
+  damageMultiplier: 1.45
   impactRadius: 3
   enemyLayer:
     serializedVersion: 2
