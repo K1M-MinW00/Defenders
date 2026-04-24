@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 1838466798527487007}
   - component: {fileID: 7431971341929807749}
   - component: {fileID: 3215718443639412451}
+  - component: {fileID: 6338075697721484727}
   m_Layer: 7
   m_Name: Unit_Base
   m_TagString: Player
@@ -358,6 +359,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 921ffd94e10d42149a6acefa3075f9ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitBuffController
+--- !u!114 &6338075697721484727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344609166725255392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66116622c9cbcb14f819285f7e7b2c4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitHUDController
+  unit: {fileID: 4470774158927102257}
+  root: {fileID: 2774387734849985176}
+  hpSlider: {fileID: 663795649373710863}
+  energySlider: {fileID: 7222418128686505397}
+  starText: {fileID: 1006081842717739518}
 --- !u!1 &2774387734849985176
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,6 +747,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6834863120672019600, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
+      propertyPath: m_SortingOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 9220702195223095994, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
       propertyPath: m_Name
       value: UnitHUD_Canvas
@@ -736,10 +758,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 9220702195223095994, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8751284169796821242}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
 --- !u!224 &621771143843687826 stripped
 RectTransform:
@@ -768,27 +787,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!1 &2432221523049888076 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9220702195223095994, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
-  m_PrefabInstance: {fileID: 6788753528763274230}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8751284169796821242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2432221523049888076}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66116622c9cbcb14f819285f7e7b2c4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitHUDController
-  unit: {fileID: 0}
-  hpSlider: {fileID: 663795649373710863}
-  energySlider: {fileID: 7222418128686505397}
-  starText: {fileID: 1006081842717739518}
 --- !u!114 &7222418128686505397 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4183087968156520003, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}

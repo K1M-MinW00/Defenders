@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ public class UnitHUDController : MonoBehaviour
     [SerializeField] private UnitController unit;
 
     [Header("UI")]
+    [SerializeField] private GameObject root;
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Slider energySlider;
     [SerializeField] private TextMeshProUGUI starText;
@@ -15,7 +17,7 @@ public class UnitHUDController : MonoBehaviour
     private void Awake()
     {
         if (unit == null)
-            unit = GetComponentInParent<UnitController>();
+            unit = GetComponent<UnitController>();
     }
 
     private void OnEnable()
@@ -24,6 +26,7 @@ public class UnitHUDController : MonoBehaviour
             return;
 
         unit.OnStatsChanged += HandleStarChanged;
+        unit.Health.OnDead += HandleDead;
         unit.Health.OnHpChanged += HandleHpChanged;
         unit.Energy.OnEnergyChanged += HandleEnergyChanged;
     }
@@ -34,6 +37,7 @@ public class UnitHUDController : MonoBehaviour
             return;
 
         unit.OnStatsChanged -= HandleStarChanged;
+        unit.Health.OnDead -= HandleDead;
         unit.Health.OnHpChanged -= HandleHpChanged;
         unit.Energy.OnEnergyChanged -= HandleEnergyChanged;
     }
@@ -42,7 +46,15 @@ public class UnitHUDController : MonoBehaviour
 
     private void HandleHpChanged(UnitController instance, float curHp, float maxHp)
     {
+        if (!instance.IsDead)
+            SetHudVisible(true);
+
         RefreshHp();
+    }
+
+    private void HandleDead(UnitController instance)
+    {
+        SetHudVisible(false);
     }
 
     private void HandleEnergyChanged(float current, float max)
@@ -50,6 +62,11 @@ public class UnitHUDController : MonoBehaviour
         RefreshEnergy();
     }
 
+    private void SetHudVisible(bool visible)
+    {
+        if(root !=  null)
+            root.SetActive(visible);
+    }
 
     private void RefreshHp()
     {
@@ -58,6 +75,7 @@ public class UnitHUDController : MonoBehaviour
         hpSlider.maxValue = maxHp;
         hpSlider.value = Mathf.Clamp(unit.Health.CurrentHp,0f,maxHp);
     }
+
     private void RefreshEnergy()
     {
         float maxE = 100f;
@@ -73,6 +91,8 @@ public class UnitHUDController : MonoBehaviour
 
     private void RefreshAll()
     {
+        SetHudVisible(!unit.IsDead);
+
         RefreshStar();
         RefreshHp();
         RefreshEnergy();

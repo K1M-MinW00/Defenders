@@ -14,6 +14,7 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageUIController stageUI;
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
+    [SerializeField] private StageTimeController stageTimeController;
 
     // [SerializeField] private EconomyManager economyManager;
 
@@ -53,6 +54,7 @@ public class StageSessionController : MonoBehaviour
         monsterSpawner.WaveHpTracker.PrepareWave(CurrentWave);
 
         preparationService.EnterPrepareMode();
+        stageTimeController.ExitCombatPhase();
         flowController.StartPreparePhase(OnPrepareFinished);
     }
 
@@ -64,18 +66,18 @@ public class StageSessionController : MonoBehaviour
     public void EnterCombatPhase()
     {
         CurrentState = StageState.Combat;
-
         stageUI.SetPhase(CurrentState);
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         preparationService.ExitPrepareMode();
+        stageTimeController.EnterCombatPhase();
         waveController.StartWave(CurrentWave, OnWaveWin, OnWaveLose);
     }
 
     private void OnWaveWin()
     {
         rewardService.GiveWaveReward(CurrentWave);
-
+        stageTimeController.ExitCombatPhase();
         CurrentWaveIndex++;
 
         if (CurrentWave == null)
@@ -90,6 +92,7 @@ public class StageSessionController : MonoBehaviour
 
     private void OnWaveLose()
     {
+        stageTimeController.ExitCombatPhase();
         CurrentState = StageState.StageFail;
         stageUI.SetPhase(CurrentState);
         stageUI.ShowStageFail();
