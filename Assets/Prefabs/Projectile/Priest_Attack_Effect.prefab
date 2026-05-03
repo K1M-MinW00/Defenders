@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1089252905542310141}
   - component: {fileID: 8083599143341276744}
   - component: {fileID: -5139028585302536866}
+  - component: {fileID: -5820146894968191136}
   m_Layer: 0
   m_Name: Priest_Attack_Effect
   m_TagString: Untagged
@@ -48,9 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c22bf696af7acc4eb71eaffd5e37ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagicImpact
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
+  lifeTime: 0.5
 --- !u!70 &3689370277561726755
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -196,3 +195,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-5820146894968191136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495283008993698088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable

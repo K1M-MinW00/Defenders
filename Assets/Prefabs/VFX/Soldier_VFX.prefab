@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 4207587607757574652}
   - component: {fileID: 7443465576677887146}
   - component: {fileID: 7594520462794483239}
+  - component: {fileID: 892455673494948260}
+  - component: {fileID: 6702730740151830754}
   m_Layer: 0
   m_Name: Soldier_VFX
   m_TagString: Untagged
@@ -114,3 +116,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &892455673494948260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8526793392125579738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bd1b00d101b277498efd3cc453f1397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledVfx
+  lifeTime: 0.4
+--- !u!114 &6702730740151830754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8526793392125579738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable

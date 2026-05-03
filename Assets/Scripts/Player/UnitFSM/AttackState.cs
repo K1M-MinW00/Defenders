@@ -26,6 +26,7 @@ public class AttackState : IState
         if (owner.IsDead)
             return;
 
+
         if(owner.SkillController.CanStartSkill())
         {
             owner.FSMController.ChangeToSkill();

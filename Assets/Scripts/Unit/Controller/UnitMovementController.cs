@@ -9,6 +9,19 @@ public class UnitMovementController : MonoBehaviour
 
     public NavMeshAgent Agent => agent;
 
+    public Vector3 MoveDirection
+    {
+        get
+        {
+            Vector3 velocity = agent.velocity;
+
+            if(velocity.sqrMagnitude > 0.001f)
+                return velocity.normalized;
+
+            return Vector3.zero;
+        }
+    }
+
     public void Initialize(UnitController owner)
     {
         this.owner = owner;

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Lancer
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 3
+  displayName: Lancer
+  icon: {fileID: 3272805312411629707, guid: ba3add362b2a88d45a2c1a68db5165e3, type: 3}
+  unitPrefab: {fileID: 6053776636646679034, guid: e9c296e1c39059b42abbe8b35ef6b376, type: 3}
+  passiveSkill: {fileID: 11400000, guid: 222d2a11cec953c4d9565e4babca0c52, type: 2}
+  activeSkill: {fileID: 11400000, guid: 764e1f9661cd85743af5937ec2428d8d, type: 2}
+  baseStats:
+    Attack: 32
+    MaxHp: 340
+    AttackPerSec: 1
+    DetectRange: 3.8
+  maxLevel: 50
+  attackGrowthValue: 3
+  hpGrowthValue: 20
+  starAttackMultipliers:
+  - 1
+  - 1.25
+  - 1.65
+  - 2.1
+  starHpMultipliers:
+  - 1
+  - 1.25
+  - 1.65
+  - 2.1
+  starDetectRangeMultipliers:
+  - 1
+  - 1.1
+  - 1.15
+  - 1.25
+  starAttackPerSecondMultipliers:
+  - 1
+  - 1.05
+  - 1.1
+  - 1.2

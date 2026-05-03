@@ -5,38 +5,42 @@ using System;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    private ObjectPool pool;
-    private UnitRoster unitRoster;
-    [SerializeField] private MonsterWaveHpTracker waveHpTracker;
-    public MonsterWaveHpTracker WaveHpTracker => waveHpTracker;
     [SerializeField] private Transform spawnPoint;
 
-    private readonly List<MonsterController> aliveMonsters = new();
-    public IReadOnlyList<MonsterController> MonsterLists => aliveMonsters;
-    public int AliveCount => aliveMonsters.Count;
-    
+    private StagePoolManager poolManager;
+    private UnitRoster unitRoster;
+    private MonsterWaveHpTracker waveHpTracker;
+    private DamageUIService damageUIService;
+
     private WaveData currentWave;
-    private int plannedMonsterCount => currentWave != null ? currentWave.TotalMonsterCount : 0;
+    private readonly List<MonsterController> aliveMonsters = new();
     private int deadMonsterCount;
+    private Coroutine spawnRoutine;
+
+    public MonsterWaveHpTracker WaveHpTracker => waveHpTracker;
+    public int AliveCount => aliveMonsters.Count;
+
+    private int plannedMonsterCount => currentWave != null ? currentWave.TotalMonsterCount : 0;
     public int RemainingCount => Mathf.Max(0, plannedMonsterCount - deadMonsterCount);
-    
+
     public event Action OnAllMonstersSpawned;
     public event Action<int> OnAliveCountChanged;
 
-
-    public void Init(ObjectPool pool, UnitRoster unitRoster)
+    public void Init(StagePoolManager poolManager, UnitRoster unitRoster, MonsterWaveHpTracker waveHpTracker, DamageUIService damageUIService)
     {
-        this.pool = pool;
+        this.poolManager = poolManager;
         this.unitRoster = unitRoster;
+        this.waveHpTracker = waveHpTracker; 
+        this.damageUIService = damageUIService;
     }
 
     public void StartWave(WaveData waveData)
     {
-        currentWave  = waveData;
+        currentWave = waveData;
         StopAllCoroutines();
 
         deadMonsterCount = 0;
-        StartCoroutine(SpawnWaveRoutine(waveData));
+        spawnRoutine = StartCoroutine(SpawnWaveRoutine(waveData));
     }
 
     private IEnumerator SpawnWaveRoutine(WaveData waveData)
@@ -66,33 +70,58 @@ public class MonsterSpawner : MonoBehaviour
             yield return new WaitForSeconds(subWave.delayAfter);
         }
     }
-
-
-    private MonsterController SpawnMonster(MonsterDataSO data , Vector3 spawnPos)
+    public void StopSpawning()
     {
-        string monsterId = data.monsterId;
-        GameObject go = pool.Spawn(monsterId, spawnPos);
-        MonsterController monster = go.GetComponent<MonsterController>();
+        if (spawnRoutine != null)
+        {
+            StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+        }
+    }
 
-        monster.Initialize(unitRoster, data);
-        monster.SetPoolKey(monsterId);
+    private MonsterController SpawnMonster(MonsterDataSO data, Vector3 spawnPos)
+    {
+        if (data == null || data.prefab == null)
+        {
+            Debug.LogError("Spawn Monster failed. MonsterDataSO or prefab is null.");
+            return null;
+        }
+
+        MonsterController monster = poolManager.Spawn(data.prefab.GetComponent<MonsterController>(), spawnPos, Quaternion.identity, PoolCategory.Monster);
+
+        if (monster == null)
+        {
+            Debug.LogError("Spawn Monster failed. MonsterController Not found.");
+            return null;
+        }
+
+        monster.Initialize(unitRoster, data, poolManager);
+        monster.Health.OnHpChanged += HandleMonsterDamaged;
         monster.OnDead += HandleMonsterDead;
 
         waveHpTracker?.RegisterSpawnedMonster(monster);
         aliveMonsters.Add(monster);
+
         return monster;
     }
 
     private void HandleMonsterDead(MonsterController monster)
     {
+        monster.Health.OnHpChanged -= HandleMonsterDamaged;
         monster.OnDead -= HandleMonsterDead;
+
         waveHpTracker?.UnregisterMonster(monster);
         aliveMonsters.Remove(monster);
 
         deadMonsterCount++;
 
         OnAliveCountChanged?.Invoke(RemainingCount);
-        pool.Despawn(monster.PoolKey, monster.gameObject);
+    }
+
+    private void HandleMonsterDamaged(MonsterHealth health, float damage)
+    {
+        Vector3 worldPos = health.transform.position;
+        damageUIService.Show(worldPos, damage);
     }
 
     public MonsterController FindClosestAlive(Vector3 from)

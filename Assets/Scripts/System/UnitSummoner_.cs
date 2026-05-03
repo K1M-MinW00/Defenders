@@ -70,7 +70,7 @@ public class UnitSummoner_ : MonoBehaviour
 
         StageUnitInitData initData = new StageUnitInitData(unitData, selectedUser, initialStar);
 
-        unit.BindCombatContext(monsterSpawner, roster);
+        // unit.BindCombatContext(monsterSpawner, roster);
         unit.Initialize(initData);
         unit.SetCombatPhase(false);
 

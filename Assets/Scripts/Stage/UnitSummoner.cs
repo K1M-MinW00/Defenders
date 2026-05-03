@@ -4,15 +4,25 @@ public class UnitSummoner : MonoBehaviour
 {
     [Header("Unit Pool (Inspector)")]
     [SerializeField] private UnitDataSO[] unitPool;
+
     [Header("Spawn Settings")]
     [SerializeField] private Transform unitsRoot;
-    [SerializeField] private MonsterSpawner monsterSpawner;
-    [SerializeField] private UnitRoster roster;
-    [SerializeField] private FusionService fusionService;
-    
-    [SerializeField] private TilemapPlacementArea placementArea;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float spawnRadius = 2.5f;
+    [SerializeField] private TilemapPlacementArea placementArea;
+
+    private StagePoolManager poolManager;
+    private UnitRoster unitRoster;
+    private FusionService fusionService;
+    private MonsterSpawner monsterSpawner;
+
+    public void Init(StagePoolManager poolManager, UnitRoster unitRoster, FusionService fusionService, MonsterSpawner monsterSpawner)
+    {
+        this.poolManager = poolManager;
+        this.unitRoster = unitRoster;
+        this.fusionService = fusionService;
+        this.monsterSpawner = monsterSpawner;
+    }
 
     public bool SummonRandomUnit()
     {
@@ -36,11 +46,11 @@ public class UnitSummoner : MonoBehaviour
         UserUnitData userData = new UserUnitData(data.unitCode);
         StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
 
-        unit.BindCombatContext(monsterSpawner,roster);
+        unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
         unit.Initialize(initData);
         unit.SetCombatPhase(false);
-        
-        roster?.Register(unit);
+
+        unitRoster?.Register(unit);
         fusionService?.TryAutoFuse(unit);
 
         return true;

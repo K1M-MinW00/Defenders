@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3254161127016795242}
   - component: {fileID: -5068862671800697205}
   - component: {fileID: -3521010439676643875}
+  - component: {fileID: -1429093310210855587}
   m_Layer: 0
   m_Name: Arrow_Falling
   m_TagString: Untagged
@@ -180,4 +181,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowRainFallingArrow
   fallSpeed: 10
-  impactEffectPrefab: {fileID: 0}
+  lifeTime: 0.5
+  hitBufferSize: 32
+--- !u!114 &-1429093310210855587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796473401046290145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable

@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 52190141222350594}
   - component: {fileID: 6822899064845844811}
   - component: {fileID: 1287075693170154560}
+  - component: {fileID: 2412327091032714089}
+  - component: {fileID: 8571604956173017829}
   m_Layer: 5
   m_Name: DamagePopup
   m_TagString: Untagged
@@ -168,4 +170,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96407a6900e01dd44a22d06b519149be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamagePopup
-  text: {fileID: 52190141222350594}
+  damageText: {fileID: 52190141222350594}
+  lifeTime: 0.8
+--- !u!114 &2412327091032714089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2722712196064138861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable
+--- !u!225 &8571604956173017829
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2722712196064138861}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

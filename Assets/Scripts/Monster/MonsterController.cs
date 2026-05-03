@@ -12,19 +12,19 @@ public class MonsterController : MonoBehaviour, IPoolable
     private UnitRoster unitRoster;
     private NavMeshAgent agent;
     private IMonsterAttack attackBehavior;
+    private StagePoolManager poolManager;
+
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
     public NavMeshAgent Agent => agent;
     public UnitController Target { get; private set; }
     public MonsterHealth Health { get; private set; }
-
+    public StagePoolManager PoolManager => poolManager;
     public float AttackRange => FinalStats.atkRange;
     public float AttackCooldown => 1f / FinalStats.atkPerSec;
     public float AtkDamage => FinalStats.atkDamage;
-    public string PoolKey => poolKey;
-    private string poolKey;
 
-    public void SetPoolKey(string key) => poolKey = key;
+    private Poolable poolable;
 
     private MonsterFSM fsm;
     public MonsterMoveState moveState;
@@ -45,6 +45,8 @@ public class MonsterController : MonoBehaviour, IPoolable
         if (attackBehavior == null)
             attackBehavior = GetComponent<IMonsterAttack>();
 
+        poolable = GetComponent<Poolable>();
+
         Health = GetComponent<MonsterHealth>();
         Health.OnDead += HandleDead;
 
@@ -57,11 +59,12 @@ public class MonsterController : MonoBehaviour, IPoolable
         idleState = new MonsterIdleState(this, fsm);
     }
 
-    public void Initialize(UnitRoster unitRoster, MonsterDataSO data)
+    public void Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
     {
         Data = data;
         FinalStats = data.Stats;
         this.unitRoster = unitRoster;
+        this.poolManager = poolManager;
 
         ApplyStats();
     }
@@ -98,9 +101,9 @@ public class MonsterController : MonoBehaviour, IPoolable
 
     private void HandleDead(MonsterHealth health)
     {
-        ClearTarget();
-        StopMovement();
         OnDead?.Invoke(this);
+
+        poolable.ReturnToPool();
     }
 
 
@@ -132,7 +135,9 @@ public class MonsterController : MonoBehaviour, IPoolable
     {
         if (!HasValidTarget())
             return;
-        FaceTarget();
+
+        Vector3 velocity = agent.velocity;
+        view.FaceDirection(velocity);
         MoveTo(Target.transform.position);
     }
 

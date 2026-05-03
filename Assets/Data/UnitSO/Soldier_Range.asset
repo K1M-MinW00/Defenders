@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Soldier_Range
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitCode: 9
+  displayName: Soldier_Range
+  icon: {fileID: -3868812660829053132, guid: 1c4a5a9b2ede32e4c8f7c30754ba0665, type: 3}
+  unitPrefab: {fileID: 4635945194083421887, guid: da061a48600fb0640ad4b7377b9f53db, type: 3}
+  passiveSkill: {fileID: 11400000, guid: d7d0c7b32010b564cb48b90c15f6f001, type: 2}
+  activeSkill: {fileID: 11400000, guid: 25a8efc4898a8694da176639e18a65d5, type: 2}
+  baseStats:
+    Attack: 28
+    MaxHp: 300
+    AttackPerSec: 1.05
+    DetectRange: 4.5
+  maxLevel: 50
+  attackGrowthValue: 3
+  hpGrowthValue: 16
+  starAttackMultipliers:
+  - 1
+  - 1.25
+  - 1.6
+  - 2.05
+  starHpMultipliers:
+  - 1
+  - 1.2
+  - 1.55
+  - 1.95
+  starDetectRangeMultipliers:
+  - 1
+  - 1.1
+  - 1.2
+  - 1.3
+  starAttackPerSecondMultipliers:
+  - 1
+  - 1.05
+  - 1.1
+  - 1.2

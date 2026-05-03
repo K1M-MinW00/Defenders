@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoldierMLeapSlashSkill
   damageMultiplier: 1.25
-  impactRadius: 1.6
+  impactRadius: 3
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64

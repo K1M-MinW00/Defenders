@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class UnitAnimationEvent : MonoBehaviour
 {
-    private IAttackBehavior attackBehavior;
+    private IUnitAttack attackBehavior;
     private UnitController unitController;
 
     private void Awake()
     {
-        attackBehavior = GetComponentInParent<IAttackBehavior>();
+        attackBehavior = GetComponentInParent<IUnitAttack>();
         unitController = GetComponentInParent<UnitController>();
     }
 

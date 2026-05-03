@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Werebear_EarthSlam_Skill : ActiveSkillBase
 {
@@ -6,13 +7,27 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
     [SerializeField] private float damageMultiplier = 2.4f;
     [SerializeField] private float impactRadius = 1.6f;
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private int hitBufferSize = 32;
 
     [Header("Effect")]
     [SerializeField] private GameObject impactEffectPrefab;
     private GameObject spawnedEffect;
 
+    private Collider2D[] hitBuffer;
+    private ContactFilter2D hitFilter;
+    private readonly HashSet<IDamageable> damagedTargets = new();
+
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.SelfArea;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CastWithoutTarget;
+    private void Awake()
+    {
+        hitBuffer = new Collider2D[hitBufferSize];
+
+        hitFilter = new ContactFilter2D();
+        hitFilter.useLayerMask = true;
+        hitFilter.SetLayerMask(enemyLayer);
+        hitFilter.useTriggers = true;
+    }
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
@@ -38,57 +53,71 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
     public override void OnSkillApply(SkillExecutionContext context)
     {
         Vector2 center = context.CastPosition;
+        SpawnImpactEffect(center);
 
-        if (impactEffectPrefab != null)
-            spawnedEffect = Instantiate(impactEffectPrefab, center, Quaternion.identity);
-        
+        int hitCount = Physics2D.OverlapCircle(
+                    center,
+                    impactRadius,
+                    hitFilter,
+                    hitBuffer
+                );
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(center, impactRadius, enemyLayer);
-        if (hits == null || hits.Length == 0)
+        if (hitCount <= 0)
             return;
 
         float damage = owner.Attack * damageMultiplier;
 
-        foreach (Collider2D hit in hits)
-        {
-            if (hit.TryGetComponent<IDamageable>(out var damageable))
-            {
-                damageable.TakeDamage(damage);
-
-                // 추후 상태이상 시스템 추가:
-                // if (hit.TryGetComponent<IStatusAffectable>(out var statusTarget))
-                // {
-                //     statusTarget.ApplyStun(stunDuration);
-                // }
-            }
-        }
+        ApplyDamage(hitCount, damage);
     }
 
-    public override void OnSkillEnd(SkillExecutionContext context)
-    {
-        if (spawnedEffect != null)
-        {
-            spawnedEffect.SetActive(false);
-            Destroy(spawnedEffect);
-            spawnedEffect = null;
-        }
-    }
+    public override void OnSkillEnd(SkillExecutionContext context) { }
 
-    public override void CancelSkill()
+    public override void CancelSkill() { }
+    private void SpawnImpactEffect(Vector2 center)
     {
-        if (spawnedEffect != null)
+        if (impactEffectPrefab == null || owner.PoolManager == null)
+            return;
+
+        Poolable effect = owner.PoolManager.Spawn(
+            impactEffectPrefab,
+            center,
+            Quaternion.identity,
+            PoolCategory.Effect
+        );
+
+        if (effect != null && effect.TryGetComponent(out PooledVfx vfx))
+            vfx.Play();
+    }
+    private void ApplyDamage(int hitCount, float damage)
+    {
+        damagedTargets.Clear();
+
+        for (int i = 0; i < hitCount; i++)
         {
-            spawnedEffect.SetActive(false);
-            Destroy(spawnedEffect);
-            spawnedEffect = null;
+            Collider2D hit = hitBuffer[i];
+
+            if (hit == null)
+                continue;
+
+            if (!hit.TryGetComponent(out IDamageable damageable))
+                continue;
+
+            if (!damagedTargets.Add(damageable))
+                continue;
+
+            damageable.TakeDamage(damage);
+
+            // 추후 상태이상 시스템 추가
         }
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
+        Vector3 center = owner != null ? owner.transform.position : transform.position;
+
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.8f);
-        Gizmos.DrawWireSphere(transform.position, impactRadius);
+        Gizmos.DrawWireSphere(center, impactRadius);
     }
 #endif
 }

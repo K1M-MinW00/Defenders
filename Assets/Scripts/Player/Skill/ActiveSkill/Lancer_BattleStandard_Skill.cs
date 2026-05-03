@@ -22,15 +22,11 @@ public class Lancer_BattleStandard_Skill : ActiveSkillBase
     {
         context = new SkillExecutionContext();
         context.Initialize(owner);
-
         context.SetCastPosition(owner.transform.position);
         return true;
     }
 
-    public override void OnSkillStart(SkillExecutionContext context)
-    {
-
-    }
+    public override void OnSkillStart(SkillExecutionContext context) { }
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
@@ -39,27 +35,16 @@ public class Lancer_BattleStandard_Skill : ActiveSkillBase
 
         Vector3 spawnPos = context.CastPosition;
 
-        Lancer_Active_Aura flag = Instantiate(flagPrefab, spawnPos, Quaternion.identity);
+        Lancer_Active_Aura flag = owner.PoolManager.Spawn(flagPrefab, spawnPos, Quaternion.identity,PoolCategory.Effect);
 
         string uniqueId = $"{owner.GetInstanceID()}_{Time.frameCount}";
-        flag.Initialize(
-            duration: duration,
-            radius: radius,
-            attackBonusPercent: attackBonusPercent,
-            attackSpeedBonusPercent: attackSpeedBonusPercent,
-            allyLayer: allyLayer,
-            uniqueId: uniqueId
-        );
 
+        flag.Initialize(duration,radius,attackBonusPercent,attackSpeedBonusPercent,allyLayer,uniqueId);
     }
 
-    public override void OnSkillEnd(SkillExecutionContext context)
-    {
-    }
+    public override void OnSkillEnd(SkillExecutionContext context){ }
 
-    public override void CancelSkill()
-    {
-    }
+    public override void CancelSkill() { }
 
     private void OnDrawGizmosSelected()
     {

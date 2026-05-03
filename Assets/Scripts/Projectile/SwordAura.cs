@@ -1,15 +1,26 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class SwordAura : MonoBehaviour
+public class SwordAura : MonoBehaviour, IPoolable
 {
+    private Poolable poolable;
+
     private float damage;
     private Vector2 direction;
     private float speed;
     private float lifeTime;
     private LayerMask targetLayer;
 
-    private float spawnTime;
+    private bool isActive;
 
+    private readonly HashSet<IDamageable> hitTargets = new();
+
+    private void Awake()
+    {
+        poolable = GetComponent<Poolable>();
+        if(poolable ==  null )
+            poolable = gameObject.AddComponent<Poolable>();
+    }
 
     public void Initialize(float damage, Vector2 direction, float projectileSpeed, float projectileLifeTime, LayerMask targetLayer)
     {
@@ -19,45 +30,64 @@ public class SwordAura : MonoBehaviour
         this.lifeTime = projectileLifeTime;
         this.targetLayer = targetLayer;
 
-        spawnTime = Time.time;
-        RotateVisual();
-    }
+        isActive = true;
 
-    private void RotateVisual()
-    {
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        hitTargets.Clear();
+
+        CancelInvoke(nameof(ReturnToPool));
+        Invoke(nameof(ReturnToPool), lifeTime);
     }
 
     private void Update()
     {
-        Move();
-        CheckDestroyCondition();
-    }
-
-    private void CheckDestroyCondition()
-    {
-        if (Time.time >= spawnTime + lifeTime)
-        {
-            Destroy(gameObject);
+        if (!isActive)
             return;
-        }
-    }
 
-    private void Move()
-    {
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!isActive)
+            return;
+
         if (((1 << collision.gameObject.layer) & targetLayer) == 0)
             return;
 
-        if (collision.TryGetComponent<IDamageable>(out IDamageable damageable))
-        {
-            damageable.TakeDamage(damage);
+        if (!collision.TryGetComponent(out IDamageable damageable))
+            return;
 
-        }
+        if (!hitTargets.Add(damageable))
+            return;
+
+        damageable.TakeDamage(damage);
+    }
+
+    private void ReturnToPool()
+    {
+        if (!isActive)
+            return;
+
+        poolable.ReturnToPool();
+    }
+
+    public void OnSpawn()
+    {
+        isActive = false;
+        hitTargets.Clear();
+        CancelInvoke(nameof(ReturnToPool));
+    }
+
+    public void OnDespawn()
+    {
+        isActive = false;
+        hitTargets.Clear();
+        CancelInvoke(nameof(ReturnToPool));
+
+        damage = 0f;
+        speed = 0f;
+        lifeTime = 0f;
+        direction = Vector2.zero;
+        targetLayer = 0;
     }
 }

@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 1475468706105307561}
   - component: {fileID: 1904445087386071173}
   - component: {fileID: 2600683287578642297}
+  - component: {fileID: -3629563294368253866}
+  - component: {fileID: 9045474731166136185}
   m_Layer: 0
   m_Name: Lancer_VFX
   m_TagString: Untagged
@@ -114,3 +116,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-3629563294368253866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6948581144379448196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bd1b00d101b277498efd3cc453f1397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledVfx
+  lifeTime: 0.4
+--- !u!114 &9045474731166136185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6948581144379448196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable

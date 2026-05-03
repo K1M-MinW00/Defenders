@@ -117,7 +117,6 @@ MonoBehaviour:
   multiTargetUnlockStar: 3
   hitboxPrefab: {fileID: 1383628206955395719, guid: 149d6dd52e9dd9d40b5692475a666645, type: 3}
   attackAngle: 60
-  hitRadius: 4
 --- !u!114 &-3704186839640977958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +130,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Armored_Axeman_SpinSlash_Skill
   damageMultiplier: 1.45
-  radius: 1.8
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64

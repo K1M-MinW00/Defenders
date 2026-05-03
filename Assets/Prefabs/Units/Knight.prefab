@@ -181,10 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec0fb98345db6df47bffa0d71d4bc255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Knight_Cleave_Skill
-  swordAuraPrefab: {fileID: 1461256047603450798, guid: 4f7f3383bdfc1d941bb9905610e18937, type: 3}
+  swordAuraPrefab: {fileID: 2084830849487182946, guid: 4f7f3383bdfc1d941bb9905610e18937, type: 3}
   damageMultiplier: 1.35
-  projectileSpeed: 7
-  lifeTime: 1.5
+  projectileSpeed: 12
+  lifeTime: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64

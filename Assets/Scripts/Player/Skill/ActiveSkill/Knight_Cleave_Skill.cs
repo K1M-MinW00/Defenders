@@ -3,7 +3,7 @@
 public class Knight_Cleave_Skill : ActiveSkillBase
 {
     [Header("Cleave")]
-    [SerializeField] private GameObject swordAuraPrefab;
+    [SerializeField] private SwordAura swordAuraPrefab;
     [SerializeField] private float damageMultiplier = 2.0f;
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float lifeTime = 2f;
@@ -18,10 +18,12 @@ public class Knight_Cleave_Skill : ActiveSkillBase
         context.Initialize(owner);
 
         MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+
         if (target == null)
             return false;
 
         context.SetEnemyTarget(target);
+
         return true;
     }
 
@@ -33,22 +35,23 @@ public class Knight_Cleave_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        Vector2 direction =((Vector2)context.EnemyTarget.transform.position - (Vector2)owner.transform.position).normalized;
+        Vector2 dir =(Vector2)context.EnemyTarget.transform.position - (Vector2)owner.transform.position;
+        dir.Normalize();
 
-        GameObject skillObj = Instantiate(swordAuraPrefab, owner.transform.position, Quaternion.identity);
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0f,0f,angle);
+       
 
-        if (skillObj.TryGetComponent<SwordAura>(out var projectile))
-        {
+        SwordAura projectile = owner.PoolManager.Spawn(swordAuraPrefab, owner.transform.position, rotation,PoolCategory.Projectile);
+
+        if(projectile != null)
+        { 
             float damage = owner.Attack * damageMultiplier;
-            projectile.Initialize(damage, direction, projectileSpeed, lifeTime, enemyLayer);
+            projectile.Initialize(damage, dir, projectileSpeed, lifeTime, enemyLayer);
         }
     }
 
-    public override void OnSkillEnd(SkillExecutionContext context)
-    {
-    }
+    public override void OnSkillEnd(SkillExecutionContext context) { }
 
-    public override void CancelSkill()
-    {
-    }
+    public override void CancelSkill() { }
 }

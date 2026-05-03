@@ -24,15 +24,25 @@ public class UnitAnimationController : MonoBehaviour
     public void PlayAttack()
     {
         float attackAnimSpeed = owner.AttackPerSec;
-        Debug.Log(attackAnimSpeed);
+
+        if(attackAnimSpeed <= 1f)
+            attackAnimSpeed = 1f;
+
         view.SetAnimSpeed(AttackSpeedMultiplierHash, attackAnimSpeed);
         view?.PlayAttack();
     }
 
     public void FaceTarget(MonsterController target)
     {
-        if (target == null) return;
+        if (target == null) 
+            return;
+
         view?.FaceTo(transform.position, target.transform.position);
+    }
+
+    public void SetFacing(bool faceRight)
+    {
+        view?.SetFacing(faceRight);
     }
 
     public Vector2 GetFacingDirection()

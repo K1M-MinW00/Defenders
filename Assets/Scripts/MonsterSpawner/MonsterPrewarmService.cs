@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class MonsterPrewarmService : MonoBehaviour
 {
-    [SerializeField] private ObjectPool objectPool;
+    [SerializeField] private StagePoolManager poolManager;
 
     public void PrewarmForWave(WaveData waveData)
     {
-        if (waveData == null || objectPool == null)
+        if (waveData == null || poolManager == null)
             return;
 
         Dictionary<MonsterDataSO, int> requiredCounts = CalculateRequiredCounts(waveData);
@@ -15,24 +15,21 @@ public class MonsterPrewarmService : MonoBehaviour
         foreach (var pair in requiredCounts)
         {
             MonsterDataSO data = pair.Key;
-            string monsterId = data.monsterId;
             int requiredCount = pair.Value;
 
-            int pooledInactiveCount = objectPool.GetInactiveCount(monsterId);
-            int shortage = requiredCount - pooledInactiveCount;
+            if(data == null || data.prefab == null)
+            {
+                Debug.LogError("Monster prewarm failed. MonsterDataSO or prefab is null.");
+                continue;
+            }
+
+            int inactiveCount = poolManager.GetInactiveCount(data.prefab);
+            int shortage = requiredCount - inactiveCount;
 
             if (shortage <= 0)
                 continue;
 
-            GameObject prefab = data.prefab;
-
-            if (prefab == null)
-            {
-                Debug.LogError($"Monster prefab load failed: {monsterId}");
-                continue;
-            }
-
-            objectPool.Prewarm(monsterId, prefab, shortage);
+            poolManager.Prewarm(data.prefab, shortage, PoolCategory.Monster);
         }
     }
 
@@ -47,7 +44,7 @@ public class MonsterPrewarmService : MonoBehaviour
 
             foreach (MonsterGroup group in subWave.spawnGroups)
             {
-                if (group == null || string.IsNullOrEmpty(group.data.monsterId))
+                if (group == null || group.data == null)
                     continue;
 
                 if (!counts.ContainsKey(group.data))

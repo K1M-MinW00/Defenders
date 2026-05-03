@@ -17,15 +17,20 @@ public class StageTimeController : MonoBehaviour
     public bool IsCombatPhase => isCombatPhase;
     public bool IsPaused => isPaused;
 
-    public event Action<float> OnSelectedSpeedChanged;
+    public event Action<float> OnSpeedChanged;
     public event Action<bool> OnPauseChanged;
 
-    private void Awake()
+    public void Initialize()
     {
-        LoadSavedSpeed();
+        selectedCombatSpeed = PlayerPrefs.GetFloat(SavedSpeedKey,normalSpeed);
 
-        // 스테이지 시작 직후는 준비 단계이므로 항상 1배속
+        if (!Mathf.Approximately(selectedCombatSpeed, fastSpeed))
+            selectedCombatSpeed = normalSpeed;
+
         Time.timeScale = 1f;
+
+        OnSpeedChanged?.Invoke(selectedCombatSpeed);
+        OnPauseChanged?.Invoke(false);
     }
 
     private void OnDestroy()
@@ -35,31 +40,16 @@ public class StageTimeController : MonoBehaviour
 
     public void ToggleSpeed()
     {
-        selectedCombatSpeed = Mathf.Approximately(selectedCombatSpeed, normalSpeed)
-            ? fastSpeed
-            : normalSpeed;
+        selectedCombatSpeed = Mathf.Approximately(selectedCombatSpeed, normalSpeed) ? fastSpeed : normalSpeed;
 
-        SaveSpeed();
-
-        OnSelectedSpeedChanged?.Invoke(selectedCombatSpeed);
+        PlayerPrefs.SetFloat(SavedSpeedKey, selectedCombatSpeed);
+        PlayerPrefs.Save();
 
         // 전투 중일 때만 실제 배속 적용
         if (isCombatPhase && !isPaused)
-            ApplySelectedCombatSpeed();
-    }
+            Time.timeScale = selectedCombatSpeed;
 
-    public void SetSpeed(float speed)
-    {
-        selectedCombatSpeed = Mathf.Approximately(speed, fastSpeed)
-            ? fastSpeed
-            : normalSpeed;
-
-        SaveSpeed();
-
-        OnSelectedSpeedChanged?.Invoke(selectedCombatSpeed);
-
-        if (isCombatPhase && !isPaused)
-            ApplySelectedCombatSpeed();
+        OnSpeedChanged?.Invoke(selectedCombatSpeed);
     }
 
     public void EnterCombatPhase()
@@ -67,7 +57,7 @@ public class StageTimeController : MonoBehaviour
         isCombatPhase = true;
 
         if (!isPaused)
-            ApplySelectedCombatSpeed();
+            Time.timeScale = selectedCombatSpeed;
     }
 
     public void ExitCombatPhase()
@@ -96,10 +86,7 @@ public class StageTimeController : MonoBehaviour
 
         isPaused = false;
 
-        if (isCombatPhase)
-            ApplySelectedCombatSpeed();
-        else
-            Time.timeScale = normalSpeed;
+        Time.timeScale = isCombatPhase ? selectedCombatSpeed : normalSpeed;
 
         OnPauseChanged?.Invoke(false);
     }
@@ -110,24 +97,5 @@ public class StageTimeController : MonoBehaviour
             Resume();
         else
             Pause();
-    }
-
-    private void ApplySelectedCombatSpeed()
-    {
-        Time.timeScale = selectedCombatSpeed;
-    }
-
-    private void LoadSavedSpeed()
-    {
-        selectedCombatSpeed = PlayerPrefs.GetFloat(SavedSpeedKey, normalSpeed);
-
-        if (!Mathf.Approximately(selectedCombatSpeed, fastSpeed))
-            selectedCombatSpeed = normalSpeed;
-    }
-
-    private void SaveSpeed()
-    {
-        PlayerPrefs.SetFloat(SavedSpeedKey, selectedCombatSpeed);
-        PlayerPrefs.Save();
     }
 }

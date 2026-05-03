@@ -168,13 +168,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoldierR_ArrowRain_Skill
   damageMultiplier: 0.65
-  arrowCount: 8
-  rainRadius: 2.2
-  hitRadius: 0.35
+  arrowCount: 6
+  rainRadius: 1
+  hitRadius: 0.5
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  fallingArrowPrefab: {fileID: 1796473401046290145, guid: d26a49802432cb543aa8f70f4979e99e, type: 3}
+  fallingArrowPrefab: {fileID: -3521010439676643875, guid: d26a49802432cb543aa8f70f4979e99e, type: 3}
   spawnHeight: 5
   horizontalScatter: 1.8
 --- !u!114 &-3471045351191771853

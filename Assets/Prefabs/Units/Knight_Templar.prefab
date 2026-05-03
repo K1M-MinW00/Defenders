@@ -131,7 +131,8 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  beamEffectPrefab: {fileID: 8556144927267406452, guid: f4cbf35e8411fee42970a2907345ff06, type: 3}
+  hitBufferSize: 32
+  beamEffectPrefab: {fileID: -5031632017064973516, guid: f4cbf35e8411fee42970a2907345ff06, type: 3}
 --- !u!114 &1583106785907814873
 MonoBehaviour:
   m_ObjectHideFlags: 0

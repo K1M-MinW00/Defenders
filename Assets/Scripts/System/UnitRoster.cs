@@ -86,9 +86,6 @@ public class UnitRoster : MonoBehaviour
             if (unit == null || unit.IsDead)
                 continue;
 
-            if (unit == damagedUnit)
-                continue;
-
             unit.ReceiveCombatAlert();
         }
     }

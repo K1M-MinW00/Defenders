@@ -130,7 +130,7 @@ MonoBehaviour:
   meteorPrefab: {fileID: 2394154420839144201, guid: 30ddcbf10669509479d86f654f857e12, type: 3}
   damageMultiplier: 2.4
   spawnHeight: 5
-  explosionRadius: 2
+  explosionRadius: 4
   projectileSpeed: 9
   enemyLayer:
     serializedVersion: 2

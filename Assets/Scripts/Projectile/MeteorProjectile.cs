@@ -1,12 +1,34 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class MeteorProjectile : MonoBehaviour
+public class MeteorProjectile : MonoBehaviour, IPoolable
 {
+    [Header("Hit Buffer")]
+    [SerializeField] private int hitBufferSize = 32;
+
+    private Poolable poolable;
+    private Collider2D[] hitBuffer;
+    private ContactFilter2D hitFilter;
+
     private float damage;
     private Vector2 targetPos;
     private float fallSpeed;
     private float explosionRadius;
-    private LayerMask targetLayer;
+    private LayerMask enemyLayer;
+
+    private bool isActive;
+
+    private readonly HashSet<IDamageable> damagedTargets = new();
+
+    private void Awake()
+    {
+        poolable = GetComponent<Poolable>();
+        hitBuffer = new Collider2D[hitBufferSize];
+
+        hitFilter = new ContactFilter2D();
+        hitFilter.useLayerMask = true;
+        hitFilter.useTriggers = true;
+    }
 
     public void Initialize(float damage, Vector2 targetPos, float fallSpeed, float explosionRadius, LayerMask targetLayer)
     {
@@ -14,7 +36,12 @@ public class MeteorProjectile : MonoBehaviour
         this.targetPos = targetPos;
         this.fallSpeed = fallSpeed;
         this.explosionRadius = explosionRadius;
-        this.targetLayer = targetLayer;
+        this.enemyLayer = targetLayer;
+
+        hitFilter.SetLayerMask(targetLayer);
+
+        damagedTargets.Clear();
+        isActive = true;
 
         Vector2 spawnPos = transform.position;
         Vector2 dir = (targetPos - spawnPos).normalized;
@@ -29,21 +56,63 @@ public class MeteorProjectile : MonoBehaviour
         if (Vector2.Distance(transform.position, targetPos) <= 0.05f)
         {
             Explode();
+            ReturnToPool();
         }
     }
 
     private void Explode()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(targetPos, explosionRadius, targetLayer);
+        int hitCount = Physics2D.OverlapCircle(
+             targetPos,
+             explosionRadius,
+             hitFilter,
+             hitBuffer
+         );
 
-        foreach (var hit in hits)
+        damagedTargets.Clear();
+
+        for (int i = 0; i < hitCount; i++)
         {
-            if (hit.TryGetComponent<IDamageable>(out var damageable))
-            {
-                damageable.TakeDamage(damage);
-            }
-        }
+            Collider2D hit = hitBuffer[i];
 
-        Destroy(gameObject);
+            if (hit == null)
+                continue;
+
+            if (!hit.TryGetComponent(out IDamageable damageable))
+                continue;
+
+            if (!damagedTargets.Add(damageable))
+                continue;
+
+            damageable.TakeDamage(damage);
+        }
+    }
+
+    private void ReturnToPool()
+    {
+        if (!isActive)
+            return;
+
+        poolable.ReturnToPool();
+    }
+
+    public void OnSpawn()
+    {
+        isActive = false;
+        damagedTargets.Clear();
+        CancelInvoke(nameof(ReturnToPool));
+    }
+
+    public void OnDespawn()
+    {
+        isActive = false;
+        damagedTargets.Clear();
+        CancelInvoke(nameof(ReturnToPool));
+
+        targetPos = Vector2.zero;
+        damage = 0f;
+        fallSpeed = 0f;
+        explosionRadius = 0f;
+        enemyLayer = 0;
     }
 }

@@ -6,23 +6,17 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageData currentStageData;
 
     [Header("Controllers")]
-    [SerializeField] private StageFlowController flowController;
+    [SerializeField] private StagePrepareTimerController prepareTimerController;
     [SerializeField] private WaveController waveController;
     [SerializeField] private StageRewardService rewardService;
     [SerializeField] private StagePreparationService preparationService;
     [SerializeField] private StageBootstrapper bootstrapper;
-    [SerializeField] private StageUIController stageUI;
+    [SerializeField] private StageUIController_ stageUI;
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
     [SerializeField] private StageTimeController stageTimeController;
 
-    // [SerializeField] private EconomyManager economyManager;
-
-    //public UnitRosterHpTracker UnitRosterHpTracker => unitRosterHpTracker;
-    //public MonsterSpawner MonsterSpawner => waveController.MonsterSpawner;
-    //public EconomyManager EconomyManager => economyManager;
-    //public PopulationManager PopulationManager => preparationService.PopulationManager;
-
+   
     public StageState CurrentState { get; private set; } = StageState.None;
     public StageData CurrentStageData => currentStageData;
     public int CurrentWaveIndex { get; private set; }
@@ -55,7 +49,7 @@ public class StageSessionController : MonoBehaviour
 
         preparationService.EnterPrepareMode();
         stageTimeController.ExitCombatPhase();
-        flowController.StartPreparePhase(OnPrepareFinished);
+        prepareTimerController.StartPreparePhase(OnPrepareFinished);
     }
 
     private void OnPrepareFinished()
@@ -104,5 +98,28 @@ public class StageSessionController : MonoBehaviour
         rewardService.GiveStageClearReward(currentStageData);
         stageUI.SetPhase(CurrentState);
         stageUI.ShowStageClear();
+    }
+
+    private void StopCurrentPhase()
+    {
+        prepareTimerController.StopPreparePhase();
+        waveController.StopWave();
+        preparationService.ExitPrepareMode();
+    }
+
+    public void RequestStageFail()
+    {
+        if (CurrentState == StageState.StageFail || CurrentState == StageState.StageClear)
+            return;
+
+        StopCurrentPhase();
+
+        CurrentState = StageState.StageFail;
+
+        stageTimeController.Resume();
+        stageTimeController.ExitCombatPhase();
+
+        stageUI.SetPhase(CurrentState);
+        stageUI.ShowStageFail();
     }
 }

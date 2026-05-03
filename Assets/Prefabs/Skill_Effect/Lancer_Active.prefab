@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6229503867863177708}
   - component: {fileID: 7976678530230565780}
   - component: {fileID: 4128732162914245548}
+  - component: {fileID: 3427987318805585670}
   m_Layer: 0
   m_Name: Lancer_Active
   m_TagString: Untagged
@@ -114,6 +115,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &3427987318805585670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3130127555302688551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable
 --- !u!1 &6348187382762894691
 GameObject:
   m_ObjectHideFlags: 0

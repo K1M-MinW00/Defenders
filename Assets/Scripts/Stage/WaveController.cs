@@ -84,4 +84,18 @@ public class WaveController : MonoBehaviour
             onWaveLose?.Invoke();
         }
     }
+
+    public void StopWave()
+    {
+        monsterSpawner.StopSpawning();
+        monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
+        monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
+
+        unitRoster.OnAliveCountChanged -= HandleUnitAliveChanged;
+
+        waveEnded = true;
+        allMonstersSpawned = false;
+        onWaveWin = null;
+        onWaveLose = null;
+    }
 }

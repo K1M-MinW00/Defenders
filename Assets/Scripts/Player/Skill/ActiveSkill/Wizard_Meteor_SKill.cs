@@ -3,7 +3,7 @@
 public class Wizard_Meteor_Skill : ActiveSkillBase
 {
     [Header("Fireball")]
-    [SerializeField] private GameObject meteorPrefab;
+    [SerializeField] private MeteorProjectile meteorPrefab;
     [SerializeField] private float damageMultiplier = 3.0f;
     [SerializeField] private float spawnHeight = 3f;
     [SerializeField] private float explosionRadius = 1.5f;
@@ -46,17 +46,12 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 
         Vector2 targetPos = context.EnemyTarget.transform.position;
         Vector2 spawnPos = targetPos + Vector2.up * spawnHeight;
-        GameObject skillObj = Instantiate(meteorPrefab, spawnPos, Quaternion.identity);
+        
+        MeteorProjectile projectile = owner.PoolManager.Spawn(meteorPrefab, spawnPos, Quaternion.identity,PoolCategory.Projectile);
 
-        if (skillObj.TryGetComponent<MeteorProjectile>(out var projectile))
-        {
-            float damage = owner.Attack * damageMultiplier;
-            projectile.Initialize(damage, targetPos, projectileSpeed,explosionRadius, enemyLayer);
-        }
-        else
-        {
-            Debug.LogWarning($"{name} - FireballProjectile component not found on fireballProjectilePrefab.");
-        }
+        float damage = owner.Attack * damageMultiplier;
+        projectile.Initialize(damage, targetPos, projectileSpeed, explosionRadius, enemyLayer);
+
     }
 
     public override void OnSkillEnd(SkillExecutionContext context)

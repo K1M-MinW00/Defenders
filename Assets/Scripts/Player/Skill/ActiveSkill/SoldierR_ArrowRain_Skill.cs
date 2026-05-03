@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class SoldierR_ArrowRain_Skill : ActiveSkillBase
 {
@@ -10,9 +11,14 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
     [SerializeField] private LayerMask enemyLayer;
 
     [Header("Arrow Rain Visual")]
-    [SerializeField] private GameObject fallingArrowPrefab;
+    [SerializeField] private ArrowRainFallingArrow fallingArrowPrefab;
     [SerializeField] private float spawnHeight = 3.5f;
     [SerializeField] private float horizontalScatter = 0.15f;
+
+#if UNITY_EDITOR
+    private readonly List<Vector2> debugLandingPoints = new();
+    private Vector2 debugCenter;
+#endif
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
@@ -42,10 +48,19 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
         Vector2 center = context.CastPosition;
         float damage = owner.Attack * damageMultiplier;
 
+#if UNITY_EDITOR
+        debugCenter = center;
+        debugLandingPoints.Clear();
+#endif
+
         for (int i = 0; i < arrowCount; i++)
         {
             Vector2 landingOffset = Random.insideUnitCircle * rainRadius;
             Vector2 landingPoint = center + landingOffset;
+
+#if UNITY_EDITOR
+            debugLandingPoints.Add(landingPoint);
+#endif
 
             Vector2 spawnOffset = new Vector2(
                 Random.Range(-horizontalScatter, horizontalScatter),
@@ -54,21 +69,39 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
 
             Vector3 spawnPos = (Vector3)(landingPoint + spawnOffset) + Vector3.up * spawnHeight;
 
-            GameObject arrowObj = Instantiate(fallingArrowPrefab, spawnPos, Quaternion.identity);
+            ArrowRainFallingArrow fallingArrow = owner.PoolManager.Spawn(
+                fallingArrowPrefab,
+                spawnPos,
+                Quaternion.identity,
+                PoolCategory.Projectile
+            );
 
-            if (arrowObj.TryGetComponent<ArrowRainFallingArrow>(out var fallingArrow))
-            {
-                fallingArrow.Initialize(
-                    landingPoint,
-                    damage,
-                    hitRadius,
-                    enemyLayer
-                );
-            }
+            if (fallingArrow == null)
+                continue;
+
+            fallingArrow.Initialize(landingPoint, damage, hitRadius, enemyLayer);
         }
     }
 
     public override void OnSkillEnd(SkillExecutionContext context) { }
 
     public override void CancelSkill() { }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(debugCenter, rainRadius);
+
+        Gizmos.color = Color.red;
+
+        for (int i = 0; i < debugLandingPoints.Count; i++)
+        {
+            Vector2 point = debugLandingPoints[i];
+
+            Gizmos.DrawWireSphere(point, hitRadius);
+            Gizmos.DrawSphere(point, 0.05f);
+        }
+    }
+#endif
 }

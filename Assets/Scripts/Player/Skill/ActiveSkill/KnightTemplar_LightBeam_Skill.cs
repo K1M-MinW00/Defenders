@@ -4,13 +4,14 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
 {
     [Header("Light Beam")]
     [SerializeField] private float damageMultiplier = 2.5f;
-    [SerializeField] private float beamLength = 4f;
+    [SerializeField] private float beamLength = 40f;
     [SerializeField] private float beamWidth = 1.2f;
     [SerializeField] private LayerMask enemyLayer;
 
     [Header("Effect")]
-    [SerializeField] private GameObject beamEffectPrefab;
-    private GameObject spawnedEffect;
+    [SerializeField] private LightBeam beamEffectPrefab;
+
+    private LightBeam spawnedEffect;
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRangeOrGlobalClosest;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
@@ -28,10 +29,12 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
             
             if (!enemyGlobal)
                 return false;
+
             target = owner.Targeting.CurrentTarget;
         }
 
         context.SetEnemyTarget(target);
+
         return true;
     }
 
@@ -39,73 +42,56 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
     {
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
+
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        if (context.EnemyTarget == null)
+        SpawnBeamEffect(context);
+    }
+
+    public override void OnSkillEnd(SkillExecutionContext context) 
+    {
+        ReturnBeamEffect();
+    }
+
+    public override void CancelSkill()
+    {
+        ReturnBeamEffect();
+    }
+
+    private void SpawnBeamEffect(SkillExecutionContext context)
+    {
+        if (beamEffectPrefab == null || owner.PoolManager == null)
             return;
 
         Vector2 origin = owner.transform.position;
         Vector2 targetPos = context.EnemyTarget.transform.position;
 
-        Vector2 dir = (targetPos - origin);
-        if (dir.sqrMagnitude <= 0.0001f)
-            dir = owner.Animation.GetFacingDirection();
-
-        dir.Normalize();
-
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-
-        // 박스 중심 (앞쪽으로 절반 이동)
+        Vector2 dir = (targetPos - origin).normalized;
+        
         Vector2 center = origin + dir * (beamLength * 0.5f);
+        
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
 
-        // 이펙트
-        if (beamEffectPrefab != null)
-        {
-            Quaternion rot = Quaternion.Euler(0f, 0f, angle);
-            spawnedEffect = Instantiate(beamEffectPrefab, center, rot);
-            var sr = spawnedEffect.GetComponent<SpriteRenderer>();
-            sr.size = new Vector2(beamLength, beamWidth);
-        }
+        float damamge = owner.Attack * damageMultiplier;
 
-        // 판정
-        Vector2 boxSize = new Vector2(beamLength, beamWidth);
+        spawnedEffect = owner.PoolManager.Spawn(beamEffectPrefab,center,rotation,PoolCategory.Effect);
 
-        Collider2D[] hits = Physics2D.OverlapBoxAll(center, boxSize, angle, enemyLayer);
-
-        if (hits == null || hits.Length == 0)
+        if (spawnedEffect == null)
             return;
 
-        float damage = owner.Attack * damageMultiplier;
-
-        foreach (var hit in hits)
-        {
-            if (hit.TryGetComponent<IDamageable>(out var dmg))
-            {
-                dmg.TakeDamage(damage);
-            }
-        }
+        spawnedEffect.Initialize(center, dir, beamLength, beamWidth, damamge, enemyLayer);
     }
 
-    public override void OnSkillEnd(SkillExecutionContext context) 
+    private void ReturnBeamEffect()
     {
-        if(spawnedEffect != null)
-        {
-            spawnedEffect.SetActive(false);
-            Destroy(spawnedEffect);
-            spawnedEffect = null;
-        }
-    }
+        if (spawnedEffect == null)
+            return;
 
-    public override void CancelSkill()
-    {
-        if (spawnedEffect != null)
-        {
-            spawnedEffect.SetActive(false);
-            Destroy(spawnedEffect);
-            spawnedEffect = null;
-        }
+        spawnedEffect.ReturnToPool();
+        spawnedEffect = null;
     }
 
 #if UNITY_EDITOR

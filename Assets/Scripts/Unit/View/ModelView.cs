@@ -47,16 +47,27 @@ public class ModelView : MonoBehaviour
         if (Mathf.Abs(dx) < 0.01f)
             return;
 
-        bool shouldFaceRight = dx > 0f;
+        SetFacing(dx > 0f);
+    }
 
-        if (shouldFaceRight == isFacingRight)
+    public void FaceDirection(Vector2 dir)
+    {
+        if (Mathf.Abs(dir.x) < 0.01f)
             return;
 
-        isFacingRight = shouldFaceRight;
+        SetFacing(dir.x > 0f);
+    }
+
+    public void SetFacing(bool faceRight)
+    {
+        if (faceRight == isFacingRight)
+            return;
+
+        isFacingRight = faceRight;
 
         Transform pivot = visualRoot != null ? visualRoot : transform;
         Vector3 scale = pivot.localScale;
-        scale.x = Mathf.Abs(scale.x) * (isFacingRight ? 1f : -1f);
+        scale.x = Mathf.Abs(scale.x) * (faceRight ? 1f : -1f);
         pivot.localScale = scale;
     }
 

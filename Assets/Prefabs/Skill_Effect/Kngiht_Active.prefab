@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 838567496246580285}
   - component: {fileID: 4092969131537213171}
   - component: {fileID: 2084830849487182946}
+  - component: {fileID: 8021985870744587259}
   m_Layer: 0
   m_Name: Kngiht_Active
   m_TagString: Untagged
@@ -110,6 +111,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf0673ed7d534814b9485c7f632705f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SwordAura
+--- !u!114 &8021985870744587259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461256047603450798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable
 --- !u!1 &5000824998939792438
 GameObject:
   m_ObjectHideFlags: 0

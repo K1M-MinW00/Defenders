@@ -27,8 +27,6 @@ public sealed class MonsterMoveState : IState
 
     public void Update()
     {
-        owner.FaceTarget();
-
         if (!owner.HasValidTarget())
         {
             if (!owner.TryFindClosestAliveUnit())

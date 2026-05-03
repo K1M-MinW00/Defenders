@@ -2,25 +2,41 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class Lancer_Active_Aura : MonoBehaviour
+public class Lancer_Active_Aura : MonoBehaviour, IPoolable
 {
     [SerializeField] private SpriteRenderer rangeSrdr;
+    private Poolable poolable;
+    private CircleCollider2D circleTrigger;
 
     [Header("Refresh")]
     [SerializeField] private float refreshInterval = 0.2f;
     [SerializeField] private float buffDuration = 0.35f;
 
     private readonly HashSet<UnitController> unitsInRange = new();
+    private readonly List<UnitController> invalidUnits = new();
 
-    private float attackBonusPercent = 0.20f;
-    private float attackSpeedBonusPercent = 0.15f;
+    private float attackBonusPercent;
+    private float attackSpeedBonusPercent;
     private LayerMask allyLayer;
+
     private string attackBuffId;
     private string attackSpeedBuffId;
 
     private float lifeTimer;
     private float refreshTimer;
-    private CircleCollider2D circleTrigger;
+    private bool isActive;
+
+    private void Awake()
+    {
+        poolable = GetComponent<Poolable>();
+        circleTrigger = GetComponent<CircleCollider2D>();
+
+        if (circleTrigger != null)
+            circleTrigger.isTrigger = true;
+
+        if (poolable == null)
+            poolable = gameObject.AddComponent<Poolable>();
+    }
 
     public void Initialize(float duration,float radius,float attackBonusPercent,float attackSpeedBonusPercent,LayerMask allyLayer,string uniqueId)
     {
@@ -31,9 +47,6 @@ public class Lancer_Active_Aura : MonoBehaviour
         attackBuffId = $"LancerFlag_Attack_{uniqueId}";
         attackSpeedBuffId = $"LancerFlag_AttackSpeed_{uniqueId}";
 
-        circleTrigger = GetComponent<CircleCollider2D>();
-
-        circleTrigger.isTrigger = true;
         circleTrigger.radius = radius;
 
         float spriteSize = rangeSrdr.sprite.bounds.size.x;
@@ -44,10 +57,14 @@ public class Lancer_Active_Aura : MonoBehaviour
 
         lifeTimer = duration;
         refreshTimer = 0f;
+        isActive = true;
     }
 
     private void Update()
     {
+        if (!isActive)
+            return;
+
         lifeTimer -= Time.deltaTime;
         refreshTimer -= Time.deltaTime;
 
@@ -58,10 +75,7 @@ public class Lancer_Active_Aura : MonoBehaviour
         }
 
         if (lifeTimer <= 0f)
-        {
-            CleanupAllBuffs();
-            Destroy(gameObject);
-        }
+            ReturnToPool();
     }
 
     private void RefreshBuffs()
@@ -75,7 +89,6 @@ public class Lancer_Active_Aura : MonoBehaviour
         {
             if (unit == null || unit.IsDead)
             {
-                invalidUnits ??= new List<UnitController>();
                 invalidUnits.Add(unit);
                 continue;
             }
@@ -128,15 +141,30 @@ public class Lancer_Active_Aura : MonoBehaviour
 
     private void CleanupAllBuffs()
     {
-        foreach (UnitController unit in unitsInRange)
+        if (unitsInRange.Count > 0)
         {
-            if (unit == null)
-                continue;
+            foreach (UnitController unit in unitsInRange)
+            {
+                if (unit == null)
+                    continue;
 
-            RemoveBuff(unit);
+                RemoveBuff(unit);
+            }
         }
 
         unitsInRange.Clear();
+        invalidUnits.Clear();
+    }
+
+    private void ReturnToPool()
+    {
+        if (!isActive)
+            return;
+
+        CleanupAllBuffs();
+
+        isActive = false;
+        poolable.ReturnToPool();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -156,6 +184,9 @@ public class Lancer_Active_Aura : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (((1 << other.gameObject.layer) & allyLayer.value) == 0)
+            return;
+
         if (!other.TryGetComponent<UnitController>(out UnitController unit))
             return;
 
@@ -163,5 +194,27 @@ public class Lancer_Active_Aura : MonoBehaviour
             return;
 
         RemoveBuff(unit);
+    }
+
+    public void OnSpawn()
+    {
+        isActive = false;
+        unitsInRange.Clear();
+        invalidUnits.Clear();
+    }
+
+    public void OnDespawn()
+    {
+        CleanupAllBuffs();
+        
+        isActive = false;
+
+        attackBonusPercent = 0f;
+        attackSpeedBonusPercent = 0f;
+        allyLayer = 0;
+        attackBuffId = null;
+        attackSpeedBuffId = null;
+        lifeTimer = 0f;
+        refreshTimer = 0f;
     }
 }

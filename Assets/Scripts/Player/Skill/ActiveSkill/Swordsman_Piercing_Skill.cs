@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Firebase.Auth;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Swordsman_Piercing_Skill : ActiveSkillBase
@@ -8,13 +10,36 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
     [SerializeField] private Vector2 boxSize = new Vector2(1f, 1f);
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private int multCnt = 4;
+    [SerializeField] private float hitInterval = 0.05f;
+
+    [SerializeField] private int hitBufferSize = 32;
 
     [Header("Effect")]
     [SerializeField] private GameObject hitEffectPrefab;
-    private GameObject spawnedEffect;
+    
+    private Poolable spawnedEffect;
+    private Coroutine multiHitRoutine;
+
+    private Collider2D[] hitBuffer;
+    private ContactFilter2D hitFilter;
+    private readonly HashSet<IDamageable> damagedTargetsPerHit = new();
+
+    private Vector2 origin;
+    private Vector2 dir;
+    private float angle;
+    private Coroutine skillRoutine;
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
+
+    private void Awake()
+    {
+        hitBuffer = new Collider2D[hitBufferSize];
+        hitFilter = new ContactFilter2D();
+        hitFilter.useLayerMask = true;
+        hitFilter.SetLayerMask(enemyLayer);
+        hitFilter.useTriggers = true;
+    }
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
@@ -37,49 +62,107 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        Vector3 spawnPos = context.EnemyTarget.transform.position;
-        spawnedEffect = Instantiate(hitEffectPrefab, spawnPos, Quaternion.identity);
+        SpawnHitEffect();
 
-        Collider2D[] hits = Physics2D.OverlapBoxAll(spawnPos, boxSize, 0f, enemyLayer);
+        origin = context.EnemyTarget.transform.position;
+        dir = (Vector2)context.EnemyTarget.transform.position - (Vector2)owner.transform.position;
+        dir.Normalize();
 
-        if (hits == null || hits.Length == 0)
+        angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+        if (skillRoutine != null)
+            owner.StopCoroutine(skillRoutine);
+
+        skillRoutine = owner.StartCoroutine(CoPiercingThrust());
+    }
+
+    public override void OnSkillEnd(SkillExecutionContext context){ }
+
+    public override void CancelSkill() 
+    {
+        if(skillRoutine != null)
+        {
+            owner.StopCoroutine(skillRoutine);
+            skillRoutine = null;
+        }
+    }
+
+    private IEnumerator CoPiercingThrust()
+    {
+        float damagePerHit = owner.Attack * hitDamageMultiplier / multCnt;
+
+        for (int i = 0; i < multCnt; i++)
+        {
+            ExecuteSingleThrust(damagePerHit);
+
+            yield return new WaitForSeconds(hitInterval);
+        }
+
+        skillRoutine = null;
+    }
+
+    private void ExecuteSingleThrust(float damage)
+    {
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+        int hitCount = Physics2D.OverlapBox(
+            origin,
+            boxSize,
+            angle,
+            hitFilter,
+            hitBuffer
+        );
+
+        ApplyDamage(hitCount, damage);
+    }
+
+    private void ApplyDamage(int hitCount, float damage)
+    {
+        if (hitCount <= 0)
             return;
 
-        float damagePerHit = owner.Attack * (hitDamageMultiplier / multCnt);
-        owner.StartCoroutine(ApplyMultHit(hits, damagePerHit));
-    }
+        damagedTargetsPerHit.Clear();
 
-    public override void OnSkillEnd(SkillExecutionContext context)
-    {
-        if(spawnedEffect != null)
+        for (int i = 0; i < hitCount; i++)
         {
-            spawnedEffect.SetActive(false);
-            Destroy(spawnedEffect);
-            spawnedEffect = null;
+            Collider2D hit = hitBuffer[i];
+
+            if (hit == null)
+                continue;
+
+            if (!hit.TryGetComponent(out IDamageable damageable))
+                continue;
+
+            if (!damagedTargetsPerHit.Add(damageable))
+                continue;
+
+            damageable.TakeDamage(damage);
         }
     }
 
-    public override void CancelSkill()
+    private void SpawnHitEffect()
     {
-        if (spawnedEffect != null)
-        {
-            spawnedEffect.SetActive(false);
-            Destroy(spawnedEffect);
-            spawnedEffect = null;
-        }
+        Poolable effect = owner.PoolManager.Spawn(hitEffectPrefab,origin,Quaternion.Euler(0f,0f,angle),
+            PoolCategory.Effect
+        );
+
+        if (effect != null && effect.TryGetComponent(out PooledVfx vfx))
+            vfx.Play();
     }
 
-    private IEnumerator ApplyMultHit(Collider2D[] hits, float damagePerHit)
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
     {
-        for (int i = 0; i < multCnt; ++i)
-        {
-            foreach (Collider2D hit in hits)
-            {
-                if (hit != null && hit.TryGetComponent<IDamageable>(out var damageable))
-                    damageable.TakeDamage(damagePerHit);
-            }
+        Vector2 drawOrigin = Application.isPlaying ? origin : transform.position;
+        float drawAngle = Application.isPlaying ? angle : 0f;
 
-            yield return new WaitForSeconds(.05f);
-        }
+        Matrix4x4 old = Gizmos.matrix;
+        Gizmos.matrix = Matrix4x4.TRS(drawOrigin, Quaternion.Euler(0f, 0f, drawAngle), Vector3.one);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireCube(Vector3.zero, boxSize);
+
+        Gizmos.matrix = old;
     }
+#endif
 }

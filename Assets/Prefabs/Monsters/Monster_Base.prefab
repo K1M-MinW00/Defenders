@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8054379882903055387}
   - component: {fileID: 1385343888076783973}
   - component: {fileID: 4173038608186531338}
+  - component: {fileID: 7485299739719026670}
   m_Layer: 6
   m_Name: Monster_Base
   m_TagString: Enemy
@@ -146,6 +147,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3003d83ad5f6f234989d14fe0a016cd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterHealth
+--- !u!114 &7485299739719026670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390678771801392321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Poolable
 --- !u!1 &5829918057703837809
 GameObject:
   m_ObjectHideFlags: 0

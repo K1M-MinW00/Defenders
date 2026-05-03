@@ -2,15 +2,26 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class Arrow_Power_Projectile : MonoBehaviour
+public class Arrow_Power_Projectile : MonoBehaviour, IPoolable
 {
+    private Poolable poolable;
+
     private float damage;
     private float speed;
-    private Vector2 direction;
-    private LayerMask enemyLayer;
     private float lifeTime;
+    private LayerMask enemyLayer;
+    private Vector2 direction;
+    private bool isActive;
 
-    private readonly HashSet<Collider2D> hitTargets = new();
+    private readonly HashSet<IDamageable> hitTargets = new();
+
+    private void Awake()
+    {
+        poolable = GetComponent<Poolable>();
+
+        if (poolable == null)
+            poolable = gameObject.AddComponent<Poolable>();
+    }
 
     public void Initialize(float damage, float speed, Vector2 direction, LayerMask enemyLayer, float lifeTime)
     {
@@ -20,30 +31,62 @@ public class Arrow_Power_Projectile : MonoBehaviour
         this.enemyLayer = enemyLayer;
         this.lifeTime = lifeTime;
 
-        float angle = Mathf.Atan2(this.direction.y, this.direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        isActive = true;
 
-        Destroy(gameObject, this.lifeTime);
+        hitTargets.Clear();
+
+        CancelInvoke(nameof(ReturnToPool));
+        Invoke(nameof(ReturnToPool), lifeTime);
     }
 
     private void Update()
     {
+        if (!isActive)
+            return;
+
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!isActive)
+            return;
+
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        if (hitTargets.Contains(other))
+        if (!other.TryGetComponent<IDamageable>(out var damageable))
             return;
 
-        hitTargets.Add(other);
+        if (!hitTargets.Add(damageable))
+            return;
 
-        if (other.TryGetComponent<IDamageable>(out var damageable))
-        {
-            damageable.TakeDamage(damage);
-        }
+        damageable.TakeDamage(damage);
+    }
+
+    private void ReturnToPool()
+    {
+        if (!isActive)
+            return;
+
+        poolable.ReturnToPool();
+    }
+
+    public void OnSpawn()
+    {
+        isActive = false;
+        CancelInvoke(nameof(ReturnToPool));
+    }
+
+    public void OnDespawn()
+    {
+        isActive = false;
+        CancelInvoke(nameof(ReturnToPool));
+
+        damage = 0f;
+        speed = 0f;
+        lifeTime = 0f;
+        direction = Vector2.zero;
+        enemyLayer = 0;
     }
 }
