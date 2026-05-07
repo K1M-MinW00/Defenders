@@ -45,6 +45,11 @@ public class UnitAnimationController : MonoBehaviour
         view?.SetFacing(faceRight);
     }
 
+    public void FaceDirection(Vector2 dir)
+    {
+        view?.FaceDirection(dir);
+    }
+
     public Vector2 GetFacingDirection()
     {
         return view != null ? view.GetFacingDirection() : Vector2.right;

@@ -36,6 +36,7 @@ public class AttackState : IState
         if (!owner.Targeting.HasValidTarget())
         {
             bool found = owner.Targeting.TryFindTargetInSensor();
+
             if (!found)
                 found = owner.Targeting.FindGlobalAliveMonster();
             

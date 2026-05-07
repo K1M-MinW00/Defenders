@@ -99,7 +99,7 @@ public class StageHudPresenter : MonoBehaviour
             UpdatePopulation(population.CurrentPopulation, population.MaxPopulation);
     }
 
-    private void SetStageInfo(string stageName, int stageId)
+    private void SetStageInfo(int stageName, int stageId)
     {
         if (stageInfoText != null)
             stageInfoText.text = $"{stageName} - {stageId}";

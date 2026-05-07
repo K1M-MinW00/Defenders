@@ -75,7 +75,7 @@ public class StageUIController : MonoBehaviour
         waveTrackUI?.Initialize(session.CurrentStageData);
 
         if (session.CurrentStageData != null)
-            SetStageInfo(session.CurrentStageData.stageName, session.CurrentStageData.stageId.ToString());
+            SetStageInfo(session.CurrentStageData.stageName.ToString(), session.CurrentStageData.stageId.ToString());
 
         SetPhase(session.CurrentState);
     }

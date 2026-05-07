@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
   m_Name: Knight
   m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitId: unit_knight
   unitCode: 0
   displayName: Knight
-  icon: {fileID: -5711848221618334454, guid: b9494408acf6cbe41b220706a5875ca9, type: 3}
+  icon: {fileID: -6013459150365757729, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
   unitPrefab: {fileID: 8701186199276537277, guid: 3853f4a0cc9151443b2cdbad6f3aa303, type: 3}
   passiveSkill: {fileID: 11400000, guid: 15ba8de14841daa4eb39692afd60fb04, type: 2}
   activeSkill: {fileID: 11400000, guid: c30e24e053c093a42a961d7a1cc9b6db, type: 2}

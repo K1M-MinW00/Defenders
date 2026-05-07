@@ -10,27 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
-  m_Name: Wizard
+  m_Name: Soldier_Range
   m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
-  unitCode: 5
-  displayName: Wizard
-  icon: {fileID: 1457491203435894738, guid: 367c371cc852b4148ae4e63b2f7b209f, type: 3}
-  unitPrefab: {fileID: 8164363347632917002, guid: 8a290fb8d46757443ac11ca29a3c9a4a, type: 3}
-  passiveSkill: {fileID: 11400000, guid: 8fecc58d38a9d3847bbdfd69ff161032, type: 2}
-  activeSkill: {fileID: 11400000, guid: 23b343ba68fb3f149a66e2c6a04331c2, type: 2}
+  unitId: unit_soldierR
+  unitCode: 9
+  displayName: Soldier_Range
+  icon: {fileID: -7319071494286620450, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
+  unitPrefab: {fileID: 4635945194083421887, guid: da061a48600fb0640ad4b7377b9f53db, type: 3}
+  passiveSkill: {fileID: 11400000, guid: d7d0c7b32010b564cb48b90c15f6f001, type: 2}
+  activeSkill: {fileID: 11400000, guid: 25a8efc4898a8694da176639e18a65d5, type: 2}
   baseStats:
-    Attack: 60
-    MaxHp: 260
-    AttackPerSec: 0.65
-    DetectRange: 6
+    Attack: 28
+    MaxHp: 300
+    AttackPerSec: 1.05
+    DetectRange: 4.5
   maxLevel: 50
-  attackGrowthValue: 6
-  hpGrowthValue: 14
+  attackGrowthValue: 3
+  hpGrowthValue: 16
   starAttackMultipliers:
   - 1
-  - 1.4
-  - 1.95
-  - 2.7
+  - 1.25
+  - 1.6
+  - 2.05
   starHpMultipliers:
   - 1
   - 1.2
@@ -39,10 +40,10 @@ MonoBehaviour:
   starDetectRangeMultipliers:
   - 1
   - 1.1
-  - 1.25
-  - 1.35
+  - 1.2
+  - 1.3
   starAttackPerSecondMultipliers:
   - 1
   - 1.05
   - 1.1
-  - 1.15
+  - 1.2

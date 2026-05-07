@@ -10,39 +10,40 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
-  m_Name: Werebear
+  m_Name: Wizard
   m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
-  unitCode: 10
-  displayName: Werebear
-  icon: {fileID: 4407900946912368253, guid: edccf73f01498d44887fe1b3a2603654, type: 3}
-  unitPrefab: {fileID: 308839627680805525, guid: d6ea7d2b7b4fd064cad37f4a55ecd562, type: 3}
-  passiveSkill: {fileID: 11400000, guid: 3f534375eeb25c14a9bff00dc56c2355, type: 2}
-  activeSkill: {fileID: 11400000, guid: 3960eaac72a5eec42847ce18a181de32, type: 2}
+  unitId: unit_wizard
+  unitCode: 5
+  displayName: Wizard
+  icon: {fileID: -1229185169664441540, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
+  unitPrefab: {fileID: 8164363347632917002, guid: 8a290fb8d46757443ac11ca29a3c9a4a, type: 3}
+  passiveSkill: {fileID: 11400000, guid: 8fecc58d38a9d3847bbdfd69ff161032, type: 2}
+  activeSkill: {fileID: 11400000, guid: 23b343ba68fb3f149a66e2c6a04331c2, type: 2}
   baseStats:
-    Attack: 38
-    MaxHp: 650
+    Attack: 60
+    MaxHp: 260
     AttackPerSec: 0.65
-    DetectRange: 3
+    DetectRange: 6
   maxLevel: 50
-  attackGrowthValue: 4
-  hpGrowthValue: 40
+  attackGrowthValue: 6
+  hpGrowthValue: 14
   starAttackMultipliers:
   - 1
-  - 1.2
-  - 1.6
-  - 2.05
+  - 1.4
+  - 1.95
+  - 2.7
   starHpMultipliers:
   - 1
-  - 1.45
-  - 2.1
-  - 2.8
+  - 1.2
+  - 1.55
+  - 1.95
   starDetectRangeMultipliers:
+  - 1
+  - 1.1
+  - 1.25
+  - 1.35
+  starAttackPerSecondMultipliers:
   - 1
   - 1.05
   - 1.1
   - 1.15
-  starAttackPerSecondMultipliers:
-  - 1
-  - 1.02
-  - 1.05
-  - 1.1

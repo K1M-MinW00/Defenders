@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitId: unit_archer
   unitCode: 2
   displayName: Archer
-  icon: {fileID: -7132172409892320828, guid: 492d92066580385478f702636c89f8fb, type: 3}
+  icon: {fileID: -9180426125723624345, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
   unitPrefab: {fileID: 8000201301124123185, guid: adbd41c60b30c044493d5eebd1e38b25, type: 3}
   passiveSkill: {fileID: 11400000, guid: 322ccfa29607b9f418541f849e1aa5ad, type: 2}
   activeSkill: {fileID: 11400000, guid: f903df8c89b83bf4381e5fc0a71cfc3b, type: 2}

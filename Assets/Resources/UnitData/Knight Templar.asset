@@ -10,32 +10,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
-  m_Name: Axeman
+  m_Name: Knight Templar
   m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
-  unitCode: 6
-  displayName: Axeman
-  icon: {fileID: -1467410003536780371, guid: 0e79c1b62fb1051479145acc3f56f8f1, type: 3}
-  unitPrefab: {fileID: 7769852123241821866, guid: 7674b273a43d64543af82fb3524fe104, type: 3}
-  passiveSkill: {fileID: 11400000, guid: 0d52e1d08a49bbd448963d094c6a481d, type: 2}
-  activeSkill: {fileID: 11400000, guid: 62e1fe0ef143df548af7926400fb39e1, type: 2}
+  unitId: unit_knightTemplar
+  unitCode: 1
+  displayName: Knight_Templar
+  icon: {fileID: -1574949385015627090, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
+  unitPrefab: {fileID: 6463679714893050464, guid: a66f4deb5f8cfd14cbad34d5b6f9e999, type: 3}
+  passiveSkill: {fileID: 11400000, guid: ee497796788aedf4e8836f93492b3e3e, type: 2}
+  activeSkill: {fileID: 11400000, guid: 458d8c43800de7640a593b8e3beb27d6, type: 2}
   baseStats:
-    Attack: 40
-    MaxHp: 320
-    AttackPerSec: 0.9
-    DetectRange: 3.2
+    Attack: 48
+    MaxHp: 560
+    AttackPerSec: 0.85
+    DetectRange: 4
   maxLevel: 50
-  attackGrowthValue: 4
-  hpGrowthValue: 18
+  attackGrowthValue: 5
+  hpGrowthValue: 34
   starAttackMultipliers:
   - 1
-  - 1.3
-  - 1.75
-  - 2.3
+  - 1.35
+  - 1.85
+  - 2.5
   starHpMultipliers:
   - 1
-  - 1.25
-  - 1.65
-  - 2.1
+  - 1.35
+  - 1.85
+  - 2.5
   starDetectRangeMultipliers:
   - 1
   - 1.05

@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2ee53ee485841c418eef932da004626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Wizard_Meteor_Skill
-  meteorPrefab: {fileID: 2394154420839144201, guid: 30ddcbf10669509479d86f654f857e12, type: 3}
+  meteorPrefab: {fileID: 6453844778351835197, guid: 30ddcbf10669509479d86f654f857e12, type: 3}
   damageMultiplier: 2.4
   spawnHeight: 5
   explosionRadius: 4

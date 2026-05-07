@@ -5,8 +5,9 @@ using System;
 [Serializable]
 public class UserUnitData
 {
-    [FirestoreProperty] public int UnitCodeValue { get; set; }
+    [FirestoreProperty] public string UnitId { get; set; }
     [FirestoreProperty] public int Level { get; set; } = 1;
+    [FirestoreProperty] public int UnitCodeValue { get; set; }
 
 
     public UnitCode UnitCode

@@ -5,12 +5,15 @@ public class UnitMasterDataManager : MonoBehaviour
 {
     public static UnitMasterDataManager Instance { get; private set; }
 
-    [SerializeField] private Dictionary<UnitCode, UnitDataSO> unitDataMap = new();
+    private readonly Dictionary<string, UnitDataSO> unitDataMap = new();
 
-    [SerializeField] private List<UnitCode> starterUnits = new();
-    [SerializeField] private List<UnitCode> defaultOwnedUnits = new();
-    public IReadOnlyList<UnitCode> StarterUnits => starterUnits;
-    public IReadOnlyList<UnitCode> DefaultOwnedUnits => defaultOwnedUnits;
+    [Header("Default User Units")]
+    [SerializeField] private List<string> defaultOwnedUnitIds = new();
+    
+    public IReadOnlyList<string> DefaultOwnedUnitIds => defaultOwnedUnitIds;
+    public bool IsLoaded { get;private set; }
+
+    private const string UnitDataPath = "UnitData";
 
     private void Awake()
     {
@@ -28,29 +31,50 @@ public class UnitMasterDataManager : MonoBehaviour
 
     private void LoadAllUnitData()
     {
+        IsLoaded = false;
         unitDataMap.Clear();
 
-        UnitDataSO[] unitDataArr = Resources.LoadAll<UnitDataSO>("UnitData");
+        UnitDataSO[] unitDataArr = Resources.LoadAll<UnitDataSO>(UnitDataPath);
+
+        if(unitDataArr == null || unitDataArr.Length == 0)
+        {
+            Debug.LogError($"[UnitMasterDataManager] No UnitDataSo found in Resources/{UnitDataPath}.");
+            return;
+        }
 
         foreach (var unitData in unitDataArr)
         {
             if (unitData == null)
                 continue;
 
-            if (unitDataMap.ContainsKey(unitData.unitCode))
+            if (string.IsNullOrWhiteSpace(unitData.unitId))
             {
-                Debug.LogError($"[UnitMasterDataManager] Duplicate UnitCode : {unitData.unitCode}");
+                Debug.LogError($"[UnitMasterDataManager] UnitDataSO has empty unitId. Asset: {unitData.name}");
                 continue;
             }
 
-            unitDataMap.Add(unitData.unitCode, unitData);
+            if (unitDataMap.ContainsKey(unitData.unitId))
+            {
+                Debug.LogError($"[UnitMasterDataManager] Duplicate unitId: {unitData.unitId}");
+                continue;
+            }
+
+            unitDataMap.Add(unitData.unitId, unitData);
         }
+        
+        IsLoaded = unitDataMap.Count > 0;
+
+        Debug.Log($"[UnitMasterDataManager] Loaded unit count: {unitDataMap.Count}");
     }
 
-    public UnitDataSO GetUnitData(UnitCode unitCode)
+
+    public UnitDataSO GetUnitData(string unitId)
     {
-        unitDataMap.TryGetValue(unitCode, out UnitDataSO unitData);
-        return unitData;
+        if (string.IsNullOrWhiteSpace(unitId))
+            return null;
+
+        unitDataMap.TryGetValue(unitId, out UnitDataSO data);
+        return data;
     }
 
     public IReadOnlyCollection<UnitDataSO> GetAllUnitData()
@@ -58,9 +82,9 @@ public class UnitMasterDataManager : MonoBehaviour
         return unitDataMap.Values;
     }
 
-    public bool Contains(UnitCode unitCode)
+    public bool Contains(string unitId)
     {
-        return unitDataMap.ContainsKey(unitCode);
+        return unitDataMap.ContainsKey(unitId);
     }
 }
 

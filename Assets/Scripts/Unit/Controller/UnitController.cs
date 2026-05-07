@@ -131,6 +131,7 @@ public class UnitController : MonoBehaviour
 
         targeting.ApplyRange(runtime.FinalStats.DetectRange);
 
+        anim.SetFacing(true);
         fsmController.ChangeToIdle();
     }
 
@@ -185,7 +186,7 @@ public class UnitController : MonoBehaviour
         if (!targeting.HasValidTarget())
             return;
 
-        anim.FaceTo(transform.position,movement.MoveDirection);
+        anim.FaceDirection(movement.MoveDirection);
         Movement.MoveTo(Target.transform.position);
     }
    

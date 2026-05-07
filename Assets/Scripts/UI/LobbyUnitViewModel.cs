@@ -2,8 +2,11 @@
 
 public class LobbyUnitViewModel
 {
-    public UnitCode UnitCode;
+    public string UnitId;
     public Sprite Icon;
-    //public int Level;
-    //public int Promotion;
+
+    public bool IsOwned;
+    public bool IsSelected;
+
+    public int Level;
 }

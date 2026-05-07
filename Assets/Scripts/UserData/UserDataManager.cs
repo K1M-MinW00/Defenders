@@ -6,7 +6,7 @@ using UnityEngine;
 public class UserDataManager : MonoBehaviour
 {
     public static UserDataManager Instance { get; private set; }
-    public UserDataRoot CurrentData { get; private set; }
+    public UserDataRoot Data { get; private set; }
     public string CurrentUserId { get; private set; }
 
     public bool IsInitialized { get; private set; }
@@ -14,7 +14,7 @@ public class UserDataManager : MonoBehaviour
     public bool IsDirty { get; private set; }
     public bool IsBusy { get; private set; }
 
-    private FirebaseFirestore firestore;
+    private FirebaseFirestore db;
     private const string UsersCollection = "users";
 
     private void Awake()
@@ -29,15 +29,22 @@ public class UserDataManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void Initialize()
+    public bool Initialize()
     {
         if (IsInitialized)
-            return;
+            return true;
 
-        firestore = FirebaseFirestore.DefaultInstance;
+        db = FirebaseFirestore.DefaultInstance;
+
+        if (db == null)
+        {
+            Debug.LogError("[UserDataManager] FirebaseFirestore.DefaultInstance is null.");
+            return false;
+        }
+
         IsInitialized = true;
-
-        Debug.Log("[UserDataManager] Firestore initialized");
+        Debug.Log("[UserDataManager] Firestore initialized.");
+        return true;
     }
 
     public async Task<bool> LoadOrCreateAsync(string userId)
@@ -48,65 +55,68 @@ public class UserDataManager : MonoBehaviour
             return false;
         }
 
-        if (!IsInitialized)
-            Initialize();
-
         if (IsBusy)
         {
             Debug.LogWarning("[UserDataManager] Another task is already running");
             return false;
         }
 
+        if (!Initialize())
+            return false;
+
         IsBusy = true;
+        IsLoaded = false;
 
         try
         {
             CurrentUserId = userId;
 
-            DocumentReference docRef = firestore.Collection(UsersCollection).Document(userId);
+            DocumentReference docRef = db.Collection(UsersCollection).Document(userId);
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
             if (snapshot.Exists)
             {
-                CurrentData = snapshot.ConvertTo<UserDataRoot>();
+                Data = snapshot.ConvertTo<UserDataRoot>();
 
-                if (CurrentData == null)
+                if (Data == null)
                 {
                     Debug.LogWarning("[UserDataManager] ConvertTo returned null. Creating default data.");
-                    CurrentData = UserDataFactory.CreateDefault(userId);
-                    
-                    bool saveOk = await SaveAsync(true);
-                    if (!saveOk)
+                    Data = UserDataFactory.CreateDefault(userId);
+
+                    if (!await SaveAsync(true))
                         return false;
                 }
                 else
                 {
-                    if (CurrentData.Profile == null)
-                        CurrentData.Profile = new UserProfileData();
+                    if (Data.Profile == null)
+                        Data.Profile = UserDataFactory.CreateDefaultProfile(userId);
 
-                    if (CurrentData.Roster == null)
-                        CurrentData.Roster = UserDataFactory.CreateDefaultRoster();
+                    if (Data.Resources == null)
+                        Data.Resources = UserDataFactory.CreateDefaultResources();
 
-                    if (CurrentData.Progress == null)
-                        CurrentData.Progress = new UserProgressData();
+                    if (Data.Roster == null)
+                        Data.Roster = UserDataFactory.CreateDefaultRoster();
 
-                    if (string.IsNullOrEmpty(CurrentData.Profile.UserId))
-                        CurrentData.Profile.UserId = userId;
+                    if (Data.Progress == null)
+                        Data.Progress = UserDataFactory.CreateDefaultProgress();
 
                     Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
                 }
             }
             else
             {
-                CurrentData = UserDataFactory.CreateDefault(userId);
+                Data = UserDataFactory.CreateDefault(userId);
 
-                bool saveOk = await SaveAsync(true);
-
-                if(!saveOk)
+                if(!await SaveAsync(true))
                     return false;
                 
                 Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
             }
+
+            bool fuelChanged = StaminaService.RefreshFuel(Data.Resources);
+
+            if (fuelChanged)
+                await SaveAsync(true);
 
             IsLoaded = true;
             IsDirty = false;
@@ -125,13 +135,13 @@ public class UserDataManager : MonoBehaviour
 
     public async Task<bool> SaveAsync(bool force = false)
     {
-        if(!IsInitialized)
+        if(!IsInitialized || db == null)
         {
             Debug.LogError("[UserDataManager] Not Initialized");
             return false;
         }
         
-        if(CurrentData == null)
+        if(Data == null)
         {
             Debug.LogError("[UserDataManager] No Loaded data to save.");
             return false;
@@ -148,8 +158,8 @@ public class UserDataManager : MonoBehaviour
 
         try
         {
-            DocumentReference docRef = firestore.Collection(UsersCollection).Document(CurrentUserId);
-            await docRef.SetAsync(CurrentData);
+            DocumentReference docRef = db.Collection(UsersCollection).Document(CurrentUserId);
+            await docRef.SetAsync(Data);
 
             IsDirty = false;
             Debug.Log($"[UserDataManager] Save success. UID : {CurrentUserId}");
@@ -162,5 +172,10 @@ public class UserDataManager : MonoBehaviour
         }
     }
 
+
+    public void MarkDirty()
+    {
+        IsDirty = true;
+    }
 }
 

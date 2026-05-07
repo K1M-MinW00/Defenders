@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
   m_Name: Swordsman
   m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitId: unit_swordsman
   unitCode: 7
   displayName: Swordsman
-  icon: {fileID: 3613407544420638092, guid: 6617a0f66500e434186183372d0898c9, type: 3}
+  icon: {fileID: 6900662605740815897, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
   unitPrefab: {fileID: 1272179824587458314, guid: 6c37d050c62d3ae459a80b77fc9486d9, type: 3}
   passiveSkill: {fileID: 11400000, guid: 84244d0a9dd652a42b7d550499db013c, type: 2}
   activeSkill: {fileID: 11400000, guid: 9365f2cb2a4eea54280e753644aa9979, type: 2}

@@ -30,7 +30,12 @@ public class MoveState : IState
 
         if (!owner.Targeting.HasValidTarget())
         {
-            if (!owner.Targeting.TryFindTargetInSensor())
+            bool found = owner.Targeting.TryFindTargetInSensor();
+
+            if (!found)
+                found = owner.Targeting.FindGlobalAliveMonster();
+
+            if (!found)
             {
                 owner.FSMController.ChangeToIdle();
                 return;
