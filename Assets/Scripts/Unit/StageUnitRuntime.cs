@@ -3,7 +3,7 @@
 [System.Serializable]
 public class StageUnitRuntime
 {
-    public UnitCode UnitCode { get; private set; }
+    public string UnitId { get; private set; }
     public int Star { get; private set; }
 
     public UnitStats OriginStats { get; private set; } // 1성 기준 기본 스탯
@@ -14,7 +14,7 @@ public class StageUnitRuntime
 
     public StageUnitRuntime(StageUnitInitData initData)
     {
-        UnitCode = initData.UserData.UnitCode;
+        UnitId = initData.UnitData.unitId;
         Star = Mathf.Max(1,initData.InitialStar);
     }
 

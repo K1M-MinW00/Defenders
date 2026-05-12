@@ -1,13 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 [System.Serializable]
 public class WaveData
 {
     public WaveType waveType;
     public List<SubWaveData> subWaves = new();
-    public int rewardGold;
+
 
     public int TotalMonsterCount
     {
@@ -18,12 +17,12 @@ public class WaveData
 
             int total = 0;
 
-            foreach(var subWave in subWaves)
+            foreach (SubWaveData subWave in subWaves)
             {
-                if (subWave?.spawnGroups == null)
+                if (subWave?.spawnEntries == null)
                     continue;
 
-                foreach(var entry in subWave.spawnGroups)
+                foreach (MonsterSpawnEntry entry in subWave.spawnEntries)
                 {
                     if (entry == null)
                         continue;
@@ -31,11 +30,11 @@ public class WaveData
                     total += Mathf.Max(0, entry.count);
                 }
             }
+
             return total;
         }
     }
 }
-
 public enum WaveType
 {
     Normal,
@@ -46,13 +45,27 @@ public enum WaveType
 [System.Serializable]
 public class SubWaveData
 {
-    public List<MonsterGroup> spawnGroups = new();
-    public float delayAfter;
+    public List<MonsterSpawnEntry> spawnEntries = new();
+
+    [Tooltip("이 SubWave가 모두 생성된 뒤, 다음 SubWave까지 대기 시간")]
+    public float delayAfterSubWave = 1f;
 }
 
 [System.Serializable]
-public class MonsterGroup
+public class MonsterSpawnEntry
 {
     public MonsterDataSO data;
-    public int count;
+
+    [Min(0)]
+    public int count = 1;
+
+    [Tooltip("StageMapContext의 SpawnPoints 배열 인덱스")]
+    [Min(0)]
+    public int spawnPointIndex = 0;
+
+    [Tooltip("같은 그룹 내 몬스터 간 생성 간격")]
+    public float interval = 0.1f;
+
+    [Tooltip("이 그룹 생성이 끝난 뒤 다음 그룹까지 대기 시간")]
+    public float delayAfterGroup = 0f;
 }

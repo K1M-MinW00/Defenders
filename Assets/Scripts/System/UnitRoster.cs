@@ -114,7 +114,7 @@ public class UnitRoster : MonoBehaviour
         return best;
     }
 
-    public UnitController FindAny(UnitCode unitCode, int star, UnitController exclude = null)
+    public UnitController FindAny(string unitId, int star, UnitController exclude = null)
     {
         for (int i = 0; i < units.Count; i++)
         {
@@ -123,7 +123,7 @@ public class UnitRoster : MonoBehaviour
             if (unit == null || unit == exclude)
                 continue;
 
-            if (unit.UnitCode == unitCode && unit.Star == star)
+            if (unit.UnitId == unitId && unit.Star == star)
                 return unit;
         }
 

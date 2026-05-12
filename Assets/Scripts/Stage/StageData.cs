@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Stage/Stage Data")]
+[CreateAssetMenu(menuName = "Game/Stage/Stage")]
 public class StageData : ScriptableObject
 {
     public int stageName;

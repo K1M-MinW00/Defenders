@@ -5,9 +5,9 @@ public class PlacementController : MonoBehaviour
 {
     [Header("Reference")]
     [SerializeField] private Camera mainCam;
-    [SerializeField] private TilemapPlacementArea placementArea;
     [SerializeField] private UIDropRouter uiDropRouter;
     [SerializeField] private StageUIController_ stageUIController;
+    [SerializeField] private TilemapPlacementArea placementArea;
 
     [Header("Section")]
     [SerializeField] private LayerMask unitLayer;
@@ -25,8 +25,23 @@ public class PlacementController : MonoBehaviour
             mainCam = Camera.main;
     }
 
+    public void Initialize(TilemapPlacementArea placementArea)
+    {
+        this.placementArea = placementArea;
+
+        if (this.placementArea != null)
+            this.placementArea.SetVisible(false);
+    }
+
+
     public void EnablePlacement(bool enable)
     {
+        if (placementArea == null)
+        {
+            Debug.LogError($"{nameof(PlacementController)} is not initialized.");
+            return;
+        }
+
         placementEnabled = enable;
         placementArea.SetVisible(enable);
 
@@ -66,20 +81,20 @@ public class PlacementController : MonoBehaviour
             return;
 
         DraggingUnit = unit;
+        originalPos = unit.transform.position;
+        
         DraggingUnit.Movement.Stop();
         DraggingUnit.ShowRange();
-        originalPos = unit.transform.position;
 
         int star = unit.Star;
-
         bool canReroll = (star == 1);
+
         stageUIController.SetUnitDragMode(true, canReroll,star);
     }
 
     private void Dragging()
     {
         Vector2 world = GetMouseWorld2D();
-
         DraggingUnit.transform.position = new Vector3(world.x, world.y, DraggingUnit.transform.position.z);
     }
 
@@ -120,15 +135,20 @@ public class PlacementController : MonoBehaviour
 
     private void CancelDrag()
     {
-        DraggingUnit.transform.position = originalPos;
+        if(DraggingUnit != null)
+            DraggingUnit.transform.position = originalPos;
+
         FinishDrag();
     }
 
     private void FinishDrag()
     {
-        DraggingUnit.Movement.Resume();
-        DraggingUnit.HideRange();
-        DraggingUnit = null;
+        if (DraggingUnit != null)
+        {
+            DraggingUnit.Movement.Resume();
+            DraggingUnit.HideRange();
+            DraggingUnit = null;
+        }
 
         stageUIController.SetUnitDragMode(false);
     }

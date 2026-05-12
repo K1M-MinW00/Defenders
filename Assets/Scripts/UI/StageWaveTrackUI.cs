@@ -18,9 +18,9 @@ public class StageWaveTrackUI : MonoBehaviour
     [SerializeField] private Color clearedConnectorColor = Color.green;
     [SerializeField] private Color upcomingConnectorColor = Color.gray;
 
-    private StageData stageData;
+    private StageDataSO stageData;
 
-    public void Initialize(StageData stageData)
+    public void Initialize(StageDataSO stageData)
     {
         this.stageData = stageData;
     }

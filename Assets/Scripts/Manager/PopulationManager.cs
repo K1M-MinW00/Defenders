@@ -1,9 +1,12 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PopulationManager : MonoBehaviour
 {
+    [Header("Reference")]
+    [SerializeField] private UnitRoster unitRoster;
+    [SerializeField] private EconomyManager economyManager;
+
     [Header("Limits")]
     [SerializeField] private int initialMax = 5;
     [SerializeField] private int hardMax = 10;
@@ -11,22 +14,30 @@ public class PopulationManager : MonoBehaviour
     [Header("Increase Costs (Max 5->6, 6->7, ... 9->10)")]
     [SerializeField] private int[] increaseCosts = { 5, 10, 15, 20, 25 };
 
-    [Header("Reference")]
-    [SerializeField] private UnitRoster unitRoster;
-    [SerializeField] private EconomyManager economyManager;
-
     public int MaxPopulation { get; private set; }
     public int CurrentPopulation => unitRoster.Units.Count;
 
     public event Action<int, int> OnPopulationChanged;
 
-    public void Init(UnitRoster unitRoster, EconomyManager economyManager)
+    private void Awake()
     {
-        this.unitRoster = unitRoster;
-        this.economyManager = economyManager;
+        MaxPopulation = initialMax;
+    }
+    private void OnEnable()
+    {
+        if(unitRoster == null)
+        {
+            Debug.LogError("Population Manager : Unit Roster is null");
+            return;
+        }
+
+        if(economyManager == null)
+        {
+            Debug.LogError("Population Manager : EconomyManager is null");
+            return;
+        }
 
         unitRoster.OnRosterChanged += Notify;
-        MaxPopulation = Mathf.Clamp(initialMax,0,hardMax);
         Notify();
     }
 

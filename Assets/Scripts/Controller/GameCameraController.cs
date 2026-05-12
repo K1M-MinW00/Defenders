@@ -20,8 +20,8 @@ public class GameCameraController : MonoBehaviour
     [SerializeField] private bool allowPanInCombat = true;
 
     [Header("Move Bounds")]
-    [SerializeField] private Vector2 minBounds = new Vector2(-10f, -5f);
-    [SerializeField] private Vector2 maxBounds = new Vector2(10f, 5f);
+    [SerializeField] private Transform minBound;
+    [SerializeField] private Transform maxBound;
 
     [Header("Default Prepare Camera")]
     [SerializeField] private Vector3 defaultPosition = new Vector3(0f, 0f, -10f);
@@ -40,16 +40,19 @@ public class GameCameraController : MonoBehaviour
             Debug.LogWarning($"{name}: GameCameraController 는 Orthographic Camera 기준으로 작성되었습니다.");
     }
 
-    private void Start()
-    {
-        ResetCameraToDefaultImmediate();
-    }
-
     private void Update()
     {
         HandleZoom();
         HandlePan();
         ClampCameraPosition();
+    }
+
+    public void Initialize(Transform minBound, Transform maxBound)
+    {
+        this.minBound = minBound;
+        this.maxBound = maxBound;
+
+        ResetCameraToDefaultImmediate();
     }
 
     public void ResetCameraToDefaultImmediate()
@@ -225,21 +228,21 @@ public class GameCameraController : MonoBehaviour
         float halfHeight = cam.orthographicSize;
         float halfWidth = halfHeight * cam.aspect;
 
-        float minX = minBounds.x + halfWidth;
-        float maxX = maxBounds.x - halfWidth;
-        float minY = minBounds.y + halfHeight;
-        float maxY = maxBounds.y - halfHeight;
+        float minX = minBound.position.x + halfWidth;
+        float maxX = maxBound.position.x - halfWidth;
+        float minY = minBound.position.y + halfHeight;
+        float maxY = maxBound.position.y - halfHeight;
 
         Vector3 pos = transform.position;
 
         // 카메라 뷰가 bounds보다 더 큰 경우 중앙 고정
         if (minX > maxX)
-            pos.x = (minBounds.x + maxBounds.x) * 0.5f;
+            pos.x = (minBound.position.x + maxBound.position.x) * 0.5f;
         else
             pos.x = Mathf.Clamp(pos.x, minX, maxX);
 
         if (minY > maxY)
-            pos.y = (minBounds.y + maxBounds.y) * 0.5f;
+            pos.y = (minBound.position.y + maxBound.position    .y) * 0.5f;
         else
             pos.y = Mathf.Clamp(pos.y, minY, maxY);
 
@@ -287,8 +290,8 @@ public class GameCameraController : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
-        Vector3 center = new Vector3((minBounds.x + maxBounds.x) * 0.5f, (minBounds.y + maxBounds.y) * 0.5f, 0f);
-        Vector3 size = new Vector3(maxBounds.x - minBounds.x, maxBounds.y - minBounds.y, 0f);
+        Vector3 center = new Vector3((minBound.position.x + maxBound.position.x) * 0.5f, (minBound.position.y + maxBound.position.y) * 0.5f, 0f);
+        Vector3 size = new Vector3(maxBound.position.x - minBound.position.x, maxBound.position.y - minBound.position.y, 0f);
         Gizmos.DrawWireCube(center, size);
     }
 #endif

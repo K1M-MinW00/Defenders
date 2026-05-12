@@ -2,28 +2,46 @@
 
 public class StageBootstrapper : MonoBehaviour
 {
-    [SerializeField] private EconomyConfig economyConfig;
-
+    [Header("Scene References")]
+    [SerializeField] private PlacementController placementController;
     [SerializeField] private EconomyManager economyManager;
-    [SerializeField] private PopulationManager populationManager;
-    [SerializeField] private StagePoolManager poolManager;
-
+    [SerializeField] private GameCameraController gameCameraController;
     [SerializeField] private UnitSummoner unitSummoner;
-    [SerializeField] private UnitRoster unitRoster;
-    [SerializeField] private UnitRosterHpTracker unitHpTracker;
-    [SerializeField] private FusionService fusionService;
-    
     [SerializeField] private MonsterSpawner monsterSpawner;
-    [SerializeField] private MonsterWaveHpTracker monsterHpTracker;
-    [SerializeField] private DamageUIService damageUIService;
 
-    public void Initialize()
+
+    public StageMapContext InitializeStage(StageDataSO stageData, StageEnterData enterData)
     {
-        economyManager.Init(economyConfig);
-        monsterSpawner.Init(poolManager, unitRoster, monsterHpTracker, damageUIService);
-        unitSummoner.Init(poolManager, unitRoster, fusionService, monsterSpawner);
-        populationManager.Init(unitRoster,economyManager);
-        unitHpTracker.Init(unitRoster);
-        
+        if(stageData == null)
+        {
+            Debug.LogError("StageBootstrapper. InitializeStage Failed");
+            return null;
+        }
+
+        economyManager.Init(stageData.economyConfig);
+        StageMapContext mapContext = CreateMap(stageData);
+
+        placementController.Initialize(mapContext.PlacementArea);
+
+        unitSummoner.SetMapContext(mapContext.UnitSpawnPoint, mapContext.PlacementArea);
+        unitSummoner.SetUnitPool(enterData.SelectedUnitIds);
+
+        monsterSpawner.SetSpawnPoints(mapContext.MonsterSpawnPoints);
+        gameCameraController.Initialize(mapContext.MinBound, mapContext.MaxBound);
+
+        return mapContext;
+    }
+
+    private StageMapContext CreateMap(StageDataSO stageData)
+    {
+        GameObject mapPrefab = stageData.mapPrefab;
+        GameObject mapInstance = Instantiate(mapPrefab);
+
+        StageMapContext context = mapInstance.GetComponent<StageMapContext>();
+
+        if (context == null)
+            throw new System.Exception("StageMapContext is missing on map prefab.");
+
+        return context;
     }
 }

@@ -10,7 +10,7 @@ public class EconomyManager : MonoBehaviour
     public event Action<int> OnGoldChanged;
     public bool IsInitialized => config != null;
 
-    public void Init(EconomyConfig config = null)
+    public void Init(EconomyConfig config)
     {
         if (config == null)
         {

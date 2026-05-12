@@ -12,7 +12,7 @@ public class StageRewardService : MonoBehaviour
         economyManager.ApplyWaveReward(waveData.waveType);
     }
 
-    public void GiveStageClearReward(StageData stageData)
+    public void GiveStageClearReward(StageDataSO stageData)
     {
         if (stageData == null)
             return;

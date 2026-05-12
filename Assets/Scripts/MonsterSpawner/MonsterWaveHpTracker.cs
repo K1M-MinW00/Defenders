@@ -91,12 +91,12 @@ public class MonsterWaveHpTracker : MonoBehaviour
             if (subWave == null)
                 continue;
 
-            foreach (MonsterGroup group in subWave.spawnGroups)
+            foreach (MonsterSpawnEntry entry in subWave.spawnEntries)
             {
-                if (group == null || string.IsNullOrEmpty(group.data.monsterId))
+                if (entry == null || entry.data == null)
                     continue;
 
-                total += group.data.Stats.maxHp * group.count;
+                total += entry.data.Stats.maxHp * entry.count;
             }
         }
 

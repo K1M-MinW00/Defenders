@@ -1,5 +1,6 @@
 ﻿using Firebase.Firestore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -172,6 +173,33 @@ public class UserDataManager : MonoBehaviour
         }
     }
 
+    public async Task SaveUserProgressAsync(UserProgressData progress)
+    {
+        if (progress == null)
+        {
+            Debug.LogError("SaveUserProgressAsync failed. Progress is null.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(CurrentUserId))
+        {
+            Debug.LogError("SaveUserProgressAsync failed. UserId is null.");
+            return;
+        }
+
+        DocumentReference userRef = db.Collection("users").Document(CurrentUserId);
+
+        Dictionary<string, object> updates = new()
+        {
+            { "Progress.CurrentSector", progress.CurrentSector },
+            { "Progress.CurrentStage", progress.CurrentStage }
+        };
+
+        await userRef.UpdateAsync(updates);
+
+        if (Data != null)
+            Data.Progress = progress;
+    }
 
     public void MarkDirty()
     {

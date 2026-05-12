@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StageResultUI : MonoBehaviour
 {
     [SerializeField] private GameObject stageClearPanel;
     [SerializeField] private GameObject stageFailPanel;
+
+    [Header("Scene")]
+    [SerializeField] private string lobbySceneName = "LobbyScene";
 
     public void Initialize()
     {
@@ -31,5 +35,10 @@ public class StageResultUI : MonoBehaviour
 
         if (stageFailPanel != null)
             stageFailPanel.SetActive(false);
+    }
+    public void OnClickReturnToLobby()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(lobbySceneName);
     }
 }

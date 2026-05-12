@@ -5,15 +5,17 @@ using System;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    [SerializeField] private Transform spawnPoint;
+    [Header("Reference")]
+    [SerializeField] private StagePoolManager poolManager;
+    [SerializeField] private UnitRoster unitRoster;
+    [SerializeField] private MonsterWaveHpTracker waveHpTracker;
+    [SerializeField] private DamageUIService damageUIService;
 
-    private StagePoolManager poolManager;
-    private UnitRoster unitRoster;
-    private MonsterWaveHpTracker waveHpTracker;
-    private DamageUIService damageUIService;
+    [SerializeField] private Transform[] spawnPoints;
 
     private WaveData currentWave;
     private readonly List<MonsterController> aliveMonsters = new();
+
     private int deadMonsterCount;
     private Coroutine spawnRoutine;
 
@@ -26,57 +28,123 @@ public class MonsterSpawner : MonoBehaviour
     public event Action OnAllMonstersSpawned;
     public event Action<int> OnAliveCountChanged;
 
-    public void Init(StagePoolManager poolManager, UnitRoster unitRoster, MonsterWaveHpTracker waveHpTracker, DamageUIService damageUIService)
+    public void SetSpawnPoints(Transform[] spawnPoints)
     {
-        this.poolManager = poolManager;
-        this.unitRoster = unitRoster;
-        this.waveHpTracker = waveHpTracker; 
-        this.damageUIService = damageUIService;
+        this.spawnPoints = spawnPoints;
     }
 
     public void StartWave(WaveData waveData)
     {
-        currentWave = waveData;
-        StopAllCoroutines();
+        if (waveData == null)
+        {
+            Debug.LogError("StartWave failed. WaveData is null.");
+            return;
+        }
 
+        if (spawnPoints == null || spawnPoints.Length == 0)
+        {
+            Debug.LogError("StartWave failed. SpawnPoints are not set.");
+            return;
+        }
+
+        StopSpawning();
+
+        currentWave = waveData;
         deadMonsterCount = 0;
+
+        aliveMonsters.Clear();
+        OnAliveCountChanged?.Invoke(RemainingCount);
+
         spawnRoutine = StartCoroutine(SpawnWaveRoutine(waveData));
     }
 
     private IEnumerator SpawnWaveRoutine(WaveData waveData)
     {
-        aliveMonsters.Clear();
-        OnAliveCountChanged?.Invoke(RemainingCount);
-
         foreach (var subWave in waveData.subWaves)
         {
             yield return StartCoroutine(SpawnSubWave(subWave));
-            yield return new WaitForSeconds(subWave.delayAfter);
+
+            if (subWave.delayAfterSubWave > 0f)
+                yield return new WaitForSeconds(subWave.delayAfterSubWave);
         }
 
+        spawnRoutine = null;
         OnAllMonstersSpawned?.Invoke();
     }
 
     private IEnumerator SpawnSubWave(SubWaveData subWave)
     {
-        foreach (var group in subWave.spawnGroups)
-        {
-            for (int i = 0; i < group.count; i++)
-            {
-                SpawnMonster(group.data, spawnPoint.position);
-                yield return new WaitForSeconds(0.1f);
-            }
+        if (subWave == null || subWave.spawnEntries == null)
+            yield break;
 
-            yield return new WaitForSeconds(subWave.delayAfter);
+        foreach (MonsterSpawnEntry entry in subWave.spawnEntries)
+        {
+            yield return SpawnEntryRoutine(entry);
+
+            if (entry.delayAfterGroup > 0f)
+                yield return new WaitForSeconds(entry.delayAfterGroup);
         }
     }
+
+    private IEnumerator SpawnEntryRoutine(MonsterSpawnEntry entry)
+    {
+        if (entry == null)
+            yield break;
+
+        if (entry.data == null)
+        {
+            Debug.LogWarning("MonsterSpawnEntry skipped. MonsterDataSO is null.");
+            yield break;
+        }
+
+        Transform spawnPoint = GetSpawnPoint(entry.spawnPointIndex);
+
+        if (spawnPoint == null)
+            yield break;
+
+        int count = Mathf.Max(0, entry.count);
+        float interval = Mathf.Max(0f, entry.interval);
+
+        for (int i = 0; i < count; i++)
+        {
+            SpawnMonster(entry.data, spawnPoint.position);
+
+            if (interval > 0f && i < count - 1)
+                yield return new WaitForSeconds(interval);
+        }
+    }
+    private Transform GetSpawnPoint(int index)
+    {
+        if (spawnPoints == null || spawnPoints.Length == 0)
+        {
+            Debug.LogError("SpawnPoints are empty.");
+            return null;
+        }
+
+        if (index < 0 || index >= spawnPoints.Length)
+        {
+            Debug.LogError($"Invalid spawnPointIndex: {index}. SpawnPoints Length: {spawnPoints.Length}");
+            return null;
+        }
+
+        Transform point = spawnPoints[index];
+
+        if (point == null)
+        {
+            Debug.LogError($"SpawnPoint at index {index} is null.");
+            return null;
+        }
+
+        return point;
+    }
+
     public void StopSpawning()
     {
-        if (spawnRoutine != null)
-        {
-            StopCoroutine(spawnRoutine);
-            spawnRoutine = null;
-        }
+        if (spawnRoutine == null)
+            return;
+
+        StopCoroutine(spawnRoutine);
+        spawnRoutine = null;
     }
 
     private MonsterController SpawnMonster(MonsterDataSO data, Vector3 spawnPos)
@@ -87,7 +155,15 @@ public class MonsterSpawner : MonoBehaviour
             return null;
         }
 
-        MonsterController monster = poolManager.Spawn(data.prefab.GetComponent<MonsterController>(), spawnPos, Quaternion.identity, PoolCategory.Monster);
+        MonsterController prefab = data.prefab.GetComponent<MonsterController>();
+        
+        if(prefab == null)
+        {
+            Debug.LogError($"Spawn Monster failed. MonsterController not found on prefab : {data.prefab.name}");
+            return null;
+        }
+
+        MonsterController monster = poolManager.Spawn(prefab, spawnPos, Quaternion.identity, PoolCategory.Monster);
 
         if (monster == null)
         {

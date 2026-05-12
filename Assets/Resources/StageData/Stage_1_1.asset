@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca54f33d337f66f4aa39dd5f52204907, type: 3}
+  m_Name: Stage_1_1
+  m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
+  sector: 1
+  stage: 1
+  mapPrefab: {fileID: 4960614761546158943, guid: 8157f7e2d5de64d48935d55a53f158d6, type: 3}
+  waves:
+  - waveType: 0
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 5
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 0.5
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 0
+      delayAfterSubWave: 5
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 5
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 0.5
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 0
+      delayAfterSubWave: 5
+  - waveType: 0
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
+        count: 3
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 1
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 1
+      delayAfterSubWave: 1
+  - waveType: 1
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 3
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 3
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 5
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 3
+      delayAfterSubWave: 1
+  - waveType: 0
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 5
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 1
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 8
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 1
+  - waveType: 2
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 3
+        spawnPointIndex: 0
+        interval: 0.5
+        delayAfterGroup: 0.5
+      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
+        count: 2
+        spawnPointIndex: 0
+        interval: 0.5
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 3
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.5
+        delayAfterGroup: 0.5
+      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.5
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 1
+  economyConfig: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}

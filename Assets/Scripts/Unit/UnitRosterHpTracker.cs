@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using UnityEngine;
 
 public class UnitRosterHpTracker : MonoBehaviour
 {
-    private UnitRoster unitRoster;
+    [SerializeField] private UnitRoster unitRoster;
 
     public event Action<float, float> OnTotalHpChanged;
 
@@ -28,13 +27,15 @@ public class UnitRosterHpTracker : MonoBehaviour
         }
     }
 
-    public void Init(UnitRoster unitRoster)
+    private void Start()
     {
-        Unbind();
+        if(unitRoster == null)
+        {
+            Debug.LogError($"UnitRosterHpTracker : Unit Roster is null.");
+            return;
+        }
 
-        this.unitRoster = unitRoster;
         unitRoster.OnRosterChanged += Rebuild;
-
         Rebuild();
     }
 

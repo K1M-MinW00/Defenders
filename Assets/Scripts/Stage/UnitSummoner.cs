@@ -1,27 +1,43 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitSummoner : MonoBehaviour
 {
+    [Header("Reference")]
+    [SerializeField] private StagePoolManager poolManager;
+    [SerializeField] private UnitRoster unitRoster;
+    [SerializeField] private FusionService fusionService;
+    [SerializeField] private MonsterSpawner monsterSpawner;
+    [SerializeField] private Transform unitsRoot;
+    
     [Header("Unit Pool (Inspector)")]
     [SerializeField] private UnitDataSO[] unitPool;
 
     [Header("Spawn Settings")]
-    [SerializeField] private Transform unitsRoot;
     [SerializeField] private Transform spawnPoint;
-    [SerializeField] private float spawnRadius = 2.5f;
     [SerializeField] private TilemapPlacementArea placementArea;
+    [SerializeField] private float spawnRadius = 2.5f;
 
-    private StagePoolManager poolManager;
-    private UnitRoster unitRoster;
-    private FusionService fusionService;
-    private MonsterSpawner monsterSpawner;
 
-    public void Init(StagePoolManager poolManager, UnitRoster unitRoster, FusionService fusionService, MonsterSpawner monsterSpawner)
+    public void SetMapContext(Transform unitSpawnPoint, TilemapPlacementArea placementArea)
     {
-        this.poolManager = poolManager;
-        this.unitRoster = unitRoster;
-        this.fusionService = fusionService;
-        this.monsterSpawner = monsterSpawner;
+        this.spawnPoint = unitSpawnPoint;
+        this.placementArea = placementArea;
+    }
+
+    public void SetUnitPool(IReadOnlyList<string> selectedUnitIds)
+    {
+        List<UnitDataSO> result = new();
+
+        foreach (string unitId in selectedUnitIds)
+        {
+            UnitDataSO data = UnitMasterDataManager.Instance.GetUnitData(unitId);
+
+            if (data != null)
+                result.Add(data);
+        }
+
+        unitPool = result.ToArray();
     }
 
     public bool SummonRandomUnit()
@@ -42,8 +58,7 @@ public class UnitSummoner : MonoBehaviour
 
         UnitController unit = go.GetComponent<UnitController>();
 
-        // TODO : UserUnitData 정보 받아와 유닛 기본 스탯 계산 및 생성
-        UserUnitData userData = new UserUnitData(data.unitCode);
+        UserUnitData userData = FindUserUnitData(data);
         StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
 
         unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
@@ -56,10 +71,39 @@ public class UnitSummoner : MonoBehaviour
         return true;
     }
 
+    private UserUnitData FindUserUnitData(UnitDataSO data)
+    {
+        UserDataRoot userDataRoot = UserDataManager.Instance.Data;
+
+        if (userDataRoot == null || userDataRoot.Roster == null)
+        {
+            Debug.LogWarning("UserDataRoot or Roster is null. Temporary UserUnitData will be used.");
+            return new UserUnitData(data.unitId);
+        }
+
+        foreach (UserUnitData userUnit in userDataRoot.Roster.OwnedUnits)
+        {
+            if (userUnit.UnitId == data.unitId)
+                return userUnit;
+        }
+
+        Debug.LogWarning($"UserUnitData not found. UnitId: {data.unitId}");
+        return new UserUnitData(data.unitId);
+    }
+
     private Vector3 ResolveSpawnPosition()
     {
-        Vector2 offset = Random.insideUnitCircle * spawnRadius;
-        Vector3 pos = spawnPoint.transform.position + (Vector3)offset;
-        return pos;
+        const int maxAttempts = 20;
+
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            Vector2 offset = Random.insideUnitCircle * spawnRadius;
+            Vector3 pos = spawnPoint.position + (Vector3)offset;
+
+            if (placementArea == null || placementArea.CanPlace(pos))
+                return pos;
+        }
+
+        return spawnPoint.position;
     }
 }

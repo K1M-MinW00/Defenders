@@ -6,7 +6,6 @@ public class UnitDataSO : ScriptableObject
 {
     [Header("Identity")]
     public string unitId;
-    public UnitCode unitCode;
     public string displayName;
     public Sprite icon;
     public GameObject unitPrefab;

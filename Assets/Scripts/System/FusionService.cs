@@ -22,13 +22,15 @@ public class FusionService : MonoBehaviour
         while (seed != null && seed.UnitData != null)
         {
             int star = seed.Star;
+
             if (star >= maxStar)
                 break;
 
-            UnitCode unitCode = seed.UnitCode;
+            string unitCode = seed.UnitId;
 
             // 같은 (unitId, star)인 "다른 유닛" 찾기
             UnitController other = roster.FindAny(unitCode, star, exclude: seed);
+
             if (other == null)
                 break;
 

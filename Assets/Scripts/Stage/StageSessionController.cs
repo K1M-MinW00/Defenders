@@ -1,10 +1,8 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class StageSessionController : MonoBehaviour
 {
-    [Header("Runtime")]
-    [SerializeField] private StageData currentStageData;
-
     [Header("Controllers")]
     [SerializeField] private StagePrepareTimerController prepareTimerController;
     [SerializeField] private WaveController waveController;
@@ -15,10 +13,16 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
     [SerializeField] private StageTimeController stageTimeController;
+    [SerializeField] private StageProgressService progressService;
 
-   
+    [Header("Runtime")]
+    [SerializeField] private StageDataSO currentStageData;
+    private StageEnterData enterData;
+    private readonly StageDataProvider stageDataProvider = new();
+
+
     public StageState CurrentState { get; private set; } = StageState.None;
-    public StageData CurrentStageData => currentStageData;
+    public StageDataSO CurrentStageData => currentStageData;
     public int CurrentWaveIndex { get; private set; }
 
     public WaveData CurrentWave =>
@@ -28,15 +32,38 @@ public class StageSessionController : MonoBehaviour
 
     private void Start()
     {
-        // currentStageData = StageContext.SelectedStageData; // 로비에서 전달된 데이터
-        bootstrapper.Initialize();
+        enterData = StageEnterHolder.Consume();
+
+        if(enterData == null)
+        {
+            Debug.LogError("StageEnterData is missing.");
+            return;
+        }
+
+        StageDataSO stageData = stageDataProvider.Load(enterData.Sector, enterData.Stage);
+
+        if(stageData == null)
+        {
+            Debug.LogError("StageData is missing");
+            return;
+        }
+
+        StartStage(stageData,enterData);
+    }
+
+    private void StartStage(StageDataSO stageData, StageEnterData enterData)
+    {
+        currentStageData = stageData;
+        CurrentWaveIndex = 0;
+        CurrentState = StageState.None;
+
+        bootstrapper.InitializeStage(stageData,enterData);
 
         stageUI.Initialize();
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         EnterPreparePhase();
     }
-
     public void EnterPreparePhase()
     {
         CurrentState = StageState.Preparing;
@@ -92,10 +119,12 @@ public class StageSessionController : MonoBehaviour
         stageUI.ShowStageFail();
     }
 
-    private void HandleStageClear()
+    private async Task HandleStageClear()
     {
         CurrentState = StageState.StageClear;
         rewardService.GiveStageClearReward(currentStageData);
+        await progressService.ApplyStageClearAsync(currentStageData);
+
         stageUI.SetPhase(CurrentState);
         stageUI.ShowStageClear();
     }

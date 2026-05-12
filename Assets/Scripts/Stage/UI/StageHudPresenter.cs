@@ -21,7 +21,7 @@ public class StageHudPresenter : MonoBehaviour
     private MonsterSpawner monsterSpawner;
 
     public void Initialize(
-        StageData stageData,
+        StageDataSO stageData,
         StageState initialState,
         EconomyManager economy,
         PopulationManager population,
@@ -36,7 +36,7 @@ public class StageHudPresenter : MonoBehaviour
         cachedState = initialState;
 
         if (stageData != null)
-            SetStageInfo(stageData.stageName, stageData.stageId);
+            SetStageInfo(stageData.sector, stageData.stage);
 
         Bind();
         RefreshInitialValues();

@@ -17,44 +17,97 @@ MonoBehaviour:
   waves:
   - waveType: 0
     subWaves:
-    - spawnGroups:
-      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
-        count: 5
-      delayAfter: 3
-    - spawnGroups:
+    - spawnEntries:
       - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
         count: 5
-      delayAfter: 3
-    rewardGold: 0
-  - waveType: 1
-    subWaves:
-    - spawnGroups:
-      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
-        count: 3
-      delayAfter: 3
-    rewardGold: 0
-  - waveType: 1
-    subWaves:
-    - spawnGroups:
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 0.5
       - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
         count: 3
-      delayAfter: 3
-    - spawnGroups:
-      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 0
+      delayAfterSubWave: 5
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 5
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 0.5
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
         count: 3
-      delayAfter: 3
-    rewardGold: 0
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 0
+      delayAfterSubWave: 5
   - waveType: 0
     subWaves:
-    - spawnGroups:
-      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
         count: 3
-      delayAfter: 3
-    rewardGold: 0
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 1
+      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 1
+      delayAfterSubWave: 1
+  - waveType: 1
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 3
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 3
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 5
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 3
+      delayAfterSubWave: 1
+  - waveType: 0
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 5
+        spawnPointIndex: 0
+        interval: 0.2
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 1
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+        count: 8
+        spawnPointIndex: 1
+        interval: 0.2
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 1
   - waveType: 2
     subWaves:
-    - spawnGroups:
-      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
-        count: 15
-      delayAfter: 3
-    rewardGold: 0
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 3
+        spawnPointIndex: 0
+        interval: 0.5
+        delayAfterGroup: 0.5
+      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
+        count: 2
+        spawnPointIndex: 0
+        interval: 0.5
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 3
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.5
+        delayAfterGroup: 0.5
+      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.5
+        delayAfterGroup: 0.5
+      delayAfterSubWave: 1

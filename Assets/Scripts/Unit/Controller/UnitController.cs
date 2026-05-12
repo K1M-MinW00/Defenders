@@ -39,7 +39,7 @@ public class UnitController : MonoBehaviour
     public UnitStatService StatService => statService;
     public UnitBuffController BuffController => buffController;
     public MonsterController Target => targeting.CurrentTarget;
-    public UnitCode UnitCode => runtime.UnitCode;
+    public string UnitId => runtime.UnitId;
     public int Star => runtime.Star;
      
     public float Attack => runtime.FinalStats.Attack;

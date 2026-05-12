@@ -42,15 +42,15 @@ public class MonsterPrewarmService : MonoBehaviour
             if (subWave == null)
                 continue;
 
-            foreach (MonsterGroup group in subWave.spawnGroups)
+            foreach (MonsterSpawnEntry entry in subWave.spawnEntries)
             {
-                if (group == null || group.data == null)
+                if (entry == null || entry.data == null)
                     continue;
 
-                if (!counts.ContainsKey(group.data))
-                    counts[group.data] = 0;
+                if (!counts.ContainsKey(entry.data))
+                    counts[entry.data] = 0;
 
-                counts[group.data] += group.count;
+                counts[entry.data] += entry.count;
             }
         }
 
