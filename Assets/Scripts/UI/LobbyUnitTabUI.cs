@@ -28,7 +28,7 @@ public class LobbyUnitTabUI : MonoBehaviour
 
     private void Refresh()
     {
-        UserDataRoot userData = UserDataManager.Instance.Data;
+        UserDataRoot userData = UserDataManager.Instance.UserData;
 
         if (userData == null)
         {
@@ -221,7 +221,7 @@ public class LobbyUnitTabUI : MonoBehaviour
 
     private async Task<bool> SwapSelectedUnitPositionAsync(string firstUnitId, string secondUnitId)
     {
-        UserRosterData roster = UserDataManager.Instance.Data.Roster;
+        UserRosterData roster = UserDataManager.Instance.UserData.Roster;
 
         if (roster == null || roster.SelectedUnitIds == null)
             return false;
@@ -242,7 +242,7 @@ public class LobbyUnitTabUI : MonoBehaviour
 
     private async Task<bool> ReplaceSelectedUnitAsync(string oldUnitId, string newUnitId)
     {
-        UserRosterData roster = UserDataManager.Instance.Data.Roster;
+        UserRosterData roster = UserDataManager.Instance.UserData.Roster;
 
         if (roster == null || roster.SelectedUnitIds == null)
             return false;

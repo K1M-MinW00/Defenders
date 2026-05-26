@@ -2,12 +2,20 @@
 
 public static class StaminaService
 {
-    public const int MaxFuel = 100;
-    public const int RecoverSecondsPerFuel = 300; // 5분
+    public const int RecoverSecondsPerFuel = 300;
 
     public static long GetUnixNow()
     {
         return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    }
+
+    public static void InitializeFullFuel(UserResourceData resources)
+    {
+        if (resources == null)
+            return;
+
+        resources.Fuel = resources.MaxFuel;
+        resources.LastFuelUpdateTime = GetUnixNow();
     }
 
     public static bool RefreshFuel(UserResourceData resources)
@@ -15,19 +23,18 @@ public static class StaminaService
         if (resources == null)
             return false;
 
+        int maxFuel = resources.MaxFuel;
         long now = GetUnixNow();
+
+        if (resources.Fuel >= maxFuel)
+        {
+            resources.LastFuelUpdateTime = now;
+            return false;
+        }
 
         if (resources.LastFuelUpdateTime <= 0)
         {
-            resources.LastFuelUpdateTime = now;
-            return true;
-        }
-
-        if (resources.Fuel >= MaxFuel)
-        {
-            resources.Fuel = MaxFuel;
-            resources.LastFuelUpdateTime = now;
-            return true;
+            return false;
         }
 
         long elapsed = now - resources.LastFuelUpdateTime;
@@ -35,20 +42,59 @@ public static class StaminaService
         if (elapsed < RecoverSecondsPerFuel)
             return false;
 
-        int recovered = (int)(elapsed / RecoverSecondsPerFuel);
+        int recoveredFuel = (int)(elapsed / RecoverSecondsPerFuel);
 
-        if (recovered <= 0)
+        if (recoveredFuel <= 0)
             return false;
 
         int oldFuel = resources.Fuel;
-        resources.Fuel = Math.Min(MaxFuel, resources.Fuel + recovered);
 
-        if (resources.Fuel >= MaxFuel)
-            resources.LastFuelUpdateTime = now;
+        resources.Fuel = Math.Min(maxFuel, resources.Fuel + recoveredFuel);
+
+        if (resources.Fuel >= maxFuel)
+        {
+            resources.Fuel = maxFuel;
+        }
         else
-            resources.LastFuelUpdateTime += recovered * RecoverSecondsPerFuel;
+        {
+            resources.LastFuelUpdateTime += recoveredFuel * RecoverSecondsPerFuel;
+        }
 
-        return resources.Fuel != oldFuel;
+        return oldFuel != resources.Fuel;
+    }
+
+    public static bool ConsumeFuel(UserResourceData resources, int amount)
+    {
+        if (resources == null)
+            return false;
+
+        if (amount <= 0)
+            return false;
+
+        if (resources.Fuel < amount)
+            return false;
+
+        bool wasFull = resources.Fuel >= resources.MaxFuel;
+
+        resources.Fuel -= amount;
+
+        if (wasFull)
+        {
+            resources.LastFuelUpdateTime = GetUnixNow();
+        }
+
+        return true;
+    }
+
+    public static void AddFuel(UserResourceData resources, int amount)
+    {
+        if (resources == null)
+            return;
+
+        if (amount <= 0)
+            return;
+
+        resources.Fuel = Math.Min(resources.MaxFuel, resources.Fuel + amount);
     }
 
     public static int GetRemainingSecondsToNextFuel(UserResourceData resources)
@@ -56,28 +102,30 @@ public static class StaminaService
         if (resources == null)
             return 0;
 
-        if (resources.Fuel >= MaxFuel)
+        if (resources.Fuel >= resources.MaxFuel)
             return 0;
 
         long now = GetUnixNow();
+
         long elapsed = now - resources.LastFuelUpdateTime;
 
-        int remaining = RecoverSecondsPerFuel - (int)(elapsed % RecoverSecondsPerFuel);
+        int remain = RecoverSecondsPerFuel - (int)(elapsed % RecoverSecondsPerFuel);
 
-        if (remaining < 0)
-            return 0;
-
-        return remaining;
+        return Math.Max(remain, 0);
     }
 
-    public static string FormatSecondsToMinuteSecond(int seconds)
+    public static int GetRemainingSecondsToFullFuel(UserResourceData resources)
     {
-        if (seconds < 0)
-            seconds = 0;
+        if (resources == null)
+            return 0;
 
-        int minute = seconds / 60;
-        int second = seconds % 60;
+        if (resources.Fuel >= resources.MaxFuel)
+            return 0;
 
-        return $"{minute:00}:{second:00}";
+        int remainFuel = resources.MaxFuel - resources.Fuel;
+
+        int nextRecover = GetRemainingSecondsToNextFuel(resources);
+
+        return ((remainFuel - 1) * RecoverSecondsPerFuel) + nextRecover;
     }
 }

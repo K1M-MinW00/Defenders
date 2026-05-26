@@ -7,6 +7,7 @@ public class UserUnitData
 {
     [FirestoreProperty] public string UnitId { get; set; }
     [FirestoreProperty] public int Level { get; set; } = 1;
+    [FirestoreProperty] public int Exp { get; set; } = 0;
 
     public UserUnitData() { }
 
@@ -14,5 +15,6 @@ public class UserUnitData
     {
         UnitId = unitId;
         Level = level;
+        Exp = 0;
     }
 }

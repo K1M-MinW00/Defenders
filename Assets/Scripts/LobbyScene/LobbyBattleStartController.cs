@@ -8,7 +8,7 @@ public class LobbyBattleStartController : MonoBehaviour
 
     public void OnClickStartBattle()
     {
-        UserDataRoot userData = UserDataManager.Instance.Data;
+        UserDataRoot userData = UserDataManager.Instance.UserData;
 
         if (userData == null)
         {

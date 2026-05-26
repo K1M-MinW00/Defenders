@@ -73,7 +73,7 @@ public class UnitSummoner : MonoBehaviour
 
     private UserUnitData FindUserUnitData(UnitDataSO data)
     {
-        UserDataRoot userDataRoot = UserDataManager.Instance.Data;
+        UserDataRoot userDataRoot = UserDataManager.Instance.UserData;
 
         if (userDataRoot == null || userDataRoot.Roster == null)
         {

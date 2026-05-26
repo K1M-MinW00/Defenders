@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2ddc4873b0fb141b89fa363101d3aa, type: 3}
+  m_Name: material_exp_2
+  m_EditorClassIdentifier: Assembly-CSharp::MaterialDataSO
+  ItemId: material_exp_2
+  ItemName: "\uD6C8\uB828 \uC7AC\uB8CC 2"
+  Icon: {fileID: 2729078193229508051, guid: 3b1be0e407de560478b58493a4719f45, type: 3}
+  Rarity: 1
+  Description: "\uC720\uB2DB \uB808\uBCA8\uC5C5\uC744 \uC704\uD55C \uD6C8\uB828 \uC7AC\uB8CC\n\uC720\uB2DB
+    \uACBD\uD5D8\uCE58 + 100"
+  ExpValue: 100

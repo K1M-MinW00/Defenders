@@ -6,4 +6,6 @@ public class UserRosterData
 {
     [FirestoreProperty] public List<UserUnitData> OwnedUnits { get; set; } = new();
     [FirestoreProperty] public List<string> SelectedUnitIds { get; set; } = new();
+    [FirestoreProperty] public int Power { get; } = 0;
+
 }

@@ -8,6 +8,7 @@ public class UnitDataSO : ScriptableObject
     public string unitId;
     public string displayName;
     public Sprite icon;
+    public Rarity rarity;
     public GameObject unitPrefab;
 
     [Header("Skills")]
@@ -18,7 +19,7 @@ public class UnitDataSO : ScriptableObject
     public UnitStats baseStats = new UnitStats(10f,50f, 3f, 4f);
 
     [Header("Level Growth")]
-    public int maxLevel = 100;
+    public int maxLevel = 50;
     public int attackGrowthValue= 5;
     public int hpGrowthValue = 20;
 

@@ -1,19 +1,26 @@
-﻿using Firebase.Firestore;
+﻿using Firebase.Auth;
+using Firebase.Firestore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class UserDataManager : MonoBehaviour
+public partial class UserDataManager : MonoBehaviour
 {
     public static UserDataManager Instance { get; private set; }
-    public UserDataRoot Data { get; private set; }
+    public UserDataRoot UserData { get; private set; }
+    public InventoryService InventoryService { get;private set; }
+    public MailboxService MailboxService { get; private set; }
     public string CurrentUserId { get; private set; }
 
     public bool IsInitialized { get; private set; }
     public bool IsLoaded { get; private set; }
     public bool IsDirty { get; private set; }
     public bool IsBusy { get; private set; }
+
+    public event Action OnProfileUpdated;
+    public event Action OnResourceUpdated;
+    public event Action OnProgressUpdated;
 
     private FirebaseFirestore db;
     private const string UsersCollection = "users";
@@ -36,7 +43,9 @@ public class UserDataManager : MonoBehaviour
             return true;
 
         db = FirebaseFirestore.DefaultInstance;
-
+        ItemDatabase.Initialize();
+        UnitDatabase.Initialize();
+        GameIconDatabase.Initialize();
         if (db == null)
         {
             Debug.LogError("[UserDataManager] FirebaseFirestore.DefaultInstance is null.");
@@ -75,52 +84,70 @@ public class UserDataManager : MonoBehaviour
             DocumentReference docRef = db.Collection(UsersCollection).Document(userId);
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
+            bool isNewUser = false;
+
             if (snapshot.Exists)
             {
-                Data = snapshot.ConvertTo<UserDataRoot>();
+                UserData = snapshot.ConvertTo<UserDataRoot>();
 
-                if (Data == null)
+                if (UserData == null)
                 {
-                    Debug.LogWarning("[UserDataManager] ConvertTo returned null. Creating default data.");
-                    Data = UserDataFactory.CreateDefault(userId);
-
-                    if (!await SaveAsync(true))
-                        return false;
+                    UserData = UserDataFactory.CreateDefault(userId);
+                    isNewUser = true;
                 }
                 else
                 {
-                    if (Data.Profile == null)
-                        Data.Profile = UserDataFactory.CreateDefaultProfile(userId);
+                    if (UserData.Profile == null)
+                        UserData.Profile = UserDataFactory.CreateDefaultProfile(userId);
 
-                    if (Data.Resources == null)
-                        Data.Resources = UserDataFactory.CreateDefaultResources();
+                    if (UserData.Resource == null)
+                        UserData.Resource = UserDataFactory.CreateDefaultResources();
 
-                    if (Data.Roster == null)
-                        Data.Roster = UserDataFactory.CreateDefaultRoster();
+                    if (UserData.Roster == null)
+                        UserData.Roster = UserDataFactory.CreateDefaultRoster();
 
-                    if (Data.Progress == null)
-                        Data.Progress = UserDataFactory.CreateDefaultProgress();
+                    if (UserData.Progress == null)
+                        UserData.Progress = UserDataFactory.CreateDefaultProgress();
+
+                    if(UserData.Inventory == null)
+                        UserData.Inventory = UserDataFactory.CreateDefaultInventory();
 
                     Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
                 }
             }
             else
             {
-                Data = UserDataFactory.CreateDefault(userId);
-
-                if(!await SaveAsync(true))
-                    return false;
+                UserData = UserDataFactory.CreateDefault(userId);
+                isNewUser = true;
                 
                 Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
             }
 
-            bool fuelChanged = StaminaService.RefreshFuel(Data.Resources);
+            if (isNewUser)
+            {
+                StaminaService.InitializeFullFuel(UserData.Resource);
 
-            if (fuelChanged)
                 await SaveAsync(true);
+            }
+            else
+            {
+
+                Debug.Log($"fuel : {UserData.Resource.Fuel}");
+                bool fuelChanged = StaminaService.RefreshFuel(UserData.Resource);
+
+                Debug.Log($"fuel : {UserData.Resource.Fuel}");
+                if (fuelChanged)
+                {
+                    await SaveAsync(true);
+                }
+            }
+
+            InventoryService = new InventoryService();
+            MailboxService = new MailboxService();
 
             IsLoaded = true;
             IsDirty = false;
+
             return true;
         }
         catch (Exception e)
@@ -142,7 +169,7 @@ public class UserDataManager : MonoBehaviour
             return false;
         }
         
-        if(Data == null)
+        if(UserData == null)
         {
             Debug.LogError("[UserDataManager] No Loaded data to save.");
             return false;
@@ -160,7 +187,7 @@ public class UserDataManager : MonoBehaviour
         try
         {
             DocumentReference docRef = db.Collection(UsersCollection).Document(CurrentUserId);
-            await docRef.SetAsync(Data);
+            await docRef.SetAsync(UserData);
 
             IsDirty = false;
             Debug.Log($"[UserDataManager] Save success. UID : {CurrentUserId}");
@@ -197,13 +224,56 @@ public class UserDataManager : MonoBehaviour
 
         await userRef.UpdateAsync(updates);
 
-        if (Data != null)
-            Data.Progress = progress;
+        if (UserData != null)
+            UserData.Progress = progress;
+    }
+
+    public async Task SaveUserDataAsync()
+    {
+        if (UserData == null)
+        {
+            Debug.LogWarning("Save failed: UserData is null.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(CurrentUserId))
+        {
+            Debug.LogError("SaveUserDataAsync failed. UserId is null.");
+            return;
+        }
+
+        try
+        {
+            DocumentReference userRef = db.Collection("users").Document(CurrentUserId);
+
+            await userRef.SetAsync(UserData);
+
+            Debug.Log("UserData saved.");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"SaveUserDataAsync failed: {ex}");
+        }
     }
 
     public void MarkDirty()
     {
         IsDirty = true;
+    }
+
+    public void NotifyProfileUpdated()
+    {
+        OnProfileUpdated?.Invoke();
+    }
+
+    public void NotifyResourceUpdated()
+    {
+        OnResourceUpdated?.Invoke();
+    }
+
+    public void NotifyProgressUpdated()
+    {
+        OnProgressUpdated?.Invoke();
     }
 }
 

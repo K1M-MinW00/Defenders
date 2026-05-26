@@ -13,7 +13,7 @@ public class StageProgressService : MonoBehaviour
             return;
         }
 
-        UserDataRoot userData = UserDataManager.Instance.Data;
+        UserDataRoot userData = UserDataManager.Instance.UserData;
 
         if (userData == null || userData.Progress == null)
         {

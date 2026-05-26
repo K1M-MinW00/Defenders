@@ -3,7 +3,6 @@ using Firebase.Auth;
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class AuthManager : MonoBehaviour
 {

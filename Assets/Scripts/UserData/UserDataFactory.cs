@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 public static class UserDataFactory
 {
@@ -8,9 +7,10 @@ public static class UserDataFactory
         return new UserDataRoot
         {
             Profile = CreateDefaultProfile(userId),
-            Resources = CreateDefaultResources(),
+            Resource = CreateDefaultResources(),
             Roster = CreateDefaultRoster(),
             Progress = CreateDefaultProgress(),
+            Inventory = CreateDefaultInventory(),
         };
     }
 
@@ -32,6 +32,7 @@ public static class UserDataFactory
             Gold = 0,
             Gem = 0,
             Fuel = 100,
+            MaxFuel = 100,
             LastFuelUpdateTime = GetNow()
         };
     }
@@ -60,5 +61,10 @@ public static class UserDataFactory
             BestWaveCleared = 0
         };
     }
+    public static UserInventoryData CreateDefaultInventory()
+    {
+        return new UserInventoryData();
+    }
+
     private static long GetNow() => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 }
