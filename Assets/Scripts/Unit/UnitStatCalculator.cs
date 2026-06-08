@@ -1,27 +1,12 @@
-﻿//public static class UnitStatCalculator
-//{
-//    public static UnitStats CalculateRuntimeBase(UnitStats origin, UnitDataSO data, int star)
-//    {
-//        return data.ApplyStar(origin, star);
-//    }
+﻿public static class UnitStatCalculator
+{
+    public static UnitStats Calculate(UnitDataSO unitData, UserUnitData userUnit)
+    {
+        UnitStats stats = unitData.GetOriginStats(userUnit.Level);
 
-//    public static UnitStats CalculateFinal(UnitStats baseStats, UnitBuffController buff)
-//    {
-//        UnitStats result = baseStats;
+        // TODO : 진급, 한계돌파, 장비 추가
+        return stats;
+    }
 
-//        result.Attack = Apply(buff, BuffStatType.Attack, baseStats.Attack);
-//        result.MaxHp = Apply(buff, BuffStatType.MaxHp, baseStats.MaxHp);
-//        result.AttackPerSec = Apply(buff, BuffStatType.AttackPerSec, baseStats.AttackPerSec);
-//        result.DetectRange = Apply(buff, BuffStatType.DetectRange, baseStats.DetectRange);
-
-//        return result;
-//    }
-
-//    private static float Apply(UnitBuffController buff, BuffStatType statType, float baseValue)
-//    {
-//        float add = buff.GetAdditive(statType);
-//        float mul = buff.GetMultiplier(statType);
-
-//        return (baseValue + add) * mul;
-//    }
-//}
+    // 진급 
+}

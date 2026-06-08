@@ -42,7 +42,8 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
             return;
      
         viewModel = vm;
-
+        UserUnitData userUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(vm.UnitId);
+        
         if (iconImage != null)
         {
             iconImage.sprite = vm.Icon;
@@ -51,7 +52,7 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
 
         if (levelText != null)
         {
-            levelText.text = vm.IsOwned ? $"Lv.{vm.Level}" : "Locked";
+            levelText.text = vm.IsOwned ? $"Lv.{userUnit.Level}" : "Locked";
         }
 
         if (canvasGroup != null)

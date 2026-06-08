@@ -7,6 +7,4 @@ public class LobbyUnitViewModel
 
     public bool IsOwned;
     public bool IsSelected;
-
-    public int Level;
 }

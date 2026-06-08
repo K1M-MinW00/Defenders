@@ -64,4 +64,39 @@ public class InventoryService
 
         UserDataManager.Instance.MarkDirty();
     }
+
+    public bool RemoveStackItem(ItemCategory category, string itemId, int count)
+    {
+        List<InventoryStackItem> target = null;
+
+        switch (category)
+        {
+            case ItemCategory.Material:
+                target = Inventory.Materials;
+                break;
+            case ItemCategory.Consumable:
+                target = Inventory.Consumables;
+                break;
+        }
+
+        if (target == null)
+            return false;
+
+        var item = target.FirstOrDefault(x => x.ItemId == itemId);
+        
+        if(item == null) 
+            return false;
+
+        if (item.Count < count)
+            return false;
+
+        item.Count -= count;
+
+        if(item.Count <= 0)
+            target.Remove(item);
+
+        UserDataManager.Instance.MarkDirty();
+        
+        return true;
+    }
 }

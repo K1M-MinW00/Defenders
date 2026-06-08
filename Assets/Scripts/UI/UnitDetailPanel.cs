@@ -23,17 +23,13 @@ public class UnitDetailPanel : MonoBehaviour
     [SerializeField] private Image passiveSkillIconImage;
 
     [Header("Content Tabs")]
-    [SerializeField] private GameObject trainingTabPanel;
-    [SerializeField] private GameObject promotionTabPanel;
-    [SerializeField] private GameObject limitBreakTabPanel;
-    [SerializeField] private GameObject equipmentTabPanel;
+    [SerializeField] private UnitTrainingPanel trainingPanel;
+    //[SerializeField] private UnitPromotionPanel promotionPanel;
+    //[SerializeField] private UnitLimitBreakPanel limitBreakPanel;
+    //[SerializeField] private UnitEquipmentPanel equipmentPanel;
 
     [Header("Bottom Buttons")]
     [SerializeField] private Button backButton;
-    [SerializeField] private UnitDetailTabButton trainingTabButton;
-    [SerializeField] private UnitDetailTabButton promotionTabButton;
-    [SerializeField] private UnitDetailTabButton limitBreakTabButton;
-    [SerializeField] private UnitDetailTabButton equipmentTabButton;
 
     [Header("Popup")]
     [SerializeField] private SkillDetailPopup activeSkillDetailPopup;
@@ -49,18 +45,6 @@ public class UnitDetailPanel : MonoBehaviour
     {
         if (backButton != null)
             backButton.onClick.AddListener(Close);
-
-        if (trainingTabButton != null)
-            trainingTabButton.Button.onClick.AddListener(() => ShowTab(UnitDetailTabType.Training));
-
-        if (promotionTabButton != null)
-            promotionTabButton.Button.onClick.AddListener(() => ShowTab(UnitDetailTabType.Promotion));
-
-        if (limitBreakTabButton != null)
-            limitBreakTabButton.Button.onClick.AddListener(() => ShowTab(UnitDetailTabType.LimitBreak));
-
-        if (equipmentTabButton != null)
-            equipmentTabButton.Button.onClick.AddListener(() => ShowTab(UnitDetailTabType.Equipment));
 
         if (activeSkillButton != null)
             activeSkillButton.onClick.AddListener(OpenActiveSkillPopup);
@@ -93,10 +77,9 @@ public class UnitDetailPanel : MonoBehaviour
         else
             gameObject.SetActive(true);
 
+        BindTabPanels();
         BindCommonInfo();
         BindSkillInfo();
-
-        ShowTab(UnitDetailTabType.Training);
     }
 
     public void Close()
@@ -108,6 +91,22 @@ public class UnitDetailPanel : MonoBehaviour
 
         if (unitTabPanelRoot != null)
             unitTabPanelRoot.SetActive(true);
+    }
+
+    public void Refresh()
+    {
+        if (currentVm == null)
+            return;
+
+        BindCommonInfo();
+    }
+
+    private void BindTabPanels()
+    {
+        trainingPanel?.Bind(currentVm, currentUnitData, this);
+        //promotionPanel?.Bind(currentVm, currentUnitData);
+        //limitBreakPanel?.Bind(currentVm, currentUnitData);
+        //equipmentPanel?.Bind(currentVm, currentUnitData);
     }
 
     private void BindCommonInfo()
@@ -132,18 +131,17 @@ public class UnitDetailPanel : MonoBehaviour
             return;
         }
 
+        UserUnitData userUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(currentVm.UnitId);
+        UnitStats stats = UnitStatCalculator.Calculate(currentUnitData, userUnit);
+        
         if (levelText != null)
-            levelText.text = $"Lv {currentVm.Level}";
-
-        // 아래 계산식은 프로젝트의 UnitDataSO 구조에 맞게 교체 필요
-        int attack = CalculateLobbyAttack(currentUnitData, currentVm.Level);
-        int hp = CalculateLobbyHp(currentUnitData, currentVm.Level);
+            levelText.text = $"Lv {userUnit.Level}";
 
         if (attackText != null)
-            attackText.text = $"공격력 {attack}";
+            attackText.text = $"공격력 {stats.Attack}";
 
         if (hpText != null)
-            hpText.text = $"체력 {hp}";
+            hpText.text = $"체력 {stats.MaxHp}";
     }
 
     private void BindSkillInfo()
@@ -158,32 +156,6 @@ public class UnitDetailPanel : MonoBehaviour
             passiveSkillIconImage.sprite = currentPassiveSkill?.Icon;
     }
 
-    private void ShowTab(UnitDetailTabType tabType)
-    {
-        if (trainingTabPanel != null)
-            trainingTabPanel.SetActive(tabType == UnitDetailTabType.Training);
-
-        if (promotionTabPanel != null)
-            promotionTabPanel.SetActive(tabType == UnitDetailTabType.Promotion);
-
-        if (limitBreakTabPanel != null)
-            limitBreakTabPanel.SetActive(tabType == UnitDetailTabType.LimitBreak);
-
-        if (equipmentTabPanel != null)
-            equipmentTabPanel.SetActive(tabType == UnitDetailTabType.Equipment);
-
-        if (trainingTabButton != null)
-            trainingTabButton.SetSelected(tabType == UnitDetailTabType.Training);
-
-        if (promotionTabButton != null)
-            promotionTabButton.SetSelected(tabType == UnitDetailTabType.Promotion);
-
-        if (limitBreakTabButton != null)
-            limitBreakTabButton.SetSelected(tabType == UnitDetailTabType.LimitBreak);
-
-        if (equipmentTabButton != null)
-            equipmentTabButton.SetSelected(tabType == UnitDetailTabType.Equipment);
-    }
 
     private void OpenActiveSkillPopup()
     {
@@ -199,19 +171,6 @@ public class UnitDetailPanel : MonoBehaviour
             return;
 
         passiveSkillDetailPopup.Open(currentPassiveSkill);
-    }
-
-    private int CalculateLobbyAttack(UnitDataSO unitData, int level)
-    {
-        // TODO: 실제 UnitDataSO 스탯 구조에 맞게 교체
-        // 예: baseAtk + atkPerLevel * (level - 1)
-        return 0;
-    }
-
-    private int CalculateLobbyHp(UnitDataSO unitData, int level)
-    {
-        // TODO: 실제 UnitDataSO 스탯 구조에 맞게 교체
-        return 0;
     }
 
     private SkillViewData CreateActiveSkillViewData(UnitDataSO unitData)
@@ -239,11 +198,4 @@ public class UnitDetailPanel : MonoBehaviour
             Description = unitData.passiveSkill.description,
         };
     }
-}
-public enum UnitDetailTabType
-{
-    Training,
-    Promotion,
-    LimitBreak,
-    Equipment
 }

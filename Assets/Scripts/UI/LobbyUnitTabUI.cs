@@ -116,8 +116,6 @@ public class LobbyUnitTabUI : MonoBehaviour
 
             IsOwned = isOwned,
             IsSelected = isSelected,
-
-            Level = isOwned ? userUnit.Level : 0,
         };
     }
 

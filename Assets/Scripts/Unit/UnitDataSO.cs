@@ -16,11 +16,11 @@ public class UnitDataSO : ScriptableObject
     public SkillDataSO activeSkill;
 
     [Header("Base Stats (Lv1, 1¼º)")]
-    public UnitStats baseStats = new UnitStats(10f,50f, 3f, 4f);
+    public UnitStats baseStats = new UnitStats(10f, 50f, 3f, 4f);
 
     [Header("Level Growth")]
     public int maxLevel = 50;
-    public int attackGrowthValue= 5;
+    public int attackGrowthValue = 5;
     public int hpGrowthValue = 20;
 
     [Header("Star Growth")]

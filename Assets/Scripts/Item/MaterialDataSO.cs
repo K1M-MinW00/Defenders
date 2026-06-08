@@ -4,7 +4,7 @@
 public class MaterialDataSO : ItemDataSO
 {
     [Header("Material")]
-    public int ExpValue;
+    public int Value;
 
     public override ItemCategory Category => ItemCategory.Material;
 

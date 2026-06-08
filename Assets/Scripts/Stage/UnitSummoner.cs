@@ -75,20 +75,7 @@ public class UnitSummoner : MonoBehaviour
     {
         UserDataRoot userDataRoot = UserDataManager.Instance.UserData;
 
-        if (userDataRoot == null || userDataRoot.Roster == null)
-        {
-            Debug.LogWarning("UserDataRoot or Roster is null. Temporary UserUnitData will be used.");
-            return new UserUnitData(data.unitId);
-        }
-
-        foreach (UserUnitData userUnit in userDataRoot.Roster.OwnedUnits)
-        {
-            if (userUnit.UnitId == data.unitId)
-                return userUnit;
-        }
-
-        Debug.LogWarning($"UserUnitData not found. UnitId: {data.unitId}");
-        return new UserUnitData(data.unitId);
+        return UserDataManager.Instance.UserData.Roster.GetOwnedUnit(data.unitId);
     }
 
     private Vector3 ResolveSpawnPosition()
