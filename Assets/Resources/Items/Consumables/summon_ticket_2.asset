@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77c6e01b237f2054f80a1315d440eb4b, type: 3}
   m_Name: summon_ticket_2
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableDataSO
-  ItemId: summon_ticket_2
+  ItemId: summon_ticket_speical
   ItemName: "\uACE0\uAE09 \uC720\uB2DB \uBF51\uAE30\uAD8C"
   Icon: {fileID: 9013296249961276397, guid: 3b1be0e407de560478b58493a4719f45, type: 3}
   Rarity: 2

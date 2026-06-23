@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,6 @@ public class UnitTrainingPanel : MonoBehaviour
     [SerializeField] private TrainingMaterialSlot slotPrefab;
 
     [Header("Preview")]
-    [SerializeField] private TMP_Text previewLevelText;
     [SerializeField] private TMP_Text gainedExpText;
     [SerializeField] private TMP_Text goldCostText;
 
@@ -26,16 +26,20 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private LobbyUnitViewModel currentVm;
     private UnitDataSO currentUnitData;
-    private UnitDetailPanel detailPanel;
+    private UserUnitData currentUnit;
+    private UserResourceData resource;
+
+    private UnitDetailView detailPanel;
+
+    private IReadOnlyList<InventoryStackItem> materials;
+    private readonly Dictionary<string, int> selectedMaterials = new();
+    private readonly List<TrainingMaterialSlot> slots = new();
 
     private int previewLevel;
     private int previewExp;
 
-    private readonly Dictionary<string, int> selectedMaterials = new();
-    private readonly List<TrainingMaterialSlot> slots = new();
-
-    private int totalExp;
-    private int totalGold;
+    private int previewTotalExp;
+    private int previewTotalGold;
 
     private void Awake()
     {
@@ -57,10 +61,21 @@ public class UnitTrainingPanel : MonoBehaviour
         ResetSelection();
     }
 
-    public void Bind(LobbyUnitViewModel vm, UnitDataSO unitData, UnitDetailPanel panel)
+    public void Bind(LobbyUnitViewModel vm, UnitDataSO unitData, UnitDetailView panel)
     {
         currentVm = vm;
         currentUnitData = unitData;
+        currentUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(vm.UnitId);
+
+        resource = UserDataManager.Instance.UserData.Resource;
+
+        materials = UserDataManager.Instance.InventoryService.GetMaterials().OrderBy(x =>
+        {
+            MaterialDataSO data = ItemDatabase.Get(x.ItemId) as MaterialDataSO;
+
+            return data?.Value ?? int.MaxValue;
+        }).ToList();
+
         detailPanel = panel;
 
         ResetSelection();
@@ -70,6 +85,12 @@ public class UnitTrainingPanel : MonoBehaviour
     {
         selectedMaterials.Clear();
         BuildMaterialList();
+        RefreshUI();
+    }
+
+    private void RefreshUI()
+    {
+        RefreshSlots();
         RefreshPreview();
     }
 
@@ -80,11 +101,10 @@ public class UnitTrainingPanel : MonoBehaviour
 
         slots.Clear();
 
-        var materialList = UserDataManager.Instance.InventoryService.GetMaterials();
-
-        foreach (var item in materialList)
+        foreach (var item in materials)
         {
-            MaterialDataSO materialData = ItemDatabase.GetItem(item.ItemId) as MaterialDataSO;
+            MaterialDataSO materialData = ItemDatabase.Get(item.ItemId) as MaterialDataSO;
+
             if (materialData == null)
                 continue;
 
@@ -93,15 +113,11 @@ public class UnitTrainingPanel : MonoBehaviour
 
             slots.Add(slot);
         }
-
-        RefreshSlots();
     }
 
     public void OnAddMaterial(MaterialDataSO material)
     {
-        UserUnitData unit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(currentVm.UnitId);
-
-        if (unit.Level >= currentUnitData.maxLevel)
+        if (currentUnit.Level >= currentUnitData.maxLevel)
             return;
 
         selectedMaterials.TryGetValue(material.ItemId, out int count);
@@ -113,8 +129,7 @@ public class UnitTrainingPanel : MonoBehaviour
 
         selectedMaterials[material.ItemId] = count + 1;
 
-        RefreshSlots();
-        RefreshPreview();
+        RefreshUI();
     }
 
     public void OnRemoveMaterial(MaterialDataSO material)
@@ -126,9 +141,8 @@ public class UnitTrainingPanel : MonoBehaviour
 
         if (selectedMaterials[material.ItemId] <= 0)
             selectedMaterials.Remove(material.ItemId);
-
-        RefreshSlots();
-        RefreshPreview();
+        
+        RefreshUI();
     }
 
     public int GetSelectedCount(string itemId)
@@ -138,9 +152,7 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private int GetOwnedCount(string itemId)
     {
-        var materials = UserDataManager.Instance.InventoryService.GetMaterials();
-
-        foreach (var item in materials)
+       foreach (var item in materials)
         {
             if (item.ItemId == itemId)
                 return item.Count;
@@ -160,24 +172,22 @@ public class UnitTrainingPanel : MonoBehaviour
         if (currentVm == null)
             return;
 
-        totalExp = 0;
-        totalGold = 0;
+        previewTotalExp = 0;
+        previewTotalGold = 0;
 
         foreach (var pair in selectedMaterials)
         {
-            MaterialDataSO material = ItemDatabase.GetItem(pair.Key) as MaterialDataSO;
+            MaterialDataSO material = ItemDatabase.Get(pair.Key) as MaterialDataSO;
 
             if (material == null)
                 continue;
 
-            totalExp += material.Value * pair.Value;
-            totalGold += material.Value * pair.Value;
+            previewTotalExp += material.Value * pair.Value;
+            previewTotalGold += material.Value * pair.Value;
         }
 
-        UserUnitData unit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(currentVm.UnitId);
-
-        previewLevel = unit.Level;
-        previewExp = unit.Exp + totalExp;
+        previewLevel = currentUnit.Level;
+        previewExp = currentUnit.Exp + previewTotalExp;
 
         while (previewLevel < currentUnitData.maxLevel)
         {
@@ -190,19 +200,26 @@ public class UnitTrainingPanel : MonoBehaviour
             previewLevel++;
         }
 
-        previewLevelText.text = $"Lv {previewLevel}";
+        if (previewLevel >= currentUnitData.maxLevel)
+        {
+            previewLevel = currentUnitData.maxLevel;
+            previewExp = 0;
+        }
 
-        gainedExpText.gameObject.SetActive(totalExp > 0);
-        gainedExpText.text = $"+{totalExp}";
+        gainedExpText.gameObject.SetActive(previewTotalExp > 0);
+        gainedExpText.text = $"+{previewTotalExp}";
 
-        int levelDiff = previewLevel - unit.Level;
+        int levelDiff = previewLevel - currentUnit.Level;
 
         levelUpDiffText.gameObject.SetActive(levelDiff > 0);
         levelUpDiffText.text = $"+{levelDiff}";
 
-        goldCostText.text = $"<sprite=1> {totalGold.ToString("N0")}";
+        bool canAfford = resource.Gold >= previewTotalGold;
+        string color = canAfford ? "white" : "red";
 
-        int needCurrentExp = previewLevel >= currentUnitData.maxLevel ? 1 :  UnitExpTable.GetRequiredExp(previewLevel);
+        goldCostText.text = $"<sprite=1> <color={color}>{previewTotalGold:N0}</color> / {resource.Gold:N0}";
+
+        int needCurrentExp = previewLevel >= currentUnitData.maxLevel ? 1 : UnitExpTable.GetRequiredExp(previewLevel);
 
         expSlider.maxValue = needCurrentExp;
         expSlider.value = previewExp;
@@ -212,21 +229,21 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void OnClickAddOneLevel()
     {
-        RefreshPreview();
-
         if (previewLevel >= currentUnitData.maxLevel)
             return;
 
         int needExp = UnitExpTable.GetRequiredExp(previewLevel) - previewExp;
 
-        
+        if (previewTotalGold + needExp > resource.Gold)
+            return;
+
         AutoFillMaterials(needExp);
     }
 
     private void OnClickMaxLevel()
     {
-        while (true)
-        {
+         while (true)
+         {
             RefreshPreview();
 
             if (previewLevel >= currentUnitData.maxLevel)
@@ -234,11 +251,14 @@ public class UnitTrainingPanel : MonoBehaviour
 
             int needExp = UnitExpTable.GetRequiredExp(previewLevel) - previewExp;
 
-            bool added = AutoFillMaterialsInternal(needExp);
-
-            if (!added)
+            if (previewTotalGold + needExp > resource.Gold)
                 break;
-        }
+
+            bool enoughMaterial = AutoFillMaterialsInternal(needExp);
+
+            if (!enoughMaterial)
+                break;
+         }
 
         RefreshSlots();
         RefreshPreview();
@@ -255,11 +275,9 @@ public class UnitTrainingPanel : MonoBehaviour
     {
         bool addedAny = false;
 
-        var materials = UserDataManager.Instance.InventoryService.GetMaterials();
-
         foreach (var item in materials)
         {
-            MaterialDataSO material = ItemDatabase.GetItem(item.ItemId) as MaterialDataSO;
+            MaterialDataSO material = ItemDatabase.Get(item.ItemId) as MaterialDataSO;
 
             if (material == null)
                 continue;
@@ -294,22 +312,16 @@ public class UnitTrainingPanel : MonoBehaviour
         if (selectedMaterials.Count == 0)
             return;
 
-        UserResourceData resource = UserDataManager.Instance.UserData.Resource;
+        bool success = UserDataManager.Instance.ResourceService.SpendGold(previewTotalGold);
 
-        if (resource.Gold < totalGold)
+        if (!success)
             return;
-
-        // TODO : Resource 처리 서비스로 빼기
-        resource.Gold -= totalGold;
-
 
         foreach (var pair in selectedMaterials)
             UserDataManager.Instance.InventoryService.RemoveStackItem(ItemCategory.Material, pair.Key, pair.Value);
 
-        UserUnitData unit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(currentVm.UnitId);
+        currentUnit.AddExp(previewTotalExp);
 
-        unit.AddExp(totalExp);
-        
         await UserDataManager.Instance.SaveAsync();
 
         detailPanel.Refresh();

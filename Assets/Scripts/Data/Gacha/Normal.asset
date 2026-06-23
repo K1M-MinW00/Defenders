@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54d44c0f1ff7b9e469c32998b5a9b005, type: 3}
+  m_Name: Normal
+  m_EditorClassIdentifier: Assembly-CSharp::GachaDataSO
+  recruitType: 0
+  bannerName: "\uC77C\uBC18 \uBAA8\uC9D1"
+  bannerImage: {fileID: 1202984965197363600, guid: 25431b7bc0c8a5d47a10821d4223c1ab, type: 3}
+  pickupUnit: {fileID: 0}
+  normalRate: 85
+  rareRate: 13
+  legendRate: 2
+  legendPityCount: 50
+  normalPool:
+  - {fileID: 11400000, guid: e12e44d1608e1a146bf3abaaf97b8731, type: 2}
+  - {fileID: 11400000, guid: eac385cdf226b304cbdd7a01bcfc951e, type: 2}
+  - {fileID: 11400000, guid: 90cbe44048e981442ba0547dbb64138c, type: 2}
+  - {fileID: 11400000, guid: 0d4af60c8da9f5743aaa2fb6c98e79b1, type: 2}
+  rarePool:
+  - {fileID: 11400000, guid: 80624c56eb0c40c4d95dae888164153f, type: 2}
+  - {fileID: 11400000, guid: a25a1f0fc0651444080745516046c3a5, type: 2}
+  - {fileID: 11400000, guid: faa184ffc77758046a9d0f72f5336312, type: 2}
+  - {fileID: 11400000, guid: c003e33c2aa03ff48b093c2809baf32d, type: 2}
+  legendPool:
+  - {fileID: 11400000, guid: 0ff6c8a40fd56dd43aeec19cc3ab59bd, type: 2}
+  - {fileID: 11400000, guid: fb64b41c4fe0490498e313d58fd9145b, type: 2}
+  - {fileID: 11400000, guid: c5351fee9edd22642807fe013acb5f9c, type: 2}
+  ticketItemId: summon_ticket_1
+  gemCost: 300
