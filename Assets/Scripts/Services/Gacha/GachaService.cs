@@ -48,7 +48,6 @@ public class GachaService
         {
             Unit = unit,
             IsLegend = rarity == Rarity.Legend,
-            IsPity = isPity
         };
     }
 

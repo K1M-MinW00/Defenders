@@ -2,5 +2,5 @@
 {
     public UnitDataSO Unit;
     public bool IsLegend;
-    public bool IsPity;
+    public bool IsDuplicateReward;
 }

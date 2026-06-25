@@ -91,7 +91,7 @@ public class UnitBuffController : MonoBehaviour
         owner.StatService.Recalculate(StatRefreshPolicy.KeepRatio);
     }
 
-    public float GetAdditive(BuffStatType statType)
+    public float GetAdditive(StatType statType)
     {
         float total = 0f;
 
@@ -100,7 +100,7 @@ public class UnitBuffController : MonoBehaviour
             if (buff.StatType != statType)
                 continue;
 
-            if (buff.ModifyType != BuffModifyType.Additive)
+            if (buff.ModifyType != BuffModifyType.Flat)
                 continue;
 
             total += buff.Value;
@@ -109,7 +109,7 @@ public class UnitBuffController : MonoBehaviour
         return total;
     }
 
-    public float GetMultiplier(BuffStatType statType)
+    public float GetMultiplier(StatType statType)
     {
         float total = 1f;
 
@@ -118,7 +118,7 @@ public class UnitBuffController : MonoBehaviour
             if (buff.StatType != statType)
                 continue;
 
-            if (buff.ModifyType != BuffModifyType.Multiplicative)
+            if (buff.ModifyType != BuffModifyType.Percent)
                 continue;
 
             total *= (1f + buff.Value);

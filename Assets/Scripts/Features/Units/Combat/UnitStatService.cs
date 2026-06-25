@@ -36,15 +36,15 @@ public class UnitStatService : MonoBehaviour
     {
         UnitStats result = stageBaseStats;
 
-        result.Attack = CalculateBuffedValue(BuffStatType.Attack, stageBaseStats.Attack);
-        result.MaxHp = CalculateBuffedValue(BuffStatType.MaxHp, stageBaseStats.MaxHp);
-        result.AttackPerSec = CalculateBuffedValue(BuffStatType.AttackPerSec, stageBaseStats.AttackPerSec);
-        result.DetectRange = CalculateBuffedValue(BuffStatType.DetectRange, stageBaseStats.DetectRange);
+        result.Attack = CalculateBuffedValue(StatType.Attack, stageBaseStats.Attack);
+        result.MaxHp = CalculateBuffedValue(StatType.MaxHp, stageBaseStats.MaxHp);
+        result.AttackPerSec = CalculateBuffedValue(StatType.AttackPerSec, stageBaseStats.AttackPerSec);
+        result.DetectRange = CalculateBuffedValue(StatType.DetectRange, stageBaseStats.DetectRange);
 
         return result;
     }
 
-    private float CalculateBuffedValue(BuffStatType statType, float baseValue)
+    private float CalculateBuffedValue(StatType statType, float baseValue)
     {
         float additive = owner.BuffController.GetAdditive(statType);
         float multiplier = owner.BuffController.GetMultiplier(statType);

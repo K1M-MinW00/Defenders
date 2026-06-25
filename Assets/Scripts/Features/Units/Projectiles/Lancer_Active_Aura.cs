@@ -107,8 +107,8 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
     {
         RuntimeBuff attackBuff = new RuntimeBuff(
             buffId: attackBuffId,
-            statType: BuffStatType.Attack,
-            modifyType: BuffModifyType.Multiplicative,
+            statType: StatType.Attack,
+            modifyType: BuffModifyType.Percent,
             value: attackBonusPercent,
             durationType: BuffDurationType.Timed,
             durationSeconds: buffDuration
@@ -116,8 +116,8 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
 
         RuntimeBuff attackSpeedBuff = new RuntimeBuff(
             buffId: attackSpeedBuffId,
-            statType: BuffStatType.AttackPerSec,
-            modifyType: BuffModifyType.Multiplicative,
+            statType: StatType.AttackPerSec,
+            modifyType: BuffModifyType.Percent,
             value: attackSpeedBonusPercent,
             durationType: BuffDurationType.Timed,
             durationSeconds: buffDuration

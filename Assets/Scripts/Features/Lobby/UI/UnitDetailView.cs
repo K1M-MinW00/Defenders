@@ -25,7 +25,7 @@ public class UnitDetailView : MonoBehaviour
     [Header("Content Tabs")]
     [SerializeField] private UnitTrainingPanel trainingPanel;
     //[SerializeField] private UnitPromotionPanel promotionPanel;
-    //[SerializeField] private UnitLimitBreakPanel limitBreakPanel;
+    [SerializeField] private UnitLimitBreakPanel limitBreakPanel;
     //[SerializeField] private UnitEquipmentPanel equipmentPanel;
 
     [Header("Bottom Buttons")]
@@ -107,7 +107,7 @@ public class UnitDetailView : MonoBehaviour
     {
         trainingPanel?.Bind(currentVm, currentUnitData, this);
         //promotionPanel?.Bind(currentVm, currentUnitData);
-        //limitBreakPanel?.Bind(currentVm, currentUnitData);
+        limitBreakPanel?.Bind(currentUnitData, this);
         //equipmentPanel?.Bind(currentVm, currentUnitData);
     }
 

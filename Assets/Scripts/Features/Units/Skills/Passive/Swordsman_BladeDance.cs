@@ -33,8 +33,8 @@ public class Swordsman_BladeDance : PassiveSkillBase
 
         RuntimeBuff buff = new RuntimeBuff(
             buffId: buffId,
-            statType: BuffStatType.AttackPerSec,
-            modifyType: BuffModifyType.Multiplicative,
+            statType: StatType.AttackPerSec,
+            modifyType: BuffModifyType.Percent,
             value: totalBonus,
             durationType: BuffDurationType.Timed,
             durationSeconds: stackDuration

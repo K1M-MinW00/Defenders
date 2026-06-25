@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -16,7 +17,7 @@ public class UnitDataSO : ScriptableObject
     public SkillDataSO activeSkill;
 
     [Header("Base Stats (Lv1, 1¼º)")]
-    public UnitStats baseStats = new UnitStats(10f, 50f, 3f, 4f);
+    public UnitStats baseStats = new UnitStats();
 
     [Header("Level Growth")]
     public int maxLevel = 50;
@@ -29,6 +30,9 @@ public class UnitDataSO : ScriptableObject
     public float[] starHpMultipliers = { 1f, 1.35f, 1.8f, 2.4f };
     public float[] starDetectRangeMultipliers = { 1f, 1.2f, 1.5f, 2f };
     public float[] starAttackPerSecondMultipliers = { 1f, 1.5f, 1.8f, 2f };
+
+    [Header("Limit Break")]
+    public List<LimitBreakData> limitBreaks = new();
 
     public UnitStats GetOriginStats(int level)
     {

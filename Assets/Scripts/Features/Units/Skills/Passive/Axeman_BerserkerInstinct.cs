@@ -39,8 +39,8 @@ public class Axeman_BerserkerInstinct : PassiveSkillBase
     {
         RuntimeBuff attackBuff = new RuntimeBuff(
             buffId: attackBuffId,
-            statType: BuffStatType.Attack,
-            modifyType: BuffModifyType.Multiplicative,
+            statType: StatType.Attack,
+            modifyType: BuffModifyType.Percent,
             value: attackBonusPercent,
             durationType: BuffDurationType.Timed,
             durationSeconds: duration
@@ -48,8 +48,8 @@ public class Axeman_BerserkerInstinct : PassiveSkillBase
 
         RuntimeBuff attackSpeedBuff = new RuntimeBuff(
             buffId: attackSpeedBuffId,
-            statType: BuffStatType.AttackPerSec,
-            modifyType: BuffModifyType.Multiplicative,
+            statType: StatType.AttackPerSec,
+            modifyType: BuffModifyType.Percent,
             value: attackSpeedBonusPercent,
             durationType: BuffDurationType.Timed,
             durationSeconds: duration

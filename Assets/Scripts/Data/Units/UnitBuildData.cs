@@ -3,7 +3,7 @@
     public UnitDataSO UnitData { get; private set; }
     public UserUnitData UserData { get; private set; }
 
-    public UnitStats PersistentStats { get; private set; }
+    public UnitStats BaseStat { get; private set; }
 
     public int Level => UserData.Level;
 
@@ -12,6 +12,6 @@
     {
         UnitData = unitData;
         UserData = userData;
-        PersistentStats = persistentStats;
+        BaseStat = persistentStats;
     }
 }

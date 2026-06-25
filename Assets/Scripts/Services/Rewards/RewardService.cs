@@ -41,7 +41,7 @@ public class RewardService
                 break;
 
             case RewardType.Unit:
-                GiveUnit(reward.Id,reward.Amount);
+                UserDataManager.Instance.RosterService.GiveUnit(UnitDatabase.Get(reward.Id));
                 break;
 
             case RewardType.Equipment:
@@ -67,40 +67,6 @@ public class RewardService
         InventoryService inventoryService = UserDataManager.Instance.InventoryService;
         Debug.Log($"{item.Category}, {itemId}, {amount}");
         inventoryService.AddStackItem(item.Category, itemId, amount);
-    }
-
-    private void GiveUnit(string unitId, int amount)
-    {
-        Debug.Log($"Give Unit : {unitId} x{amount}");
-
-        UnitDataSO unit = UnitDatabase.Get(unitId);
-
-        if (unit == null)
-        {
-            Debug.LogError($"Unit not found : {unitId}");
-
-            return;
-        }
-
-        UserRosterData roster = UserDataManager.Instance.UserData.Roster;
-
-        bool alreadyOwned = roster.OwnedUnits.Any(x => x.UnitId == unitId);
-
-        if (alreadyOwned)
-        {
-            Debug.Log($"Already owned unit : {unitId}");
-            return;
-        }
-
-        UserUnitData userUnit = new()
-        {
-            UnitId = unitId,
-            Level = 1,
-        };
-
-        roster.OwnedUnits.Add(userUnit);
-
-        UserDataManager.Instance.MarkDirty();
     }
 
     private void GiveEquipment(string equipmentId, int amount)

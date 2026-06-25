@@ -13,6 +13,7 @@ public partial class UserDataManager : MonoBehaviour
     public MailboxService MailboxService { get; private set; }
     public ResourceService ResourceService { get; private set; }
     public GachaService GachaService { get; private set; }
+    public RosterService RosterService { get; private set; }
     public RewardService RewardService { get; private set; }
 
     public string CurrentUserId { get; private set; }
@@ -149,6 +150,7 @@ public partial class UserDataManager : MonoBehaviour
             ResourceService = new ResourceService();
             RewardService = new RewardService();
             GachaService = new GachaService();
+            RosterService = new RosterService();
 
             IsLoaded = true;
             IsDirty = false;

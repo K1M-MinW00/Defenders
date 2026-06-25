@@ -1,15 +1,21 @@
-public enum BuffStatType
+public enum StatType
 {
     Attack,
     MaxHp,
+
     AttackPerSec,
     DetectRange,
+
+    CritChance,
+    CritDamage,
+
+    EnergyRecovery
 }
 
 public enum BuffModifyType
 {
-    Additive,
-    Multiplicative,
+    Flat,
+    Percent,
 }
 
 public enum BuffDurationType
@@ -23,7 +29,7 @@ public enum BuffDurationType
 public sealed class RuntimeBuff
 {
     public string BuffId { get; private set; }
-    public BuffStatType StatType { get; private set; }
+    public StatType StatType { get; private set; }
     public BuffModifyType ModifyType { get; private set; }
     public float Value { get; private set; }
 
@@ -33,7 +39,7 @@ public sealed class RuntimeBuff
 
     public RuntimeBuff(
         string buffId,
-        BuffStatType statType,
+        StatType statType,
         BuffModifyType modifyType,
         float value,
         BuffDurationType durationType,

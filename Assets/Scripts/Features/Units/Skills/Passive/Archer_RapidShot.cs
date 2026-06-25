@@ -34,7 +34,7 @@ public class Archer_RapidShot : PassiveSkillBase
     private void ApplyArcherBuff()
     {
         RuntimeBuff buff = new RuntimeBuff(
-               buffId, BuffStatType.AttackPerSec, BuffModifyType.Multiplicative, attackSpeedBonusPercent, BuffDurationType.Timed, duration);
+               buffId, StatType.AttackPerSec, BuffModifyType.Percent, attackSpeedBonusPercent, BuffDurationType.Timed, duration);
 
         owner.BuffController.RemoveBuff(buffId, StatRefreshPolicy.KeepRatio);
         owner.BuffController.AddBuff(buff, StatRefreshPolicy.KeepRatio);

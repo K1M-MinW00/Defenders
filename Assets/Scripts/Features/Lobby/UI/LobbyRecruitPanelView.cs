@@ -167,9 +167,20 @@ public class LobbyRecruitPanelView : MonoBehaviour
         }
 
         List<GachaResult> results = UserDataManager.Instance.GachaService.Draw(currentBanner, count);
+        RosterService roster = UserDataManager.Instance.RosterService;
+
+        foreach(var result in results)
+        {
+            UserUnitData owned = roster.GetUnit(result.Unit.unitId);
+
+            if (owned != null &&  !owned.CanReceive)
+                result.IsDuplicateReward = true;
+            
+            roster.GiveUnit(result.Unit);
+        }
 
         resultPopup.Open(results);
-
+        
         Refresh();
     }
 }

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Soldier_Melee
   m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
   unitId: unit_soldierM
-  unitCode: 8
   displayName: Soldier_Melee
   icon: {fileID: 8188359060617121934, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
+  rarity: 0
   unitPrefab: {fileID: 4452343533218067403, guid: 5c8fb23d3cd6a8042b0b7f08b8658c12, type: 3}
   passiveSkill: {fileID: 11400000, guid: 1af022547620e0940bddf2dc7bcb8192, type: 2}
   activeSkill: {fileID: 11400000, guid: 80dc85c604ed324489da6eef8a759cd3, type: 2}
@@ -24,6 +24,9 @@ MonoBehaviour:
     MaxHp: 480
     AttackPerSec: 0.7
     DetectRange: 3
+    CritChance: 0.1
+    CritDamage: 1.25
+    EnergyRecovery: 0.1
   maxLevel: 50
   attackGrowthValue: 2
   hpGrowthValue: 32
@@ -47,3 +50,19 @@ MonoBehaviour:
   - 1.02
   - 1.05
   - 1.1
+  limitBreaks:
+  - statType: 1
+    value: 10
+    description: "\uCCB4\uB825 10% \uC99D\uAC00"
+  - statType: 6
+    value: 10
+    description: "\uC5D0\uB108\uC9C0 \uD68C\uBCF5 10% \uC99D\uAC00"
+  - statType: 4
+    value: 10
+    description: "\uCE58\uBA85\uD0C0 \uD655\uB960 10% \uC99D\uAC00"
+  - statType: 2
+    value: 10
+    description: "\uACF5\uACA9 \uC18D\uB3C4 10% \uC99D\uAC00"
+  - statType: 5
+    value: 10
+    description: "\uCE58\uBA85\uD0C0 \uB370\uBBF8\uC9C0 10% \uC99D\uAC00"

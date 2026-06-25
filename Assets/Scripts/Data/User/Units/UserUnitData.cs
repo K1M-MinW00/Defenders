@@ -11,7 +11,7 @@ public class UserUnitData
     [FirestoreProperty] public int LimitBreak { get; set; } = 0;
     [FirestoreProperty] public int Promotion { get; set; } = 0;
     [FirestoreProperty] public int DuplicateCount { get; set; } = 0;
-
+    public bool CanReceive => LimitBreak + DuplicateCount < 5;
     public UserUnitData() { }
 
     public void AddExp(int amount)
@@ -51,5 +51,4 @@ public class UserUnitData
             Exp = 0;
         }
     }
-
 }
