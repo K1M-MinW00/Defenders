@@ -6,6 +6,8 @@ public class Priest_Heal_Skill : ActiveSkillBase
 {
     [Header("Heal")]
     [SerializeField] private float healMultiplier = 2.0f;
+    [SerializeField] private float upgrade_healMultiplier = 3f;
+
     [SerializeField] private GameObject healEffectPrefab;
     private Poolable spawnedEffect;
 
@@ -43,7 +45,9 @@ public class Priest_Heal_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        float healAmount = owner.Attack * healMultiplier;
+        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_healMultiplier : healMultiplier;
+
+        float healAmount = owner.Attack * multiplier;
         
         foreach (var target in context.AllyTargets)
         {

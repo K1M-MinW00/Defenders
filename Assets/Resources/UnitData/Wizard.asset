@@ -50,6 +50,15 @@ MonoBehaviour:
   - 1.05
   - 1.1
   - 1.15
+  promotionCost:
+  - MaterialId: material_prom_1
+    Count: 5
+  - MaterialId: material_prom_2
+    Count: 10
+  - MaterialId: material_prom_3
+    Count: 15
+  - MaterialId: material_prom_4
+    Count: 20
   limitBreaks:
   - statType: 1
     value: 10

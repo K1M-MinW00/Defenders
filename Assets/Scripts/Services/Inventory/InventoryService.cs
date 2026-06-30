@@ -7,9 +7,16 @@ public class InventoryService
     private UserInventoryData Inventory => UserDataManager.Instance.UserData.Inventory;
 
 
-    public IReadOnlyList<InventoryStackItem> GetMaterials()
+    public IReadOnlyList<InventoryStackItem> GetMaterials(MaterialType type = MaterialType.None)
     {
-        return Inventory.Materials;
+        if(type == MaterialType.None)
+            return Inventory.Materials;
+
+        return Inventory.Materials.Where(x =>
+        {
+            MaterialDataSO data = ItemDatabase.Get(x.ItemId) as MaterialDataSO;
+            return data != null && data.MaterialType == type;
+        }).ToList();
     }
 
 
@@ -53,6 +60,7 @@ public class InventoryService
         };
     }
 
+    
     public void AddEquipment(string equipmentId)
     {
         ItemDataSO itemData = ItemDatabase.Get(equipmentId);

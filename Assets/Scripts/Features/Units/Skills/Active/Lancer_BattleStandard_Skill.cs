@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Lancer_BattleStandard_Skill : ActiveSkillBase
 {
@@ -8,7 +7,8 @@ public class Lancer_BattleStandard_Skill : ActiveSkillBase
 
     [Header("Aura Buff")]
     [SerializeField] private float radius = 2f;
-    [SerializeField] private float duration = 5f;
+    [SerializeField] private float duration = 3f;
+    [SerializeField] private float upgrade_duration = 5f;
 
     [SerializeField] private float attackBonusPercent = 0.2f;
     [SerializeField] private float attackSpeedBonusPercent = 0.15f;
@@ -35,14 +35,16 @@ public class Lancer_BattleStandard_Skill : ActiveSkillBase
 
         Vector3 spawnPos = context.CastPosition;
 
-        Lancer_Active_Aura flag = owner.PoolManager.Spawn(flagPrefab, spawnPos, Quaternion.identity,PoolCategory.Effect);
+        Lancer_Active_Aura flag = owner.PoolManager.Spawn(flagPrefab, spawnPos, Quaternion.identity, PoolCategory.Effect);
 
         string uniqueId = $"{owner.GetInstanceID()}_{Time.frameCount}";
 
-        flag.Initialize(duration,radius,attackBonusPercent,attackSpeedBonusPercent,allyLayer,uniqueId);
+        float buffTime = skillController.HasActiveUpgrade2 ? upgrade_duration : duration;
+
+        flag.Initialize(buffTime, radius, attackBonusPercent, attackSpeedBonusPercent, allyLayer, uniqueId);
     }
 
-    public override void OnSkillEnd(SkillExecutionContext context){ }
+    public override void OnSkillEnd(SkillExecutionContext context) { }
 
     public override void CancelSkill() { }
 

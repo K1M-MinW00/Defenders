@@ -31,6 +31,9 @@ public class UnitDataSO : ScriptableObject
     public float[] starDetectRangeMultipliers = { 1f, 1.2f, 1.5f, 2f };
     public float[] starAttackPerSecondMultipliers = { 1f, 1.5f, 1.8f, 2f };
 
+    [Header("Promotion")]
+    public PromotionCost[] promotionCost;
+
     [Header("Limit Break")]
     public List<LimitBreakData> limitBreaks = new();
 

@@ -3,7 +3,9 @@
 public class SoldierMLeapSlashSkill : ActiveSkillBase
 {
     [Header("Leap Slash")]
-    [SerializeField] private float damageMultiplier = 2.2f;
+    [SerializeField] private float damageMultiplier = 2f;
+    [SerializeField] private float upgrade_damageMultiplier = 3f;
+
     [SerializeField] private float impactRadius = 1.2f;
     [SerializeField] private LayerMask enemyLayer;
 
@@ -16,7 +18,8 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
         context.Initialize(owner);
 
         MonsterController target = owner.Targeting.GetClosestEnemyInRange();
-        if(target != null)
+
+        if (target != null)
             context.SetEnemyTarget(target);
 
         Vector3 castPos = owner.transform.position;
@@ -27,20 +30,21 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
 
     public override void OnSkillStart(SkillExecutionContext context)
     {
-        if(context.EnemyTarget != null)
+        if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
         Vector3 center = context.CastPosition;
-        
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(center, impactRadius, enemyLayer);
 
         if (hits == null || hits.Length == 0)
             return;
 
-        float damage = owner.Attack * damageMultiplier;
+        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float damage = owner.Attack * multiplier;
 
         foreach (Collider2D hit in hits)
         {

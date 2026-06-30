@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: Archer_Passive
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uC18D\uC0AC"
-  description: "\uC5F0\uC18D \uC0AC\uACA9 \uC2DC \uACF5\uACA9 \uC18D\uB3C4\uAC00
-    \uC810\uCC28 \uAC00\uC18D\uB41C\uB2E4."
   icon: {fileID: -5650323012087916457, guid: 96460c55c5a814045a192f741ea727c4, type: 3}
+  skillType: 1
+  upgrades:
+  - promotionLevel: 1
+    description: "\uC5F0\uC18D \uC0AC\uACA9 \uC2DC \uACF5\uACA9 \uC18D\uB3C4\uAC00
+      \uC810\uCC28 \uAC00\uC18D\uB41C\uB2E4."
+  - promotionLevel: 3
+    description: "\uACF5\uACA9 \uC18D\uB3C4 \uC99D\uAC00"

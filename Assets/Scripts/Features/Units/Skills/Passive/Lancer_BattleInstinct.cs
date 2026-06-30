@@ -3,7 +3,9 @@
 public class Lancer_BattleInstinct:PassiveSkillBase
 {
     [Header("Battle Instinct")]
-    [SerializeField] private int maxStacks = 3;
+    [SerializeField] private int maxStacks = 5;
+    [SerializeField] private int upgrade_maxStacks = 4;
+
     [SerializeField] private float attackBonusPerStack = 0.10f;
     [SerializeField] private float bonusDamageOnMaxStack = 0.30f;
 
@@ -18,13 +20,15 @@ public class Lancer_BattleInstinct:PassiveSkillBase
 
     public override void OnAttackStarted(MonsterController target)
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
-        if (currentStacks < maxStacks)
+        int stacks = skillController.HasPassiveUpgrade2 ? upgrade_maxStacks : maxStacks;
+
+        if (currentStacks < stacks)
             currentStacks++;
 
-        if (currentStacks >= maxStacks)
+        if (currentStacks >= stacks)
             maxStackReady = true;
     }
 

@@ -4,11 +4,12 @@ public class SoldierR_DetectWeakness : PassiveSkillBase
 {
     [Header("Detect Weakness")]
     [SerializeField] private float procChance = 0.25f;
-    [SerializeField] private float bonusDamagePercent = 0.4f;
+    [SerializeField] private float damageMultiplier = 1.2f;
+    [SerializeField] private float upgrade_damageMultiplier = 1.5f;
 
     public override void OnAttackHit(MonsterController target, ref float damage)
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
         if (target == null || target.Health.IsDead)
@@ -17,7 +18,9 @@ public class SoldierR_DetectWeakness : PassiveSkillBase
         if (Random.value > procChance)
             return;
 
-        float additiveDamage = damage * bonusDamagePercent;
+        float multiplier = skillController.HasPassiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float additiveDamage = damage * multiplier;
+
         target.Health.TakeDamage(additiveDamage);
     }
 }

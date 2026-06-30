@@ -6,7 +6,8 @@ public class Axeman_BerserkerInstinct : PassiveSkillBase
     [SerializeField] private float attackBonusPercent = 0.20f;
     [SerializeField] private float attackSpeedBonusPercent = 0.20f;
     [SerializeField] private float duration = 3f;
-    [SerializeField] private float cooldown = 4f;
+    [SerializeField] private float cooldown = 5f;
+    [SerializeField] private float upgrade_cooldown = 4f;
 
     [Header("Buff Id")]
     [SerializeField] private string attackBuffId = "Axeman_BerserkInstinct_Attack";
@@ -21,11 +22,13 @@ public class Axeman_BerserkerInstinct : PassiveSkillBase
 
     public override void OnAfterTakeDamage(float finalDamage)
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
         if (finalDamage <= 0f)
             return;
+
+        cooldown = skillController.HasPassiveUpgrade2 ? upgrade_cooldown : cooldown;
 
         if (Time.time < lastProcTime + cooldown)
             return;

@@ -4,6 +4,8 @@ public class Swordsman_BladeDance : PassiveSkillBase
 {
     [Header("Blade Dance")]
     [SerializeField] private int maxStacks = 5;
+    [SerializeField] private int upgrade_maxStacks = 4;
+
     [SerializeField] private float attackSpeedBonusPerStack = 0.06f;
     [SerializeField] private float stackDuration = 2f;
 
@@ -20,13 +22,15 @@ public class Swordsman_BladeDance : PassiveSkillBase
 
     public override void OnAttackStarted(MonsterController target)
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
         if (Time.time > lastAttackTime + stackDuration)
             currentStacks = 0;
 
         lastAttackTime = Time.time;
+        maxStacks = skillController.HasPassiveUpgrade2 ? upgrade_maxStacks : maxStacks;
+
         currentStacks = Mathf.Min(currentStacks + 1, maxStacks);
 
         float totalBonus = currentStacks * attackSpeedBonusPerStack;

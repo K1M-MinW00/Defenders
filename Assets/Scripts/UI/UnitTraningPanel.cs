@@ -61,21 +61,13 @@ public class UnitTrainingPanel : MonoBehaviour
         ResetSelection();
     }
 
-    public void Bind(LobbyUnitViewModel vm, UnitDataSO unitData, UnitDetailView panel)
+    public void Bind(UnitDataSO unitData, UnitDetailView panel)
     {
-        currentVm = vm;
         currentUnitData = unitData;
-        currentUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(vm.UnitId);
-
+        currentUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(unitData.unitId);
         resource = UserDataManager.Instance.UserData.Resource;
 
-        materials = UserDataManager.Instance.InventoryService.GetMaterials().OrderBy(x =>
-        {
-            MaterialDataSO data = ItemDatabase.Get(x.ItemId) as MaterialDataSO;
-
-            return data?.Value ?? int.MaxValue;
-        }).ToList();
-
+        materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
         detailPanel = panel;
 
         ResetSelection();

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2995892266405762854}
   - component: {fileID: 8969900948218052616}
   m_Layer: 5
-  m_Name: Ellipsis_Prefab
+  m_Name: UI_WaveEllipsis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

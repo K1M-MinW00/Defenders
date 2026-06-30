@@ -4,7 +4,9 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 {
     [Header("Fireball")]
     [SerializeField] private MeteorProjectile meteorPrefab;
-    [SerializeField] private float damageMultiplier = 3.0f;
+    [SerializeField] private float damageMultiplier = 2f;
+    [SerializeField] private float upgrade_damageMultiplier = 3f;
+
     [SerializeField] private float spawnHeight = 3f;
     [SerializeField] private float explosionRadius = 1.5f;
     [SerializeField] private float projectileSpeed = 10f;
@@ -49,9 +51,9 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
         
         MeteorProjectile projectile = owner.PoolManager.Spawn(meteorPrefab, spawnPos, Quaternion.identity,PoolCategory.Projectile);
 
-        float damage = owner.Attack * damageMultiplier;
+        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float damage = owner.Attack * multiplier;
         projectile.Initialize(damage, targetPos, projectileSpeed, explosionRadius, enemyLayer);
-
     }
 
     public override void OnSkillEnd(SkillExecutionContext context)

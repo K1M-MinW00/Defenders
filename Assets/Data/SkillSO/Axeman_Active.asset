@@ -13,6 +13,14 @@ MonoBehaviour:
   m_Name: Axeman_Active
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uD30C\uBA78\uC758 \uD68C\uC804\uACA9"
-  description: "\uB3C4\uB07C\uB97C \uD06C\uAC8C \uD718\uB458\uB7EC \uC8FC\uBCC0\uC744
-    \uCD08\uD1A0\uD654\uD55C\uB2E4."
+  description: 
   icon: {fileID: 4059945435950837572, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}
+  skillType: 0
+  upgrades:
+  - promotionLevel: 0
+    description: "\uB3C4\uB07C\uB97C \uD06C\uAC8C \uD718\uB458\uB7EC \uC8FC\uBCC0\uC744
+      \uCD08\uD1A0\uD654\uD55C\uB2E4."
+  - promotionLevel: 2
+    description: "\uB370\uBBF8\uC9C0 \uC99D\uAC00"
+  - promotionLevel: 4
+    description: "\uC804\uD22C \uC2DC\uC791 \uC2DC \uC5D0\uB108\uC9C0 50% \uD68D\uB4DD"

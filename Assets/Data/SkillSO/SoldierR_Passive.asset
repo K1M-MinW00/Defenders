@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: SoldierR_Passive
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uC57D\uC810 \uAC04\uD30C"
-  description: "\uC801\uC758 \uAE09\uC18C\uB97C \uD3EC\uCC29\uD574 \uCD94\uAC00 \uD53C\uD574\uB97C
-    \uAC00\uD55C\uB2E4."
+  description: 
   icon: {fileID: 7609506403020695555, guid: 96460c55c5a814045a192f741ea727c4, type: 3}
+  skillType: 1
+  upgrades:
+  - promotionLevel: 1
+    description: "\uC801\uC758 \uAE09\uC18C\uB97C \uD3EC\uCC29\uD574 \uCD94\uAC00
+      \uD53C\uD574\uB97C \uAC00\uD55C\uB2E4."
+  - promotionLevel: 3
+    description: "\uCD94\uAC00 \uD53C\uD574\uB7C9 \uC99D\uAC00"

@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: Wizard_Passive
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uB9C8\uB825\uC758 \uACF5\uBA85"
-  description: "\uC2A4\uD0AC \uC0AC\uC6A9 \uD6C4 \uC77C\uBD80 \uB9C8\uB825\uC744
-    \uB418\uB3CC\uB824 \uBC1B\uB294\uB2E4."
+  description: 
   icon: {fileID: 764780353723372841, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}
+  skillType: 1
+  upgrades:
+  - promotionLevel: 1
+    description: "\uC2A4\uD0AC \uC0AC\uC6A9 \uD6C4 \uC77C\uBD80 \uB9C8\uB825\uC744
+      \uB418\uB3CC\uB824 \uBC1B\uB294\uB2E4."
+  - promotionLevel: 3
+    description: "\uD68C\uBCF5 \uB9C8\uB825\uB7C9 \uC99D\uAC00"

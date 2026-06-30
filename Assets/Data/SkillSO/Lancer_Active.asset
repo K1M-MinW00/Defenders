@@ -13,7 +13,14 @@ MonoBehaviour:
   m_Name: Lancer_Active
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uC804\uC7A5\uC758 \uAE43\uBC1C"
-  description: "\uAE43\uBC1C\uC744 \uC138\uC6CC \uC544\uAD70\uC5D0\uAC8C \uC804\uD22C\uC758
-    \uCD95\uBCF5\uC744 \uBD80\uC5EC\uD574 \uACF5\uACA9\uB825\uACFC \uACF5\uACA9 \uC18D\uB3C4\uB97C
-    \uC77C\uC2DC\uC801\uC73C\uB85C \uC99D\uAC00\uC2DC\uD0A8\uB2E4."
   icon: {fileID: -2860209954433129432, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}
+  skillType: 0
+  upgrades:
+  - promotionLevel: 0
+    description: "\uAE43\uBC1C\uC744 \uC138\uC6CC \uC544\uAD70\uC5D0\uAC8C \uC804\uD22C\uC758
+      \uCD95\uBCF5\uC744 \uBD80\uC5EC\uD574 \uACF5\uACA9\uB825\uACFC \uACF5\uACA9
+      \uC18D\uB3C4\uB97C \uC77C\uC2DC\uC801\uC73C\uB85C \uC99D\uAC00\uC2DC\uD0A8\uB2E4."
+  - promotionLevel: 2
+    description: "\uBC84\uD504 \uC9C0\uC18D \uC2DC\uAC04 \uC99D\uAC00"
+  - promotionLevel: 4
+    description: "\uC804\uD22C \uC2DC\uC791 \uC2DC \uC5D0\uB108\uC9C0 50% \uD68D\uB4DD"

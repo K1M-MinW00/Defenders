@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2807554786304480898}
   - component: {fileID: 4868863406675919488}
   m_Layer: 5
-  m_Name: WaveNodePrefab
+  m_Name: UI_WaveNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,7 +278,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: '!0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cc6b435053e573d48af56872878fa595, type: 2}
   m_sharedMaterial: {fileID: -7472455607195302610, guid: cc6b435053e573d48af56872878fa595, type: 2}

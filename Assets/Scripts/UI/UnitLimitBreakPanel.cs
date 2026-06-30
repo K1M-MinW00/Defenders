@@ -14,7 +14,9 @@ public class UnitLimitBreakPanel : MonoBehaviour
     [SerializeField] private GameObject nextStarsRoot;
     [SerializeField] private Image[] nextStars;
     [SerializeField] private GameObject arrowObject;
-    [SerializeField] private Color starOffColor = new Color(0f, 0f, 0f, 0.5f);
+    [SerializeField] private Sprite emptyStarImg;
+    [SerializeField] private Sprite starImg;
+
     [Header("Effects")]
     [SerializeField] private Transform effectRoot;
     [SerializeField] private LimitBreakEffectSlot effectPrefab;
@@ -90,7 +92,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
 
         for (int i = 0; i < currentStars.Length; i++)
         {
-            currentStars[i].color = i < current ? Color.white : starOffColor;
+            currentStars[i].sprite = i < current ? starImg : emptyStarImg;
         }
 
         if (current >= MaxLimitBreak)
@@ -104,7 +106,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
         for (int i = 0; i < nextStars.Length; i++)
         {
             nextStars[i].gameObject.SetActive(true);
-            nextStars[i].color = i < next ? Color.white : starOffColor;
+            nextStars[i].sprite = i < next ? starImg : emptyStarImg;
         }
     }
 

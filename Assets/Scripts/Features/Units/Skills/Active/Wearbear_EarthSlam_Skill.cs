@@ -4,14 +4,15 @@ using UnityEngine;
 public class Werebear_EarthSlam_Skill : ActiveSkillBase
 {
     [Header("Ground Smash")]
-    [SerializeField] private float damageMultiplier = 2.4f;
+    [SerializeField] private float damageMultiplier = 2f;
+    [SerializeField] private float upgrade_damageMultiplier = 3f;
+
     [SerializeField] private float impactRadius = 1.6f;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private int hitBufferSize = 32;
 
     [Header("Effect")]
     [SerializeField] private GameObject impactEffectPrefab;
-    private GameObject spawnedEffect;
 
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
@@ -36,7 +37,7 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
 
         MonsterController target = owner.Targeting.GetClosestEnemyInRange();
 
-        if(target != null)
+        if (target != null)
             context.SetEnemyTarget(target);
 
         Vector3 castPos = owner.transform.position;
@@ -46,7 +47,7 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
 
     public override void OnSkillStart(SkillExecutionContext context)
     {
-        if(context.EnemyTarget != null)
+        if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
     }
 
@@ -65,7 +66,8 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
         if (hitCount <= 0)
             return;
 
-        float damage = owner.Attack * damageMultiplier;
+        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float damage = owner.Attack * multiplier;
 
         ApplyDamage(hitCount, damage);
     }

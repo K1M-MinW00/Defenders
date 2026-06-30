@@ -2,12 +2,8 @@
 using UnityEngine;
 
 [Serializable]
-public class SkillUpgradeEntry
+public class SkillUpgradeData
 {
-    [Header("Unlock / Upgrade")]
     [Min(0)] public int promotionLevel;
-    public bool unlocksSkill = false;
-
-    [Header("UI Text")]
     [TextArea] public string description;
 }

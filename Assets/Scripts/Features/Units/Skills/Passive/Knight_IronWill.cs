@@ -3,7 +3,9 @@
 public class Knight_IronWill : PassiveSkillBase
 {
     [Header("Iron Will")]
-    [SerializeField] private int requiredHits = 3;
+    [SerializeField] private int requiredHits = 4;
+    [SerializeField] private int upgrade_requiredHits = 3;
+
     [SerializeField] private float duration = 3f;
     [SerializeField] private float damageReductionPercent = 0.25f;
 
@@ -18,7 +20,7 @@ public class Knight_IronWill : PassiveSkillBase
 
     public override void OnBeforeTakeDamage(ref float damage)
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
         // 버프 적용 중이면 피해 감소
@@ -39,7 +41,9 @@ public class Knight_IronWill : PassiveSkillBase
 
         hitCount++;
 
-        if (hitCount < requiredHits)
+        int required = skillController.HasPassiveUpgrade2 ? upgrade_requiredHits : requiredHits;
+
+        if (hitCount < required)
             return;
 
         hitCount = 0;

@@ -4,6 +4,7 @@ public abstract class PassiveSkillBase : MonoBehaviour, IPassiveSkill
 {
     protected UnitController owner;
     protected UnitSkillController skillController;
+    protected int Promotion => owner.UserUnit.Promotion;
 
     public UnitController Owner => owner;
     public bool IsInitialized => owner != null;

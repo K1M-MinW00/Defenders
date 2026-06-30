@@ -12,17 +12,28 @@ public class UnitSkillController : MonoBehaviour
     private bool isCombatPhase;
     private bool isSkillRunning;
 
-    public ActiveSkillBase ActiveSkill => activeSkill;
-    public PassiveSkillBase PassiveSkill => passiveSkill;
-    public bool IsSkillRunning => isSkillRunning;
-
     public event Action OnSkillStarted;
     public event Action OnSkillApplied;
     public event Action OnSkillEnded;
 
+    private int promotion;
+    public int Promotion => promotion;
+
+    public ActiveSkillBase ActiveSkill => activeSkill;
+    public PassiveSkillBase PassiveSkill => passiveSkill;
+    public bool IsSkillRunning => isSkillRunning;
+
+    public bool HasPassive => promotion >= 1;
+    public bool HasActiveUpgrade2 => promotion >= 2;
+    public bool HasPassiveUpgrade2 => promotion >= 3;
+
+    public bool HasActiveUpgrade3 => promotion >= 4;
+
     public void Initialize(UnitController owner)
     {
         this.owner = owner;
+
+        promotion = owner.UserUnit.Promotion;
 
         activeSkill = GetComponent<ActiveSkillBase>();
         passiveSkill = GetComponent<PassiveSkillBase>();
@@ -157,45 +168,75 @@ public class UnitSkillController : MonoBehaviour
 
     public void NotifyBattleStart()
     {
+        if (HasActiveUpgrade3)
+            owner.Energy.Add(50f);
+
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnBattleStart();
     }
 
     public void NotifyBattleEnd()
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnBattleEnd();
     }
 
     public void NotifyAttackStarted(MonsterController target)
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnAttackStarted(target);
     }
 
     public void NotifyAttackHit(MonsterController target, ref float damage)
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnAttackHit(target, ref damage);
     }
 
     public void NotifyBeforeTakeDamage(ref float damage)
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnBeforeTakeDamage(ref damage);
     }
 
     public void NotifyAfterTakeDamage(float finalDamage)
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnAfterTakeDamage(finalDamage);
     }
     public void NotifyActiveSkillStarted()
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnActiveSkillStarted();
     }
 
     public void NotifyActiveSkillApplied()
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnActiveSkillApplied();
     }
 
     public void NotifyActiveSkillEnded()
     {
+        if (!HasPassive)
+            return;
+
         passiveSkill?.OnActiveSkillEnded();
     }
 }

@@ -3,9 +3,11 @@ using UnityEngine;
 public class Archer_RapidShot : PassiveSkillBase
 {
     [Header("Precision Shot")]
-    [SerializeField] private int requiredShots = 4;
-    [SerializeField] private float duration = 2f;
-    [SerializeField] private float attackSpeedBonusPercent = 0.25f;
+    [SerializeField] private int requiredShots = 5;
+
+    [SerializeField] private float buff_duration = 2f;
+    [SerializeField] private float bonusPercent = 0.25f;
+    [SerializeField] private float upgrade_bonusPercent = 0.5f;
 
     [SerializeField] private string buffId = "Archer_Passive";
 
@@ -18,7 +20,7 @@ public class Archer_RapidShot : PassiveSkillBase
 
     public override void OnAttackStarted(MonsterController target)
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
         shotCount++;
@@ -33,8 +35,8 @@ public class Archer_RapidShot : PassiveSkillBase
 
     private void ApplyArcherBuff()
     {
-        RuntimeBuff buff = new RuntimeBuff(
-               buffId, StatType.AttackPerSec, BuffModifyType.Percent, attackSpeedBonusPercent, BuffDurationType.Timed, duration);
+        float bonus = skillController.HasPassiveUpgrade2 ? upgrade_bonusPercent : bonusPercent;
+        RuntimeBuff buff = new RuntimeBuff(buffId, StatType.AttackPerSec, BuffModifyType.Percent, bonus, BuffDurationType.Timed, buff_duration);
 
         owner.BuffController.RemoveBuff(buffId, StatRefreshPolicy.KeepRatio);
         owner.BuffController.AddBuff(buff, StatRefreshPolicy.KeepRatio);

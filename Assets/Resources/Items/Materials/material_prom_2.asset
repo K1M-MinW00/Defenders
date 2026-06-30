@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b2ddc4873b0fb141b89fa363101d3aa, type: 3}
-  m_Name: material_exp_3 1
+  m_Name: material_prom_2
   m_EditorClassIdentifier: Assembly-CSharp::MaterialDataSO
-  ItemId: material_prom_1
-  ItemName: "\uC9C4\uAE09 \uC7AC\uB8CC 1"
-  Icon: {fileID: 99477494420869604, guid: 3b1be0e407de560478b58493a4719f45, type: 3}
+  ItemId: material_prom_2
+  ItemName: "\uC911\uAE09 \uC9C4\uAE09 \uC7AC\uB8CC"
+  Icon: {fileID: -5419496535822654946, guid: 0d371a78772bd954b99878cc3b5fb942, type: 3}
   Rarity: 1
-  Description: "\uC720\uB2DB \uC9C4\uAE09\uC744 \uC704\uD55C \uC7AC\uB8CC\n\uC720\uB2DB
-    \uACBD\uD5D8\uCE58 + 500"
-  Value: 500
+  Description: "\uC720\uB2DB \uC9C4\uAE09\uC744 \uC704\uD55C \uC911\uAE09 \uC7AC\uB8CC"
+  Value: 0
+  MaterialType: 2

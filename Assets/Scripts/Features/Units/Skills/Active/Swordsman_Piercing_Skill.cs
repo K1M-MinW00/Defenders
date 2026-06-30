@@ -1,12 +1,12 @@
-﻿using Firebase.Auth;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Swordsman_Piercing_Skill : ActiveSkillBase
 {
     [Header("Piercing Thrust")]
-    [SerializeField] private float hitDamageMultiplier = 2.5f;
+    [SerializeField] private float damageMultiplier = 2f;
+    [SerializeField] private float upgrade_damageMultiplier = 3f;
     [SerializeField] private Vector2 boxSize = new Vector2(1f, 1f);
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private int multCnt = 4;
@@ -89,7 +89,8 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
 
     private IEnumerator CoPiercingThrust()
     {
-        float damagePerHit = owner.Attack * hitDamageMultiplier / multCnt;
+        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float damagePerHit = owner.Attack * multiplier / multCnt;
 
         for (int i = 0; i < multCnt; i++)
         {

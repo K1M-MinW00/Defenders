@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: Lancer_Passive
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uC804\uC7A5\uC758 \uACA9\uC591"
-  description: "\uC801\uC744 \uACF5\uACA9\uD560 \uB54C\uB9C8\uB2E4, \uD53C\uD574\uAC00
-    \uB204\uC801 \uC0C1\uC2B9\uD55C\uB2E4."
+  description: 
   icon: {fileID: 6824600268083177782, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}
+  skillType: 1
+  upgrades:
+  - promotionLevel: 1
+    description: "\uC801\uC744 \uACF5\uACA9\uD560 \uB54C\uB9C8\uB2E4, \uD53C\uD574\uAC00
+      \uB204\uC801 \uC0C1\uC2B9\uD55C\uB2E4."
+  - promotionLevel: 3
+    description: "\uBC1C\uB3D9 \uC870\uAC74 \uAC10\uC18C"

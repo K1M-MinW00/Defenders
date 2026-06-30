@@ -4,12 +4,15 @@ using UnityEngine.UI;
 
 public class SkillDetailPopup : MonoBehaviour
 {
-    [SerializeField] private GameObject root;
     [SerializeField] private Button closeButton;
 
+    [Header("Header")]
     [SerializeField] private Image skillIconImage;
     [SerializeField] private TMP_Text skillNameText;
-    [SerializeField] private TMP_Text skillDescriptionText;
+
+    [Header("Content")]
+    [SerializeField] private Transform contentRoot;
+    [SerializeField] private SkillUpgradeSlot slotPrefab;
 
     private void Awake()
     {
@@ -19,31 +22,32 @@ public class SkillDetailPopup : MonoBehaviour
         Close();
     }
 
-    public void Open(SkillViewData skill)
+    public void Open(SkillDataSO skill, int promotion)
     {
         if (skill == null)
             return;
 
-        if (root != null)
-            root.SetActive(true);
-        else
-            gameObject.SetActive(true);
+        gameObject.SetActive(true);
 
         if (skillIconImage != null)
-            skillIconImage.sprite = skill.Icon;
+            skillIconImage.sprite = skill.icon;
 
         if (skillNameText != null)
-            skillNameText.text = skill.DisplayName;
+            skillNameText.text = skill.skillName;
 
-        if (skillDescriptionText != null)
-            skillDescriptionText.text = skill.Description;
+        foreach (Transform child in contentRoot)
+            Destroy(child.gameObject);
+
+        foreach (SkillUpgradeData data in skill.upgrades)
+        {
+            SkillUpgradeSlot slot = Instantiate(slotPrefab, contentRoot);
+
+            slot.Setup(promotion, data);
+        }
     }
 
     public void Close()
     {
-        if (root != null)
-            root.SetActive(false);
-        else
-            gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 }

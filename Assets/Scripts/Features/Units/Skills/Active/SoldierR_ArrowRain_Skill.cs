@@ -4,10 +4,15 @@ using UnityEngine;
 public class SoldierR_ArrowRain_Skill : ActiveSkillBase
 {
     [Header("Arrow Rain")]
-    [SerializeField] private float damageMultiplier = 1.2f;
+    [SerializeField] private float damageMultiplier = 1.5f;
+    [SerializeField] private float upgrade_damageMultiplier = 2f;
+    
     [SerializeField] private int arrowCount = 6;
+    [SerializeField] private int upgrade_arrowCount = 10;
+
     [SerializeField] private float rainRadius = 1.5f;
     [SerializeField] private float hitRadius = 0.4f;
+
     [SerializeField] private LayerMask enemyLayer;
 
     [Header("Arrow Rain Visual")]
@@ -46,14 +51,17 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
     public override void OnSkillApply(SkillExecutionContext context)
     {
         Vector2 center = context.CastPosition;
-        float damage = owner.Attack * damageMultiplier;
+
+        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float damage = owner.Attack * multiplier;
 
 #if UNITY_EDITOR
         debugCenter = center;
         debugLandingPoints.Clear();
 #endif
 
-        for (int i = 0; i < arrowCount; i++)
+        int count = skillController.HasActiveUpgrade2 ? upgrade_arrowCount : arrowCount;
+        for (int i = 0; i < count; i++)
         {
             Vector2 landingOffset = Random.insideUnitCircle * rainRadius;
             Vector2 landingPoint = center + landingOffset;

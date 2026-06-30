@@ -4,6 +4,8 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
 {
     [Header("Light Beam")]
     [SerializeField] private float damageMultiplier = 2.5f;
+    [SerializeField] private float upgrade_damageMultiplier = 3f;
+
     [SerializeField] private float beamLength = 40f;
     [SerializeField] private float beamWidth = 1.2f;
     [SerializeField] private LayerMask enemyLayer;
@@ -26,7 +28,7 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
         if (target == null)
         {
             bool enemyGlobal = owner.Targeting.FindGlobalAliveMonster();
-            
+
             if (!enemyGlobal)
                 return false;
 
@@ -42,7 +44,6 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
     {
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
-
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
@@ -50,7 +51,7 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
         SpawnBeamEffect(context);
     }
 
-    public override void OnSkillEnd(SkillExecutionContext context) 
+    public override void OnSkillEnd(SkillExecutionContext context)
     {
         ReturnBeamEffect();
     }
@@ -69,15 +70,16 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
         Vector2 targetPos = context.EnemyTarget.transform.position;
 
         Vector2 dir = (targetPos - origin).normalized;
-        
+
         Vector2 center = origin + dir * (beamLength * 0.5f);
-        
+
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
 
-        float damamge = owner.Attack * damageMultiplier;
+        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float damamge = owner.Attack * multiplier;
 
-        spawnedEffect = owner.PoolManager.Spawn(beamEffectPrefab,center,rotation,PoolCategory.Effect);
+        spawnedEffect = owner.PoolManager.Spawn(beamEffectPrefab, center, rotation, PoolCategory.Effect);
 
         if (spawnedEffect == null)
             return;

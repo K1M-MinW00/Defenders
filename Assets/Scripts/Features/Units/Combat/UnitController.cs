@@ -7,6 +7,7 @@ public class UnitController : MonoBehaviour
 {
     [Header("Data")]
     [SerializeField] private UnitDataSO unitData;
+    [SerializeField] private UserUnitData userData; 
     private StageUnitRuntime runtime;
 
     [Header("References")]
@@ -25,6 +26,7 @@ public class UnitController : MonoBehaviour
     private StagePoolManager poolManager;
     #region Property
     public UnitDataSO UnitData => unitData;
+    public UserUnitData UserUnit => userData;
     public StageUnitRuntime Runtime => runtime;
     public UnitHealth Health => health;
     public UnitEnergy Energy => energy;
@@ -77,6 +79,8 @@ public class UnitController : MonoBehaviour
     public void Initialize(StageUnitInitData initData)
     {
         unitData = initData.UnitData;
+        userData = initData.UserData;
+
         runtime = new StageUnitRuntime(initData);
 
         statService.Initialize(this);

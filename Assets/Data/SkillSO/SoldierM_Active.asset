@@ -13,6 +13,14 @@ MonoBehaviour:
   m_Name: SoldierM_Active
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uB3C4\uC57D \uAC15\uD0C0"
-  description: "\uC801\uC744 \uD5A5\uD574 \uB3C4\uC57D\uD574 \uB0B4\uB824\uCC0D\uC73C\uBA70
-    \uBC94\uC704 \uD53C\uD574\uB97C \uC900\uB2E4."
+  description: 
   icon: {fileID: 3426336369624216653, guid: 96460c55c5a814045a192f741ea727c4, type: 3}
+  skillType: 0
+  upgrades:
+  - promotionLevel: 0
+    description: "\uC801\uC744 \uD5A5\uD574 \uB3C4\uC57D\uD574 \uB0B4\uB824\uCC0D\uC73C\uBA70
+      \uBC94\uC704 \uD53C\uD574\uB97C \uC900\uB2E4."
+  - promotionLevel: 2
+    description: "\uB370\uBBF8\uC9C0 \uC99D\uAC00"
+  - promotionLevel: 4
+    description: "\uC804\uD22C \uC2DC\uC791 \uC2DC \uC5D0\uB108\uC9C0 50% \uD68D\uB4DD"

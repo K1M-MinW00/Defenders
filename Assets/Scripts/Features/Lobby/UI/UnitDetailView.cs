@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,11 +6,19 @@ using UnityEngine.UI;
 public class UnitDetailView : MonoBehaviour
 {
     [Header("Root")]
-    [SerializeField] private GameObject unitTabPanelRoot;
     [SerializeField] private GameObject detailRoot;
 
-    [Header("Common Top")]
-    [SerializeField] private Image unitIconImage;
+    [Header("Upper Bar")]
+    [SerializeField] private TMP_Text rarity_text;
+    [SerializeField] private Image rarity_Img;
+    [SerializeField] private Image[] limitBreak_Img;
+    [SerializeField] private Sprite star_Sprite;
+    [SerializeField] private Sprite emptyStar_Sprite;
+
+    [Header("Common UIs")]
+    [SerializeField] private Image unitIcon_Img;
+    [SerializeField] private Image prom_Img;
+    [SerializeField] private Sprite[] promotion_sprites;
     [SerializeField] private TMP_Text unitNameText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text attackText;
@@ -24,7 +33,7 @@ public class UnitDetailView : MonoBehaviour
 
     [Header("Content Tabs")]
     [SerializeField] private UnitTrainingPanel trainingPanel;
-    //[SerializeField] private UnitPromotionPanel promotionPanel;
+    [SerializeField] private UnitPromotionPanel promotionPanel;
     [SerializeField] private UnitLimitBreakPanel limitBreakPanel;
     //[SerializeField] private UnitEquipmentPanel equipmentPanel;
 
@@ -39,8 +48,8 @@ public class UnitDetailView : MonoBehaviour
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
 
-    private SkillViewData currentActiveSkill;
-    private SkillViewData currentPassiveSkill;
+    private SkillDataSO currentActiveSkill;
+    private SkillDataSO currentPassiveSkill;
 
     private void Awake()
     {
@@ -71,18 +80,17 @@ public class UnitDetailView : MonoBehaviour
             return;
         }
 
-        if (unitTabPanelRoot != null)
-            unitTabPanelRoot.SetActive(false);
-
         if (detailRoot != null)
             detailRoot.SetActive(true);
         else
             gameObject.SetActive(true);
 
+        BindUpperUIs();
         BindTabPanels();
         BindCommonInfo();
         BindSkillInfo();
     }
+
 
     public void Close()
     {
@@ -90,9 +98,29 @@ public class UnitDetailView : MonoBehaviour
             detailRoot.SetActive(false);
         else
             gameObject.SetActive(false);
+    }
 
-        if (unitTabPanelRoot != null)
-            unitTabPanelRoot.SetActive(true);
+    private void BindUpperUIs()
+    {
+        Rarity rarity = currentUnitData.rarity;
+
+        rarity_text.text = rarity.ToString();
+        
+        switch (rarity)
+        {
+            case Rarity.Normal:
+                rarity_Img.color = Color.blue;
+                break;
+            case Rarity.Rare:
+                rarity_Img.color = Color.purple;
+                break;
+            case Rarity.Legend:
+                rarity_Img.color = Color.yellow;
+                break;
+            default:
+                rarity_Img.color = Color.white;
+                break;
+        }
     }
 
     public void Refresh()
@@ -105,16 +133,16 @@ public class UnitDetailView : MonoBehaviour
 
     private void BindTabPanels()
     {
-        trainingPanel?.Bind(currentVm, currentUnitData, this);
-        //promotionPanel?.Bind(currentVm, currentUnitData);
+        trainingPanel?.Bind(currentUnitData, this);
+        promotionPanel?.Bind(currentUnitData, this);
         limitBreakPanel?.Bind(currentUnitData, this);
         //equipmentPanel?.Bind(currentVm, currentUnitData);
     }
 
     private void BindCommonInfo()
     {
-        if (unitIconImage != null)
-            unitIconImage.sprite = currentUnitData.icon;
+        if (unitIcon_Img != null)
+            unitIcon_Img.sprite = currentUnitData.icon;
 
         if (unitNameText != null)
             unitNameText.text = currentUnitData.displayName;
@@ -129,18 +157,25 @@ public class UnitDetailView : MonoBehaviour
 
         if (hpText != null)
             hpText.text = $"{stats.MaxHp}";
+
+        int limitBreak = currentUnit.LimitBreak;
+
+        for (int i = 0; i < 5; i++)
+        {
+            limitBreak_Img[i].sprite = i < limitBreak ? star_Sprite : emptyStar_Sprite;
+        }
+
+        int promotion = currentUnit.Promotion;
+        prom_Img.sprite = promotion_sprites[promotion];
     }
 
     private void BindSkillInfo()
     {
-        currentActiveSkill = CreateSkillViewData(currentUnitData.activeSkill);
-        currentPassiveSkill = CreateSkillViewData(currentUnitData.passiveSkill);
-
-        if (activeSkillIconImage != null)
-            activeSkillIconImage.sprite = currentActiveSkill?.Icon;
-
-        if (passiveSkillIconImage != null)
-            passiveSkillIconImage.sprite = currentPassiveSkill?.Icon;
+        currentActiveSkill = currentUnitData.activeSkill;
+        currentPassiveSkill = currentUnitData.passiveSkill;
+        
+        activeSkillIconImage.sprite = currentActiveSkill.icon;
+        passiveSkillIconImage.sprite = currentPassiveSkill.icon;
     }
 
 
@@ -149,7 +184,7 @@ public class UnitDetailView : MonoBehaviour
         if (activeSkillDetailPopup == null || currentActiveSkill == null)
             return;
 
-        activeSkillDetailPopup.Open(currentActiveSkill);
+        activeSkillDetailPopup.Open(currentActiveSkill, currentUnit.Promotion);
     }
 
     private void OpenPassiveSkillPopup()
@@ -157,19 +192,6 @@ public class UnitDetailView : MonoBehaviour
         if (passiveSkillDetailPopup == null || currentPassiveSkill == null)
             return;
 
-        passiveSkillDetailPopup.Open(currentPassiveSkill);
-    }
-
-    private SkillViewData CreateSkillViewData(SkillDataSO skill)
-    {
-        if (skill == null)
-            return null;
-
-        return new SkillViewData
-        {
-            Icon = skill.icon,
-            DisplayName = skill.skillName,
-            Description = skill.description,
-        };
+        passiveSkillDetailPopup.Open(currentPassiveSkill, currentUnit.Promotion);
     }
 }

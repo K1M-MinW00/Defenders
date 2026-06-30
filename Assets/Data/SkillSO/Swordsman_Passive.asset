@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: Swordsman_Passive
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uAC80\uD22C\uC758 \uB300\uAC00"
-  description: "\uC5F0\uC18D\uB41C \uAC80\uACA9\uC73C\uB85C \uACF5\uACA9 \uC18D\uB3C4\uAC00
-    \uC99D\uAC00\uD55C\uB2E4. "
+  description: 
   icon: {fileID: 5230479315308458103, guid: 96460c55c5a814045a192f741ea727c4, type: 3}
+  skillType: 1
+  upgrades:
+  - promotionLevel: 1
+    description: "\uC5F0\uC18D\uB41C \uAC80\uACA9\uC73C\uB85C \uACF5\uACA9 \uC18D\uB3C4\uAC00
+      \uC99D\uAC00\uD55C\uB2E4. "
+  - promotionLevel: 3
+    description: "\uBC1C\uB3D9 \uC870\uAC74 \uAC10\uC18C"

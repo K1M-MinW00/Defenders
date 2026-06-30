@@ -3,8 +3,9 @@
 public class Priest_HealingEcho : PassiveSkillBase
 {
     [Header("Healing Echo")]
-    [SerializeField] private int requiredHits = 4;
-    [SerializeField] private float healPercent = 0.05f; // 5%
+    [SerializeField] private int requiredHits = 5;
+    [SerializeField] private int upgrade_requiredHits = 4;
+    [SerializeField] private float healPercent = 0.1f; // 10%
 
     private int hitCount;
 
@@ -15,12 +16,14 @@ public class Priest_HealingEcho : PassiveSkillBase
 
     public override void OnAttackHit(MonsterController target, ref float damage)
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
         hitCount++;
 
-        if (hitCount < requiredHits)
+        int required = skillController.HasPassiveUpgrade2 ? upgrade_requiredHits : requiredHits;
+
+        if (hitCount < required)
             return;
 
         hitCount = 0;

@@ -4,7 +4,7 @@ public abstract class ActiveSkillBase : MonoBehaviour
 {
     protected UnitController owner;
     protected UnitSkillController skillController;
-
+    protected int Promotion => owner.UserUnit.Promotion;
     public abstract ActiveSkillTargetType TargetType { get; }
     public virtual SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
     public virtual int TargetCount => 1;

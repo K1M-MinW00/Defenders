@@ -22,7 +22,7 @@ public class RosterService
         // 최초 획득
         if (ownedUnit == null)
         {
-            Roster.OwnedUnits.Add(new UserUnitData { UnitId = unit.unitId , Level = 1});
+            Roster.OwnedUnits.Add(new UserUnitData { UnitId = unit.unitId, Level = 1 });
             UserDataManager.Instance.MarkDirty();
 
             return;
@@ -62,6 +62,31 @@ public class RosterService
 
         UserDataManager.Instance.MarkDirty();
 
+        return true;
+    }
+
+    public bool TryPromotion(UnitDataSO unitData)
+    {
+        UserUnitData unit = Roster.GetOwnedUnit(unitData.unitId);
+
+        if (unit == null)
+            return false;
+
+        if (unit.Promotion >= 4)
+            return false;
+
+        PromotionCost cost = unitData.promotionCost[unit.Promotion];
+
+        InventoryService inventory = UserDataManager.Instance.InventoryService;
+
+        if (inventory.GetItemCount(cost.MaterialId) < cost.Count)
+            return false;
+
+        inventory.RemoveStackItem(ItemCategory.Material, cost.MaterialId, cost.Count);
+
+        unit.Promotion++;
+
+        UserDataManager.Instance.MarkDirty();
         return true;
     }
 

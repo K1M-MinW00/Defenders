@@ -7,6 +7,6 @@ public class MaterialDataSO : ItemDataSO
     public int Value;
 
     public override ItemCategory Category => ItemCategory.Material;
-
+    public MaterialType MaterialType;
     public override bool Stackable => true;
 }

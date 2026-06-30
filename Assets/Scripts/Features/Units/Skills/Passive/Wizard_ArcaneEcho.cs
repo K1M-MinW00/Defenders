@@ -4,21 +4,20 @@ public class Wizard_ArcaneEcho : PassiveSkillBase
 {
     [Header("Arcane Echo")]
     [SerializeField] private float procChance = 0.25f;
-    [SerializeField] private float refundEnergy = 50f;
+    [SerializeField] private float refundEnergy = 25f;
+    [SerializeField] private float upgrade_refundEnergy = 50f;
 
-    protected override void ResetRuntimeState()
-    {
-    }
+    protected override void ResetRuntimeState() { }
 
     public override void OnActiveSkillEnded()
     {
-        if (owner == null || owner.IsDead)
+        if (!CanUsePassive())
             return;
 
         if (Random.value > procChance)
             return;
 
-        owner.Energy.Add(refundEnergy);
-
+        float refund = skillController.HasPassiveUpgrade2 ? upgrade_refundEnergy : refundEnergy;
+        owner.Energy.Add(refund);
     }
 }

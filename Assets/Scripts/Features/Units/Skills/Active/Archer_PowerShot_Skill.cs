@@ -4,6 +4,8 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
 {
     [Header("Power Shot")]
     [SerializeField] private float damageMultiplier = 3.5f;
+    [SerializeField] private float upgrade_damageMultiplier = 5f;
+
     [SerializeField] private PowerArrowProjectile arrow_Power_Projectile;
     [SerializeField] private float projectileSpeed = 12f;
     [SerializeField] private float projectileLifeTime = 3f;
@@ -55,7 +57,8 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
 
         if (arrow != null)
         {
-            float damage = owner.Attack * damageMultiplier;
+            float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+            float damage = owner.Attack * multiplier;
             arrow.Initialize(damage, projectileSpeed, dir, enemyLayer, projectileLifeTime);
         }
     }
