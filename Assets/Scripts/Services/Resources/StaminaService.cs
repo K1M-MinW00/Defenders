@@ -86,7 +86,7 @@ public static class StaminaService
         return true;
     }
 
-    public static void AddFuel(UserResourceData resources, int amount)
+    public static void AddFuel(UserResourceData resources, int amount, bool force = false)
     {
         if (resources == null)
             return;
@@ -94,7 +94,11 @@ public static class StaminaService
         if (amount <= 0)
             return;
 
-        resources.Fuel = Math.Min(resources.MaxFuel, resources.Fuel + amount);
+        if(force)
+            resources.Fuel += amount;
+
+        else
+            resources.Fuel = Math.Min(resources.MaxFuel, resources.Fuel + amount);
     }
 
     public static int GetRemainingSecondsToNextFuel(UserResourceData resources)

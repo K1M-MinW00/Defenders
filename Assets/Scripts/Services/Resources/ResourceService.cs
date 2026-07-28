@@ -61,7 +61,7 @@
         if (amount <= 0)
             return;
 
-        StaminaService.AddFuel(Resource, amount);
+        StaminaService.AddFuel(Resource, amount,true);
 
         UserDataManager.Instance.MarkDirty();
         UserDataManager.Instance.RaiseResourceUpdated();

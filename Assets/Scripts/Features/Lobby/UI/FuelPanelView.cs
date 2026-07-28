@@ -46,4 +46,19 @@ public class FuelPanelView : MonoBehaviour
 
         return $"{t.Hours:00}:{t.Minutes:00}:{t.Seconds:00}";
     }
+
+    public void OnClickRewardAd()
+    {
+        RewardData reward = new RewardData()
+        {
+            Type = RewardType.Fuel,
+            Amount = 10
+        };
+
+        AdManager.Instance.ShowRewardAd(()=>
+        {
+            UserDataManager.Instance.RewardService.GiveReward(reward);
+        });
+
+    }
 }

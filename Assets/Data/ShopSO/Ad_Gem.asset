@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4719a34e76254214f9fb319f9e688d04, type: 3}
+  m_Name: Ad_Gem
+  m_EditorClassIdentifier: Assembly-CSharp::ShopProductData
+  ProductId: Ad_Gem
+  DisplayName: "\uAD11\uACE0\uD615 \uC82C"
+  Icon: {fileID: -3168886646009006091, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
+  PurchaseType: 0
+  IAPProductId: 
+  Price: 0
+  DailyLimit: 3
+  CostType: 0
+  CostAmount: 0
+  Rewards:
+  - RewardType: 1
+    Amount: 1000
