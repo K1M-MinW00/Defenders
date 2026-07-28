@@ -10,6 +10,8 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     [Header("UI")]
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text levelText;
+    [SerializeField] private Image prom_Img;
+    [SerializeField] private Sprite[] promotion_sprites;
     [SerializeField] private CanvasGroup canvasGroup;
 
     [Header("State")]
@@ -43,7 +45,10 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
      
         viewModel = vm;
         UserUnitData userUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(vm.UnitId);
-        
+
+        int promotion = userUnit.Promotion;
+        prom_Img.sprite = promotion_sprites[promotion];
+
         if (iconImage != null)
         {
             iconImage.sprite = vm.Icon;

@@ -24,7 +24,6 @@ public class UnitTrainingPanel : MonoBehaviour
     [SerializeField] private Button maxLevelButton;
     [SerializeField] private Button trainButton;
 
-    private LobbyUnitViewModel currentVm;
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
     private UserResourceData resource;
@@ -50,9 +49,6 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        if (currentVm == null)
-            return;
-
         ResetSelection();
     }
 
@@ -161,9 +157,6 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void RefreshPreview()
     {
-        if (currentVm == null)
-            return;
-
         previewTotalExp = 0;
         previewTotalGold = 0;
 
