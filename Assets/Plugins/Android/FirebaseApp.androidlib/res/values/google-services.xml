@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="gcm_defaultSenderId" translatable="false">879285469770</string>
+  <string name="google_storage_bucket" translatable="false">defenders-3ccf2.firebasestorage.app</string>
+  <string name="project_id" translatable="false">defenders-3ccf2</string>
+  <string name="google_api_key" translatable="false">AIzaSyBijV-tLkB6-lTCqC4kRfe8WwC3sYisPIY</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBijV-tLkB6-lTCqC4kRfe8WwC3sYisPIY</string>
+  <string name="google_app_id" translatable="false">1:879285469770:android:6fd2bb5277d6ed31ac5cb3</string>
+</resources>

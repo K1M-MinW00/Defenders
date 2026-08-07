@@ -1,5 +1,5 @@
-using GoogleMobileAds.Api;
 using UnityEngine;
+using GoogleMobileAds.Api;
 using UnityEngine.Events;
 
 public class AdManager : MonoBehaviour
@@ -7,8 +7,10 @@ public class AdManager : MonoBehaviour
     public static AdManager Instance { get; private set; }
 
     private RewardedAd rewardedAd;
+
     private UnityAction onRewardComplete;
-    private const string adUnitId = "ca-app-pub-8895770206395123/9792318393";
+    private const string adUnitId = "ca-app-pub-3940256099942544/5224354917"; // º¸»óÇü ±¤°í Test ID
+    // private const string adUnitId = "ca-app-pub-8895770206395123/9792318393"; // º¸»óÇü ±¤°í ID
 
     private void Awake()
     {
@@ -32,6 +34,7 @@ public class AdManager : MonoBehaviour
     {
         var adRequest = new AdRequest();
 
+
         RewardedAd.Load(adUnitId, adRequest, (RewardedAd ad, LoadAdError error) =>
         {
             if (error != null)
@@ -46,11 +49,12 @@ public class AdManager : MonoBehaviour
             rewardedAd.OnAdFullScreenContentClosed += () =>
             {
                 onRewardComplete?.Invoke();
-                rewardedAd = null;
+                onRewardComplete = null;
 
                 LoadRewardAd();
             };
         });
+
     }
 
     public void ShowRewardAd(UnityAction onComplete)
@@ -62,6 +66,7 @@ public class AdManager : MonoBehaviour
 #endif
             return;
         }
+        onRewardComplete = null;
 
         rewardedAd.Show((Reward reward) =>
         {
