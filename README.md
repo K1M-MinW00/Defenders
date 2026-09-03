@@ -150,35 +150,3 @@ flowchart TD
 | [System](Assets/Scripts/System) | 광고, 유닛 목록과 초기화 |
 | [UI](Assets/Scripts/UI) | 성장 패널, 전투 결과 등 UI 구성 |
 | [Resources](Assets/Resources) | 런타임에 불러오는 데이터 에셋 |
-
-## 실행 방법
-
-1. 저장소를 내려받습니다.
-
-   ```bash
-   git clone https://github.com/K1M-MinW00/Defenders.git
-   ```
-
-2. Unity Hub에서 프로젝트를 추가하고 **Unity 6000.3.7f1**로 엽니다.
-3. 패키지와 에셋 임포트가 완료될 때까지 기다립니다. NavMeshPlus는 Git URL 의존성이므로 Git이 설치되어 있어야 합니다.
-4. Firebase Authentication의 익명 로그인과 Firestore에 접근할 수 있는 개발 환경을 준비합니다. 독립적으로 실행할 경우 본인의 Firebase 프로젝트에 맞는 설정 파일과 접근 규칙을 구성합니다.
-5. `Assets/Scenes/StartScene.unity`를 열고 실행합니다.
-6. 초기화와 데이터 로드가 완료되면 시작 버튼으로 로비에 진입합니다.
-
-| 씬 | 역할 |
-| --- | --- |
-| `StartScene` | 데이터베이스 초기화, 로그인, 사용자 데이터 로드 |
-| `LobbyScene` | 유닛 관리, 모집, 전투 진입 |
-| `GameScene` | 스테이지 초기화와 웨이브 전투 |
-
-`GameScene`은 로비에서 전달하는 `StageEnterData`를 사용하므로, 기본 실행 흐름은 `StartScene`부터 시작합니다.
-
-Android에서 광고를 확인하려면 Android Build Support와 SDK·NDK·JDK, Google Mobile Ads 설정이 필요합니다. 현재 `AdManager`는 Android 보상형 광고 테스트 ID를 사용합니다.
-
-## 구현 범위 참고
-
-- 이 문서는 현재 저장소의 코드와 설정을 기준으로 작성했습니다.
-- 장비 데이터 구조는 존재하지만, `UnitStatCalculator`의 장비 효과 적용은 아직 연결되지 않았습니다.
-- 현재 보상형 광고 코드는 연료 보상 연동을 포함하며, 일일 시청 횟수 제한은 포함하지 않습니다.
-- 연료 회복 시각은 기기의 UTC 시각을 기준으로 계산합니다.
-- 실행에는 Firebase 등 외부 서비스 설정이 필요하며, 위 설명은 빌드·실기기 동작 검증을 대신하지 않습니다.
