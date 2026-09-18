@@ -6,7 +6,7 @@
 
         UnitStatModifier modifier = new();
 
-        ApplyPromotion(modifier, unitData, userUnit.Promotion);
+        ApplyPromotion(modifier, userUnit.Promotion);
 
         ApplyLimitBreak(modifier, unitData, userUnit.LimitBreak);
 
@@ -17,13 +17,15 @@
         return stats;
     }
 
-    private static void ApplyPromotion(UnitStatModifier modifier, UnitDataSO unitData, int promotion)
+    private static void ApplyPromotion(UnitStatModifier modifier, int promotion)
     {
-        if (promotion >= 1)
-            modifier.AttackPercent += 10;
+        PromotionProgressionSO progression = PromotionProgressionDatabase.Get();
 
-        if (promotion >= 2)
-            modifier.MaxHpPercent += 10;
+        if (progression == null)
+            return;
+
+        foreach (PromotionStatBonus bonus in progression.GetUnlockedStatBonuses(promotion))
+            AddPercentModifier(modifier, bonus.statType, bonus.percentValue);
     }
 
     private static void ApplyLimitBreak(UnitStatModifier modifier,UnitDataSO unitData,int limitBreak)

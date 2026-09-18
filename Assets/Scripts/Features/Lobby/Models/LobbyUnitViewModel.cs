@@ -7,6 +7,7 @@ public class LobbyUnitViewModel
     public Rarity Rarity;
     public int Level;
     public int Promotion;
+    public int LimitBreak;
 
     public bool IsOwned;
     public bool IsSelected;

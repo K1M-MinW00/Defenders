@@ -23,11 +23,10 @@ public class UnitSkillController : MonoBehaviour
     public PassiveSkillBase PassiveSkill => passiveSkill;
     public bool IsSkillRunning => isSkillRunning;
 
-    public bool HasPassive => promotion >= 1;
-    public bool HasActiveUpgrade2 => promotion >= 2;
-    public bool HasPassiveUpgrade2 => promotion >= 3;
-
-    public bool HasActiveUpgrade3 => promotion >= 4;
+    public bool HasPassive => passiveSkill != null && IsSkillStageUnlocked(owner?.UnitData?.passiveSkill, 0);
+    public bool HasActiveUpgrade2 => activeSkill != null && IsSkillStageUnlocked(owner?.UnitData?.activeSkill, 1);
+    public bool HasPassiveUpgrade2 => passiveSkill != null && IsSkillStageUnlocked(owner?.UnitData?.passiveSkill, 1);
+    public bool HasActiveUpgrade3 => activeSkill != null && IsSkillStageUnlocked(owner?.UnitData?.activeSkill, 2);
 
     public void Initialize(UnitController owner)
     {
@@ -42,6 +41,11 @@ public class UnitSkillController : MonoBehaviour
         passiveSkill?.Initialize(owner, this);
 
         owner.Energy.OnEnergyFull += HandleEnergyFull;
+    }
+
+    private bool IsSkillStageUnlocked(SkillDataSO skillData, int stageIndex)
+    {
+        return skillData != null && skillData.IsStageUnlocked(promotion, stageIndex);
     }
 
     public void SetCombatPhase(bool active)

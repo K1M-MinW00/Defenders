@@ -13,6 +13,15 @@ public class SkillDataSO : ScriptableObject
     [Tooltip("스킬 해금 및 강화 단계 정보. promotionLevel 오름차순으로 작성")]
     public List<SkillUpgradeData> upgrades = new();
 
+    public bool IsStageUnlocked(int promotion, int stageIndex)
+    {
+        if (upgrades == null || stageIndex < 0 || stageIndex >= upgrades.Count)
+            return false;
+
+        SkillUpgradeData stage = upgrades[stageIndex];
+        return stage != null && promotion >= stage.promotionLevel;
+    }
+
     // [Header("Tags")]
     // public List<SkillTagType> tags = new();
 }

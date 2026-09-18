@@ -59,7 +59,7 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
             promotionInfoRoot.SetActive(isOwned);
 
         if (promotionText != null)
-            promotionText.SetText("{0}", vm.Promotion);
+            promotionText.SetText("{0}", vm.LimitBreak);
 
         if (prom_Img != null)
         {

@@ -137,6 +137,7 @@ public class LobbyUnitPanelView : MonoBehaviour
             Rarity = unitData.rarity,
             Level = userUnit?.Level ?? 0,
             Promotion = userUnit?.Promotion ?? 0,
+            LimitBreak = userUnit?.LimitBreak ?? 0,
 
             IsOwned = userUnit != null,
             IsSelected = isSelected,
