@@ -8,8 +8,11 @@ using UnityEngine.UI;
 public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     [Header("UI")]
+    [SerializeField] private Image backgroundImage;
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text levelText;
+    [SerializeField] private GameObject promotionInfoRoot;
+    [SerializeField] private TMP_Text promotionText;
     [SerializeField] private Image prom_Img;
     [SerializeField] private Sprite[] promotion_sprites;
     [SerializeField] private CanvasGroup canvasGroup;
@@ -17,6 +20,9 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     [Header("State")]
     [SerializeField] private Color ownedColor = Color.white;
     [SerializeField] private Color lockedColor = new Color(0.35f, 0.35f, 0.35f, 1f);
+    [SerializeField] private Color normalBackgroundColor = Color.blue;
+    [SerializeField] private Color rareBackgroundColor = new Color(0.627451f, 0.12549f, 0.941176f, 1f);
+    [SerializeField] private Color legendBackgroundColor = new Color(1f, 0.921569f, 0.015686f, 1f);
 
     [Header("Long Press")]
     [SerializeField] private float longPressSeconds = 0.45f;
@@ -44,15 +50,20 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
             return;
      
         viewModel = vm;
-        UserUnitData userUnit = UserDataManager.Instance.RosterService.GetUnit(vm.UnitId);
-        bool isOwned = vm.IsOwned && userUnit != null;
+        bool isOwned = vm.IsOwned;
 
-        if (vm.IsOwned && userUnit == null)
-            Debug.LogWarning($"[UnitCardUI] Owned unit data not found: {vm.UnitId}");
+        if (backgroundImage != null)
+            backgroundImage.color = GetRarityColor(vm.Rarity);
+
+        if (promotionInfoRoot != null)
+            promotionInfoRoot.SetActive(isOwned);
+
+        if (promotionText != null)
+            promotionText.SetText("{0}", vm.Promotion);
 
         if (prom_Img != null)
         {
-            int promotion = userUnit?.Promotion ?? 0;
+            int promotion = vm.Promotion;
             bool hasPromotionSprite = promotion_sprites != null &&
                 promotion >= 0 && promotion < promotion_sprites.Length;
 
@@ -70,7 +81,7 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
 
         if (levelText != null)
         {
-            levelText.text = isOwned ? $"Lv.{userUnit.Level}" : "Locked";
+            levelText.text = isOwned ? $"Lv.{vm.Level}" : "Locked";
         }
 
         if (canvasGroup != null)
@@ -81,6 +92,17 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         }
 
         StopShake();
+    }
+
+    private Color GetRarityColor(Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.Normal => normalBackgroundColor,
+            Rarity.Rare => rareBackgroundColor,
+            Rarity.Legend => legendBackgroundColor,
+            _ => Color.white,
+        };
     }
 
     public void OnPointerDown(PointerEventData eventData)

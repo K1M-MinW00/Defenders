@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LobbyUnitPanelView : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     [Header("Text")]
     [SerializeField] private TMP_Text goldText;
+
+    [Header("Responsive Grid")]
+    [SerializeField, Min(1)] private int maxColumns = 5;
 
     private readonly List<LobbyUnitViewModel> selectedUnitViewModels = new();
     private readonly List<LobbyUnitViewModel> ownedUnitListViewModels = new();
@@ -80,6 +84,7 @@ public class LobbyUnitPanelView : MonoBehaviour
 
         BuildCardList(selectedUnitRoot, selectedUnitViewModels);
         BuildCardList(ownedUnitRoot, ownedUnitListViewModels);
+        RefreshGridLayouts();
     }
 
     private void BuildSelectedUnitViewModels(List<string> selectedUnitIds, Dictionary<string, UserUnitData> ownedUnitMap)
@@ -129,6 +134,9 @@ public class LobbyUnitPanelView : MonoBehaviour
         {
             UnitId = unitData.unitId,
             Icon = unitData.icon,
+            Rarity = unitData.rarity,
+            Level = userUnit?.Level ?? 0,
+            Promotion = userUnit?.Promotion ?? 0,
 
             IsOwned = userUnit != null,
             IsSelected = isSelected,
@@ -158,6 +166,38 @@ public class LobbyUnitPanelView : MonoBehaviour
         {
             Destroy(root.GetChild(i).gameObject);
         }
+    }
+
+    private void OnRectTransformDimensionsChange()
+    {
+        if (isActiveAndEnabled)
+            RefreshGridLayouts();
+    }
+
+    private void RefreshGridLayouts()
+    {
+        UpdateGridColumns(selectedUnitRoot);
+        UpdateGridColumns(ownedUnitRoot);
+    }
+
+    private void UpdateGridColumns(Transform root)
+    {
+        if (root is not RectTransform rectTransform ||
+            !root.TryGetComponent(out GridLayoutGroup grid) ||
+            rectTransform.rect.width <= 0f)
+        {
+            return;
+        }
+
+        float availableWidth = rectTransform.rect.width - grid.padding.horizontal;
+        float itemWidth = grid.cellSize.x + grid.spacing.x;
+
+        if (availableWidth <= 0f || itemWidth <= 0f)
+            return;
+
+        int columns = Mathf.FloorToInt((availableWidth + grid.spacing.x) / itemWidth);
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        grid.constraintCount = Mathf.Clamp(columns, 1, maxColumns);
     }
 
     private async void HandleCardClicked(UnitCardUI card, LobbyUnitViewModel vm)
