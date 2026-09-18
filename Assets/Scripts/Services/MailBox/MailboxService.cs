@@ -4,30 +4,34 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class MailboxService
+public sealed class MailboxService
 {
     private readonly IMailboxRepository repository;
+    private readonly string userId;
+    private readonly UserDataRoot userData;
 
     public List<MailData> CachedMails { get; private set; } = new();
 
-    private string UserId => UserDataManager.Instance.CurrentUserId;
-    private UserDataRoot UserData => UserDataManager.Instance.UserData;
-
-    public MailboxService(IMailboxRepository repository = null)
+    public MailboxService(
+        string userId,
+        UserDataRoot userData,
+        IMailboxRepository repository = null)
     {
+        this.userId = userId;
+        this.userData = userData;
         this.repository = repository ?? new FirestoreMailboxRepository();
     }
 
     public async Task LoadMailsAsync()
     {
-        List<MailData> mails = await repository.LoadAsync(UserId);
+        List<MailData> mails = await repository.LoadAsync(userId);
         List<string> expiredIds = mails
             .Where(IsExpired)
             .Select(mail => mail.MailId)
             .ToList();
 
         if (expiredIds.Count > 0)
-            await repository.DeleteAsync(UserId, expiredIds);
+            await repository.DeleteAsync(userId, expiredIds);
 
         CachedMails = mails
             .Where(mail => !IsExpired(mail))
@@ -67,7 +71,7 @@ public class MailboxService
         if (deleteIds.Count == 0)
             return;
 
-        await repository.DeleteAsync(UserId, deleteIds);
+        await repository.DeleteAsync(userId, deleteIds);
         CachedMails.RemoveAll(mail => mail != null && deleteIds.Contains(mail.MailId));
     }
 
@@ -75,14 +79,14 @@ public class MailboxService
     {
         try
         {
-            MailboxClaimResult result = await repository.ClaimAsync(UserId, mailIds);
+            MailboxClaimResult result = await repository.ClaimAsync(userId, mailIds);
 
             if (!result.Succeeded)
                 return result;
 
-            UserData.Resource = result.Resources;
-            UserData.Inventory = result.Inventory;
-            UserData.Roster = result.Roster;
+            userData.Resource = result.Resources;
+            userData.Inventory = result.Inventory;
+            userData.Roster = result.Roster;
 
             HashSet<string> claimedIds = result.ClaimedMailIds.ToHashSet();
 

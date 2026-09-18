@@ -8,10 +8,8 @@ public partial class UserDataManager : MonoBehaviour
     public UserDataRoot UserData { get; private set; }
     public InventoryService InventoryService { get; private set; }
     public MailboxService MailboxService { get; private set; }
-    public ResourceService ResourceService { get; private set; }
     public GachaService GachaService { get; private set; }
     public RosterService RosterService { get; private set; }
-    public RewardService RewardService { get; private set; }
     public UnitTrainingUseCase UnitTrainingUseCase { get; private set; }
     public UnitPromotionUseCase UnitPromotionUseCase { get; private set; }
     public UnitLimitBreakUseCase UnitLimitBreakUseCase { get; private set; }
@@ -24,7 +22,6 @@ public partial class UserDataManager : MonoBehaviour
 
     public bool IsInitialized { get; private set; }
     public bool IsLoaded { get; private set; }
-    public bool IsDirty { get; private set; }
     public bool IsBusy { get; private set; }
 
     public event Action OnProfileUpdated;
@@ -133,18 +130,16 @@ public partial class UserDataManager : MonoBehaviour
             {
                 bool saveSucceeded = isNewUser
                     ? await CreateUserAsync()
-                    : await SaveAsync(true);
+                    : await SaveMigratedUserAsync();
 
                 if (!saveSucceeded)
                     return false;
             }
 
-            InventoryService = new InventoryService();
-            MailboxService = new MailboxService();
-            ResourceService = new ResourceService();
-            RewardService = new RewardService();
-            GachaService = new GachaService();
-            RosterService = new RosterService();
+            InventoryService = new InventoryService(UserData);
+            MailboxService = new MailboxService(CurrentUserId, UserData);
+            GachaService = new GachaService(UserData);
+            RosterService = new RosterService(UserData);
             UnitTrainingUseCase = new UnitTrainingUseCase(repository, CurrentUserId, UserData);
             UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
             UnitLimitBreakUseCase = new UnitLimitBreakUseCase(repository, CurrentUserId, UserData);
@@ -154,8 +149,6 @@ public partial class UserDataManager : MonoBehaviour
             UnitFormationUseCase = new UnitFormationUseCase(repository, CurrentUserId, UserData);
 
             IsLoaded = true;
-            IsDirty = false;
-
             return true;
         }
         catch (Exception e)
@@ -169,7 +162,7 @@ public partial class UserDataManager : MonoBehaviour
         }
     }
 
-    public async Task<bool> SaveAsync(bool force = false)
+    private async Task<bool> SaveMigratedUserAsync()
     {
         if (!IsInitialized || repository == null)
         {
@@ -183,21 +176,15 @@ public partial class UserDataManager : MonoBehaviour
             return false;
         }
 
-        if (!force && !IsDirty)
-            return true;
-
         try
         {
             await repository.SaveAllAsync(CurrentUserId, UserData);
-
-            IsDirty = false;
-
-            Debug.Log($"[UserDataManager] Save success. UID : {CurrentUserId}");
+            Debug.Log($"[UserDataManager] Migrated user data saved. UID : {CurrentUserId}");
             return true;
         }
         catch (Exception e)
         {
-            Debug.LogError($"[UserDataManager] SaveAsync exception : {e}");
+            Debug.LogError($"[UserDataManager] Save migrated data failed: {e}");
             return false;
         }
     }
@@ -205,23 +192,8 @@ public partial class UserDataManager : MonoBehaviour
     public Task<bool> SaveProfileAsync(UserProfileData profile) =>
         SaveSectionAsync(profile, () => repository.SaveProfileAsync(CurrentUserId, profile), "profile");
 
-    public Task<bool> SaveResourcesAsync(UserResourceData resources) =>
-        SaveSectionAsync(resources, () => repository.SaveResourcesAsync(CurrentUserId, resources), "resources");
-
-    public Task<bool> SaveProgressAsync(UserProgressData progress) =>
+    private Task<bool> SaveProgressAsync(UserProgressData progress) =>
         SaveSectionAsync(progress, () => repository.SaveProgressAsync(CurrentUserId, progress), "progress");
-
-    public Task<bool> SaveRosterAsync(UserRosterData roster) =>
-        SaveSectionAsync(roster, () => repository.SaveRosterAsync(CurrentUserId, roster), "roster");
-
-    public Task<bool> SaveInventoryAsync(UserInventoryData inventory) =>
-        SaveSectionAsync(inventory, () => repository.SaveInventoryAsync(CurrentUserId, inventory), "inventory");
-
-    public Task<bool> SaveGachaAsync(UserGachaData gacha) =>
-        SaveSectionAsync(gacha, () => repository.SaveGachaAsync(CurrentUserId, gacha), "gacha");
-
-    public Task<bool> SaveAdAsync(UserAdData ad) =>
-        SaveSectionAsync(ad, () => repository.SaveAdAsync(CurrentUserId, ad), "ad");
 
     public async Task<bool> SaveUserProgressAsync(UserProgressData progress)
     {
@@ -241,7 +213,6 @@ public partial class UserDataManager : MonoBehaviour
         try
         {
             await repository.CreateAsync(CurrentUserId, UserData);
-            IsDirty = false;
             return true;
         }
         catch (Exception e)
@@ -278,11 +249,6 @@ public partial class UserDataManager : MonoBehaviour
         }
     }
 
-    public void MarkDirty()
-    {
-        IsDirty = true;
-    }
-
     public void RaiseProfileUpdated()
     {
         OnProfileUpdated?.Invoke();
@@ -296,17 +262,5 @@ public partial class UserDataManager : MonoBehaviour
     public void RaiseProgressUpdated()
     {
         OnProgressUpdated?.Invoke();
-    }
-    private async void OnApplicationPause(bool pause)
-    {
-        if (pause)
-        {
-            await SaveAsync();
-        }
-    }
-
-    private async void OnApplicationQuit()
-    {
-        await SaveAsync();
     }
 }

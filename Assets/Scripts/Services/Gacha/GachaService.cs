@@ -1,8 +1,14 @@
 using UnityEngine;
 
-public class GachaService
+public sealed class GachaService
 {
-    private UserGachaData GachaData => UserDataManager.Instance.UserData.Gacha;
+    private readonly UserDataRoot userData;
+    private UserGachaData GachaData => userData.Gacha;
+
+    public GachaService(UserDataRoot userData)
+    {
+        this.userData = userData;
+    }
 
     public int GetCurrentPity(RecruitType recruitType)
     {
