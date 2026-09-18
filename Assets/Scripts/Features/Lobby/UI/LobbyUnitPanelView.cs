@@ -25,6 +25,7 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private UnitCardUI pendingSwapCard;
     private string pendingSwapUnitId;
+    private bool isChangingFormation;
 
     private void Awake()
     {
@@ -53,6 +54,12 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private void RefreshView()
     {
+        resource = UserDataManager.Instance.UserData.Resource;
+        roster = UserDataManager.Instance.UserData.Roster;
+
+        if (resource == null || roster == null)
+            return;
+
         RefreshGold();
 
         selectedUnitViewModels.Clear();
@@ -155,7 +162,7 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private async void HandleCardClicked(UnitCardUI card, LobbyUnitViewModel vm)
     {
-        if (vm == null)
+        if (isChangingFormation || vm == null)
             return;
 
         // 교체 모드가 아닐 때는 상세 정보 표시
@@ -175,23 +182,31 @@ public class LobbyUnitPanelView : MonoBehaviour
         if (!vm.IsOwned)
             return;
 
-        bool success;
+        isChangingFormation = true;
 
-        if (vm.IsSelected)
+        try
         {
-            // 전투 명단 내부 위치 교환
-            success = await SwapSelectedUnitPositionAsync(pendingSwapUnitId, vm.UnitId);
+            bool success;
+
+            if (vm.IsSelected)
+            {
+                // 전투 명단 내부 위치 교환
+                success = await SwapSelectedUnitPositionAsync(pendingSwapUnitId, vm.UnitId);
+            }
+            else
+            {
+                // 전투 명단 유닛 ↔ 대기 명단 유닛 교체
+                success = await ReplaceSelectedUnitAsync(pendingSwapUnitId, vm.UnitId);
+            }
+
+            if (success)
+                RefreshView();
         }
-        else
+        finally
         {
-            // 전투 명단 유닛 ↔ 대기 명단 유닛 교체
-            success = await ReplaceSelectedUnitAsync(pendingSwapUnitId, vm.UnitId);
+            isChangingFormation = false;
+            ClearPendingSwap();
         }
-
-        ClearPendingSwap();
-
-        if (success)
-            RefreshView();
     }
 
     private void ShowUnitDetail(LobbyUnitViewModel vm)
@@ -206,7 +221,7 @@ public class LobbyUnitPanelView : MonoBehaviour
     }
     private void HandleCardLongPressed(UnitCardUI card, LobbyUnitViewModel vm)
     {
-        if (vm == null)
+        if (isChangingFormation || vm == null)
             return;
 
         if (!vm.IsOwned)
@@ -228,45 +243,30 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private async Task<bool> SwapSelectedUnitPositionAsync(string firstUnitId, string secondUnitId)
     {
-        UserRosterData roster = UserDataManager.Instance.UserData.Roster;
+        FormationChangeResult result = await UserDataManager.Instance.UnitFormationUseCase.ExecuteAsync(
+            new FormationChangeCommand(
+                FormationChangeType.SwapPositions,
+                firstUnitId,
+                secondUnitId));
 
-        if (roster == null || roster.SelectedUnitIds == null)
-            return false;
+        if (!result.Succeeded)
+            Debug.LogWarning($"[LobbyUnitPanelView] Swap formation failed: {result.Failure}");
 
-        int firstIndex = roster.SelectedUnitIds.IndexOf(firstUnitId);
-        int secondIndex = roster.SelectedUnitIds.IndexOf(secondUnitId);
-
-        if (firstIndex < 0 || secondIndex < 0)
-            return false;
-
-        (roster.SelectedUnitIds[firstIndex], roster.SelectedUnitIds[secondIndex]) =
-            (roster.SelectedUnitIds[secondIndex], roster.SelectedUnitIds[firstIndex]);
-
-        UserDataManager.Instance.MarkDirty();
-
-        return await UserDataManager.Instance.SaveAsync();
+        return result.Succeeded;
     }
 
     private async Task<bool> ReplaceSelectedUnitAsync(string oldUnitId, string newUnitId)
     {
-        UserRosterData roster = UserDataManager.Instance.UserData.Roster;
+        FormationChangeResult result = await UserDataManager.Instance.UnitFormationUseCase.ExecuteAsync(
+            new FormationChangeCommand(
+                FormationChangeType.ReplaceUnit,
+                oldUnitId,
+                newUnitId));
 
-        if (roster == null || roster.SelectedUnitIds == null)
-            return false;
+        if (!result.Succeeded)
+            Debug.LogWarning($"[LobbyUnitPanelView] Replace formation failed: {result.Failure}");
 
-        int index = roster.SelectedUnitIds.IndexOf(oldUnitId);
-
-        if (index < 0)
-            return false;
-
-        if (roster.SelectedUnitIds.Contains(newUnitId))
-            return false;
-
-        roster.SelectedUnitIds[index] = newUnitId;
-
-        UserDataManager.Instance.MarkDirty();
-
-        return await UserDataManager.Instance.SaveAsync();
+        return result.Succeeded;
     }
 
     private void ClearPendingSwap()
