@@ -19,6 +19,10 @@ public class FuelPanelView : MonoBehaviour
     [SerializeField] private int purchaseFuelGemCost = 100;
 
     private float timer;
+    private bool isAdRequestPending;
+    private bool isSavingAdReward;
+    private bool hasAdClosed;
+    private bool isPurchasingFuel;
 
     private void OnEnable()
     {
@@ -43,15 +47,11 @@ public class FuelPanelView : MonoBehaviour
 
         UserDataRoot userData = UserDataManager.Instance.UserData;
 
-        UserResourceData resources = userData.Resource;
-        UserAdData adData = userData.Ad;
+        UserResourceData resources = UserDataCloner.Copy(userData.Resource);
+        UserAdData adData = UserDataCloner.Copy(userData.Ad);
 
         StaminaService.RefreshFuel(resources);
-
-        bool adReset = AdDailyLimitService.Refresh(adData);
-
-        if (adReset)
-            UserDataManager.Instance.MarkDirty();
+        AdDailyLimitPolicy.Refresh(adData, DateTime.UtcNow);
 
         RefreshFuelUI(resources);
         RefreshRewardAdUI(adData);
@@ -79,38 +79,89 @@ public class FuelPanelView : MonoBehaviour
 
     private void RefreshRewardAdUI(UserAdData adData)
     {
-        int count = AdDailyLimitService.GetWatchCount(adData, DailyAdType.Fuel);
+        int count = AdDailyLimitPolicy.GetWatchCount(adData, DailyAdType.Fuel);
 
-        dailyAdText.text = $"일일 광고 시청 ({count}/{AdDailyLimitService.DailyAdLimit})";
+        dailyAdText.text = $"일일 광고 시청 ({count}/{AdDailyLimitPolicy.DailyAdLimit})";
 
-        rewardAdButton.interactable = count < AdDailyLimitService.DailyAdLimit;
+        rewardAdButton.interactable = !isAdRequestPending && count < AdDailyLimitPolicy.DailyAdLimit;
     }
 
     public void OnClickRewardAd()
     {
-        UserAdData adData = UserDataManager.Instance.UserData.Ad;
-
-        if (!AdDailyLimitService.CanWatch(adData,DailyAdType.Fuel))
+        if (isAdRequestPending)
             return;
 
-        AdManager.Instance.ShowRewardAd(() =>
+        UserAdData adData = UserDataCloner.Copy(UserDataManager.Instance.UserData.Ad);
+
+        if (!AdDailyLimitPolicy.CanWatch(adData, DailyAdType.Fuel, DateTime.UtcNow))
+            return;
+
+        isAdRequestPending = true;
+        hasAdClosed = false;
+        rewardAdButton.interactable = false;
+
+        bool shown = AdManager.Instance.ShowRewardAd(
+            HandleAdRewardEarned,
+            () =>
+            {
+                hasAdClosed = true;
+
+                if (!isSavingAdReward)
+                    isAdRequestPending = false;
+
+                Refresh();
+            });
+
+        if (!shown)
         {
-            UserDataManager.Instance.ResourceService.AddFuel(rewardAdFuelAmount);
-
-            AdDailyLimitService.Consume(adData,DailyAdType.Fuel);
-
+            isAdRequestPending = false;
             Refresh();
-        });
+        }
     }
 
-    public void OnClickPurchaseFuel()
+    private async void HandleAdRewardEarned()
     {
-        bool success = UserDataManager.Instance.ResourceService.SpendGem(purchaseFuelGemCost);
+        isSavingAdReward = true;
 
-        if (!success)
+        try
+        {
+            ClaimAdFuelRewardResult result = await UserDataManager.Instance.ClaimAdFuelRewardUseCase
+                .ExecuteAsync(rewardAdFuelAmount);
+
+            if (!result.Succeeded)
+                Debug.LogWarning($"[FuelPanelView] Ad fuel reward failed: {result.Failure}");
+        }
+        finally
+        {
+            isSavingAdReward = false;
+
+            if (hasAdClosed)
+                isAdRequestPending = false;
+
+            Refresh();
+        }
+    }
+
+    public async void OnClickPurchaseFuel()
+    {
+        if (isPurchasingFuel)
             return;
 
-        UserDataManager.Instance.ResourceService.AddFuel(purchaseFuelAmount);
-        Refresh();
+        isPurchasingFuel = true;
+
+        try
+        {
+            PurchaseFuelResult result = await UserDataManager.Instance.PurchaseFuelUseCase
+                .ExecuteAsync(purchaseFuelGemCost, purchaseFuelAmount);
+
+            if (!result.Succeeded)
+                Debug.LogWarning($"[FuelPanelView] Fuel purchase failed: {result.Failure}");
+
+            Refresh();
+        }
+        finally
+        {
+            isPurchasingFuel = false;
+        }
     }
 }

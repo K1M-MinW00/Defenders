@@ -8,9 +8,12 @@ public class AdManager : MonoBehaviour
 
     private RewardedAd rewardedAd;
 
-    private UnityAction onRewardComplete;
-    private const string adUnitId = "ca-app-pub-3940256099942544/5224354917"; // º¸»óÇü ±¤°í Test ID
-    // private const string adUnitId = "ca-app-pub-8895770206395123/9792318393"; // º¸»óÇü ±¤°í ID
+    private UnityAction onRewardEarned;
+    private UnityAction onAdClosed;
+    private bool isShowing;
+    private bool isFinalizing;
+    private const string adUnitId = "ca-app-pub-3940256099942544/5224354917"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Test ID
+    // private const string adUnitId = "ca-app-pub-8895770206395123/9792318393"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ID
 
     private void Awake()
     {
@@ -40,7 +43,7 @@ public class AdManager : MonoBehaviour
         {
             if (error != null)
             {
-                Debug.LogError($"RewardAd ·Îµå ½ÇÆÐ {error.GetMessage()}");
+                Debug.LogError($"RewardAd ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½ {error.GetMessage()}");
                 rewardedAd = null;
                 return;
             }
@@ -49,28 +52,55 @@ public class AdManager : MonoBehaviour
 
             rewardedAd.OnAdFullScreenContentClosed += () =>
             {
-                onRewardComplete?.Invoke();
-                onRewardComplete = null;
+                CompleteAdSession();
+            };
 
-                LoadRewardAd();
+            rewardedAd.OnAdFullScreenContentFailed += error =>
+            {
+                Debug.LogError($"RewardAd show failed: {error.GetMessage()}");
+                CompleteAdSession();
             };
         });
 
     }
 
-    public void ShowRewardAd(UnityAction onComplete)
+    public bool ShowRewardAd(UnityAction onEarnedReward, UnityAction onClosed = null)
     {
-        if (rewardedAd == null || !rewardedAd.CanShowAd())
+        if (isShowing || rewardedAd == null || !rewardedAd.CanShowAd())
         {
-            Debug.LogError("RewardAd °¡ ÁØºñµÇÁö ¾ÊÀ½");
-            return;
+            Debug.LogError("RewardAd is not ready.");
+            return false;
         }
 
-        onRewardComplete = null;
+        isShowing = true;
+        isFinalizing = false;
+        onRewardEarned = onEarnedReward;
+        onAdClosed = onClosed;
 
         rewardedAd.Show((Reward reward) =>
         {
-            onRewardComplete = onComplete;
+            UnityAction callback = onRewardEarned;
+            onRewardEarned = null;
+            callback?.Invoke();
         });
+
+        return true;
+    }
+
+    private void CompleteAdSession()
+    {
+        if (isFinalizing)
+            return;
+
+        isFinalizing = true;
+        isShowing = false;
+        onRewardEarned = null;
+
+        UnityAction closedCallback = onAdClosed;
+        onAdClosed = null;
+        closedCallback?.Invoke();
+
+        rewardedAd = null;
+        LoadRewardAd();
     }
 }

@@ -66,6 +66,16 @@ public static class UserDataCloner
         };
     }
 
+    public static UserAdData Copy(UserAdData source)
+    {
+        return new UserAdData
+        {
+            FuelAdWatchCount = source?.FuelAdWatchCount ?? 0,
+            GemAdWatchCount = source?.GemAdWatchCount ?? 0,
+            AdWatchDate = source?.AdWatchDate,
+        };
+    }
+
     private static List<InventoryStackItem> CopyStackItems(IEnumerable<InventoryStackItem> source)
     {
         return source?

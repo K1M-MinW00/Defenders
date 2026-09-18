@@ -16,6 +16,8 @@ public partial class UserDataManager : MonoBehaviour
     public UnitPromotionUseCase UnitPromotionUseCase { get; private set; }
     public UnitLimitBreakUseCase UnitLimitBreakUseCase { get; private set; }
     public GachaUseCase GachaUseCase { get; private set; }
+    public PurchaseFuelUseCase PurchaseFuelUseCase { get; private set; }
+    public ClaimAdFuelRewardUseCase ClaimAdFuelRewardUseCase { get; private set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -146,6 +148,8 @@ public partial class UserDataManager : MonoBehaviour
             UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
             UnitLimitBreakUseCase = new UnitLimitBreakUseCase(repository, CurrentUserId, UserData);
             GachaUseCase = new GachaUseCase(repository, CurrentUserId, UserData, new UnityGachaRandom());
+            PurchaseFuelUseCase = new PurchaseFuelUseCase(repository, CurrentUserId, UserData);
+            ClaimAdFuelRewardUseCase = new ClaimAdFuelRewardUseCase(repository, CurrentUserId, UserData);
 
             IsLoaded = true;
             IsDirty = false;
