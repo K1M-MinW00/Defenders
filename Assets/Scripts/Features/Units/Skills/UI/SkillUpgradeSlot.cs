@@ -11,7 +11,7 @@ public class SkillUpgradeSlot : MonoBehaviour
 
     public void Setup(int promotion, SkillUpgradeData data)
     {
-        titleText.text = promotion <= 1 ? "기본 효과" : $"{promotion} 진급 효과";
+        titleText.text = data.promotionLevel <= 1 ? "기본 효과" : $"{data.promotionLevel} 진급 효과";
         descriptionText.text = data.description;
 
         bool unlocked = promotion >= data.promotionLevel;

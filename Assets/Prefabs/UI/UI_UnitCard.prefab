@@ -214,11 +214,11 @@ RectTransform:
   - {fileID: 6045145347660082305}
   m_Father: {fileID: 49425444790724192}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -8, y: -8}
-  m_SizeDelta: {x: 80, y: 60}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 8, y: -8}
+  m_SizeDelta: {x: 80, y: 50}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2766681739584420567
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -390,9 +390,9 @@ MonoBehaviour:
   canvasGroup: {fileID: 3745617847557062966}
   ownedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
-  normalBackgroundColor: {r: 0, g: 0, b: 1, a: 1}
-  rareBackgroundColor: {r: 0.627451, g: 0.12549, b: 0.941176, a: 1}
-  legendBackgroundColor: {r: 1, g: 0.921569, b: 0.015686, a: 1}
+  normalBackgroundColor: {r: 0.4575472, g: 0.4575472, b: 1, a: 1}
+  rareBackgroundColor: {r: 0.773222, g: 0.41037738, b: 1, a: 1}
+  legendBackgroundColor: {r: 0.9811321, g: 0.9328241, b: 0.37486652, a: 1}
   longPressSeconds: 0.45
   shakeAngle: 4
   shakeSpeed: 18
