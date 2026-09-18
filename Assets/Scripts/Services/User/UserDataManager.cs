@@ -30,6 +30,7 @@ public partial class UserDataManager : MonoBehaviour
     public event Action OnProgressUpdated;
 
     private IUserDataRepository repository;
+    private UserDataLoader userDataLoader;
 
     private void Awake()
     {
@@ -51,6 +52,7 @@ public partial class UserDataManager : MonoBehaviour
         try
         {
             repository = dataRepository ?? new FirestoreUserDataRepository();
+            userDataLoader = new UserDataLoader(repository);
         }
         catch (Exception e)
         {
@@ -85,77 +87,19 @@ public partial class UserDataManager : MonoBehaviour
 
         try
         {
+            UserDataRoot loadedUserData = await userDataLoader.LoadOrCreateAsync(userId);
+
             CurrentUserId = userId;
-
-            UserDataLoadResult loadResult = await repository.LoadAsync(userId);
-
-            bool isNewUser = false;
-            bool needsSave = false;
-
-            if (loadResult.Exists)
-            {
-                UserData = loadResult.Data;
-
-                if (UserData == null)
-                {
-                    UserData = UserDataFactory.CreateDefault(userId);
-                    isNewUser = true;
-                    needsSave = true;
-                }
-                else
-                {
-                    needsSave = UserDataMigrator.MigrateToCurrent(UserData, userId);
-                    Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
-                }
-            }
-            else
-            {
-                UserData = UserDataFactory.CreateDefault(userId);
-                isNewUser = true;
-                needsSave = true;
-
-                Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
-            }
-
-            if (isNewUser)
-            {
-                StaminaService.InitializeFullFuel(UserData.Resource);
-            }
-            else
-            {
-                bool fuelChanged = StaminaService.RefreshFuel(UserData.Resource);
-                needsSave |= fuelChanged;
-            }
-
-            if (needsSave)
-            {
-                bool saveSucceeded = isNewUser
-                    ? await CreateUserAsync()
-                    : await SaveMigratedUserAsync();
-
-                if (!saveSucceeded)
-                    return false;
-            }
-
-            InventoryService = new InventoryService(UserData);
-            MailboxService = new MailboxService(CurrentUserId, UserData);
-            GachaService = new GachaService(UserData);
-            RosterService = new RosterService(UserData);
-            UnitTrainingUseCase = new UnitTrainingUseCase(repository, CurrentUserId, UserData);
-            UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
-            UnitLimitBreakUseCase = new UnitLimitBreakUseCase(repository, CurrentUserId, UserData);
-            GachaUseCase = new GachaUseCase(repository, CurrentUserId, UserData, new UnityGachaRandom());
-            PurchaseFuelUseCase = new PurchaseFuelUseCase(repository, CurrentUserId, UserData);
-            ClaimAdFuelRewardUseCase = new ClaimAdFuelRewardUseCase(repository, CurrentUserId, UserData);
-            UnitFormationUseCase = new UnitFormationUseCase(repository, CurrentUserId, UserData);
-            ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData);
+            UserData = loadedUserData;
+            ComposeServices();
+            Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
 
             IsLoaded = true;
             return true;
         }
         catch (Exception e)
         {
-            Debug.Log($"[UserDataManager] LoadOrCreate Async exception : {e}");
+            Debug.LogError($"[UserDataManager] LoadOrCreateAsync failed: {e}");
             return false;
         }
         finally
@@ -164,31 +108,20 @@ public partial class UserDataManager : MonoBehaviour
         }
     }
 
-    private async Task<bool> SaveMigratedUserAsync()
+    private void ComposeServices()
     {
-        if (!IsInitialized || repository == null)
-        {
-            Debug.LogError("[UserDataManager] Not Initialized");
-            return false;
-        }
-
-        if (UserData == null)
-        {
-            Debug.LogError("[UserDataManager] No loaded data to save.");
-            return false;
-        }
-
-        try
-        {
-            await repository.SaveAllAsync(CurrentUserId, UserData);
-            Debug.Log($"[UserDataManager] Migrated user data saved. UID : {CurrentUserId}");
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"[UserDataManager] Save migrated data failed: {e}");
-            return false;
-        }
+        InventoryService = new InventoryService(UserData);
+        MailboxService = new MailboxService(CurrentUserId, UserData);
+        GachaService = new GachaService(UserData);
+        RosterService = new RosterService(UserData);
+        UnitTrainingUseCase = new UnitTrainingUseCase(repository, CurrentUserId, UserData);
+        UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
+        UnitLimitBreakUseCase = new UnitLimitBreakUseCase(repository, CurrentUserId, UserData);
+        GachaUseCase = new GachaUseCase(repository, CurrentUserId, UserData, new UnityGachaRandom());
+        PurchaseFuelUseCase = new PurchaseFuelUseCase(repository, CurrentUserId, UserData);
+        ClaimAdFuelRewardUseCase = new ClaimAdFuelRewardUseCase(repository, CurrentUserId, UserData);
+        UnitFormationUseCase = new UnitFormationUseCase(repository, CurrentUserId, UserData);
+        ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>
@@ -205,20 +138,6 @@ public partial class UserDataManager : MonoBehaviour
         }
 
         return success;
-    }
-
-    private async Task<bool> CreateUserAsync()
-    {
-        try
-        {
-            await repository.CreateAsync(CurrentUserId, UserData);
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"[UserDataManager] Create user failed: {e}");
-            return false;
-        }
     }
 
     private async Task<bool> SaveSectionAsync<T>(T value, Func<Task> saveOperation, string sectionName)
