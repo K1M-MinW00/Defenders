@@ -118,6 +118,8 @@ public partial class UserDataManager : MonoBehaviour
                     if (UserData.Gacha == null)
                         UserData.Gacha = UserDataFactory.CreateDefaultGacha();
 
+                    if (UserData.Ad == null)
+                        UserData.Ad = UserDataFactory.CreateDefaultAd();
                     Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
                 }
             }

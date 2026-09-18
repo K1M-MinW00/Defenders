@@ -37,7 +37,7 @@ public class RewardService
                 break;
 
             case RewardType.Item:
-                GiveItem(reward.Id,reward.Amount);
+                GiveItem(reward.Id, reward.Amount);
                 break;
 
             case RewardType.Unit:
@@ -45,7 +45,7 @@ public class RewardService
                 break;
 
             case RewardType.Equipment:
-                GiveEquipment(reward.Id,reward.Amount);
+                GiveEquipment(reward.Id, reward.Amount);
                 break;
 
             default:

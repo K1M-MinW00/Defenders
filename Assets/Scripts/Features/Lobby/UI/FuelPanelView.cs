@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FuelPanelView : MonoBehaviour
 {
@@ -8,32 +9,61 @@ public class FuelPanelView : MonoBehaviour
     [SerializeField] private TMP_Text nextRecoverText;
     [SerializeField] private TMP_Text fullRecoverText;
 
+    [Header("Reward Ad")]
+    [SerializeField] private TMP_Text dailyAdText;
+    [SerializeField] private Button rewardAdButton;
+
+
+    [SerializeField] private int rewardAdFuelAmount = 30;
+    [SerializeField] private int purchaseFuelAmount = 30;
+    [SerializeField] private int purchaseFuelGemCost = 100;
+
     private float timer;
+
+    private void OnEnable()
+    {
+        Refresh();
+    }
 
     private void Update()
     {
         timer += Time.deltaTime;
 
-        if (timer >= 1f)
-        {
-            timer = 0f;
-            Refresh();
-        }
+        if (timer < 1f)
+            return;
+
+        timer = 0f;
+        Refresh();
     }
 
     private void Refresh()
     {
-        var resources = UserDataManager.Instance.UserData.Resource;
+        if (UserDataManager.Instance == null)
+            return;
+
+        UserDataRoot userData = UserDataManager.Instance.UserData;
+
+        UserResourceData resources = userData.Resource;
+        UserAdData adData = userData.Ad;
 
         StaminaService.RefreshFuel(resources);
 
+        bool adReset = AdDailyLimitService.Refresh(adData);
+
+        if (adReset)
+            UserDataManager.Instance.MarkDirty();
+
+        RefreshFuelUI(resources);
+        RefreshRewardAdUI(adData);
+    }
+
+    private void RefreshFuelUI(UserResourceData resources)
+    {
         fuelText.text = $"{resources.Fuel}/{resources.MaxFuel}";
 
         int nextSeconds = StaminaService.GetRemainingSecondsToNextFuel(resources);
 
         nextRecoverText.text = $"다음 충전까지 {Format(nextSeconds)}";
-
-        int remainFuel = resources.MaxFuel - resources.Fuel;
 
         int fullSeconds = StaminaService.GetRemainingSecondsToFullFuel(resources);
 
@@ -47,18 +77,40 @@ public class FuelPanelView : MonoBehaviour
         return $"{t.Hours:00}:{t.Minutes:00}:{t.Seconds:00}";
     }
 
+    private void RefreshRewardAdUI(UserAdData adData)
+    {
+        int count = AdDailyLimitService.GetWatchCount(adData, DailyAdType.Fuel);
+
+        dailyAdText.text = $"일일 광고 시청 ({count}/{AdDailyLimitService.DailyAdLimit})";
+
+        rewardAdButton.interactable = count < AdDailyLimitService.DailyAdLimit;
+    }
+
     public void OnClickRewardAd()
     {
-        RewardData reward = new RewardData()
-        {
-            Type = RewardType.Fuel,
-            Amount = 10
-        };
+        UserAdData adData = UserDataManager.Instance.UserData.Ad;
 
-        AdManager.Instance.ShowRewardAd(()=>
+        if (!AdDailyLimitService.CanWatch(adData,DailyAdType.Fuel))
+            return;
+
+        AdManager.Instance.ShowRewardAd(() =>
         {
-            UserDataManager.Instance.RewardService.GiveReward(reward);
+            UserDataManager.Instance.ResourceService.AddFuel(rewardAdFuelAmount);
+
+            AdDailyLimitService.Consume(adData,DailyAdType.Fuel);
+
+            Refresh();
         });
+    }
 
+    public void OnClickPurchaseFuel()
+    {
+        bool success = UserDataManager.Instance.ResourceService.SpendGem(purchaseFuelGemCost);
+
+        if (!success)
+            return;
+
+        UserDataManager.Instance.ResourceService.AddFuel(purchaseFuelAmount);
+        Refresh();
     }
 }

@@ -1,21 +1,18 @@
-﻿using System;
+﻿using Firebase.Firestore;
+using System;
 
 public static class StaminaService
 {
     public const int RecoverSecondsPerFuel = 300;
-
-    public static long GetUnixNow()
-    {
-        return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-    }
 
     public static void InitializeFullFuel(UserResourceData resources)
     {
         if (resources == null)
             return;
 
+        Timestamp now = Timestamp.GetCurrentTimestamp();
         resources.Fuel = resources.MaxFuel;
-        resources.LastFuelUpdateTime = GetUnixNow();
+        resources.LastFuelUpdateTime = now;
     }
 
     public static bool RefreshFuel(UserResourceData resources)
@@ -24,7 +21,7 @@ public static class StaminaService
             return false;
 
         int maxFuel = resources.MaxFuel;
-        long now = GetUnixNow();
+        Timestamp now = Timestamp.GetCurrentTimestamp();
 
         if (resources.Fuel >= maxFuel)
         {
@@ -32,18 +29,16 @@ public static class StaminaService
             return false;
         }
 
-        if (resources.LastFuelUpdateTime <= 0)
-        {
-            return false;
-        }
-
-        long elapsed = now - resources.LastFuelUpdateTime;
-
-        if (elapsed < RecoverSecondsPerFuel)
+        if (IsInvalidTimestamp(resources.LastFuelUpdateTime))
             return false;
 
-        int recoveredFuel = (int)(elapsed / RecoverSecondsPerFuel);
+        long elapsedSeconds = GetElapsedSeconds(resources.LastFuelUpdateTime, now);
 
+        if (elapsedSeconds < RecoverSecondsPerFuel)
+            return false;
+
+        int recoveredFuel = (int)(elapsedSeconds / RecoverSecondsPerFuel);
+        
         if (recoveredFuel <= 0)
             return false;
 
@@ -54,10 +49,13 @@ public static class StaminaService
         if (resources.Fuel >= maxFuel)
         {
             resources.Fuel = maxFuel;
+            resources.LastFuelUpdateTime = now;
         }
         else
         {
-            resources.LastFuelUpdateTime += recoveredFuel * RecoverSecondsPerFuel;
+            long consumedSeconds = recoveredFuel * RecoverSecondsPerFuel;
+
+            resources.LastFuelUpdateTime = AddSeconds(resources.LastFuelUpdateTime,consumedSeconds);
         }
 
         return oldFuel != resources.Fuel;
@@ -80,7 +78,7 @@ public static class StaminaService
 
         if (wasFull)
         {
-            resources.LastFuelUpdateTime = GetUnixNow();
+            resources.LastFuelUpdateTime = Timestamp.GetCurrentTimestamp();
         }
 
         return true;
@@ -96,9 +94,12 @@ public static class StaminaService
 
         if(force)
             resources.Fuel += amount;
-
+        
         else
             resources.Fuel = Math.Min(resources.MaxFuel, resources.Fuel + amount);
+
+        if (resources.Fuel >= resources.MaxFuel)
+            resources.LastFuelUpdateTime = Timestamp.GetCurrentTimestamp();
     }
 
     public static int GetRemainingSecondsToNextFuel(UserResourceData resources)
@@ -109,11 +110,15 @@ public static class StaminaService
         if (resources.Fuel >= resources.MaxFuel)
             return 0;
 
-        long now = GetUnixNow();
+        if (IsInvalidTimestamp(resources.LastFuelUpdateTime))
+            return 0;
+        
+        Timestamp now = Timestamp.GetCurrentTimestamp();
+        long elapsedSeconds = GetElapsedSeconds(resources.LastFuelUpdateTime,now);
 
-        long elapsed = now - resources.LastFuelUpdateTime;
+        int elapsedInCurrentCycle = (int)(elapsedSeconds % RecoverSecondsPerFuel);
 
-        int remain = RecoverSecondsPerFuel - (int)(elapsed % RecoverSecondsPerFuel);
+        int remain = RecoverSecondsPerFuel - elapsedInCurrentCycle;
 
         return Math.Max(remain, 0);
     }
@@ -131,5 +136,25 @@ public static class StaminaService
         int nextRecover = GetRemainingSecondsToNextFuel(resources);
 
         return ((remainFuel - 1) * RecoverSecondsPerFuel) + nextRecover;
+    }
+
+    private static long GetElapsedSeconds(Timestamp from,Timestamp to)
+    {
+        DateTime fromDateTime = from.ToDateTime();
+        DateTime toDateTime = to.ToDateTime();
+
+        return (long)(toDateTime - fromDateTime).TotalSeconds;
+    }
+
+    private static Timestamp AddSeconds(Timestamp timestamp,long seconds)
+    {
+        DateTime dateTime = timestamp.ToDateTime();
+
+        return Timestamp.FromDateTime(dateTime.AddSeconds(seconds));
+    }
+
+    private static bool IsInvalidTimestamp(Timestamp timestamp)
+    {
+        return timestamp == null || timestamp.ToDateTime() == DateTime.MinValue;
     }
 }

@@ -9,4 +9,6 @@ public class UserDataRoot
     [FirestoreProperty] public UserProgressData Progress { get; set; } = new();
     [FirestoreProperty] public UserInventoryData Inventory {  get; set; } = new();
     [FirestoreProperty] public UserGachaData Gacha { get; set; } = new();
+    [FirestoreProperty] public UserAdData Ad { get; set; } = new();
+    
 }

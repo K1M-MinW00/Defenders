@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Firebase.Firestore;
+using System;
 
 public static class UserDataFactory
 {
@@ -45,7 +46,7 @@ public static class UserDataFactory
             Gem = config.StartGem,
             Fuel = config.StartFuel,
             MaxFuel = config.MaxFuel,
-            LastFuelUpdateTime = GetNow()
+            LastFuelUpdateTime = Timestamp.GetCurrentTimestamp()
         };
     }
 
@@ -76,5 +77,13 @@ public static class UserDataFactory
         return new UserInventoryData();
     }
 
-    private static long GetNow() => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+    public static UserAdData CreateDefaultAd()
+    {
+        return new UserAdData
+        {
+            FuelAdWatchCount = 0,
+            GemAdWatchCount = 0,
+        };
+    }
 }

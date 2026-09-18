@@ -32,8 +32,9 @@ public class AdManager : MonoBehaviour
 
     private void LoadRewardAd()
     {
-        var adRequest = new AdRequest();
+        Debug.Log("LoadRewardAd");
 
+        var adRequest = new AdRequest();
 
         RewardedAd.Load(adUnitId, adRequest, (RewardedAd ad, LoadAdError error) =>
         {
@@ -61,11 +62,10 @@ public class AdManager : MonoBehaviour
     {
         if (rewardedAd == null || !rewardedAd.CanShowAd())
         {
-#if UNITY_EDITOR
             Debug.LogError("RewardAd 가 준비되지 않음");
-#endif
             return;
         }
+
         onRewardComplete = null;
 
         rewardedAd.Show((Reward reward) =>
