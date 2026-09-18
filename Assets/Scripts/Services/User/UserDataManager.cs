@@ -17,6 +17,7 @@ public partial class UserDataManager : MonoBehaviour
     public PurchaseFuelUseCase PurchaseFuelUseCase { get; private set; }
     public ClaimAdFuelRewardUseCase ClaimAdFuelRewardUseCase { get; private set; }
     public UnitFormationUseCase UnitFormationUseCase { get; private set; }
+    public ProfileUpdateUseCase ProfileUpdateUseCase { get; private set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -147,6 +148,7 @@ public partial class UserDataManager : MonoBehaviour
             PurchaseFuelUseCase = new PurchaseFuelUseCase(repository, CurrentUserId, UserData);
             ClaimAdFuelRewardUseCase = new ClaimAdFuelRewardUseCase(repository, CurrentUserId, UserData);
             UnitFormationUseCase = new UnitFormationUseCase(repository, CurrentUserId, UserData);
+            ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData);
 
             IsLoaded = true;
             return true;
@@ -188,9 +190,6 @@ public partial class UserDataManager : MonoBehaviour
             return false;
         }
     }
-
-    public Task<bool> SaveProfileAsync(UserProfileData profile) =>
-        SaveSectionAsync(profile, () => repository.SaveProfileAsync(CurrentUserId, profile), "profile");
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>
         SaveSectionAsync(progress, () => repository.SaveProgressAsync(CurrentUserId, progress), "progress");

@@ -4,33 +4,19 @@ public partial class UserDataManager
 {
     public async Task UpdateNicknameAsync(string nickname)
     {
-        if (UserData == null)
+        if (ProfileUpdateUseCase == null)
             return;
 
-        string previousNickname = UserData.Profile.Nickname;
-        UserData.Profile.Nickname = nickname;
-
-        bool success = await SaveProfileAsync(UserData.Profile);
-
-        if (!success)
-            UserData.Profile.Nickname = previousNickname;
-
-        RaiseProfileUpdated();
+        if (await ProfileUpdateUseCase.UpdateNicknameAsync(nickname))
+            RaiseProfileUpdated();
     }
 
     public async Task UpdateProfileIconAsync(string iconId)
     {
-        if (UserData == null)
+        if (ProfileUpdateUseCase == null)
             return;
 
-        string previousIconId = UserData.Profile.IconId;
-        UserData.Profile.IconId = iconId;
-
-        bool success = await SaveProfileAsync(UserData.Profile);
-
-        if (!success)
-            UserData.Profile.IconId = previousIconId;
-        
-        RaiseProfileUpdated();
+        if (await ProfileUpdateUseCase.UpdateIconAsync(iconId))
+            RaiseProfileUpdated();
     }
 }

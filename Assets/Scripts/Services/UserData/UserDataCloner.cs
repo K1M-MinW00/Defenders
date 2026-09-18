@@ -3,6 +3,21 @@ using System.Linq;
 
 public static class UserDataCloner
 {
+    public static UserProfileData Copy(UserProfileData source)
+    {
+        if (source == null)
+            return null;
+
+        return new UserProfileData
+        {
+            UserId = source.UserId,
+            Nickname = source.Nickname,
+            Level = source.Level,
+            Exp = source.Exp,
+            IconId = source.IconId,
+        };
+    }
+
     public static UserResourceData Copy(UserResourceData source)
     {
         if (source == null)
