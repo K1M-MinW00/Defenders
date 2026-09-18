@@ -32,8 +32,6 @@ public class MailboxPanelView : MonoBehaviour
     {
         ClearSlots();
 
-        string uid = AuthService.Instance.CurrentUser.UserId;
-
         await mailboxService.LoadMailsAsync();
 
         foreach (MailData mail in mailboxService.CachedMails)
@@ -56,13 +54,19 @@ public class MailboxPanelView : MonoBehaviour
 
         isProcessing = true;
 
-        string uid = AuthService.Instance.CurrentUser.UserId;
+        try
+        {
+            MailboxClaimResult result = await mailboxService.ClaimMailAsync(mail);
 
-        await mailboxService.ClaimMailAsync(mail);
+            if (!result.Succeeded)
+                Debug.LogWarning($"[MailboxPanelView] Claim failed: {result.Failure}");
 
-        await RefreshAsync();
-
-        isProcessing = false;
+            await RefreshAsync();
+        }
+        finally
+        {
+            isProcessing = false;
+        }
     }
 
     private void ClearSlots()
@@ -79,13 +83,19 @@ public class MailboxPanelView : MonoBehaviour
 
         isProcessing = true;
 
-        string uid = AuthService.Instance.CurrentUser.UserId;
+        try
+        {
+            MailboxClaimResult result = await mailboxService.ClaimAllAsync();
 
-        await mailboxService .ClaimAllAsync();
+            if (!result.Succeeded && result.Failure != MailboxClaimFailure.NoClaimableMail)
+                Debug.LogWarning($"[MailboxPanelView] Claim all failed: {result.Failure}");
 
-        await RefreshAsync();
-
-        isProcessing = false;
+            await RefreshAsync();
+        }
+        finally
+        {
+            isProcessing = false;
+        }
     }
 
     private async void HandleDeleteAllButtonClicked()
@@ -93,12 +103,16 @@ public class MailboxPanelView : MonoBehaviour
         if (isProcessing)
             return;
 
-        string uid = AuthService.Instance.CurrentUser.UserId;
+        isProcessing = true;
 
-        await mailboxService.DeleteAllAsync();
-
-        await RefreshAsync();
-
-        isProcessing = false;
+        try
+        {
+            await mailboxService.DeleteAllAsync();
+            await RefreshAsync();
+        }
+        finally
+        {
+            isProcessing = false;
+        }
     }
 }

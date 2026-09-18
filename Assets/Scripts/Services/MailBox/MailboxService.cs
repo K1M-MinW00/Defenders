@@ -1,4 +1,3 @@
-using Firebase.Firestore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,105 +6,103 @@ using UnityEngine;
 
 public class MailboxService
 {
-    private const string MailboxCollection = "mailboxes";
-    private const string MailCollection = "mails";
+    private readonly IMailboxRepository repository;
 
-    private readonly FirebaseFirestore db;
     public List<MailData> CachedMails { get; private set; } = new();
 
     private string UserId => UserDataManager.Instance.CurrentUserId;
+    private UserDataRoot UserData => UserDataManager.Instance.UserData;
 
-    public MailboxService()
+    public MailboxService(IMailboxRepository repository = null)
     {
-        db = FirebaseFirestore.DefaultInstance;
-    }
-
-    private bool IsExpired(MailData mail)
-    {
-        return mail.ExpireAt.ToDateTime() <= DateTime.UtcNow;
+        this.repository = repository ?? new FirestoreMailboxRepository();
     }
 
     public async Task LoadMailsAsync()
     {
-        CachedMails.Clear();
+        List<MailData> mails = await repository.LoadAsync(UserId);
+        List<string> expiredIds = mails
+            .Where(IsExpired)
+            .Select(mail => mail.MailId)
+            .ToList();
 
-        QuerySnapshot snapshot = await db.Collection(MailboxCollection).Document(UserId).Collection(MailCollection).GetSnapshotAsync();
+        if (expiredIds.Count > 0)
+            await repository.DeleteAsync(UserId, expiredIds);
 
-        foreach (DocumentSnapshot doc in snapshot.Documents)
-        {
-            if (!doc.Exists)
-                continue;
-
-            MailData mail = doc.ConvertTo<MailData>();
-
-            if (IsExpired(mail))
-            {
-                await DeleteMailAsync(mail);
-                continue;
-            }
-
-            CachedMails.Add(mail);
-        }
-
-        CachedMails = CachedMails.OrderByDescending(x => x.CreatedAt).ToList();
+        CachedMails = mails
+            .Where(mail => !IsExpired(mail))
+            .OrderByDescending(mail => mail.CreatedAt)
+            .ToList();
     }
 
-    public async Task ClaimMailAsync(MailData mail)
+    public Task<MailboxClaimResult> ClaimMailAsync(MailData mail)
     {
-        if (mail == null || mail.Claimed)
-            return;
+        if (mail == null || mail.Claimed || IsExpired(mail))
+            return Task.FromResult(MailboxClaimResult.Fail(MailboxClaimFailure.InvalidRequest));
 
-        UserDataManager.Instance.RewardService.GiveRewards(mail.Rewards);
-
-        mail.Claimed = true;
-
-        await SaveMailAsync(mail);
-
-        await UserDataManager.Instance.SaveAsync();
+        return ClaimAsync(new[] { mail.MailId });
     }
 
-    public async Task ClaimAllAsync()
+    public Task<MailboxClaimResult> ClaimAllAsync()
     {
-        bool changed = false;
+        List<string> claimableIds = CachedMails
+            .Where(mail => mail != null && !mail.Claimed && !IsExpired(mail))
+            .Select(mail => mail.MailId)
+            .Take(100)
+            .ToList();
 
-        foreach (MailData mail in CachedMails)
-        {
-            if (mail.Claimed)
-                continue;
+        if (claimableIds.Count == 0)
+            return Task.FromResult(MailboxClaimResult.Fail(MailboxClaimFailure.NoClaimableMail));
 
-            UserDataManager.Instance.RewardService.GiveRewards(mail.Rewards);
-
-            mail.Claimed = true;
-
-            await SaveMailAsync(mail);
-
-            changed = true;
-        }
-
-        if (changed)
-        {
-            await UserDataManager.Instance.SaveAsync();
-        }
+        return ClaimAsync(claimableIds);
     }
 
     public async Task DeleteAllAsync()
     {
-        List<MailData> deleteTargets = CachedMails.Where(x => x.Claimed).ToList();
+        List<string> deleteIds = CachedMails
+            .Where(mail => mail != null && mail.Claimed)
+            .Select(mail => mail.MailId)
+            .ToList();
 
-        foreach (MailData mail in deleteTargets)
+        if (deleteIds.Count == 0)
+            return;
+
+        await repository.DeleteAsync(UserId, deleteIds);
+        CachedMails.RemoveAll(mail => mail != null && deleteIds.Contains(mail.MailId));
+    }
+
+    private async Task<MailboxClaimResult> ClaimAsync(IReadOnlyCollection<string> mailIds)
+    {
+        try
         {
-            await DeleteMailAsync(mail);
+            MailboxClaimResult result = await repository.ClaimAsync(UserId, mailIds);
+
+            if (!result.Succeeded)
+                return result;
+
+            UserData.Resource = result.Resources;
+            UserData.Inventory = result.Inventory;
+            UserData.Roster = result.Roster;
+
+            HashSet<string> claimedIds = result.ClaimedMailIds.ToHashSet();
+
+            foreach (MailData cachedMail in CachedMails)
+            {
+                if (cachedMail != null && claimedIds.Contains(cachedMail.MailId))
+                    cachedMail.Claimed = true;
+            }
+
+            return result;
         }
-
-        CachedMails.RemoveAll(x => x.Claimed);
+        catch (Exception exception)
+        {
+            Debug.LogError($"[MailboxService] Claim failed: {exception}");
+            return MailboxClaimResult.Fail(MailboxClaimFailure.SaveFailed);
+        }
     }
 
-    private async Task SaveMailAsync(MailData mail)
+    private static bool IsExpired(MailData mail)
     {
-        await db.Collection(MailboxCollection).Document(UserId).Collection(MailCollection).Document(mail.MailId).SetAsync(mail);
-    }
-    private async Task DeleteMailAsync(MailData mail)
-    {
-        await db.Collection(MailboxCollection).Document(UserId).Collection(MailCollection).Document(mail.MailId).DeleteAsync();
+        return mail?.ExpireAt == null || mail.ExpireAt.ToDateTime() <= DateTime.UtcNow;
     }
 }
