@@ -12,8 +12,7 @@ public class UnitPromotionPanel : MonoBehaviour
     [SerializeField] private TMP_Text promotionText;
 
     [Header("Upgrades")]
-    [SerializeField] private Transform effectRoot;
-    [SerializeField] private GameObject effectTemplate;
+    [SerializeField] private GameObject[] upgradeLockObjects;
 
     [Header("Materials")]
     [SerializeField] private Transform materialRoot;
@@ -76,46 +75,18 @@ public class UnitPromotionPanel : MonoBehaviour
 
     private void RefreshEffects()
     {
-        if (effectRoot == null || effectTemplate == null)
+        if (upgradeLockObjects == null)
             return;
 
-        PromotionProgressionSO progression = PromotionProgressionDatabase.Get();
-
-        if (progression == null)
+        for (int i = 0; i < upgradeLockObjects.Length; i++)
         {
-            Debug.LogWarning("[UnitPromotionPanel] Promotion progression data is missing.");
-            return;
-        }
-
-        EnsureEffectEntryCount(progression.Stages.Count);
-
-        for (int i = 0; i < effectRoot.childCount; i++)
-        {
-            GameObject entry = effectRoot.GetChild(i).gameObject;
-
-            if (i >= progression.Stages.Count || progression.Stages[i] == null)
-            {
-                entry.SetActive(false);
+            GameObject lockObject = upgradeLockObjects[i];
+            if (lockObject == null)
                 continue;
-            }
 
-            PromotionStageData stage = progression.Stages[i];
-            entry.SetActive(true);
-
-            TMP_Text descriptionText = entry.GetComponentInChildren<TMP_Text>(true);
-            if (descriptionText != null)
-                descriptionText.text = stage.description;
-
-            Transform lockObject = entry.transform.Find("locked_Img");
-            if (lockObject != null)
-                lockObject.gameObject.SetActive(currentUnit.Promotion < stage.promotionLevel);
+            int requiredPromotion = i + 1;
+            lockObject.SetActive(currentUnit.Promotion < requiredPromotion);
         }
-    }
-
-    private void EnsureEffectEntryCount(int requiredCount)
-    {
-        while (effectRoot.childCount < requiredCount)
-            Instantiate(effectTemplate, effectRoot);
     }
 
     private void RefreshMaterials()
@@ -170,6 +141,8 @@ public class UnitPromotionPanel : MonoBehaviour
             return;
 
         isPromoting = true;
+        bool promotionSucceeded = false;
+
         if (promotionButton != null)
             promotionButton.interactable = false;
 
@@ -184,6 +157,7 @@ public class UnitPromotionPanel : MonoBehaviour
                 return;
             }
 
+            promotionSucceeded = true;
             Refresh();
             detailPanel?.Refresh();
             UserDataManager.Instance.RaiseRosterUpdated();
@@ -192,7 +166,7 @@ public class UnitPromotionPanel : MonoBehaviour
         {
             isPromoting = false;
 
-            if (promotionButton != null && promotionButton.gameObject.activeSelf)
+            if (!promotionSucceeded && promotionButton != null && promotionButton.gameObject.activeSelf)
                 RefreshMaterials();
         }
     }
