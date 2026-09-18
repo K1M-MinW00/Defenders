@@ -15,6 +15,7 @@ public partial class UserDataManager : MonoBehaviour
     public UnitTrainingUseCase UnitTrainingUseCase { get; private set; }
     public UnitPromotionUseCase UnitPromotionUseCase { get; private set; }
     public UnitLimitBreakUseCase UnitLimitBreakUseCase { get; private set; }
+    public GachaUseCase GachaUseCase { get; private set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -144,6 +145,7 @@ public partial class UserDataManager : MonoBehaviour
             UnitTrainingUseCase = new UnitTrainingUseCase(repository, CurrentUserId, UserData);
             UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
             UnitLimitBreakUseCase = new UnitLimitBreakUseCase(repository, CurrentUserId, UserData);
+            GachaUseCase = new GachaUseCase(repository, CurrentUserId, UserData, new UnityGachaRandom());
 
             IsLoaded = true;
             IsDirty = false;

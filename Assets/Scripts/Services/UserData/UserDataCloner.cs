@@ -57,6 +57,15 @@ public static class UserDataCloner
         };
     }
 
+    public static UserGachaData Copy(UserGachaData source)
+    {
+        return new UserGachaData
+        {
+            NormalPity = source?.NormalPity ?? 0,
+            SpecialPity = source?.SpecialPity ?? 0,
+        };
+    }
+
     private static List<InventoryStackItem> CopyStackItems(IEnumerable<InventoryStackItem> source)
     {
         return source?

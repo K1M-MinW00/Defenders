@@ -33,9 +33,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
     [SerializeField] private GemConfirmPopupView gemConfirmPopup;
 
     private GachaDataSO currentBanner;
-
-    private const string NormalTicketId = "summon_ticket_normal";
-    private const string SpecialTicketId = "summon_ticket_speical";
+    private bool isRecruiting;
 
     private void Awake()
     {
@@ -72,7 +70,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
         gemText.text = resource.Gem.ToString("N0");
 
-        string ticketId = currentBanner.recruitType == RecruitType.Normal ? NormalTicketId : SpecialTicketId;
+        string ticketId = currentBanner.ticketItemId;
         ticketImage.sprite = ItemDatabase.Get(ticketId).Icon;
 
         int count = UserDataManager.Instance.InventoryService.GetItemCount(ticketId);
@@ -109,20 +107,24 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void TryRecruit(int count)
     {
-        RecruitCostModel cost = CalculateCost(currentBanner, count);
+        if (isRecruiting)
+            return;
+
+        GachaDataSO banner = currentBanner;
+        RecruitCostModel cost = CalculateCost(banner, count);
 
         if (cost.NeedGem == false)
         {
-            ExecuteRecruit(count, cost);
+            ExecuteRecruit(banner, count);
             return;
         }
 
-        gemConfirmPopup.Open(cost.GemUseCount, () => { ExecuteRecruit(count, cost); });
+        gemConfirmPopup.Open(cost.GemUseCount, () => { ExecuteRecruit(banner, count); });
     }
 
     private RecruitCostModel CalculateCost(GachaDataSO banner, int recruitCount)
     {
-        string ticketId = banner.recruitType == RecruitType.Normal ? NormalTicketId : SpecialTicketId;
+        string ticketId = banner.ticketItemId;
 
         int ownedTicket = UserDataManager.Instance.InventoryService.GetItemCount(ticketId);
 
@@ -137,50 +139,34 @@ public class LobbyRecruitPanelView : MonoBehaviour
         };
     }
 
-    private void ExecuteRecruit(int count, RecruitCostModel cost)
+    private async void ExecuteRecruit(GachaDataSO banner, int count)
     {
-        string ticketId = currentBanner.recruitType == RecruitType.Normal ? NormalTicketId : SpecialTicketId;
+        if (isRecruiting)
+            return;
 
-        InventoryService inventory = UserDataManager.Instance.InventoryService;
-        ResourceService resource = UserDataManager.Instance.ResourceService;
+        isRecruiting = true;
+        recruitOneButton.interactable = false;
+        recruitTenButton.interactable = false;
 
-        if (cost.GemUseCount > 0)
+        try
         {
-            bool success = resource.SpendGem(cost.GemUseCount);
+            RecruitUnitsResult result = await UserDataManager.Instance.GachaUseCase.ExecuteAsync(
+                new RecruitUnitsCommand(banner, count));
 
-            if (!success)
+            if (!result.Succeeded)
             {
-                Debug.Log("Gem 부족");
+                Debug.LogWarning($"[LobbyRecruitPanelView] Recruit failed: {result.Failure}");
                 return;
             }
-        }
 
-        if (cost.TicketUseCount > 0)
+            resultPopup.Open(new List<GachaResult>(result.Results));
+            Refresh();
+        }
+        finally
         {
-            bool success = inventory.RemoveStackItem(ItemCategory.Consumable, ticketId, cost.TicketUseCount);
-
-            if (!success)
-            {
-                Debug.LogError("티켓 부족");
-                return;
-            }
+            isRecruiting = false;
+            recruitOneButton.interactable = true;
+            recruitTenButton.interactable = true;
         }
-
-        List<GachaResult> results = UserDataManager.Instance.GachaService.Draw(currentBanner, count);
-        RosterService roster = UserDataManager.Instance.RosterService;
-
-        foreach(var result in results)
-        {
-            UserUnitData owned = roster.GetUnit(result.Unit.unitId);
-
-            if (owned != null && !roster.CanReceiveDuplicate(owned))
-                result.IsDuplicateReward = true;
-            
-            roster.GiveUnit(result.Unit);
-        }
-
-        resultPopup.Open(results);
-        
-        Refresh();
     }
 }

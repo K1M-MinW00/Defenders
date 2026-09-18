@@ -34,5 +34,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0ff6c8a40fd56dd43aeec19cc3ab59bd, type: 2}
   - {fileID: 11400000, guid: fb64b41c4fe0490498e313d58fd9145b, type: 2}
   - {fileID: 11400000, guid: c5351fee9edd22642807fe013acb5f9c, type: 2}
-  ticketItemId: summon_ticket_2
+  ticketItemId: summon_ticket_speical
   gemCost: 500
