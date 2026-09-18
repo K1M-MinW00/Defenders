@@ -14,6 +14,7 @@ public partial class UserDataManager : MonoBehaviour
     public RewardService RewardService { get; private set; }
     public UnitTrainingUseCase UnitTrainingUseCase { get; private set; }
     public UnitPromotionUseCase UnitPromotionUseCase { get; private set; }
+    public UnitLimitBreakUseCase UnitLimitBreakUseCase { get; private set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -142,6 +143,7 @@ public partial class UserDataManager : MonoBehaviour
             RosterService = new RosterService();
             UnitTrainingUseCase = new UnitTrainingUseCase(repository, CurrentUserId, UserData);
             UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
+            UnitLimitBreakUseCase = new UnitLimitBreakUseCase(repository, CurrentUserId, UserData);
 
             IsLoaded = true;
             IsDirty = false;

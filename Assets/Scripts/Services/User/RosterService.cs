@@ -4,7 +4,6 @@ using UnityEngine;
 public class RosterService
 {
     private UserRosterData Roster => UserDataManager.Instance.UserData.Roster;
-    private const int MaxLimitBreak = 5;
 
     /// <summary>
     /// 유닛 지급
@@ -42,30 +41,6 @@ public class RosterService
     }
 
     /// <summary>
-    /// 한계돌파 진행
-    /// </summary>
-    public bool TryLimitBreak(string unitId)
-    {
-        UserUnitData unit = FindOwnedUnit(unitId);
-
-        if (unit == null)
-            return false;
-
-        if (unit.DuplicateCount <= 0)
-            return false;
-
-        if (unit.LimitBreak >= MaxLimitBreak)
-            return false;
-
-        unit.DuplicateCount--;
-        unit.LimitBreak++;
-
-        UserDataManager.Instance.MarkDirty();
-
-        return true;
-    }
-
-    /// <summary>
     /// 유닛 보유 여부
     /// </summary>
     public bool HasUnit(string unitId)
@@ -83,7 +58,8 @@ public class RosterService
 
     public bool CanReceiveDuplicate(UserUnitData unit)
     {
-        return unit != null && unit.LimitBreak + unit.DuplicateCount < MaxLimitBreak;
+        return unit != null &&
+            unit.LimitBreak + unit.DuplicateCount < UnitLimitBreakUseCase.MaxLimitBreak;
     }
 
     private UserUnitData FindOwnedUnit(string unitId)

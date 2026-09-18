@@ -27,9 +27,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
     private UnitDetailView detailPanel;
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
-
-    private const int MaxLimitBreak = 5;
-
+    private bool isLimitBreaking;
 
     private void Awake()
     {
@@ -69,7 +67,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
 
     private void RefreshMaterial()
     {
-        bool isMax = currentUnit.LimitBreak >= MaxLimitBreak;
+        bool isMax = currentUnit.LimitBreak >= UnitLimitBreakUseCase.MaxLimitBreak;
      
         if (isMax)
         {
@@ -88,14 +86,14 @@ public class UnitLimitBreakPanel : MonoBehaviour
     private void RefreshStars()
     {
         int current = currentUnit.LimitBreak;
-        int next = Mathf.Min(current + 1, MaxLimitBreak);
+        int next = Mathf.Min(current + 1, UnitLimitBreakUseCase.MaxLimitBreak);
 
         for (int i = 0; i < currentStars.Length; i++)
         {
             currentStars[i].sprite = i < current ? starImg : emptyStarImg;
         }
 
-        if (current >= MaxLimitBreak)
+        if (current >= UnitLimitBreakUseCase.MaxLimitBreak)
         {
             arrowObject.SetActive(false);
             nextStarsRoot.SetActive(false);
@@ -129,22 +127,34 @@ public class UnitLimitBreakPanel : MonoBehaviour
         }
     }
 
-    public void OnClickLimitBreak()
+    public async void OnClickLimitBreak()
     {
-        if (currentUnitData == null)
+        if (isLimitBreaking || currentUnitData == null)
             return;
 
-        if (currentUnit.LimitBreak >= MaxLimitBreak)
-            return;
+        isLimitBreaking = true;
+        limitBreakButton.interactable = false;
 
-        if (currentUnit.DuplicateCount <= 0)
-            return;
+        try
+        {
+            LimitBreakUnitResult result = await UserDataManager.Instance.UnitLimitBreakUseCase.ExecuteAsync(
+                new LimitBreakUnitCommand(currentUnitData.unitId));
 
-        bool success = UserDataManager.Instance.RosterService.TryLimitBreak(currentUnitData.unitId);
+            if (!result.Succeeded)
+            {
+                Debug.LogWarning($"[UnitLimitBreakPanel] Limit break failed: {result.Failure}");
+                return;
+            }
 
-        if (!success)
-            return;
+            currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
+            Refresh();
+        }
+        finally
+        {
+            isLimitBreaking = false;
 
-        Refresh();
+            if (limitBreakButton.gameObject.activeSelf)
+                limitBreakButton.interactable = currentUnit.DuplicateCount > 0;
+        }
     }
 }
