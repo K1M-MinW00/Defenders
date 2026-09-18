@@ -60,7 +60,7 @@ public class UnitTrainingPanel : MonoBehaviour
     public void Bind(UnitDataSO unitData, UnitDetailView panel)
     {
         currentUnitData = unitData;
-        currentUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(unitData.unitId);
+        currentUnit = UserDataManager.Instance.RosterService.GetUnit(unitData.unitId);
         resource = UserDataManager.Instance.UserData.Resource;
 
         materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
@@ -305,7 +305,7 @@ public class UnitTrainingPanel : MonoBehaviour
         foreach (var pair in selectedMaterials)
             UserDataManager.Instance.InventoryService.RemoveStackItem(ItemCategory.Material, pair.Key, pair.Value);
 
-        currentUnit.AddExp(previewTotalExp);
+        UserDataManager.Instance.RosterService.AddExp(currentUnit, previewTotalExp);
 
         await UserDataManager.Instance.SaveAsync();
 

@@ -7,12 +7,14 @@ public static class UserDataFactory
     {
         return new UserDataRoot
         {
+            SchemaVersion = UserDataSchema.CurrentVersion,
             Profile = CreateDefaultProfile(userId),
             Resource = CreateDefaultResources(),
             Roster = CreateDefaultRoster(),
             Progress = CreateDefaultProgress(),
             Inventory = CreateDefaultInventory(),
             Gacha = CreateDefaultGacha(),
+            Ad = CreateDefaultAd(),
         };
     }
 

@@ -75,7 +75,7 @@ public class UnitSummoner : MonoBehaviour
     {
         UserDataRoot userDataRoot = UserDataManager.Instance.UserData;
 
-        return UserDataManager.Instance.UserData.Roster.GetOwnedUnit(data.unitId);
+        return UserDataManager.Instance.RosterService.GetUnit(data.unitId);
     }
 
     private Vector3 ResolveSpawnPosition()

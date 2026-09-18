@@ -3,6 +3,7 @@ using Firebase.Firestore;
 [FirestoreData]
 public class UserDataRoot
 {
+    [FirestoreProperty] public int SchemaVersion { get; set; }
     [FirestoreProperty] public UserProfileData Profile { get; set; } = new();
     [FirestoreProperty] public UserResourceData Resource { get; set; } = new();
     [FirestoreProperty] public UserRosterData Roster { get; set; } = new();

@@ -173,7 +173,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
         {
             UserUnitData owned = roster.GetUnit(result.Unit.unitId);
 
-            if (owned != null &&  !owned.CanReceive)
+            if (owned != null && !roster.CanReceiveDuplicate(owned))
                 result.IsDuplicateReward = true;
             
             roster.GiveUnit(result.Unit);

@@ -39,7 +39,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
     public void Bind(UnitDataSO unitData, UnitDetailView panel)
     {
         currentUnitData = unitData;
-        currentUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(unitData.unitId);
+        currentUnit = UserDataManager.Instance.RosterService.GetUnit(unitData.unitId);
         detailPanel = panel;
 
         Refresh();

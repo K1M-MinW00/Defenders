@@ -44,7 +44,7 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
             return;
      
         viewModel = vm;
-        UserUnitData userUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(vm.UnitId);
+        UserUnitData userUnit = UserDataManager.Instance.RosterService.GetUnit(vm.UnitId);
 
         int promotion = userUnit.Promotion;
         prom_Img.sprite = promotion_sprites[promotion];

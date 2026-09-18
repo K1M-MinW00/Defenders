@@ -5,6 +5,7 @@ public class RosterService
 {
     private UserRosterData Roster => UserDataManager.Instance.UserData.Roster;
     private const int MaxLimitBreak = 5;
+    private const int MaxLevel = 50;
 
     /// <summary>
     /// 유닛 지급
@@ -17,7 +18,7 @@ public class RosterService
         if (unit == null)
             return;
 
-        UserUnitData ownedUnit = Roster.GetOwnedUnit(unit.unitId);
+        UserUnitData ownedUnit = FindOwnedUnit(unit.unitId);
 
         // 최초 획득
         if (ownedUnit == null)
@@ -29,7 +30,7 @@ public class RosterService
         }
 
         // 한계돌파 재료로 사용 가능
-        if (ownedUnit.CanReceive)
+        if (CanReceiveDuplicate(ownedUnit))
         {
             ownedUnit.DuplicateCount++;
             UserDataManager.Instance.MarkDirty();
@@ -46,7 +47,7 @@ public class RosterService
     /// </summary>
     public bool TryLimitBreak(string unitId)
     {
-        UserUnitData unit = Roster.GetOwnedUnit(unitId);
+        UserUnitData unit = FindOwnedUnit(unitId);
 
         if (unit == null)
             return false;
@@ -67,7 +68,7 @@ public class RosterService
 
     public bool TryPromotion(UnitDataSO unitData)
     {
-        UserUnitData unit = Roster.GetOwnedUnit(unitData.unitId);
+        UserUnitData unit = FindOwnedUnit(unitData.unitId);
 
         if (unit == null)
             return false;
@@ -95,7 +96,7 @@ public class RosterService
     /// </summary>
     public bool HasUnit(string unitId)
     {
-        return Roster.GetOwnedUnit(unitId) != null;
+        return FindOwnedUnit(unitId) != null;
     }
 
     /// <summary>
@@ -103,7 +104,48 @@ public class RosterService
     /// </summary>
     public UserUnitData GetUnit(string unitId)
     {
-        return Roster.GetOwnedUnit(unitId);
+        return FindOwnedUnit(unitId);
+    }
+
+    public bool CanReceiveDuplicate(UserUnitData unit)
+    {
+        return unit != null && unit.LimitBreak + unit.DuplicateCount < MaxLimitBreak;
+    }
+
+    public bool AddExp(UserUnitData unit, int amount)
+    {
+        if (unit == null || amount <= 0 || unit.Level >= MaxLevel)
+            return false;
+
+        unit.Exp += amount;
+
+        while (unit.Level < MaxLevel)
+        {
+            int requiredExp = UnitExpTable.GetRequiredExp(unit.Level);
+
+            if (unit.Exp < requiredExp)
+                break;
+
+            unit.Exp -= requiredExp;
+            unit.Level++;
+        }
+
+        if (unit.Level >= MaxLevel)
+        {
+            unit.Level = MaxLevel;
+            unit.Exp = 0;
+        }
+
+        UserDataManager.Instance.MarkDirty();
+        return true;
+    }
+
+    private UserUnitData FindOwnedUnit(string unitId)
+    {
+        if (string.IsNullOrEmpty(unitId) || Roster?.OwnedUnits == null)
+            return null;
+
+        return Roster.OwnedUnits.Find(x => x != null && x.UnitId == unitId);
     }
 
     /// <summary>

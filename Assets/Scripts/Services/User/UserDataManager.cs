@@ -88,6 +88,7 @@ public partial class UserDataManager : MonoBehaviour
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
             bool isNewUser = false;
+            bool needsSave = false;
 
             if (snapshot.Exists)
             {
@@ -97,29 +98,11 @@ public partial class UserDataManager : MonoBehaviour
                 {
                     UserData = UserDataFactory.CreateDefault(userId);
                     isNewUser = true;
+                    needsSave = true;
                 }
                 else
                 {
-                    if (UserData.Profile == null)
-                        UserData.Profile = UserDataFactory.CreateDefaultProfile(userId);
-
-                    if (UserData.Resource == null)
-                        UserData.Resource = UserDataFactory.CreateDefaultResources();
-
-                    if (UserData.Roster == null)
-                        UserData.Roster = UserDataFactory.CreateDefaultRoster();
-
-                    if (UserData.Progress == null)
-                        UserData.Progress = UserDataFactory.CreateDefaultProgress();
-
-                    if (UserData.Inventory == null)
-                        UserData.Inventory = UserDataFactory.CreateDefaultInventory();
-
-                    if (UserData.Gacha == null)
-                        UserData.Gacha = UserDataFactory.CreateDefaultGacha();
-
-                    if (UserData.Ad == null)
-                        UserData.Ad = UserDataFactory.CreateDefaultAd();
+                    needsSave = UserDataMigrator.MigrateToCurrent(UserData, userId);
                     Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
                 }
             }
@@ -127,6 +110,7 @@ public partial class UserDataManager : MonoBehaviour
             {
                 UserData = UserDataFactory.CreateDefault(userId);
                 isNewUser = true;
+                needsSave = true;
 
                 Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
             }
@@ -134,18 +118,15 @@ public partial class UserDataManager : MonoBehaviour
             if (isNewUser)
             {
                 StaminaService.InitializeFullFuel(UserData.Resource);
-
-                await SaveAsync(true);
             }
             else
             {
                 bool fuelChanged = StaminaService.RefreshFuel(UserData.Resource);
-
-                if (fuelChanged)
-                {
-                    await SaveAsync(true);
-                }
+                needsSave |= fuelChanged;
             }
+
+            if (needsSave && !await SaveAsync(true))
+                return false;
 
             InventoryService = new InventoryService();
             MailboxService = new MailboxService();

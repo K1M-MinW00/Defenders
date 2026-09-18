@@ -72,7 +72,7 @@ public class UnitDetailView : MonoBehaviour
 
         currentVm = vm;
         currentUnitData = UnitDatabase.Get(vm.UnitId);
-        currentUnit = UserDataManager.Instance.UserData.Roster.GetOwnedUnit(vm.UnitId);
+        currentUnit = UserDataManager.Instance.RosterService.GetUnit(vm.UnitId);
 
         if (currentUnitData == null || currentUnit == null)
         {
