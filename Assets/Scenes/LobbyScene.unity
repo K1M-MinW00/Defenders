@@ -11303,10 +11303,8 @@ MonoBehaviour:
   - {fileID: 8956725132658205944, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
   - {fileID: 420108578528418778, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
   promotionText: {fileID: 1256207587}
-  upgrade_Entries:
-  - {fileID: 1520697891}
-  - {fileID: 903481123}
-  - {fileID: 942929133}
+  effectRoot: {fileID: 710798100}
+  effectTemplate: {fileID: 1627569901}
   materialRoot: {fileID: 662118342}
   materialSlotPrefab: {fileID: 1185242590003644129, guid: dafd29809587c6f43a0f548f831d2a68, type: 3}
   promotionButton: {fileID: 1236342797}

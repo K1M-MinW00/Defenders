@@ -12,7 +12,8 @@ public class UnitPromotionPanel : MonoBehaviour
     [SerializeField] private TMP_Text promotionText;
 
     [Header("Upgrades")]
-    [SerializeField] private GameObject[] upgrade_Entries;
+    [SerializeField] private Transform effectRoot;
+    [SerializeField] private GameObject effectTemplate;
 
     [Header("Materials")]
     [SerializeField] private Transform materialRoot;
@@ -28,14 +29,13 @@ public class UnitPromotionPanel : MonoBehaviour
 
     private void Awake()
     {
-        promotionButton.onClick.AddListener(OnClickPromotion);
+        if (promotionButton != null)
+            promotionButton.onClick.AddListener(OnClickPromotion);
     }
 
     public void Bind(UnitDataSO unitData, UnitDetailView panel)
     {
         currentUnitData = unitData;
-        currentUnit = UserDataManager.Instance.RosterService.GetUnit(unitData.unitId);
-
         detailPanel = panel;
 
         Refresh();
@@ -43,6 +43,17 @@ public class UnitPromotionPanel : MonoBehaviour
 
     private void Refresh()
     {
+        if (currentUnitData == null || UserDataManager.Instance == null)
+            return;
+
+        currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
+
+        if (currentUnit == null)
+        {
+            Debug.LogWarning($"[UnitPromotionPanel] Owned unit data not found: {currentUnitData.unitId}");
+            return;
+        }
+
         RefreshPromotionInfo();
         RefreshEffects();
         RefreshMaterials();
@@ -52,40 +63,98 @@ public class UnitPromotionPanel : MonoBehaviour
     {
         int promotion = currentUnit.Promotion;
 
-        promotionText.text = $"{promotion}진급";
+        if (promotionText != null)
+            promotionText.text = $"{promotion}진급";
 
-        if(promotion_sprites != null && promotion < promotion_sprites.Length)
+        if (promotionImage != null && promotion_sprites != null &&
+            promotion >= 0 && promotion < promotion_sprites.Length)
+        {
             promotionImage.sprite = promotion_sprites[promotion];
+        }
 
     }
 
     private void RefreshEffects()
     {
-        for (int i = 0; i < upgrade_Entries.Length; i++)
-        {
-            bool locked = i >= currentUnit.Promotion;
+        if (effectRoot == null || effectTemplate == null)
+            return;
 
-            upgrade_Entries[i].SetActive(locked);
+        PromotionProgressionSO progression = PromotionProgressionDatabase.Get();
+
+        if (progression == null)
+        {
+            Debug.LogWarning("[UnitPromotionPanel] Promotion progression data is missing.");
+            return;
         }
+
+        EnsureEffectEntryCount(progression.Stages.Count);
+
+        for (int i = 0; i < effectRoot.childCount; i++)
+        {
+            GameObject entry = effectRoot.GetChild(i).gameObject;
+
+            if (i >= progression.Stages.Count || progression.Stages[i] == null)
+            {
+                entry.SetActive(false);
+                continue;
+            }
+
+            PromotionStageData stage = progression.Stages[i];
+            entry.SetActive(true);
+
+            TMP_Text descriptionText = entry.GetComponentInChildren<TMP_Text>(true);
+            if (descriptionText != null)
+                descriptionText.text = stage.description;
+
+            Transform lockObject = entry.transform.Find("locked_Img");
+            if (lockObject != null)
+                lockObject.gameObject.SetActive(currentUnit.Promotion < stage.promotionLevel);
+        }
+    }
+
+    private void EnsureEffectEntryCount(int requiredCount)
+    {
+        while (effectRoot.childCount < requiredCount)
+            Instantiate(effectTemplate, effectRoot);
     }
 
     private void RefreshMaterials()
     {
-        foreach (Transform child in materialRoot)
-            Destroy(child.gameObject);
+        if (materialRoot != null)
+        {
+            foreach (Transform child in materialRoot)
+                Destroy(child.gameObject);
+        }
 
         if (currentUnitData.promotionCost == null ||
             currentUnit.Promotion >= currentUnitData.promotionCost.Length)
         {
-            promotionButton.gameObject.SetActive(false);
+            promotionButton?.gameObject.SetActive(false);
             return;
         }
+
+        if (promotionButton == null || materialRoot == null || materialSlotPrefab == null)
+            return;
 
         promotionButton.gameObject.SetActive(true);
 
         PromotionCost cost = currentUnitData.promotionCost[currentUnit.Promotion];
 
+        if (cost == null || string.IsNullOrWhiteSpace(cost.MaterialId) || cost.Count <= 0)
+        {
+            Debug.LogWarning($"[UnitPromotionPanel] Invalid promotion cost at level {currentUnit.Promotion}.");
+            promotionButton.interactable = false;
+            return;
+        }
+
         MaterialDataSO material = ItemDatabase.Get(cost.MaterialId) as MaterialDataSO;
+
+        if (material == null)
+        {
+            Debug.LogWarning($"[UnitPromotionPanel] Promotion material not found: {cost.MaterialId}");
+            promotionButton.interactable = false;
+            return;
+        }
 
         int owned = UserDataManager.Instance.InventoryService.GetItemCount(material.ItemId);
 
@@ -101,7 +170,8 @@ public class UnitPromotionPanel : MonoBehaviour
             return;
 
         isPromoting = true;
-        promotionButton.interactable = false;
+        if (promotionButton != null)
+            promotionButton.interactable = false;
 
         try
         {
@@ -114,7 +184,6 @@ public class UnitPromotionPanel : MonoBehaviour
                 return;
             }
 
-            currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
             Refresh();
             detailPanel?.Refresh();
             UserDataManager.Instance.RaiseRosterUpdated();
@@ -123,8 +192,14 @@ public class UnitPromotionPanel : MonoBehaviour
         {
             isPromoting = false;
 
-            if (promotionButton.gameObject.activeSelf)
+            if (promotionButton != null && promotionButton.gameObject.activeSelf)
                 RefreshMaterials();
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (promotionButton != null)
+            promotionButton.onClick.RemoveListener(OnClickPromotion);
     }
 }
