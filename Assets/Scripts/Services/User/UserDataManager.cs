@@ -1,7 +1,4 @@
-﻿using Firebase.Auth;
-using Firebase.Firestore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -27,8 +24,7 @@ public partial class UserDataManager : MonoBehaviour
     public event Action OnResourceUpdated;
     public event Action OnProgressUpdated;
 
-    private FirebaseFirestore firestore;
-    private const string UsersCollection = "users";
+    private IUserDataRepository repository;
 
     private void Awake()
     {
@@ -42,16 +38,18 @@ public partial class UserDataManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public bool Initialize()
+    public bool Initialize(IUserDataRepository dataRepository = null)
     {
         if (IsInitialized)
             return true;
 
-        firestore = FirebaseFirestore.DefaultInstance;
-
-        if (firestore == null)
+        try
         {
-            Debug.LogError("[UserDataManager] FirebaseFirestore.DefaultInstance is null.");
+            repository = dataRepository ?? new FirestoreUserDataRepository();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[UserDataManager] Repository initialization failed: {e}");
             return false;
         }
 
@@ -84,15 +82,14 @@ public partial class UserDataManager : MonoBehaviour
         {
             CurrentUserId = userId;
 
-            DocumentReference docRef = firestore.Collection(UsersCollection).Document(userId);
-            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+            UserDataLoadResult loadResult = await repository.LoadAsync(userId);
 
             bool isNewUser = false;
             bool needsSave = false;
 
-            if (snapshot.Exists)
+            if (loadResult.Exists)
             {
-                UserData = snapshot.ConvertTo<UserDataRoot>();
+                UserData = loadResult.Data;
 
                 if (UserData == null)
                 {
@@ -125,8 +122,15 @@ public partial class UserDataManager : MonoBehaviour
                 needsSave |= fuelChanged;
             }
 
-            if (needsSave && !await SaveAsync(true))
-                return false;
+            if (needsSave)
+            {
+                bool saveSucceeded = isNewUser
+                    ? await CreateUserAsync()
+                    : await SaveAsync(true);
+
+                if (!saveSucceeded)
+                    return false;
+            }
 
             InventoryService = new InventoryService();
             MailboxService = new MailboxService();
@@ -153,7 +157,7 @@ public partial class UserDataManager : MonoBehaviour
 
     public async Task<bool> SaveAsync(bool force = false)
     {
-        if (!IsInitialized || firestore == null)
+        if (!IsInitialized || repository == null)
         {
             Debug.LogError("[UserDataManager] Not Initialized");
             return false;
@@ -170,8 +174,7 @@ public partial class UserDataManager : MonoBehaviour
 
         try
         {
-            DocumentReference docRef = firestore.Collection(UsersCollection).Document(CurrentUserId);
-            await docRef.SetAsync(UserData);
+            await repository.SaveAllAsync(CurrentUserId, UserData);
 
             IsDirty = false;
 
@@ -185,32 +188,80 @@ public partial class UserDataManager : MonoBehaviour
         }
     }
 
-    public async Task SaveUserProgressAsync(UserProgressData progress)
+    public Task<bool> SaveProfileAsync(UserProfileData profile) =>
+        SaveSectionAsync(profile, () => repository.SaveProfileAsync(CurrentUserId, profile), "profile");
+
+    public Task<bool> SaveResourcesAsync(UserResourceData resources) =>
+        SaveSectionAsync(resources, () => repository.SaveResourcesAsync(CurrentUserId, resources), "resources");
+
+    public Task<bool> SaveProgressAsync(UserProgressData progress) =>
+        SaveSectionAsync(progress, () => repository.SaveProgressAsync(CurrentUserId, progress), "progress");
+
+    public Task<bool> SaveRosterAsync(UserRosterData roster) =>
+        SaveSectionAsync(roster, () => repository.SaveRosterAsync(CurrentUserId, roster), "roster");
+
+    public Task<bool> SaveInventoryAsync(UserInventoryData inventory) =>
+        SaveSectionAsync(inventory, () => repository.SaveInventoryAsync(CurrentUserId, inventory), "inventory");
+
+    public Task<bool> SaveGachaAsync(UserGachaData gacha) =>
+        SaveSectionAsync(gacha, () => repository.SaveGachaAsync(CurrentUserId, gacha), "gacha");
+
+    public Task<bool> SaveAdAsync(UserAdData ad) =>
+        SaveSectionAsync(ad, () => repository.SaveAdAsync(CurrentUserId, ad), "ad");
+
+    public async Task<bool> SaveUserProgressAsync(UserProgressData progress)
     {
-        if (progress == null)
+        bool success = await SaveProgressAsync(progress);
+
+        if (success && UserData != null)
         {
-            Debug.LogError("SaveUserProgressAsync failed. Progress is null.");
-            return;
-        }
-
-        if (string.IsNullOrEmpty(CurrentUserId))
-        {
-            Debug.LogError("SaveUserProgressAsync failed. UserId is null.");
-            return;
-        }
-
-        DocumentReference userRef = firestore.Collection("users").Document(CurrentUserId);
-
-        Dictionary<string, object> updates = new()
-        {
-            { "Progress.CurrentSector", progress.CurrentSector },
-            { "Progress.CurrentStage", progress.CurrentStage }
-        };
-
-        await userRef.UpdateAsync(updates);
-
-        if (UserData != null)
             UserData.Progress = progress;
+            RaiseProgressUpdated();
+        }
+
+        return success;
+    }
+
+    private async Task<bool> CreateUserAsync()
+    {
+        try
+        {
+            await repository.CreateAsync(CurrentUserId, UserData);
+            IsDirty = false;
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[UserDataManager] Create user failed: {e}");
+            return false;
+        }
+    }
+
+    private async Task<bool> SaveSectionAsync<T>(T value, Func<Task> saveOperation, string sectionName)
+        where T : class
+    {
+        if (!IsInitialized || repository == null || string.IsNullOrEmpty(CurrentUserId))
+        {
+            Debug.LogError($"[UserDataManager] Cannot save {sectionName}. Manager is not ready.");
+            return false;
+        }
+
+        if (value == null)
+        {
+            Debug.LogError($"[UserDataManager] Cannot save {sectionName}. Data is null.");
+            return false;
+        }
+
+        try
+        {
+            await saveOperation();
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[UserDataManager] Save {sectionName} failed: {e}");
+            return false;
+        }
     }
 
     public void MarkDirty()

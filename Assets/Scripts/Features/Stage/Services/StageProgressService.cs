@@ -21,21 +21,28 @@ public class StageProgressService : MonoBehaviour
             return;
         }
 
-        UserProgressData progress = userData.Progress;
+        UserProgressData currentProgress = userData.Progress;
 
         // 현재 진행 중인 스테이지와 방금 클리어한 스테이지가 일치할 때만 전진
-        if (progress.CurrentSector != clearedStage.sector ||
-            progress.CurrentStage != clearedStage.stage)
+        if (currentProgress.CurrentSector != clearedStage.sector ||
+            currentProgress.CurrentStage != clearedStage.stage)
         {
             Debug.LogWarning(
-                $"Stage clear ignored. Current: {progress.CurrentSector}-{progress.CurrentStage}, Cleared: {clearedStage.StageKey}"
+                $"Stage clear ignored. Current: {currentProgress.CurrentSector}-{currentProgress.CurrentStage}, Cleared: {clearedStage.StageKey}"
             );
             return;
         }
 
-        AdvanceProgress(progress);
+        UserProgressData nextProgress = new()
+        {
+            CurrentSector = currentProgress.CurrentSector,
+            CurrentStage = currentProgress.CurrentStage,
+            BestWaveCleared = currentProgress.BestWaveCleared,
+        };
 
-        await UserDataManager.Instance.SaveUserProgressAsync(progress);
+        AdvanceProgress(nextProgress);
+
+        await UserDataManager.Instance.SaveUserProgressAsync(nextProgress);
     }
 
     public Task ApplyStageFailAsync(StageDataSO failedStage, int clearedWaveCount)

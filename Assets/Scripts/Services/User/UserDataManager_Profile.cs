@@ -1,6 +1,4 @@
-﻿using Firebase.Firestore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 public partial class UserDataManager
 {
@@ -9,13 +7,13 @@ public partial class UserDataManager
         if (UserData == null)
             return;
 
+        string previousNickname = UserData.Profile.Nickname;
         UserData.Profile.Nickname = nickname;
 
-        DocumentReference userRef = firestore.Collection(UsersCollection).Document(CurrentUserId);
+        bool success = await SaveProfileAsync(UserData.Profile);
 
-        await userRef.UpdateAsync(new Dictionary<string, object> {
-            { "Profile.Nickname", nickname }
-        });
+        if (!success)
+            UserData.Profile.Nickname = previousNickname;
 
         RaiseProfileUpdated();
     }
@@ -25,13 +23,13 @@ public partial class UserDataManager
         if (UserData == null)
             return;
 
+        string previousIconId = UserData.Profile.IconId;
         UserData.Profile.IconId = iconId;
 
-        DocumentReference userRef = firestore.Collection(UsersCollection).Document(CurrentUserId);
+        bool success = await SaveProfileAsync(UserData.Profile);
 
-        await userRef.UpdateAsync(new Dictionary<string, object> {
-            { "Profile.IconId", iconId }
-        });
+        if (!success)
+            UserData.Profile.IconId = previousIconId;
         
         RaiseProfileUpdated();
     }
