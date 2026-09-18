@@ -24,6 +24,7 @@ public class UnitPromotionPanel : MonoBehaviour
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
     private UnitDetailView detailPanel;
+    private bool isPromoting;
 
     private void Awake()
     {
@@ -73,7 +74,8 @@ public class UnitPromotionPanel : MonoBehaviour
         foreach (Transform child in materialRoot)
             Destroy(child.gameObject);
 
-        if (currentUnit.Promotion >= 4)
+        if (currentUnitData.promotionCost == null ||
+            currentUnit.Promotion >= currentUnitData.promotionCost.Length)
         {
             promotionButton.gameObject.SetActive(false);
             return;
@@ -95,14 +97,33 @@ public class UnitPromotionPanel : MonoBehaviour
 
     private async void OnClickPromotion()
     {
-        bool success = UserDataManager.Instance.RosterService.TryPromotion(currentUnitData);
-
-        if (!success)
+        if (isPromoting || currentUnitData == null)
             return;
 
-        await UserDataManager.Instance.SaveAsync();
+        isPromoting = true;
+        promotionButton.interactable = false;
 
-        Refresh();
-        detailPanel.Refresh();
+        try
+        {
+            PromoteUnitResult result = await UserDataManager.Instance.UnitPromotionUseCase.ExecuteAsync(
+                new PromoteUnitCommand(currentUnitData.unitId));
+
+            if (!result.Succeeded)
+            {
+                Debug.LogWarning($"[UnitPromotionPanel] Promotion failed: {result.Failure}");
+                return;
+            }
+
+            currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
+            Refresh();
+            detailPanel.Refresh();
+        }
+        finally
+        {
+            isPromoting = false;
+
+            if (promotionButton.gameObject.activeSelf)
+                RefreshMaterials();
+        }
     }
 }

@@ -13,6 +13,7 @@ public partial class UserDataManager : MonoBehaviour
     public RosterService RosterService { get; private set; }
     public RewardService RewardService { get; private set; }
     public UnitTrainingUseCase UnitTrainingUseCase { get; private set; }
+    public UnitPromotionUseCase UnitPromotionUseCase { get; private set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -140,6 +141,7 @@ public partial class UserDataManager : MonoBehaviour
             GachaService = new GachaService();
             RosterService = new RosterService();
             UnitTrainingUseCase = new UnitTrainingUseCase(repository, CurrentUserId, UserData);
+            UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
 
             IsLoaded = true;
             IsDirty = false;

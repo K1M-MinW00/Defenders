@@ -43,9 +43,9 @@ public sealed class UnitTrainingUseCase
         if (userData.Resource == null || userData.Resource.Gold < goldCost)
             return TrainUnitResult.Fail(TrainUnitFailure.InsufficientGold);
 
-        UserResourceData nextResources = CopyResources(userData.Resource);
-        UserInventoryData nextInventory = CopyInventory(userData.Inventory);
-        UserRosterData nextRoster = CopyRoster(userData.Roster);
+        UserResourceData nextResources = UserDataCloner.Copy(userData.Resource);
+        UserInventoryData nextInventory = UserDataCloner.Copy(userData.Inventory);
+        UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
 
         if (!TryConsumeMaterials(nextInventory, command.Materials))
             return TrainUnitResult.Fail(TrainUnitFailure.InsufficientMaterials);
@@ -172,60 +172,4 @@ public sealed class UnitTrainingUseCase
         }
     }
 
-    private static UserResourceData CopyResources(UserResourceData source)
-    {
-        return new UserResourceData
-        {
-            Gold = source.Gold,
-            Gem = source.Gem,
-            Fuel = source.Fuel,
-            MaxFuel = source.MaxFuel,
-            LastFuelUpdateTime = source.LastFuelUpdateTime,
-        };
-    }
-
-    private static UserInventoryData CopyInventory(UserInventoryData source)
-    {
-        return new UserInventoryData
-        {
-            Materials = source?.Materials?
-                .Where(item => item != null)
-                .Select(item => new InventoryStackItem { ItemId = item.ItemId, Count = item.Count })
-                .ToList() ?? new List<InventoryStackItem>(),
-            Consumables = source?.Consumables?
-                .Where(item => item != null)
-                .Select(item => new InventoryStackItem { ItemId = item.ItemId, Count = item.Count })
-                .ToList() ?? new List<InventoryStackItem>(),
-            Equipments = source?.Equipments?
-                .Where(item => item != null)
-                .Select(item => new EquipmentItemData
-                {
-                    UniqueId = item.UniqueId,
-                    ItemId = item.ItemId,
-                    Level = item.Level,
-                })
-                .ToList() ?? new List<EquipmentItemData>(),
-        };
-    }
-
-    private static UserRosterData CopyRoster(UserRosterData source)
-    {
-        return new UserRosterData
-        {
-            Power = source?.Power ?? 0,
-            SelectedUnitIds = source?.SelectedUnitIds?.ToList() ?? new List<string>(),
-            OwnedUnits = source?.OwnedUnits?
-                .Where(unit => unit != null)
-                .Select(unit => new UserUnitData
-                {
-                    UnitId = unit.UnitId,
-                    Level = unit.Level,
-                    Exp = unit.Exp,
-                    LimitBreak = unit.LimitBreak,
-                    Promotion = unit.Promotion,
-                    DuplicateCount = unit.DuplicateCount,
-                })
-                .ToList() ?? new List<UserUnitData>(),
-        };
-    }
 }
