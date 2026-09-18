@@ -50,12 +50,13 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        ResetSelection();
+        if (currentUnitData != null)
+            ResetSelection();
     }
 
     private void OnDisable()
     {
-        ResetSelection();
+        selectedMaterials.Clear();
     }
 
     public void Bind(UnitDataSO unitData, UnitDetailView panel)
@@ -85,13 +86,22 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void BuildMaterialList()
     {
+        if (contentRoot == null || slotPrefab == null)
+            return;
+
         foreach (Transform child in contentRoot)
             Destroy(child.gameObject);
 
         slots.Clear();
 
-        foreach (var item in materials)
+        if (materials == null)
+            return;
+
+        foreach (InventoryStackItem item in materials)
         {
+            if (item == null || string.IsNullOrWhiteSpace(item.ItemId) || item.Count <= 0)
+                continue;
+
             MaterialDataSO materialData = ItemDatabase.Get(item.ItemId) as MaterialDataSO;
 
             if (materialData == null)
@@ -106,6 +116,9 @@ public class UnitTrainingPanel : MonoBehaviour
 
     public void OnAddMaterial(MaterialDataSO material)
     {
+        if (material == null || currentUnit == null || currentUnitData == null)
+            return;
+
         if (currentUnit.Level >= currentUnitData.maxLevel)
             return;
 
@@ -123,6 +136,9 @@ public class UnitTrainingPanel : MonoBehaviour
 
     public void OnRemoveMaterial(MaterialDataSO material)
     {
+        if (material == null)
+            return;
+
         if (!selectedMaterials.ContainsKey(material.ItemId))
             return;
 
@@ -141,9 +157,12 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private int GetOwnedCount(string itemId)
     {
-       foreach (var item in materials)
+        if (materials == null)
+            return 0;
+
+        foreach (InventoryStackItem item in materials)
         {
-            if (item.ItemId == itemId)
+            if (item != null && item.ItemId == itemId)
                 return item.Count;
         }
 
@@ -158,39 +177,19 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void RefreshPreview()
     {
-        previewTotalExp = 0;
-        previewTotalGold = 0;
+        if (currentUnit == null || currentUnitData == null || resource == null)
+            return;
 
-        foreach (var pair in selectedMaterials)
-        {
-            MaterialDataSO material = ItemDatabase.Get(pair.Key) as MaterialDataSO;
+        UnitTrainingPreview preview = UnitTrainingPreviewCalculator.Calculate(
+            currentUnit,
+            currentUnitData.maxLevel,
+            selectedMaterials,
+            resource.Gold);
 
-            if (material == null)
-                continue;
-
-            previewTotalExp += material.Value * pair.Value;
-            previewTotalGold += material.Value * pair.Value;
-        }
-
-        previewLevel = currentUnit.Level;
-        previewExp = currentUnit.Exp + previewTotalExp;
-
-        while (previewLevel < currentUnitData.maxLevel)
-        {
-            int needExp = UnitExpTable.GetRequiredExp(previewLevel);
-
-            if (previewExp < needExp)
-                break;
-
-            previewExp -= needExp;
-            previewLevel++;
-        }
-
-        if (previewLevel >= currentUnitData.maxLevel)
-        {
-            previewLevel = currentUnitData.maxLevel;
-            previewExp = 0;
-        }
+        previewLevel = preview.Level;
+        previewExp = preview.Exp;
+        previewTotalExp = preview.TotalExp;
+        previewTotalGold = preview.GoldCost;
 
         gainedExpText.gameObject.SetActive(previewTotalExp > 0);
         gainedExpText.text = $"+{previewTotalExp}";
@@ -200,8 +199,7 @@ public class UnitTrainingPanel : MonoBehaviour
         levelUpDiffText.gameObject.SetActive(levelDiff > 0);
         levelUpDiffText.text = $"+{levelDiff}";
 
-        bool canAfford = resource.Gold >= previewTotalGold;
-        string color = canAfford ? "white" : "red";
+        string color = preview.CanAfford ? "white" : "red";
 
         goldCostText.text = $"<sprite=1> <color={color}>{previewTotalGold:N0}</color> / {resource.Gold:N0}";
 
@@ -211,6 +209,12 @@ public class UnitTrainingPanel : MonoBehaviour
         expSlider.value = previewExp;
 
         currentExpText.text = $"{previewExp}/{needCurrentExp}";
+
+        bool canTrain = !isTraining && selectedMaterials.Count > 0 && preview.CanAfford &&
+            currentUnit.Level < currentUnitData.maxLevel;
+        trainButton.interactable = canTrain;
+        addOneLevelButton.interactable = previewLevel < currentUnitData.maxLevel;
+        maxLevelButton.interactable = previewLevel < currentUnitData.maxLevel;
     }
 
     private void OnClickAddOneLevel()
@@ -260,12 +264,16 @@ public class UnitTrainingPanel : MonoBehaviour
     private bool AutoFillMaterialsInternal(int targetExp)
     {
         bool addedAny = false;
+        int availableGold = Mathf.Max(0, resource.Gold - previewTotalGold);
 
-        foreach (var item in materials)
+        foreach (InventoryStackItem item in materials)
         {
+            if (item == null)
+                continue;
+
             MaterialDataSO material = ItemDatabase.Get(item.ItemId) as MaterialDataSO;
 
-            if (material == null)
+            if (material == null || material.Value <= 0)
                 continue;
 
             int selectedCount = GetSelectedCount(item.ItemId);
@@ -275,7 +283,8 @@ public class UnitTrainingPanel : MonoBehaviour
                 continue;
 
             int needCount = Mathf.CeilToInt((float)targetExp / material.Value);
-            int addCount = Mathf.Min(remainCount, needCount);
+            int affordableCount = availableGold / material.Value;
+            int addCount = Mathf.Min(remainCount, needCount, affordableCount);
 
             if (addCount <= 0)
                 continue;
@@ -283,6 +292,7 @@ public class UnitTrainingPanel : MonoBehaviour
             selectedMaterials[item.ItemId] = selectedCount + addCount;
 
             targetExp -= addCount * material.Value;
+            availableGold -= addCount * material.Value;
 
             addedAny = true;
 
@@ -299,7 +309,7 @@ public class UnitTrainingPanel : MonoBehaviour
             return;
 
         isTraining = true;
-        trainButton.interactable = false;
+        RefreshUI();
 
         try
         {
@@ -319,13 +329,13 @@ public class UnitTrainingPanel : MonoBehaviour
 
             UserDataManager.Instance.RaiseResourceUpdated();
             UserDataManager.Instance.RaiseRosterUpdated();
-            detailPanel.Refresh();
+            detailPanel?.Refresh();
             ResetSelection();
         }
         finally
         {
             isTraining = false;
-            trainButton.interactable = true;
+            RefreshUI();
         }
     }
 }
