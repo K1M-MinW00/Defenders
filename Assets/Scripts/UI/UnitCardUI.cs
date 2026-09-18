@@ -45,26 +45,39 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
      
         viewModel = vm;
         UserUnitData userUnit = UserDataManager.Instance.RosterService.GetUnit(vm.UnitId);
+        bool isOwned = vm.IsOwned && userUnit != null;
 
-        int promotion = userUnit.Promotion;
-        prom_Img.sprite = promotion_sprites[promotion];
+        if (vm.IsOwned && userUnit == null)
+            Debug.LogWarning($"[UnitCardUI] Owned unit data not found: {vm.UnitId}");
+
+        if (prom_Img != null)
+        {
+            int promotion = userUnit?.Promotion ?? 0;
+            bool hasPromotionSprite = promotion_sprites != null &&
+                promotion >= 0 && promotion < promotion_sprites.Length;
+
+            prom_Img.enabled = isOwned && hasPromotionSprite;
+
+            if (prom_Img.enabled)
+                prom_Img.sprite = promotion_sprites[promotion];
+        }
 
         if (iconImage != null)
         {
             iconImage.sprite = vm.Icon;
-            iconImage.color = vm.IsOwned ? ownedColor : lockedColor;
+            iconImage.color = isOwned ? ownedColor : lockedColor;
         }
 
         if (levelText != null)
         {
-            levelText.text = vm.IsOwned ? $"Lv.{userUnit.Level}" : "Locked";
+            levelText.text = isOwned ? $"Lv.{userUnit.Level}" : "Locked";
         }
 
         if (canvasGroup != null)
         {
-            canvasGroup.interactable = vm.IsOwned;
-            canvasGroup.blocksRaycasts = vm.IsOwned;
-            canvasGroup.alpha = vm.IsOwned ? 1f : 0.5f;
+            canvasGroup.interactable = isOwned;
+            canvasGroup.blocksRaycasts = isOwned;
+            canvasGroup.alpha = isOwned ? 1f : 0.5f;
         }
 
         StopShake();
