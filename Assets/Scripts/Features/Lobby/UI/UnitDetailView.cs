@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,12 +43,9 @@ public class UnitDetailView : MonoBehaviour
     [SerializeField] private SkillDetailPopup activeSkillDetailPopup;
     [SerializeField] private SkillDetailPopup passiveSkillDetailPopup;
 
-    private LobbyUnitViewModel currentVm;
-    private UnitDataSO currentUnitData;
-    private UserUnitData currentUnit;
-
-    private SkillDataSO currentActiveSkill;
-    private SkillDataSO currentPassiveSkill;
+    private UnitDetailPresenter presenter;
+    private UnitDetailViewState currentState;
+    private string currentUnitId;
 
     private void Awake()
     {
@@ -70,11 +66,11 @@ public class UnitDetailView : MonoBehaviour
         if (vm == null)
             return;
 
-        currentVm = vm;
-        currentUnitData = UnitDatabase.Get(vm.UnitId);
-        currentUnit = UserDataManager.Instance.RosterService.GetUnit(vm.UnitId);
+        currentUnitId = vm.UnitId;
+        presenter ??= new UnitDetailPresenter(UserDataManager.Instance.RosterService);
+        currentState = presenter.Build(currentUnitId);
 
-        if (currentUnitData == null || currentUnit == null)
+        if (currentState == null)
         {
             Debug.LogError($"[UnitDetailView] UnitData not found: {vm.UnitId}");
             return;
@@ -85,10 +81,8 @@ public class UnitDetailView : MonoBehaviour
         else
             gameObject.SetActive(true);
 
-        BindUpperUIs();
+        Render();
         BindTabPanels();
-        BindCommonInfo();
-        BindSkillInfo();
     }
 
 
@@ -102,96 +96,116 @@ public class UnitDetailView : MonoBehaviour
 
     private void BindUpperUIs()
     {
-        Rarity rarity = currentUnitData.rarity;
+        Rarity rarity = currentState.Rarity;
 
-        rarity_text.text = rarity.ToString();
+        if (rarity_text != null)
+            rarity_text.text = rarity.ToString();
         
         switch (rarity)
         {
             case Rarity.Normal:
-                rarity_Img.color = Color.blue;
+                if (rarity_Img != null) rarity_Img.color = Color.blue;
                 break;
             case Rarity.Rare:
-                rarity_Img.color = Color.purple;
+                if (rarity_Img != null) rarity_Img.color = Color.purple;
                 break;
             case Rarity.Legend:
-                rarity_Img.color = Color.yellow;
+                if (rarity_Img != null) rarity_Img.color = Color.yellow;
                 break;
             default:
-                rarity_Img.color = Color.white;
+                if (rarity_Img != null) rarity_Img.color = Color.white;
                 break;
         }
     }
 
     public void Refresh()
     {
-        if (currentVm == null)
+        if (presenter == null || string.IsNullOrWhiteSpace(currentUnitId))
             return;
 
-        BindCommonInfo();
+        currentState = presenter.Build(currentUnitId);
+
+        if (currentState == null)
+        {
+            Debug.LogWarning($"[UnitDetailView] Cannot refresh unit: {currentUnitId}");
+            Close();
+            return;
+        }
+
+        Render();
     }
 
     private void BindTabPanels()
     {
-        trainingPanel?.Bind(currentUnitData, this);
-        promotionPanel?.Bind(currentUnitData, this);
-        limitBreakPanel?.Bind(currentUnitData, this);
-        //equipmentPanel?.Bind(currentVm, currentUnitData);
+        trainingPanel?.Bind(currentState.Definition, this);
+        promotionPanel?.Bind(currentState.Definition, this);
+        limitBreakPanel?.Bind(currentState.Definition, this);
     }
 
     private void BindCommonInfo()
     {
         if (unitIcon_Img != null)
-            unitIcon_Img.sprite = currentUnitData.icon;
+            unitIcon_Img.sprite = currentState.Icon;
 
         if (unitNameText != null)
-            unitNameText.text = currentUnitData.displayName;
-
-        UnitStats stats = UnitStatCalculator.Calculate(currentUnitData, currentUnit);
+            unitNameText.text = currentState.DisplayName;
 
         if (levelText != null)
-            levelText.text = $"Lv {currentUnit.Level}";
+            levelText.text = $"Lv {currentState.Level}";
 
         if (attackText != null)
-            attackText.text = $"{stats.Attack}";
+            attackText.text = $"{currentState.Attack}";
 
         if (hpText != null)
-            hpText.text = $"{stats.MaxHp}";
+            hpText.text = $"{currentState.MaxHp}";
 
-        int limitBreak = currentUnit.LimitBreak;
+        int limitBreak = currentState.LimitBreak;
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < limitBreak_Img.Length; i++)
         {
-            limitBreak_Img[i].sprite = i < limitBreak ? star_Sprite : emptyStar_Sprite;
+            if (limitBreak_Img[i] != null)
+                limitBreak_Img[i].sprite = i < limitBreak ? star_Sprite : emptyStar_Sprite;
         }
 
-        int promotion = currentUnit.Promotion;
-        prom_Img.sprite = promotion_sprites[promotion];
+        int promotion = currentState.Promotion;
+
+        if (prom_Img != null && promotion_sprites != null &&
+            promotion >= 0 && promotion < promotion_sprites.Length)
+        {
+            prom_Img.sprite = promotion_sprites[promotion];
+        }
     }
 
     private void BindSkillInfo()
     {
-        currentActiveSkill = currentUnitData.activeSkill;
-        currentPassiveSkill = currentUnitData.passiveSkill;
-        
-        activeSkillIconImage.sprite = currentActiveSkill.icon;
-        passiveSkillIconImage.sprite = currentPassiveSkill.icon;
+        if (activeSkillIconImage != null)
+            activeSkillIconImage.sprite = currentState.ActiveSkill?.icon;
+
+        if (passiveSkillIconImage != null)
+            passiveSkillIconImage.sprite = currentState.PassiveSkill?.icon;
+    }
+
+    private void Render()
+    {
+        BindUpperUIs();
+        BindCommonInfo();
+        BindSkillInfo();
     }
 
 
     private void OpenActiveSkillPopup()
     {
-        if (activeSkillDetailPopup == null || currentActiveSkill == null)
+        if (activeSkillDetailPopup == null || currentState?.ActiveSkill == null)
             return;
 
-        activeSkillDetailPopup.Open(currentActiveSkill, currentUnit.Promotion);
+        activeSkillDetailPopup.Open(currentState.ActiveSkill, currentState.Promotion);
     }
 
     private void OpenPassiveSkillPopup()
     {
-        if (passiveSkillDetailPopup == null || currentPassiveSkill == null)
+        if (passiveSkillDetailPopup == null || currentState?.PassiveSkill == null)
             return;
 
-        passiveSkillDetailPopup.Open(currentPassiveSkill, currentUnit.Promotion);
+        passiveSkillDetailPopup.Open(currentState.PassiveSkill, currentState.Promotion);
     }
 }
