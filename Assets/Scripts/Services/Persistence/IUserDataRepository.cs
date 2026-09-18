@@ -12,6 +12,18 @@ public interface IUserDataRepository
     Task SaveInventoryAsync(string userId, UserInventoryData inventory);
     Task SaveGachaAsync(string userId, UserGachaData gacha);
     Task SaveAdAsync(string userId, UserAdData ad);
+    Task SaveSectionsAsync(string userId, UserDataUpdate update);
+}
+
+public sealed class UserDataUpdate
+{
+    public UserProfileData Profile { get; set; }
+    public UserResourceData Resources { get; set; }
+    public UserProgressData Progress { get; set; }
+    public UserRosterData Roster { get; set; }
+    public UserInventoryData Inventory { get; set; }
+    public UserGachaData Gacha { get; set; }
+    public UserAdData Ad { get; set; }
 }
 
 public sealed class UserDataLoadResult

@@ -39,6 +39,7 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private int previewTotalExp;
     private int previewTotalGold;
+    private bool isTraining;
 
     private void Awake()
     {
@@ -294,22 +295,36 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private async void OnClickTrain()
     {
-        if (selectedMaterials.Count == 0)
+        if (isTraining || selectedMaterials.Count == 0 || currentUnitData == null)
             return;
 
-        bool success = UserDataManager.Instance.ResourceService.SpendGold(previewTotalGold);
+        isTraining = true;
+        trainButton.interactable = false;
 
-        if (!success)
-            return;
+        try
+        {
+            TrainUnitResult result = await UserDataManager.Instance.UnitTrainingUseCase.ExecuteAsync(
+                new TrainUnitCommand(currentUnitData.unitId, selectedMaterials));
 
-        foreach (var pair in selectedMaterials)
-            UserDataManager.Instance.InventoryService.RemoveStackItem(ItemCategory.Material, pair.Key, pair.Value);
+            if (!result.Succeeded)
+            {
+                Debug.LogWarning($"Unit training failed: {result.Failure}");
+                RefreshUI();
+                return;
+            }
 
-        UserDataManager.Instance.RosterService.AddExp(currentUnit, previewTotalExp);
+            currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
+            resource = UserDataManager.Instance.UserData.Resource;
+            materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
 
-        await UserDataManager.Instance.SaveAsync();
-
-        detailPanel.Refresh();
-        ResetSelection();
+            UserDataManager.Instance.RaiseResourceUpdated();
+            detailPanel.Refresh();
+            ResetSelection();
+        }
+        finally
+        {
+            isTraining = false;
+            trainButton.interactable = true;
+        }
     }
 }

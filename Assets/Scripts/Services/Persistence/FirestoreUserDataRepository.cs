@@ -78,6 +78,30 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
     public Task SaveAdAsync(string userId, UserAdData ad) =>
         SaveSectionAsync(userId, "Ad", ad);
 
+    public Task SaveSectionsAsync(string userId, UserDataUpdate update)
+    {
+        if (update == null)
+            throw new ArgumentNullException(nameof(update));
+
+        Dictionary<string, object> fields = new()
+        {
+            { UpdatedAtField, FieldValue.ServerTimestamp },
+        };
+
+        AddSection(fields, "Profile", update.Profile);
+        AddSection(fields, "Resource", update.Resources);
+        AddSection(fields, "Progress", update.Progress);
+        AddSection(fields, "Roster", update.Roster);
+        AddSection(fields, "Inventory", update.Inventory);
+        AddSection(fields, "Gacha", update.Gacha);
+        AddSection(fields, "Ad", update.Ad);
+
+        if (fields.Count == 1)
+            throw new ArgumentException("At least one user data section is required.", nameof(update));
+
+        return GetUserDocument(userId).UpdateAsync(fields);
+    }
+
     private Task SaveSectionAsync<T>(string userId, string fieldName, T value)
     {
         if (value == null)
@@ -96,6 +120,13 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
             throw new ArgumentException("User ID is null or empty.", nameof(userId));
 
         return firestore.Collection(UsersCollection).Document(userId);
+    }
+
+    private static void AddSection<T>(Dictionary<string, object> fields, string fieldName, T value)
+        where T : class
+    {
+        if (value != null)
+            fields.Add(fieldName, value);
     }
 
     private static Dictionary<string, object> BuildRootFields(UserDataRoot data, bool includeCreatedAt)

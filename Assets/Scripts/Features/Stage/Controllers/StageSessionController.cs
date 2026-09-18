@@ -95,7 +95,7 @@ public class StageSessionController : MonoBehaviour
         waveController.StartWave(CurrentWave, OnWaveWin, OnWaveLose);
     }
 
-    private void OnWaveWin()
+    private async void OnWaveWin()
     {
         rewardService.GiveWaveReward(CurrentWave);
         stageTimeController.ExitCombatPhase();
@@ -103,7 +103,7 @@ public class StageSessionController : MonoBehaviour
 
         if (CurrentWave == null)
         {
-            HandleStageClear();
+            await HandleStageClear();
             return;
         }
         

@@ -5,7 +5,6 @@ public class RosterService
 {
     private UserRosterData Roster => UserDataManager.Instance.UserData.Roster;
     private const int MaxLimitBreak = 5;
-    private const int MaxLevel = 50;
 
     /// <summary>
     /// 유닛 지급
@@ -110,34 +109,6 @@ public class RosterService
     public bool CanReceiveDuplicate(UserUnitData unit)
     {
         return unit != null && unit.LimitBreak + unit.DuplicateCount < MaxLimitBreak;
-    }
-
-    public bool AddExp(UserUnitData unit, int amount)
-    {
-        if (unit == null || amount <= 0 || unit.Level >= MaxLevel)
-            return false;
-
-        unit.Exp += amount;
-
-        while (unit.Level < MaxLevel)
-        {
-            int requiredExp = UnitExpTable.GetRequiredExp(unit.Level);
-
-            if (unit.Exp < requiredExp)
-                break;
-
-            unit.Exp -= requiredExp;
-            unit.Level++;
-        }
-
-        if (unit.Level >= MaxLevel)
-        {
-            unit.Level = MaxLevel;
-            unit.Exp = 0;
-        }
-
-        UserDataManager.Instance.MarkDirty();
-        return true;
     }
 
     private UserUnitData FindOwnedUnit(string unitId)
