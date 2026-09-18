@@ -45,14 +45,14 @@ public class StartupBootstrap : MonoBehaviour
             loadingView.SetStatus("Checking Login...");
             loadingView.SetProgress(0.3f);
 
-            bool loginOk = await AuthService.Instance.InitializeAndLoginAsync();
-            if (!loginOk || AuthService.Instance.CurrentUser == null)
+            AuthLoginResult loginResult = await AuthService.Instance.SignInAsync();
+            if (!loginResult.Succeeded)
             {
                 SetFailed("Login Failed");
                 return;
             }
 
-            string userId = AuthService.Instance.CurrentUser.UserId;
+            string userId = loginResult.UserId;
             Debug.Log($"[StartupBootstrap] Login Success. UID: {userId}");
 
             await WaitForSecondsAsync(LoadingStepDelay);

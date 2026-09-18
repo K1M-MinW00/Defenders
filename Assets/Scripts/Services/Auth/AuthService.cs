@@ -4,18 +4,15 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class AuthService : MonoBehaviour
+public sealed class AuthService : MonoBehaviour
 {
     public static AuthService Instance { get; private set; }
-
-    public FirebaseAuth Auth { get; private set; }
-    public FirebaseUser CurrentUser => Auth?.CurrentUser;
 
     public bool IsInitialized { get; private set; }
     public bool IsBusy { get; private set; }
 
-    public event Action<FirebaseUser> OnLoginSucceeded;
-    public event Action<string> OnLoginFailed;
+    private FirebaseAuth auth;
+    private FirebaseUser CurrentUser => auth?.CurrentUser;
 
     private void Awake()
     {
@@ -30,10 +27,10 @@ public class AuthService : MonoBehaviour
     }
 
 
-    public async Task<bool> InitializeAndLoginAsync()
+    public async Task<AuthLoginResult> SignInAsync()
     {
         if (IsBusy)
-            return false;
+            return AuthLoginResult.Fail("Authentication is already in progress.");
 
         IsBusy = true;
 
@@ -42,10 +39,7 @@ public class AuthService : MonoBehaviour
             bool initOk = await InitializeFirebaseAsync();
 
             if (!initOk)
-            {
-                RaiseLoginFailed("Firebase initialization failed.");
-                return false;
-            }
+                return Fail("Firebase initialization failed.");
 
             if (CurrentUser != null)
             {
@@ -54,30 +48,24 @@ public class AuthService : MonoBehaviour
                 if (isSessionValid)
                 {
                     Debug.Log($"[AuthManager] Auto login Success. UID : {CurrentUser.UserId}");
-                    OnLoginSucceeded?.Invoke(CurrentUser);
-                    return true;
+                    return AuthLoginResult.Success(CurrentUser.UserId);
                 }
 
                 Debug.LogWarning("[AuthManager] Cached User session is invalid. Signing out");
                 SignOut();
             }
 
-            AuthResult authResult = await Auth.SignInAnonymouslyAsync();
+            AuthResult authResult = await auth.SignInAnonymouslyAsync();
 
             if (authResult?.User == null)
-            {
-                RaiseLoginFailed("Anonymous login returned null user");
-                return false;
-            }
+                return Fail("Anonymous login returned null user.");
 
             Debug.Log($"[AuthManager] Anonymous login success. UID : {authResult.User.UserId}");
-            OnLoginSucceeded?.Invoke(authResult.User);
-            return true;
+            return AuthLoginResult.Success(authResult.User.UserId);
         }
         catch (Exception e)
         {
-            RaiseLoginFailed($"Login exception : {e}");
-            return false;
+            return Fail($"Login exception: {e}");
         }
         finally
         {
@@ -100,8 +88,8 @@ public class AuthService : MonoBehaviour
                 return false;
             }
 
-            Auth = FirebaseAuth.DefaultInstance;
-            IsInitialized = Auth != null;
+            auth = FirebaseAuth.DefaultInstance;
+            IsInitialized = auth != null;
 
             Debug.Log("[AuthManager] Firebase Auth Initialized");
             return IsInitialized;
@@ -132,16 +120,16 @@ public class AuthService : MonoBehaviour
 
     public void SignOut()
     {
-        if (!IsInitialized || Auth == null)
+        if (!IsInitialized || auth == null)
             return;
 
-        Auth.SignOut();
+        auth.SignOut();
         Debug.Log("[AuthManager] Signed out");
     }
 
-    private void RaiseLoginFailed(string message)
+    private static AuthLoginResult Fail(string message)
     {
         Debug.LogError($"[AuthManager] {message}");
-        OnLoginFailed?.Invoke(message);
+        return AuthLoginResult.Fail(message);
     }
 }
