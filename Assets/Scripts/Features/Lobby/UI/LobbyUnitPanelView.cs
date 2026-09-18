@@ -39,7 +39,8 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private void OnEnable()
     {
-        UserDataManager.Instance.OnResourceUpdated += RefreshView;
+        UserDataManager.Instance.OnResourceUpdated += RefreshGold;
+        UserDataManager.Instance.OnRosterUpdated += RefreshView;
         RefreshView();
     }
 
@@ -48,7 +49,8 @@ public class LobbyUnitPanelView : MonoBehaviour
         if (UserDataManager.Instance == null)
             return;
 
-        UserDataManager.Instance.OnResourceUpdated -= RefreshView;
+        UserDataManager.Instance.OnResourceUpdated -= RefreshGold;
+        UserDataManager.Instance.OnRosterUpdated -= RefreshView;
     }
 
     private void RefreshGold()

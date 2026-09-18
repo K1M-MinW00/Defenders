@@ -14,18 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PromotionProgressionSO
   stages:
   - promotionLevel: 1
-    description: "\uCCB4\uB825 10% \uC99D\uAC00, \uD328\uC2DC\uBE0C \uC2A4\uD0AC \uD574\uAE08"
+    description: "\uD328\uC2DC\uBE0C \uC2A4\uD0AC \uD574\uAE08"
+    statBonuses: []
+    startingEnergyPercent: 0
+  - promotionLevel: 2
+    description: "\uC561\uD2F0\uBE0C \uC2A4\uD0AC \uD6A8\uACFC \uCD94\uAC00, \uCCB4\uB825 10% \uC99D\uAC00"
     statBonuses:
     - statType: 1
       percentValue: 10
-  - promotionLevel: 2
-    description: "\uACF5\uACA9\uB825 10% \uC99D\uAC00, \uC561\uD2F0\uBE0C \uC2A4\uD0AC 2\uB2E8\uACC4"
+    startingEnergyPercent: 0
+  - promotionLevel: 3
+    description: "\uD328\uC2DC\uBE0C \uC2A4\uD0AC \uD6A8\uACFC \uCD94\uAC00, \uACF5\uACA9\uB825 10% \uC99D\uAC00"
     statBonuses:
     - statType: 0
       percentValue: 10
-  - promotionLevel: 3
-    description: "\uD328\uC2DC\uBE0C \uC2A4\uD0AC 2\uB2E8\uACC4"
-    statBonuses: []
+    startingEnergyPercent: 0
   - promotionLevel: 4
-    description: "\uC561\uD2F0\uBE0C \uC2A4\uD0AC 3\uB2E8\uACC4"
+    description: "\uC6E8\uC774\uBE0C \uC2DC\uC791 \uC2DC \uC5D0\uB108\uC9C0 50% \uD68D\uB4DD"
     statBonuses: []
+    startingEnergyPercent: 50

@@ -159,6 +159,8 @@ public class LobbyRecruitPanelView : MonoBehaviour
                 return;
             }
 
+            UserDataManager.Instance.RaiseResourceUpdated();
+            UserDataManager.Instance.RaiseRosterUpdated();
             resultPopup.Open(new List<GachaResult>(result.Results));
             Refresh();
         }

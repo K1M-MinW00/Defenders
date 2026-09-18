@@ -116,7 +116,8 @@ public class UnitPromotionPanel : MonoBehaviour
 
             currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
             Refresh();
-            detailPanel.Refresh();
+            detailPanel?.Refresh();
+            UserDataManager.Instance.RaiseRosterUpdated();
         }
         finally
         {

@@ -26,7 +26,6 @@ public class UnitSkillController : MonoBehaviour
     public bool HasPassive => passiveSkill != null && IsSkillStageUnlocked(owner?.UnitData?.passiveSkill, 0);
     public bool HasActiveUpgrade2 => activeSkill != null && IsSkillStageUnlocked(owner?.UnitData?.activeSkill, 1);
     public bool HasPassiveUpgrade2 => passiveSkill != null && IsSkillStageUnlocked(owner?.UnitData?.passiveSkill, 1);
-    public bool HasActiveUpgrade3 => activeSkill != null && IsSkillStageUnlocked(owner?.UnitData?.activeSkill, 2);
 
     public void Initialize(UnitController owner)
     {
@@ -172,8 +171,11 @@ public class UnitSkillController : MonoBehaviour
 
     public void NotifyBattleStart()
     {
-        if (HasActiveUpgrade3)
-            owner.Energy.Add(50f);
+        PromotionProgressionSO progression = PromotionProgressionDatabase.Get();
+        float startingEnergyPercent = progression?.GetStartingEnergyPercent(promotion) ?? 0f;
+
+        if (startingEnergyPercent > 0f)
+            owner.Energy.Add(owner.Energy.MaxEnergy * startingEnergyPercent / 100f);
 
         if (!HasPassive)
             return;

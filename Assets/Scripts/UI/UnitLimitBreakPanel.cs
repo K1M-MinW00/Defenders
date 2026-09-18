@@ -177,6 +177,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
             }
 
             Refresh();
+            UserDataManager.Instance.RaiseRosterUpdated();
         }
         finally
         {

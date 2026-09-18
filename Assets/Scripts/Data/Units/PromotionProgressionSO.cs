@@ -29,6 +29,22 @@ public sealed class PromotionProgressionSO : ScriptableObject
             }
         }
     }
+
+    public float GetStartingEnergyPercent(int promotion)
+    {
+        if (stages == null)
+            return 0f;
+
+        float total = 0f;
+
+        foreach (PromotionStageData stage in stages)
+        {
+            if (stage != null && stage.promotionLevel > 0 && stage.promotionLevel <= promotion)
+                total += Mathf.Max(0f, stage.startingEnergyPercent);
+        }
+
+        return total;
+    }
 }
 
 [Serializable]
@@ -37,6 +53,7 @@ public sealed class PromotionStageData
     [Min(1)] public int promotionLevel = 1;
     [TextArea] public string description;
     public List<PromotionStatBonus> statBonuses = new();
+    [Min(0f)] public float startingEnergyPercent;
 }
 
 [Serializable]
