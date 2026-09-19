@@ -23,6 +23,8 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private readonly List<LobbyUnitViewModel> selectedUnitViewModels = new();
     private readonly List<LobbyUnitViewModel> ownedUnitListViewModels = new();
+    private readonly Dictionary<string, UnitCardUI> cardsByUnitId = new();
+    private readonly List<string> staleCardIds = new();
 
     private UserResourceData resource;
     private UserRosterData roster;
@@ -46,6 +48,8 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private void OnDisable()
     {
+        ClearPendingSwap();
+
         if (UserDataManager.Instance == null)
             return;
 
@@ -84,8 +88,7 @@ public class LobbyUnitPanelView : MonoBehaviour
         BuildSelectedUnitViewModels(selectedUnitIds, ownedUnitMap);
         BuildOwnedUnitViewModels(selectedSet, ownedUnitMap);
 
-        BuildCardList(selectedUnitRoot, selectedUnitViewModels);
-        BuildCardList(ownedUnitRoot, ownedUnitListViewModels);
+        ReconcileCardLists();
         RefreshGridLayouts();
     }
 
@@ -146,29 +149,98 @@ public class LobbyUnitPanelView : MonoBehaviour
         };
     }
 
-    private void BuildCardList(Transform root, List<LobbyUnitViewModel> viewModels)
+    private void ReconcileCardLists()
     {
-        if (root == null || unitCardPrefab == null)
+        if (unitCardPrefab == null)
             return;
 
-        ClearCardList(root);
+        HashSet<string> visibleUnitIds = new();
 
-        foreach (LobbyUnitViewModel vm in viewModels)
+        ReconcileCardList(selectedUnitRoot, selectedUnitViewModels, visibleUnitIds);
+        ReconcileCardList(ownedUnitRoot, ownedUnitListViewModels, visibleUnitIds);
+        RemoveStaleCards(visibleUnitIds);
+        RestorePendingSwapVisual();
+    }
+
+    private void ReconcileCardList(
+        Transform root,
+        IReadOnlyList<LobbyUnitViewModel> viewModels,
+        HashSet<string> visibleUnitIds)
+    {
+        if (root == null || viewModels == null)
+            return;
+
+        for (int i = 0; i < viewModels.Count; i++)
         {
-            UnitCardUI card = Instantiate(unitCardPrefab, root);
-            card.Bind(vm);
+            LobbyUnitViewModel vm = viewModels[i];
+            if (vm == null || string.IsNullOrWhiteSpace(vm.UnitId) || !visibleUnitIds.Add(vm.UnitId))
+                continue;
 
-            card.OnClicked += HandleCardClicked;
-            card.OnLongPressed += HandleCardLongPressed;
+            UnitCardUI card = GetOrCreateCard(vm.UnitId, root);
+
+            if (card.transform.parent != root)
+                card.transform.SetParent(root, false);
+
+            card.transform.SetSiblingIndex(i);
+            card.Bind(vm);
         }
     }
 
-    private void ClearCardList(Transform root)
+    private UnitCardUI GetOrCreateCard(string unitId, Transform root)
     {
-        for (int i = root.childCount - 1; i >= 0; i--)
+        if (cardsByUnitId.TryGetValue(unitId, out UnitCardUI card) && card != null)
+            return card;
+
+        card = Instantiate(unitCardPrefab, root);
+        card.OnClicked += HandleCardClicked;
+        card.OnLongPressed += HandleCardLongPressed;
+        cardsByUnitId[unitId] = card;
+
+        return card;
+    }
+
+    private void RemoveStaleCards(HashSet<string> visibleUnitIds)
+    {
+        staleCardIds.Clear();
+
+        foreach (KeyValuePair<string, UnitCardUI> pair in cardsByUnitId)
         {
-            Destroy(root.GetChild(i).gameObject);
+            if (!visibleUnitIds.Contains(pair.Key))
+                staleCardIds.Add(pair.Key);
         }
+
+        foreach (string unitId in staleCardIds)
+        {
+            UnitCardUI card = cardsByUnitId[unitId];
+
+            if (card != null)
+            {
+                card.OnClicked -= HandleCardClicked;
+                card.OnLongPressed -= HandleCardLongPressed;
+                card.gameObject.SetActive(false);
+                Destroy(card.gameObject);
+            }
+
+            cardsByUnitId.Remove(unitId);
+        }
+
+        staleCardIds.Clear();
+    }
+
+    private void RestorePendingSwapVisual()
+    {
+        if (string.IsNullOrWhiteSpace(pendingSwapUnitId))
+            return;
+
+        if (!cardsByUnitId.TryGetValue(pendingSwapUnitId, out UnitCardUI card) ||
+            card == null || card.ViewModel == null || !card.ViewModel.IsSelected)
+        {
+            ClearPendingSwap();
+            return;
+        }
+
+        pendingSwapCard = card;
+        pendingSwapCard.StartShake();
     }
 
     private void OnRectTransformDimensionsChange()
@@ -319,5 +391,19 @@ public class LobbyUnitPanelView : MonoBehaviour
 
         pendingSwapCard = null;
         pendingSwapUnitId = null;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (UnitCardUI card in cardsByUnitId.Values)
+        {
+            if (card == null)
+                continue;
+
+            card.OnClicked -= HandleCardClicked;
+            card.OnLongPressed -= HandleCardLongPressed;
+        }
+
+        cardsByUnitId.Clear();
     }
 }
