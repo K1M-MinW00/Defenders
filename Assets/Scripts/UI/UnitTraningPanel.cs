@@ -108,7 +108,11 @@ public class UnitTrainingPanel : MonoBehaviour
                 continue;
 
             TrainingMaterialSlot slot = Instantiate(slotPrefab, contentRoot);
-            slot.Setup(materialData, item.Count, this);
+            slot.Setup(
+                materialData,
+                item.Count,
+                () => OnAddMaterial(materialData),
+                () => OnRemoveMaterial(materialData));
 
             slots.Add(slot);
         }
@@ -171,8 +175,13 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void RefreshSlots()
     {
-        foreach (var slot in slots)
-            slot.Refresh();
+        foreach (TrainingMaterialSlot slot in slots)
+        {
+            if (slot == null || string.IsNullOrWhiteSpace(slot.ItemId))
+                continue;
+
+            slot.Refresh(GetSelectedCount(slot.ItemId));
+        }
     }
 
     private void RefreshPreview()

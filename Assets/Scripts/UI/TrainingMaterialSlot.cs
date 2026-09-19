@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,42 +13,72 @@ public class TrainingMaterialSlot : MonoBehaviour
 
     private MaterialDataSO materialData;
     private int ownedCount;
+    private Action onAdd;
+    private Action onRemove;
 
-    private UnitTrainingPanel trainingPanel;
+    public string ItemId => materialData?.ItemId;
 
-    public void Setup(MaterialDataSO data, int owned, UnitTrainingPanel panel)
+    public void Setup(MaterialDataSO data, int owned, Action addHandler, Action removeHandler)
     {
         materialData = data;
-        ownedCount = owned;
-        trainingPanel = panel;
+        ownedCount = Mathf.Max(0, owned);
+        onAdd = addHandler;
+        onRemove = removeHandler;
 
-        iconImage.sprite = data.Icon;
+        if (iconImage != null)
+            iconImage.sprite = data != null ? data.Icon : null;
 
-        selectButton.onClick.RemoveAllListeners();
-        selectButton.onClick.AddListener(AddOne);
+        if (selectButton != null)
+        {
+            selectButton.onClick.RemoveListener(HandleAddClicked);
+            selectButton.onClick.AddListener(HandleAddClicked);
+        }
 
-        minusButton.onClick.RemoveAllListeners();
-        minusButton.onClick.AddListener(RemoveOne);
+        if (minusButton != null)
+        {
+            minusButton.onClick.RemoveListener(HandleRemoveClicked);
+            minusButton.onClick.AddListener(HandleRemoveClicked);
+        }
 
-        Refresh();
+        Refresh(0);
     }
 
-    private void AddOne()
+    private void HandleAddClicked()
     {
-        trainingPanel.OnAddMaterial(materialData);
+        onAdd?.Invoke();
     }
 
-    private void RemoveOne()
+    private void HandleRemoveClicked()
     {
-        trainingPanel.OnRemoveMaterial(materialData);
+        onRemove?.Invoke();
     }
 
-    public void Refresh()
+    public void Refresh(int selectedCount)
     {
-        int selectedCount = trainingPanel.GetSelectedCount(materialData.ItemId);
+        selectedCount = Mathf.Clamp(selectedCount, 0, ownedCount);
 
-        ownedCountText.text = ownedCount.ToString("N0");
-        selectedCountText.text = selectedCount > 0 ? selectedCount.ToString("N0") : "";
-        minusButton.gameObject.SetActive(selectedCount > 0);
+        if (ownedCountText != null)
+            ownedCountText.text = ownedCount.ToString("N0");
+
+        if (selectedCountText != null)
+            selectedCountText.text = selectedCount > 0 ? selectedCount.ToString("N0") : string.Empty;
+
+        if (minusButton != null)
+            minusButton.gameObject.SetActive(selectedCount > 0);
+
+        if (selectButton != null)
+            selectButton.interactable = materialData != null && selectedCount < ownedCount;
+    }
+
+    private void OnDestroy()
+    {
+        if (selectButton != null)
+            selectButton.onClick.RemoveListener(HandleAddClicked);
+
+        if (minusButton != null)
+            minusButton.onClick.RemoveListener(HandleRemoveClicked);
+
+        onAdd = null;
+        onRemove = null;
     }
 }
