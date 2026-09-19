@@ -135,6 +135,7 @@ public class UnitDetailView : MonoBehaviour
         }
 
         Render();
+        BindTabPanels();
     }
 
     private void BindTabPanels()
