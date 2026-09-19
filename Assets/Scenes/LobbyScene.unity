@@ -960,7 +960,6 @@ GameObject:
   - component: {fileID: 24743860}
   - component: {fileID: 24743859}
   - component: {fileID: 24743858}
-  - component: {fileID: 24743861}
   m_Layer: 5
   m_Name: LimitBreak_Btn
   m_TagString: Untagged
@@ -1072,24 +1071,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 24743856}
   m_CullTransparentMesh: 1
---- !u!114 &24743861
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 24743856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84560d4a3efbe9949a4e4384b746028b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitDetailTabButton
-  button: {fileID: 24743858}
-  backgroundImage: {fileID: 1201708037}
-  labelText: {fileID: 434115208}
-  targetRect: {fileID: 24743857}
-  normalColor: {r: 0.15, g: 0.25, b: 0.38, a: 1}
-  selectedColor: {r: 0.15, g: 0.75, b: 1, a: 1}
 --- !u!1 &25353360
 GameObject:
   m_ObjectHideFlags: 0
@@ -8321,7 +8302,6 @@ GameObject:
   - component: {fileID: 175742151}
   - component: {fileID: 175742150}
   - component: {fileID: 175742149}
-  - component: {fileID: 175742152}
   m_Layer: 5
   m_Name: Equip_Btn
   m_TagString: Untagged
@@ -8433,24 +8413,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 175742147}
   m_CullTransparentMesh: 1
---- !u!114 &175742152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 175742147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84560d4a3efbe9949a4e4384b746028b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitDetailTabButton
-  button: {fileID: 175742149}
-  backgroundImage: {fileID: 359904740}
-  labelText: {fileID: 543583649}
-  targetRect: {fileID: 175742148}
-  normalColor: {r: 0.15, g: 0.25, b: 0.38, a: 1}
-  selectedColor: {r: 0.15, g: 0.75, b: 1, a: 1}
 --- !u!1 &177071488
 GameObject:
   m_ObjectHideFlags: 0
@@ -22739,7 +22701,6 @@ GameObject:
   - component: {fileID: 566079730}
   - component: {fileID: 566079729}
   - component: {fileID: 566079728}
-  - component: {fileID: 566079731}
   m_Layer: 5
   m_Name: Train_Btn
   m_TagString: Untagged
@@ -22851,24 +22812,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 566079726}
   m_CullTransparentMesh: 1
---- !u!114 &566079731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566079726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84560d4a3efbe9949a4e4384b746028b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitDetailTabButton
-  button: {fileID: 566079728}
-  backgroundImage: {fileID: 1731178879}
-  labelText: {fileID: 1320110482}
-  targetRect: {fileID: 566079727}
-  normalColor: {r: 0.15, g: 0.25, b: 0.38, a: 1}
-  selectedColor: {r: 0.15, g: 0.75, b: 1, a: 1}
 --- !u!1 &568000667
 GameObject:
   m_ObjectHideFlags: 0
@@ -80644,7 +80587,6 @@ GameObject:
   - component: {fileID: 2116530299}
   - component: {fileID: 2116530298}
   - component: {fileID: 2116530297}
-  - component: {fileID: 2116530300}
   m_Layer: 5
   m_Name: Promotion_Btn
   m_TagString: Untagged
@@ -80756,24 +80698,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2116530295}
   m_CullTransparentMesh: 1
---- !u!114 &2116530300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2116530295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84560d4a3efbe9949a4e4384b746028b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitDetailTabButton
-  button: {fileID: 2116530297}
-  backgroundImage: {fileID: 871280055}
-  labelText: {fileID: 404019517}
-  targetRect: {fileID: 2116530296}
-  normalColor: {r: 0.15, g: 0.25, b: 0.38, a: 1}
-  selectedColor: {r: 0.15, g: 0.75, b: 1, a: 1}
 --- !u!1 &2116868930
 GameObject:
   m_ObjectHideFlags: 0
