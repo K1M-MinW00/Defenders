@@ -381,18 +381,10 @@ MonoBehaviour:
   promotionInfoRoot: {fileID: 1659636168321115253}
   promotionText: {fileID: 3970340374354497422}
   prom_Img: {fileID: 3515122058229735216}
-  promotion_sprites:
-  - {fileID: -8598921663240077131, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 5972198822125079039, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: -6628392552983383109, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 8956725132658205944, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 420108578528418778, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
+  visualConfig: {fileID: 11400000, guid: b35a62096de54a64a3915d346269523d, type: 2}
   canvasGroup: {fileID: 3745617847557062966}
   ownedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
-  normalBackgroundColor: {r: 0.4575472, g: 0.4575472, b: 1, a: 1}
-  rareBackgroundColor: {r: 0.773222, g: 0.41037738, b: 1, a: 1}
-  legendBackgroundColor: {r: 0.9811321, g: 0.9328241, b: 0.37486652, a: 1}
   longPressSeconds: 0.45
   shakeAngle: 4
   shakeSpeed: 18

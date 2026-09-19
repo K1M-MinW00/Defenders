@@ -6,18 +6,13 @@ public class RecruitUnitIconView : MonoBehaviour
     [SerializeField] private Image bgImage;
     [SerializeField] private Image iconImage;
     [SerializeField] private GameObject duplicateMark;
+    [SerializeField] private UnitVisualConfigSO visualConfig;
 
     public void Setup(GachaResult result)
     {
         iconImage.sprite = result.Unit.icon;
 
-        bgImage.color = result.Unit.rarity switch
-        {
-            Rarity.Legend => Color.yellow,
-            Rarity.Rare => Color.blue,
-            Rarity.Normal => Color.wheat,
-            _ => Color.white
-        };
+        bgImage.color = visualConfig != null ? visualConfig.GetRarityColor(result.Unit.rarity) : Color.white;
 
         duplicateMark.SetActive(result.IsDuplicateReward);
     }
@@ -26,13 +21,7 @@ public class RecruitUnitIconView : MonoBehaviour
     {
         iconImage.sprite = unit.icon;
 
-        bgImage.color = unit.rarity switch
-        {
-            Rarity.Legend => Color.yellow,
-            Rarity.Rare => Color.blue,
-            Rarity.Normal => Color.wheat,
-            _ => Color.white
-        };
+        bgImage.color = visualConfig != null ? visualConfig.GetRarityColor(unit.rarity) : Color.white;
 
         duplicateMark.SetActive(false);
     }

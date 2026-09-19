@@ -14,8 +14,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
     [SerializeField] private GameObject nextStarsRoot;
     [SerializeField] private Image[] nextStars;
     [SerializeField] private GameObject arrowObject;
-    [SerializeField] private Sprite emptyStarImg;
-    [SerializeField] private Sprite starImg;
+    [SerializeField] private UnitVisualConfigSO visualConfig;
 
     [Header("Effects")]
     [SerializeField] private Transform effectRoot;
@@ -123,7 +122,8 @@ public class UnitLimitBreakPanel : MonoBehaviour
 
             star.gameObject.SetActive(true);
             star.color = Color.white;
-            star.sprite = i < filledCount ? starImg : emptyStarImg;
+            if (visualConfig != null)
+                star.sprite = i < filledCount ? visualConfig.FilledStarSprite : visualConfig.EmptyStarSprite;
         }
     }
 

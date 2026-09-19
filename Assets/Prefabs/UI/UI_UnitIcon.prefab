@@ -168,6 +168,7 @@ MonoBehaviour:
   bgImage: {fileID: 461759218750889097}
   iconImage: {fileID: 7182531148138049261}
   duplicateMark: {fileID: 5306984525851157515}
+  visualConfig: {fileID: 11400000, guid: b35a62096de54a64a3915d346269523d, type: 2}
 --- !u!1 &5306984525851157515
 GameObject:
   m_ObjectHideFlags: 0

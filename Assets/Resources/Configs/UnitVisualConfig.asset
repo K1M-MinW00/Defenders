@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c603d10958fc4eeca199d3d4f819585b, type: 3}
+  m_Name: UnitVisualConfig
+  m_EditorClassIdentifier: Assembly-CSharp::UnitVisualConfigSO
+  normalColor: {r: 0.4575472, g: 0.4575472, b: 1, a: 1}
+  rareColor: {r: 0.773222, g: 0.41037738, b: 1, a: 1}
+  legendColor: {r: 0.9811321, g: 0.9328241, b: 0.37486652, a: 1}
+  promotionSprites:
+  - {fileID: -8598921663240077131, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
+  - {fileID: 5972198822125079039, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
+  - {fileID: -6628392552983383109, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
+  - {fileID: 8956725132658205944, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
+  - {fileID: 420108578528418778, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
+  filledStarSprite: {fileID: 2081244459407798326, guid: 35bce1252a0021647b0e3235da5c42be, type: 3}
+  emptyStarSprite: {fileID: 1837334682534702371, guid: 35bce1252a0021647b0e3235da5c42be, type: 3}

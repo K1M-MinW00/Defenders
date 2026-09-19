@@ -11258,12 +11258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitPromotionPanel
   promotionImage: {fileID: 1250084121}
-  promotion_sprites:
-  - {fileID: -8598921663240077131, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 5972198822125079039, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: -6628392552983383109, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 8956725132658205944, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 420108578528418778, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
+  visualConfig: {fileID: 11400000, guid: b35a62096de54a64a3915d346269523d, type: 2}
   promotionText: {fileID: 1256207587}
   upgradeLockObjects:
   - {fileID: 1520697891}
@@ -32827,16 +32822,9 @@ MonoBehaviour:
   - {fileID: 1092662618}
   - {fileID: 1052719731}
   - {fileID: 458365396}
-  star_Sprite: {fileID: 2081244459407798326, guid: 35bce1252a0021647b0e3235da5c42be, type: 3}
-  emptyStar_Sprite: {fileID: 1837334682534702371, guid: 35bce1252a0021647b0e3235da5c42be, type: 3}
+  visualConfig: {fileID: 11400000, guid: b35a62096de54a64a3915d346269523d, type: 2}
   unitIcon_Img: {fileID: 535769726}
   prom_Img: {fileID: 1682984330}
-  promotion_sprites:
-  - {fileID: -8598921663240077131, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 5972198822125079039, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: -6628392552983383109, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 8956725132658205944, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
-  - {fileID: 420108578528418778, guid: 0157a1c6f2f16cb42ad1e27f3d9a0ce0, type: 3}
   unitNameText: {fileID: 1537625693}
   levelText: {fileID: 1864842328}
   attackText: {fileID: 1455574390}
@@ -64919,8 +64907,7 @@ MonoBehaviour:
   - {fileID: 1593737580}
   - {fileID: 293864126}
   arrowObject: {fileID: 698944415}
-  emptyStarImg: {fileID: 1837334682534702371, guid: 35bce1252a0021647b0e3235da5c42be, type: 3}
-  starImg: {fileID: 2081244459407798326, guid: 35bce1252a0021647b0e3235da5c42be, type: 3}
+  visualConfig: {fileID: 11400000, guid: b35a62096de54a64a3915d346269523d, type: 2}
   effectRoot: {fileID: 2058685195}
   effectPrefab: {fileID: 5455670098866968765, guid: 69f6e2a99424fc246b537fa7f2d1b367, type: 3}
   limitBreakButton: {fileID: 1673086097}

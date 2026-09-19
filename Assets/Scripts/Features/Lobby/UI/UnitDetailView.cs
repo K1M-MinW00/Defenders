@@ -11,13 +11,11 @@ public class UnitDetailView : MonoBehaviour
     [SerializeField] private TMP_Text rarity_text;
     [SerializeField] private Image rarity_Img;
     [SerializeField] private Image[] limitBreak_Img;
-    [SerializeField] private Sprite star_Sprite;
-    [SerializeField] private Sprite emptyStar_Sprite;
+    [SerializeField] private UnitVisualConfigSO visualConfig;
 
     [Header("Common UIs")]
     [SerializeField] private Image unitIcon_Img;
     [SerializeField] private Image prom_Img;
-    [SerializeField] private Sprite[] promotion_sprites;
     [SerializeField] private TMP_Text unitNameText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text attackText;
@@ -103,21 +101,8 @@ public class UnitDetailView : MonoBehaviour
         if (rarity_text != null)
             rarity_text.text = rarity.ToString();
         
-        switch (rarity)
-        {
-            case Rarity.Normal:
-                if (rarity_Img != null) rarity_Img.color = Color.blue;
-                break;
-            case Rarity.Rare:
-                if (rarity_Img != null) rarity_Img.color = Color.purple;
-                break;
-            case Rarity.Legend:
-                if (rarity_Img != null) rarity_Img.color = Color.yellow;
-                break;
-            default:
-                if (rarity_Img != null) rarity_Img.color = Color.white;
-                break;
-        }
+        if (rarity_Img != null)
+            rarity_Img.color = visualConfig != null ? visualConfig.GetRarityColor(rarity) : Color.white;
     }
 
     public void Refresh()
@@ -166,17 +151,17 @@ public class UnitDetailView : MonoBehaviour
 
         for (int i = 0; i < limitBreak_Img.Length; i++)
         {
-            if (limitBreak_Img[i] != null)
-                limitBreak_Img[i].sprite = i < limitBreak ? star_Sprite : emptyStar_Sprite;
+            if (limitBreak_Img[i] != null && visualConfig != null)
+                limitBreak_Img[i].sprite = i < limitBreak
+                    ? visualConfig.FilledStarSprite
+                    : visualConfig.EmptyStarSprite;
         }
 
         int promotion = currentState.Promotion;
+        Sprite promotionSprite = visualConfig?.GetPromotionSprite(promotion);
 
-        if (prom_Img != null && promotion_sprites != null &&
-            promotion >= 0 && promotion < promotion_sprites.Length)
-        {
-            prom_Img.sprite = promotion_sprites[promotion];
-        }
+        if (prom_Img != null && promotionSprite != null)
+            prom_Img.sprite = promotionSprite;
     }
 
     private void BindSkillInfo()

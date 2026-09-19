@@ -8,7 +8,7 @@ public class UnitPromotionPanel : MonoBehaviour
 {
     [Header("Promotion")]
     [SerializeField] private Image promotionImage;
-    [SerializeField] private Sprite[] promotion_sprites;
+    [SerializeField] private UnitVisualConfigSO visualConfig;
     [SerializeField] private TMP_Text promotionText;
 
     [Header("Upgrades")]
@@ -63,11 +63,9 @@ public class UnitPromotionPanel : MonoBehaviour
         if (promotionText != null)
             promotionText.text = $"{promotion}진급";
 
-        if (promotionImage != null && promotion_sprites != null &&
-            promotion >= 0 && promotion < promotion_sprites.Length)
-        {
-            promotionImage.sprite = promotion_sprites[promotion];
-        }
+        Sprite promotionSprite = visualConfig?.GetPromotionSprite(promotion);
+        if (promotionImage != null && promotionSprite != null)
+            promotionImage.sprite = promotionSprite;
 
     }
 
