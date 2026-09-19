@@ -28,8 +28,6 @@ public class UnitTrainingPanel : MonoBehaviour
     private UserUnitData currentUnit;
     private UserResourceData resource;
 
-    private UnitDetailView detailPanel;
-
     private IReadOnlyList<InventoryStackItem> materials;
     private readonly Dictionary<string, int> selectedMaterials = new();
     private readonly List<TrainingMaterialSlot> slots = new();
@@ -59,14 +57,13 @@ public class UnitTrainingPanel : MonoBehaviour
         selectedMaterials.Clear();
     }
 
-    public void Bind(UnitDataSO unitData, UnitDetailView panel)
+    public void Bind(UnitDataSO unitData)
     {
         currentUnitData = unitData;
         currentUnit = UserDataManager.Instance.RosterService.GetUnit(unitData.unitId);
         resource = UserDataManager.Instance.UserData.Resource;
 
         materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
-        detailPanel = panel;
 
         ResetSelection();
     }
@@ -338,7 +335,6 @@ public class UnitTrainingPanel : MonoBehaviour
 
             UserDataManager.Instance.RaiseResourceUpdated();
             UserDataManager.Instance.RaiseRosterUpdated();
-            detailPanel?.Refresh();
             ResetSelection();
         }
         finally

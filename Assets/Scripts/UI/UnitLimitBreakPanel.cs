@@ -24,7 +24,6 @@ public class UnitLimitBreakPanel : MonoBehaviour
     [Header("Button")]
     [SerializeField] private Button limitBreakButton;
 
-    private UnitDetailView detailPanel;
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
     private bool isLimitBreaking;
@@ -35,10 +34,9 @@ public class UnitLimitBreakPanel : MonoBehaviour
             limitBreakButton.onClick.AddListener(OnClickLimitBreak);
     }
 
-    public void Bind(UnitDataSO unitData, UnitDetailView panel)
+    public void Bind(UnitDataSO unitData)
     {
         currentUnitData = unitData;
-        detailPanel = panel;
 
         Refresh();
     }
@@ -61,8 +59,6 @@ public class UnitLimitBreakPanel : MonoBehaviour
         RefreshMaterial();
         RefreshStars();
         RefreshEffects();
-
-        detailPanel?.Refresh();
     }
 
     private void ResetView()
@@ -176,7 +172,6 @@ public class UnitLimitBreakPanel : MonoBehaviour
                 return;
             }
 
-            Refresh();
             UserDataManager.Instance.RaiseRosterUpdated();
         }
         finally

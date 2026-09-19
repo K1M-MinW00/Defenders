@@ -23,7 +23,6 @@ public class UnitPromotionPanel : MonoBehaviour
 
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
-    private UnitDetailView detailPanel;
     private bool isPromoting;
 
     private void Awake()
@@ -32,10 +31,9 @@ public class UnitPromotionPanel : MonoBehaviour
             promotionButton.onClick.AddListener(OnClickPromotion);
     }
 
-    public void Bind(UnitDataSO unitData, UnitDetailView panel)
+    public void Bind(UnitDataSO unitData)
     {
         currentUnitData = unitData;
-        detailPanel = panel;
 
         Refresh();
     }
@@ -158,8 +156,6 @@ public class UnitPromotionPanel : MonoBehaviour
             }
 
             promotionSucceeded = true;
-            Refresh();
-            detailPanel?.Refresh();
             UserDataManager.Instance.RaiseRosterUpdated();
         }
         finally

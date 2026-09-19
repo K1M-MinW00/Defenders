@@ -46,6 +46,7 @@ public class UnitDetailView : MonoBehaviour
     private UnitDetailPresenter presenter;
     private UnitDetailViewState currentState;
     private string currentUnitId;
+    private bool isRosterSubscribed;
 
     private void Awake()
     {
@@ -68,6 +69,7 @@ public class UnitDetailView : MonoBehaviour
 
         currentUnitId = vm.UnitId;
         presenter ??= new UnitDetailPresenter(UserDataManager.Instance.RosterService);
+        SubscribeToRosterUpdates();
         currentState = presenter.Build(currentUnitId);
 
         if (currentState == null)
@@ -137,9 +139,9 @@ public class UnitDetailView : MonoBehaviour
 
     private void BindTabPanels()
     {
-        trainingPanel?.Bind(currentState.Definition, this);
-        promotionPanel?.Bind(currentState.Definition, this);
-        limitBreakPanel?.Bind(currentState.Definition, this);
+        trainingPanel?.Bind(currentState.Definition);
+        promotionPanel?.Bind(currentState.Definition);
+        limitBreakPanel?.Bind(currentState.Definition);
     }
 
     private void BindCommonInfo()
@@ -192,6 +194,23 @@ public class UnitDetailView : MonoBehaviour
         BindSkillInfo();
     }
 
+    private void SubscribeToRosterUpdates()
+    {
+        if (isRosterSubscribed || UserDataManager.Instance == null)
+            return;
+
+        UserDataManager.Instance.OnRosterUpdated += HandleRosterUpdated;
+        isRosterSubscribed = true;
+    }
+
+    private void HandleRosterUpdated()
+    {
+        bool isOpen = detailRoot != null ? detailRoot.activeSelf : gameObject.activeSelf;
+
+        if (isOpen)
+            Refresh();
+    }
+
 
     private void OpenActiveSkillPopup()
     {
@@ -207,5 +226,20 @@ public class UnitDetailView : MonoBehaviour
             return;
 
         passiveSkillDetailPopup.Open(currentState.PassiveSkill, currentState.Promotion);
+    }
+
+    private void OnDestroy()
+    {
+        if (backButton != null)
+            backButton.onClick.RemoveListener(Close);
+
+        if (activeSkillButton != null)
+            activeSkillButton.onClick.RemoveListener(OpenActiveSkillPopup);
+
+        if (passiveSkillButton != null)
+            passiveSkillButton.onClick.RemoveListener(OpenPassiveSkillPopup);
+
+        if (isRosterSubscribed && UserDataManager.Instance != null)
+            UserDataManager.Instance.OnRosterUpdated -= HandleRosterUpdated;
     }
 }
