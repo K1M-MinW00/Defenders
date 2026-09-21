@@ -33,13 +33,19 @@ public class LobbyRecruitPanelView : MonoBehaviour
     [SerializeField] private GemConfirmPopupView gemConfirmPopup;
 
     private GachaDataSO currentBanner;
+    private LobbyRecruitPresenter presenter;
+    private RecruitPanelViewState currentState;
     private bool isRecruiting;
 
     private void Awake()
     {
-        normalButton.onClick.AddListener(() => { SelectBanner(normalBanner); });
+        presenter = new LobbyRecruitPresenter(
+            UserDataManager.Instance.UserData,
+            UserDataManager.Instance.InventoryService,
+            UserDataManager.Instance.GachaService);
 
-        specialButton.onClick.AddListener(() => { SelectBanner(specialBanner); });
+        normalButton.onClick.AddListener(SelectNormalBanner);
+        specialButton.onClick.AddListener(SelectSpecialBanner);
 
         recruitOneButton.onClick.AddListener(RecruitOne);
         recruitTenButton.onClick.AddListener(RecruitTen);
@@ -48,7 +54,28 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void OnEnable()
     {
+        UserDataManager.Instance.OnResourceUpdated += Refresh;
+        UserDataManager.Instance.OnInventoryUpdated += Refresh;
         SelectBanner(normalBanner);
+    }
+
+    private void OnDisable()
+    {
+        if (UserDataManager.Instance == null)
+            return;
+
+        UserDataManager.Instance.OnResourceUpdated -= Refresh;
+        UserDataManager.Instance.OnInventoryUpdated -= Refresh;
+    }
+
+    private void SelectNormalBanner()
+    {
+        SelectBanner(normalBanner);
+    }
+
+    private void SelectSpecialBanner()
+    {
+        SelectBanner(specialBanner);
     }
 
     private void SelectBanner(GachaDataSO banner)
@@ -59,35 +86,22 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void Refresh()
     {
-        RefreshResources();
-        RefreshBanner();
-        RefreshPity();
-    }
+        currentState = presenter?.Build(currentBanner);
+        if (currentState == null)
+        {
+            recruitOneButton.interactable = false;
+            recruitTenButton.interactable = false;
+            return;
+        }
 
-    private void RefreshResources()
-    {
-        UserResourceData resource = UserDataManager.Instance.UserData.Resource;
+        gemText.text = currentState.GemCount.ToString("N0");
+        ticketText.text = currentState.TicketCount.ToString("N0");
+        ticketImage.sprite = currentState.TicketIcon;
+        bannerImage.sprite = currentState.BannerImage;
+        pityText.text = $"앞으로 {currentState.RemainingPity}회 모집 안에 전설 유닛 확정 획득";
 
-        gemText.text = resource.Gem.ToString("N0");
-
-        string ticketId = currentBanner.ticketItemId;
-        ticketImage.sprite = ItemDatabase.Get(ticketId).Icon;
-
-        int count = UserDataManager.Instance.InventoryService.GetItemCount(ticketId);
-
-        ticketText.text = count.ToString("N0");
-    }
-
-    private void RefreshBanner()
-    {
-        bannerImage.sprite = currentBanner.bannerImage;
-    }
-
-    private void RefreshPity()
-    {
-        int remain = UserDataManager.Instance.GachaService.GetRemainPity(currentBanner);
-
-        pityText.text = $"앞으로 {remain}회 모집 안에 전설 유닛 확정 획득";
+        recruitOneButton.interactable = !isRecruiting && currentState.CanRecruitOne;
+        recruitTenButton.interactable = !isRecruiting && currentState.CanRecruitTen;
     }
 
     private void OpenRatePopup()
@@ -111,7 +125,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
             return;
 
         GachaDataSO banner = currentBanner;
-        RecruitCostModel cost = CalculateCost(banner, count);
+        RecruitCostModel cost = presenter.CalculateCost(banner, count);
 
         if (cost.NeedGem == false)
         {
@@ -120,23 +134,6 @@ public class LobbyRecruitPanelView : MonoBehaviour
         }
 
         gemConfirmPopup.Open(cost.GemUseCount, () => { ExecuteRecruit(banner, count); });
-    }
-
-    private RecruitCostModel CalculateCost(GachaDataSO banner, int recruitCount)
-    {
-        string ticketId = banner.ticketItemId;
-
-        int ownedTicket = UserDataManager.Instance.InventoryService.GetItemCount(ticketId);
-
-        int ticketUse = Mathf.Min(ownedTicket, recruitCount);
-
-        int shortage = recruitCount - ticketUse;
-
-        return new RecruitCostModel
-        {
-            TicketUseCount = ticketUse,
-            GemUseCount = shortage * banner.gemCost
-        };
     }
 
     private async void ExecuteRecruit(GachaDataSO banner, int count)
@@ -169,8 +166,25 @@ public class LobbyRecruitPanelView : MonoBehaviour
         finally
         {
             isRecruiting = false;
-            recruitOneButton.interactable = true;
-            recruitTenButton.interactable = true;
+            Refresh();
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (normalButton != null)
+            normalButton.onClick.RemoveListener(SelectNormalBanner);
+
+        if (specialButton != null)
+            specialButton.onClick.RemoveListener(SelectSpecialBanner);
+
+        if (recruitOneButton != null)
+            recruitOneButton.onClick.RemoveListener(RecruitOne);
+
+        if (recruitTenButton != null)
+            recruitTenButton.onClick.RemoveListener(RecruitTen);
+
+        if (rateButton != null)
+            rateButton.onClick.RemoveListener(OpenRatePopup);
     }
 }

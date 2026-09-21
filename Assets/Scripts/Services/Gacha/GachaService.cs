@@ -12,6 +12,9 @@ public sealed class GachaService
 
     public int GetCurrentPity(RecruitType recruitType)
     {
+        if (GachaData == null)
+            return 0;
+
         return recruitType switch
         {
             RecruitType.Normal => GachaData.NormalPity,
@@ -22,6 +25,9 @@ public sealed class GachaService
 
     public int GetRemainPity(GachaDataSO banner)
     {
+        if (banner == null)
+            return 0;
+
         int currentPity = GetCurrentPity(banner.recruitType);
 
         return Mathf.Max(0, banner.legendPityCount - currentPity);
