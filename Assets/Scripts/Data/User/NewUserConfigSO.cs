@@ -7,6 +7,7 @@ public class NewUserConfigSO : ScriptableObject
     [Header("Profile")]
     public int StartLevel = 1;
     public string DefaultProfileIconId = "unit_knight";
+    [Min(0)] public int NicknameChangeGemCost = 500;
 
     [Header("Resource")]
     public int StartGold = 0;

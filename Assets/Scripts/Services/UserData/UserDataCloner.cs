@@ -15,6 +15,7 @@ public static class UserDataCloner
             Level = source.Level,
             Exp = source.Exp,
             IconId = source.IconId,
+            HasUsedFreeNicknameChange = source.HasUsedFreeNicknameChange,
         };
     }
 

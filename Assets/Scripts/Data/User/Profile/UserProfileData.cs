@@ -10,4 +10,5 @@ public class UserProfileData
     [FirestoreProperty] public int Exp { get; set; } = 0;
 
     [FirestoreProperty] public string IconId { get; set; } = "unit_knight";
+    [FirestoreProperty] public bool HasUsedFreeNicknameChange { get; set; }
 }

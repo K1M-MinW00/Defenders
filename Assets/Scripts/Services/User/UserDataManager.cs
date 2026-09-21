@@ -123,7 +123,8 @@ public partial class UserDataManager : MonoBehaviour
         PurchaseFuelUseCase = new PurchaseFuelUseCase(repository, CurrentUserId, UserData);
         ClaimAdFuelRewardUseCase = new ClaimAdFuelRewardUseCase(repository, CurrentUserId, UserData);
         UnitFormationUseCase = new UnitFormationUseCase(repository, CurrentUserId, UserData);
-        ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData);
+        int nicknameCost = GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500;
+        ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData, nicknameCost);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>

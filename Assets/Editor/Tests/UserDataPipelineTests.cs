@@ -90,12 +90,14 @@ public sealed class UserDataPipelineTests
         FakeUserDataRepository repository = new();
         ProfileUpdateUseCase useCase = new(repository, UserId, data);
 
-        bool succeeded = await useCase.UpdateNicknameAsync("NewName");
+        NicknameChangeResult result = await useCase.UpdateNicknameAsync("NewName");
 
-        Assert.That(succeeded, Is.True);
-        Assert.That(repository.SaveProfileCallCount, Is.EqualTo(1));
+        Assert.That(result.Succeeded, Is.True);
+        Assert.That(result.GemCost, Is.Zero);
+        Assert.That(repository.SaveSectionsCallCount, Is.EqualTo(1));
         Assert.That(data.Profile, Is.Not.SameAs(originalProfile));
         Assert.That(data.Profile.Nickname, Is.EqualTo("NewName"));
+        Assert.That(data.Profile.HasUsedFreeNicknameChange, Is.True);
         Assert.That(originalProfile.Nickname, Is.EqualTo("OldName"));
     }
 
@@ -106,15 +108,52 @@ public sealed class UserDataPipelineTests
         UserProfileData originalProfile = data.Profile;
         FakeUserDataRepository repository = new()
         {
-            ThrowOnSaveProfile = true,
+            ThrowOnSaveSections = true,
         };
         ProfileUpdateUseCase useCase = new(repository, UserId, data);
 
-        bool succeeded = await useCase.UpdateNicknameAsync("NewName");
+        NicknameChangeResult result = await useCase.UpdateNicknameAsync("NewName");
 
-        Assert.That(succeeded, Is.False);
+        Assert.That(result.Succeeded, Is.False);
+        Assert.That(result.Failure, Is.EqualTo(NicknameChangeFailure.SaveFailed));
         Assert.That(data.Profile, Is.SameAs(originalProfile));
         Assert.That(data.Profile.Nickname, Is.EqualTo("OldName"));
+    }
+
+    [Test]
+    public async Task NicknameUpdate_ChargesGem_AfterFreeChange()
+    {
+        UserDataRoot data = CreateValidData();
+        data.Profile.HasUsedFreeNicknameChange = true;
+        data.Resource.Gem = 600;
+        FakeUserDataRepository repository = new();
+        ProfileUpdateUseCase useCase = new(repository, UserId, data, 500);
+
+        NicknameChangeResult result = await useCase.UpdateNicknameAsync("PaidName");
+
+        Assert.That(result.Succeeded, Is.True);
+        Assert.That(result.GemCost, Is.EqualTo(500));
+        Assert.That(data.Resource.Gem, Is.EqualTo(100));
+        Assert.That(data.Profile.Nickname, Is.EqualTo("PaidName"));
+        Assert.That(repository.SaveSectionsCallCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task NicknameUpdate_RejectsInsufficientGem()
+    {
+        UserDataRoot data = CreateValidData();
+        data.Profile.HasUsedFreeNicknameChange = true;
+        data.Resource.Gem = 499;
+        FakeUserDataRepository repository = new();
+        ProfileUpdateUseCase useCase = new(repository, UserId, data, 500);
+
+        NicknameChangeResult result = await useCase.UpdateNicknameAsync("PaidName");
+
+        Assert.That(result.Succeeded, Is.False);
+        Assert.That(result.Failure, Is.EqualTo(NicknameChangeFailure.InsufficientGem));
+        Assert.That(data.Resource.Gem, Is.EqualTo(499));
+        Assert.That(data.Profile.Nickname, Is.EqualTo("OldName"));
+        Assert.That(repository.SaveSectionsCallCount, Is.Zero);
     }
 
     [Test]
@@ -214,10 +253,12 @@ public sealed class UserDataPipelineTests
     {
         public UserDataLoadResult LoadResult { get; set; } = UserDataLoadResult.NotFound();
         public bool ThrowOnSaveProfile { get; set; }
+        public bool ThrowOnSaveSections { get; set; }
         public int CreateCallCount { get; private set; }
         public int SaveAllCallCount { get; private set; }
         public int SaveResourcesCallCount { get; private set; }
         public int SaveProfileCallCount { get; private set; }
+        public int SaveSectionsCallCount { get; private set; }
         public UserDataRoot CreatedData { get; private set; }
 
         public Task<UserDataLoadResult> LoadAsync(string userId) => Task.FromResult(LoadResult);
@@ -256,6 +297,14 @@ public sealed class UserDataPipelineTests
         public Task SaveInventoryAsync(string userId, UserInventoryData inventory) => Task.CompletedTask;
         public Task SaveGachaAsync(string userId, UserGachaData gacha) => Task.CompletedTask;
         public Task SaveAdAsync(string userId, UserAdData ad) => Task.CompletedTask;
-        public Task SaveSectionsAsync(string userId, UserDataUpdate update) => Task.CompletedTask;
+        public Task SaveSectionsAsync(string userId, UserDataUpdate update)
+        {
+            SaveSectionsCallCount++;
+
+            if (ThrowOnSaveSections)
+                throw new InvalidOperationException("Simulated multi-section save failure.");
+
+            return Task.CompletedTask;
+        }
     }
 }

@@ -2,13 +2,20 @@
 
 public partial class UserDataManager
 {
-    public async Task UpdateNicknameAsync(string nickname)
+    public async Task<NicknameChangeResult> UpdateNicknameAsync(string nickname)
     {
         if (ProfileUpdateUseCase == null)
-            return;
+            return NicknameChangeResult.Fail(NicknameChangeFailure.SaveFailed);
 
-        if (await ProfileUpdateUseCase.UpdateNicknameAsync(nickname))
+        NicknameChangeResult result = await ProfileUpdateUseCase.UpdateNicknameAsync(nickname);
+        if (result.Succeeded)
+        {
             RaiseProfileUpdated();
+            if (result.GemCost > 0)
+                RaiseResourceUpdated();
+        }
+
+        return result;
     }
 
     public async Task<bool> UpdateProfileIconAsync(string iconId)

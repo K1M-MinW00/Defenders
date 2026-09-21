@@ -41,7 +41,8 @@ public class GameSettingsManager : MonoBehaviour
     private void Load()
     {
         SoundEnabled = PlayerPrefs.GetInt(SoundKey, 1) == 1;
-        LanguageCode = PlayerPrefs.GetString(LanguageKey, "ko");
+        string savedLanguage = PlayerPrefs.GetString(LanguageKey, "ko");
+        LanguageCode = savedLanguage == "en" ? "en" : "ko";
 
         // 
         VibrationEnabled = PlayerPrefs.GetInt(VibrationKey, 1) == 1;
@@ -63,7 +64,7 @@ public class GameSettingsManager : MonoBehaviour
 
     public void SetLanguage(string languageCode)
     {
-        if (string.IsNullOrEmpty(languageCode))
+        if (languageCode != "ko" && languageCode != "en")
             return;
 
         if (LanguageCode == languageCode)

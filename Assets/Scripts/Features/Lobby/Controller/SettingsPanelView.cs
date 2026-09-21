@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +15,7 @@ public class SettingsPanelView : MonoBehaviour
     [SerializeField] private TMP_Text nicknameText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text uidText;
-        
+
     [Header("Button")]
     [SerializeField] private Button editProfileButton;
     [SerializeField] private Button editNicknameButton;
@@ -26,52 +27,37 @@ public class SettingsPanelView : MonoBehaviour
     [SerializeField] private Toggle soundToggle;
     [SerializeField] private TMP_Dropdown languageDropdown;
 
+    private SettingsPanelPresenter presenter;
     private bool isRefreshingUI;
-    private GameSettingsManager Settings => GameSettingsManager.Instance;
+    private bool isSubscribed;
 
     private void Awake()
     {
         panelRoot.SetActive(false);
+        ConfigureLanguageOptions();
 
         closeButton.onClick.AddListener(Close);
-
-        editProfileButton.onClick.AddListener(OnClickEditProfile);
-        editNicknameButton.onClick.AddListener(OnClickEditNickname);
-        copyUidButton.onClick.AddListener(OnClickCopyUid);
-        linkAccountButton.onClick.AddListener(OnClickLinkAccount);
-
-        soundToggle.onValueChanged.AddListener(OnSoundToggleChanged);
-        languageDropdown.onValueChanged.AddListener(OnLanguageDropdownChanged);
+        editProfileButton.onClick.AddListener(OpenProfileEditor);
+        editNicknameButton.onClick.AddListener(OpenNicknameEditor);
+        copyUidButton.onClick.AddListener(CopyUserId);
+        linkAccountButton.onClick.AddListener(ShowAccountLinkNotice);
+        soundToggle.onValueChanged.AddListener(HandleSoundToggleChanged);
+        languageDropdown.onValueChanged.AddListener(HandleLanguageDropdownChanged);
     }
 
     private void OnEnable()
     {
+        if (UserDataManager.Instance?.UserData == null || GameSettingsManager.Instance == null)
+            return;
+
+        presenter ??= new SettingsPanelPresenter(UserDataManager.Instance.UserData, GameSettingsManager.Instance);
+        SubscribeEvents();
         Refresh();
-
-        if(UserDataManager.Instance != null)
-        {
-            UserDataManager.Instance.OnProfileUpdated += Refresh;
-        }
-
-        if (Settings != null)
-        {
-            Settings.OnSoundChanged += HandleSoundChanged;
-            Settings.OnLanguageChanged += HandleLanguageChanged;
-        }
     }
 
     private void OnDisable()
     {
-        if (UserDataManager.Instance != null)
-        {
-            UserDataManager.Instance.OnProfileUpdated -= Refresh;
-        }
-
-        if (Settings != null)
-        {
-            Settings.OnSoundChanged -= HandleSoundChanged;
-            Settings.OnLanguageChanged -= HandleLanguageChanged;
-        }
+        UnsubscribeEvents();
     }
 
     public void Close()
@@ -81,97 +67,115 @@ public class SettingsPanelView : MonoBehaviour
 
     public void Refresh()
     {
+        SettingsPanelViewState state = presenter?.Build();
+        if (state == null)
+            return;
+
         isRefreshingUI = true;
-
-        UserProfileData profile = UserDataManager.Instance.UserData.Profile;
-
-        nicknameText.text = profile.Nickname;
-        uidText.text = profile.UserId;
-        levelText.text = profile.Level.ToString();
-        
-        iconImage.sprite = UnitDatabase.GetIcon(profile.IconId);
-        
-        soundToggle.isOn = Settings.SoundEnabled;
-        languageDropdown.value = GetLanguageDropdownIndex(Settings.LanguageCode);
-
+        iconImage.sprite = state.ProfileIcon;
+        nicknameText.text = state.Nickname;
+        uidText.text = state.UserId;
+        levelText.text = state.Level.ToString();
+        soundToggle.SetIsOnWithoutNotify(state.SoundEnabled);
+        languageDropdown.SetValueWithoutNotify(state.LanguageIndex);
         isRefreshingUI = false;
     }
 
-    private void OnClickEditProfile()
+    private void ConfigureLanguageOptions()
+    {
+        languageDropdown.ClearOptions();
+        List<TMP_Dropdown.OptionData> options = new();
+        foreach (string label in SettingsPanelPresenter.LanguageLabels)
+            options.Add(new TMP_Dropdown.OptionData(label));
+        languageDropdown.AddOptions(options);
+    }
+
+    private void OpenProfileEditor()
     {
         editProfilePopupRoot.SetActive(true);
     }
 
-    private void OnClickEditNickname()
+    private void OpenNicknameEditor()
     {
         editNicknamePopupRoot.SetActive(true);
     }
 
-    private void OnClickCopyUid()
+    private void CopyUserId()
     {
-        var uid = UserDataManager.Instance.UserData.Profile.UserId;
-        GUIUtility.systemCopyBuffer = uid;
+        string userId = UserDataManager.Instance?.UserData?.Profile?.UserId;
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            UIFeedbackToast.Show("사용자 ID를 확인할 수 없습니다.");
+            return;
+        }
+
+        GUIUtility.systemCopyBuffer = userId;
+        UIFeedbackToast.Show("사용자 ID를 복사했습니다.");
     }
 
-    private void OnClickLinkAccount()
+    private static void ShowAccountLinkNotice()
     {
-        // TODO: AccountLinkPanel ����
-        // Google / Apple ������ AuthManager���� ó��
+        UIFeedbackToast.Show("계정 연결 기능은 추후 지원될 예정입니다.");
     }
 
-
-    private void OnSoundToggleChanged(bool isOn)
+    private void HandleSoundToggleChanged(bool enabled)
     {
-        if (isRefreshingUI)
+        if (!isRefreshingUI)
+            presenter?.SetSound(enabled);
+    }
+
+    private void HandleLanguageDropdownChanged(int index)
+    {
+        if (!isRefreshingUI)
+            presenter?.SetLanguage(index);
+    }
+
+    private void SubscribeEvents()
+    {
+        if (isSubscribed)
             return;
 
-        Settings.SetSound(isOn);
+        UserDataManager.Instance.OnProfileUpdated += Refresh;
+        GameSettingsManager.Instance.OnSoundChanged += HandleSoundChanged;
+        GameSettingsManager.Instance.OnLanguageChanged += HandleLanguageChanged;
+        isSubscribed = true;
     }
 
-    private void OnLanguageDropdownChanged(int index)
+    private void UnsubscribeEvents()
     {
-        if (isRefreshingUI)
+        if (!isSubscribed)
             return;
 
-        string languageCode = GetLanguageCodeByIndex(index);
-        Settings.SetLanguage(languageCode);
+        if (UserDataManager.Instance != null)
+            UserDataManager.Instance.OnProfileUpdated -= Refresh;
+
+        if (GameSettingsManager.Instance != null)
+        {
+            GameSettingsManager.Instance.OnSoundChanged -= HandleSoundChanged;
+            GameSettingsManager.Instance.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
+        isSubscribed = false;
     }
 
     private void HandleSoundChanged(bool enabled)
     {
-        isRefreshingUI = true;
-        soundToggle.isOn = enabled;
-        isRefreshingUI = false;
+        soundToggle.SetIsOnWithoutNotify(enabled);
     }
 
     private void HandleLanguageChanged(string languageCode)
     {
-        isRefreshingUI = true;
-        languageDropdown.value = GetLanguageDropdownIndex(languageCode);
-        isRefreshingUI = false;
+        languageDropdown.SetValueWithoutNotify(SettingsPanelPresenter.GetLanguageIndex(languageCode));
     }
 
-    private int GetLanguageDropdownIndex(string languageCode)
+    private void OnDestroy()
     {
-        return languageCode switch
-        {
-            "ko" => 0,
-            "ja" => 1,
-            "en" => 2,
-            "vn" => 3,
-            _ => 0
-        };
-    }
-
-    private string GetLanguageCodeByIndex(int index)
-    {
-        return index switch
-        {
-            0 => "ko",
-            1 => "ja",
-            2 => "en",
-            3 => "vn",
-            _ => "ko"
-        };
+        closeButton?.onClick.RemoveListener(Close);
+        editProfileButton?.onClick.RemoveListener(OpenProfileEditor);
+        editNicknameButton?.onClick.RemoveListener(OpenNicknameEditor);
+        copyUidButton?.onClick.RemoveListener(CopyUserId);
+        linkAccountButton?.onClick.RemoveListener(ShowAccountLinkNotice);
+        soundToggle?.onValueChanged.RemoveListener(HandleSoundToggleChanged);
+        languageDropdown?.onValueChanged.RemoveListener(HandleLanguageDropdownChanged);
     }
 }
