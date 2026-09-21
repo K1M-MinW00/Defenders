@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -21,13 +20,11 @@ public class LobbyUnitPanelView : MonoBehaviour
     [Header("Responsive Grid")]
     [SerializeField, Min(1)] private int maxColumns = 5;
 
-    private readonly List<LobbyUnitViewModel> selectedUnitViewModels = new();
-    private readonly List<LobbyUnitViewModel> ownedUnitListViewModels = new();
     private readonly Dictionary<string, UnitCardUI> cardsByUnitId = new();
     private readonly List<string> staleCardIds = new();
 
     private UserResourceData resource;
-    private UserRosterData roster;
+    private LobbyUnitPanelPresenter presenter;
 
     private UnitCardUI pendingSwapCard;
     private string pendingSwapUnitId;
@@ -36,7 +33,7 @@ public class LobbyUnitPanelView : MonoBehaviour
     private void Awake()
     {
         resource = UserDataManager.Instance.UserData.Resource;
-        roster = UserDataManager.Instance.UserData.Roster;
+        presenter = new LobbyUnitPanelPresenter(UserDataManager.Instance.RosterService);
     }
 
     private void OnEnable()
@@ -65,99 +62,28 @@ public class LobbyUnitPanelView : MonoBehaviour
     private void RefreshView()
     {
         resource = UserDataManager.Instance.UserData.Resource;
-        roster = UserDataManager.Instance.UserData.Roster;
 
-        if (resource == null || roster == null)
+        if (resource == null || presenter == null)
             return;
 
         RefreshGold();
 
-        selectedUnitViewModels.Clear();
-        ownedUnitListViewModels.Clear();
-
-        List<UserUnitData> ownedUnits = roster.OwnedUnits ?? new List<UserUnitData>();
-        List<string> selectedUnitIds = roster.SelectedUnitIds ?? new List<string>();
-
-        Dictionary<string, UserUnitData> ownedUnitMap = ownedUnits
-            .Where(x => x != null && !string.IsNullOrWhiteSpace(x.UnitId))
-            .GroupBy(x => x.UnitId)
-            .ToDictionary(g => g.Key, g => g.First());
-
-        HashSet<string> selectedSet = new HashSet<string>(selectedUnitIds);
-
-        BuildSelectedUnitViewModels(selectedUnitIds, ownedUnitMap);
-        BuildOwnedUnitViewModels(selectedSet, ownedUnitMap);
-
-        ReconcileCardLists();
+        LobbyUnitPanelViewState state = presenter.Build();
+        ReconcileCardLists(state.SelectedUnits, state.AvailableUnits);
         RefreshGridLayouts();
     }
 
-    private void BuildSelectedUnitViewModels(List<string> selectedUnitIds, Dictionary<string, UserUnitData> ownedUnitMap)
-    {
-        foreach (string unitId in selectedUnitIds)
-        {
-            if (string.IsNullOrWhiteSpace(unitId))
-                continue;
-
-            UnitDataSO unitData = UnitDatabase.Get(unitId);
-
-            if (unitData == null)
-            {
-                Debug.LogWarning($"[LobbyUnitTabUI] UnitDataSO not found for selected unitId: {unitId}");
-                continue;
-            }
-
-            ownedUnitMap.TryGetValue(unitId, out UserUnitData userUnit);
-
-            LobbyUnitViewModel vm = CreateViewModel(unitData, userUnit, true);
-            selectedUnitViewModels.Add(vm);
-        }
-    }
-
-    private void BuildOwnedUnitViewModels(HashSet<string> selectedSet, Dictionary<string, UserUnitData> ownedUnitMap)
-    {
-        IReadOnlyCollection<UnitDataSO> allUnitData = UnitDatabase.GetAll();
-
-        foreach (UnitDataSO unitData in allUnitData)
-        {
-            if (unitData == null || string.IsNullOrWhiteSpace(unitData.unitId))
-                continue;
-
-            if (selectedSet.Contains(unitData.unitId))
-                continue;
-
-            ownedUnitMap.TryGetValue(unitData.unitId, out UserUnitData userUnit);
-
-            LobbyUnitViewModel vm = CreateViewModel(unitData, userUnit, false);
-            ownedUnitListViewModels.Add(vm);
-        }
-    }
-
-    private LobbyUnitViewModel CreateViewModel(UnitDataSO unitData, UserUnitData userUnit, bool isSelected)
-    {
-        return new LobbyUnitViewModel
-        {
-            UnitId = unitData.unitId,
-            Icon = unitData.icon,
-            Rarity = unitData.rarity,
-            Level = userUnit?.Level ?? 0,
-            Promotion = userUnit?.Promotion ?? 0,
-            LimitBreak = userUnit?.LimitBreak ?? 0,
-
-            IsOwned = userUnit != null,
-            IsSelected = isSelected,
-        };
-    }
-
-    private void ReconcileCardLists()
+    private void ReconcileCardLists(
+        IReadOnlyList<LobbyUnitViewModel> selectedUnits,
+        IReadOnlyList<LobbyUnitViewModel> availableUnits)
     {
         if (unitCardPrefab == null)
             return;
 
         HashSet<string> visibleUnitIds = new();
 
-        ReconcileCardList(selectedUnitRoot, selectedUnitViewModels, visibleUnitIds);
-        ReconcileCardList(ownedUnitRoot, ownedUnitListViewModels, visibleUnitIds);
+        ReconcileCardList(selectedUnitRoot, selectedUnits, visibleUnitIds);
+        ReconcileCardList(ownedUnitRoot, availableUnits, visibleUnitIds);
         RemoveStaleCards(visibleUnitIds);
         RestorePendingSwapVisual();
     }

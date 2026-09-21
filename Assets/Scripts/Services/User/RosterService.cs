@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 public sealed class RosterService
 {
@@ -40,7 +40,18 @@ public sealed class RosterService
     /// </summary>
     public IReadOnlyList<UserUnitData> GetOwnedUnits()
     {
+        if (Roster?.OwnedUnits == null)
+            return Array.Empty<UserUnitData>();
+
         return Roster.OwnedUnits;
+    }
+
+    public IReadOnlyList<string> GetSelectedUnitIds()
+    {
+        if (Roster?.SelectedUnitIds == null)
+            return Array.Empty<string>();
+
+        return Roster.SelectedUnitIds;
     }
 
 }
