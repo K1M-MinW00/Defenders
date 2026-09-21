@@ -14,7 +14,7 @@ public sealed class RecruitPresentationConfigSO : ScriptableObject
     }
 
     [Header("Timing")]
-    [SerializeField, Min(0f)] private float newUnitDetailDuration = 1f;
+    [SerializeField, Min(0f)] private float newUnitDetailDuration = 2f;
     [SerializeField, Min(0f)] private float revealInterval = 0.18f;
     [SerializeField, Min(0f)] private float cardRevealDuration = 0.22f;
 

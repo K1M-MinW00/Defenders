@@ -5,7 +5,7 @@ using UnityEngine;
 
 public sealed class RecruitPresentationController : MonoBehaviour
 {
-    private const float DefaultNewUnitDetailDuration = 1f;
+    private const float DefaultNewUnitDetailDuration = 2f;
     private const float DefaultRevealInterval = 0.18f;
     private const float DefaultCardRevealDuration = 0.22f;
 
