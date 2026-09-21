@@ -150,6 +150,7 @@ public class UnitPromotionPanel : MonoBehaviour
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[UnitPromotionPanel] Promotion failed: {result.Failure}");
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
                 return;
             }
 

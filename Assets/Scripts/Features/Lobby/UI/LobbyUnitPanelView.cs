@@ -291,7 +291,10 @@ public class LobbyUnitPanelView : MonoBehaviour
                 secondUnitId));
 
         if (!result.Succeeded)
+        {
             Debug.LogWarning($"[LobbyUnitPanelView] Swap formation failed: {result.Failure}");
+            UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
+        }
 
         return result.Succeeded;
     }
@@ -305,7 +308,10 @@ public class LobbyUnitPanelView : MonoBehaviour
                 newUnitId));
 
         if (!result.Succeeded)
+        {
             Debug.LogWarning($"[LobbyUnitPanelView] Replace formation failed: {result.Failure}");
+            UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
+        }
 
         return result.Succeeded;
     }

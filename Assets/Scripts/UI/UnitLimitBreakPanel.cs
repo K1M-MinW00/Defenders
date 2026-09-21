@@ -169,6 +169,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[UnitLimitBreakPanel] Limit break failed: {result.Failure}");
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
                 return;
             }
 

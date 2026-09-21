@@ -325,6 +325,7 @@ public class UnitTrainingPanel : MonoBehaviour
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"Unit training failed: {result.Failure}");
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
                 RefreshUI();
                 return;
             }
