@@ -7,16 +7,19 @@ public sealed class RecruitPresentationController : MonoBehaviour
 {
     private const float DefaultIntroDuration = 0.65f;
     private const float DefaultRevealInterval = 0.18f;
+    private const float DefaultCardRevealDuration = 0.22f;
 
     [Header("Optional Intro Presentation")]
     [SerializeField] private GameObject introRoot;
     [SerializeField] private Animator introAnimator;
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private RecruitPresentationOverlayView overlayView;
 
     private RecruitResultPopupView resultPopup;
     private RecruitPresentationConfigSO config;
     private Coroutine presentationRoutine;
     private bool isPresenting;
+    private bool ownsOverlayView;
 
     public bool IsPresenting => isPresenting;
     public event Action PresentationCompleted;
@@ -30,7 +33,21 @@ public sealed class RecruitPresentationController : MonoBehaviour
         config = presentationConfig;
 
         if (resultPopup != null)
+        {
             resultPopup.SkipRequested += Skip;
+
+            if (overlayView == null && resultPopup.transform.parent != null)
+            {
+                overlayView = RecruitPresentationOverlayView.Create(resultPopup.transform.parent);
+                ownsOverlayView = true;
+            }
+        }
+
+        if (overlayView != null)
+        {
+            overlayView.SkipRequested -= Skip;
+            overlayView.SkipRequested += Skip;
+        }
     }
 
     public void Present(IReadOnlyList<GachaResult> results)
@@ -60,15 +77,22 @@ public sealed class RecruitPresentationController : MonoBehaviour
         PlayIntro(GetHighestRarity(results));
 
         float introDuration = config != null ? config.IntroDuration : DefaultIntroDuration;
-        if (introDuration > 0f)
-            yield return new WaitForSecondsRealtime(introDuration);
+        float elapsed = 0f;
+        while (elapsed < introDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            overlayView?.SetIntroProgress(introDuration > 0f ? elapsed / introDuration : 1f);
+            yield return null;
+        }
 
         SetIntroVisible(false);
+        overlayView?.ShowRevealMode();
 
         float revealInterval = config != null ? config.RevealInterval : DefaultRevealInterval;
+        float cardRevealDuration = config != null ? config.CardRevealDuration : DefaultCardRevealDuration;
         for (int i = 0; i < resultPopup.ResultCount; i++)
         {
-            resultPopup.Reveal(i);
+            resultPopup.Reveal(i, cardRevealDuration);
 
             if (revealInterval > 0f && i < resultPopup.ResultCount - 1)
                 yield return new WaitForSecondsRealtime(revealInterval);
@@ -80,6 +104,7 @@ public sealed class RecruitPresentationController : MonoBehaviour
     private void PlayIntro(Rarity rarity)
     {
         SetIntroVisible(introRoot != null);
+        overlayView?.ShowIntro(rarity, GetRarityColor(rarity));
 
         if (introAnimator != null && config != null)
         {
@@ -107,6 +132,7 @@ public sealed class RecruitPresentationController : MonoBehaviour
         presentationRoutine = null;
         isPresenting = false;
         SetIntroVisible(false);
+        overlayView?.Hide();
 
         if (revealAll)
         {
@@ -121,6 +147,7 @@ public sealed class RecruitPresentationController : MonoBehaviour
     {
         presentationRoutine = null;
         isPresenting = false;
+        overlayView?.Hide();
         if (resultPopup != null)
             resultPopup.RevealAll();
 
@@ -148,10 +175,30 @@ public sealed class RecruitPresentationController : MonoBehaviour
         return highest;
     }
 
+    private Color GetRarityColor(Rarity rarity)
+    {
+        if (config != null)
+            return config.GetRarityColor(rarity);
+
+        return rarity switch
+        {
+            Rarity.Normal => new Color(0.08f, 0.28f, 1f, 1f),
+            Rarity.Rare => new Color(0.63f, 0.13f, 0.94f, 1f),
+            Rarity.Legend => new Color(1f, 0.92f, 0.02f, 1f),
+            _ => Color.white,
+        };
+    }
+
     private void OnDestroy()
     {
         if (resultPopup != null)
             resultPopup.SkipRequested -= Skip;
+
+        if (overlayView != null)
+            overlayView.SkipRequested -= Skip;
+
+        if (ownsOverlayView && overlayView != null)
+            Destroy(overlayView.gameObject);
     }
 
     private void OnDisable()

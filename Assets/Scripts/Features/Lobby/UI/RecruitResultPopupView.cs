@@ -47,18 +47,18 @@ public class RecruitResultPopupView : MonoBehaviour
         }
     }
 
-    public void Reveal(int index)
+    public void Reveal(int index, float duration = 0f)
     {
         if (index < 0 || index >= slots.Count)
             return;
 
-        slots[index].gameObject.SetActive(true);
+        slots[index].RevealAnimated(duration);
     }
 
     public void RevealAll()
     {
         foreach (RecruitUnitIconView slot in slots)
-            slot.gameObject.SetActive(true);
+            slot.ShowImmediately();
 
         isPresenting = false;
     }
