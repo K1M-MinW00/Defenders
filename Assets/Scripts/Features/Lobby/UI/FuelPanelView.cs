@@ -94,7 +94,11 @@ public class FuelPanelView : MonoBehaviour
         UserAdData adData = UserDataCloner.Copy(UserDataManager.Instance.UserData.Ad);
 
         if (!AdDailyLimitPolicy.CanWatch(adData, DailyAdType.Fuel, DateTime.UtcNow))
+        {
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(
+                ClaimAdFuelRewardFailure.DailyLimitReached));
             return;
+        }
 
         isAdRequestPending = true;
         hasAdClosed = false;
@@ -115,6 +119,7 @@ public class FuelPanelView : MonoBehaviour
         if (!shown)
         {
             isAdRequestPending = false;
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
             Refresh();
         }
     }
@@ -129,7 +134,10 @@ public class FuelPanelView : MonoBehaviour
                 .ExecuteAsync(rewardAdFuelAmount);
 
             if (!result.Succeeded)
+            {
                 Debug.LogWarning($"[FuelPanelView] Ad fuel reward failed: {result.Failure}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+            }
         }
         finally
         {
@@ -155,7 +163,10 @@ public class FuelPanelView : MonoBehaviour
                 .ExecuteAsync(purchaseFuelGemCost, purchaseFuelAmount);
 
             if (!result.Succeeded)
+            {
                 Debug.LogWarning($"[FuelPanelView] Fuel purchase failed: {result.Failure}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+            }
 
             Refresh();
         }

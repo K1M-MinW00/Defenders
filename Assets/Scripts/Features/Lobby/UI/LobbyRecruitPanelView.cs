@@ -156,6 +156,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[LobbyRecruitPanelView] Recruit failed: {result.Failure}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
                 return;
             }
 

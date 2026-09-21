@@ -59,7 +59,10 @@ public class MailboxPanelView : MonoBehaviour
             MailboxClaimResult result = await mailboxService.ClaimMailAsync(mail);
 
             if (!result.Succeeded)
+            {
                 Debug.LogWarning($"[MailboxPanelView] Claim failed: {result.Failure}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+            }
 
             await RefreshAsync();
         }
@@ -87,8 +90,13 @@ public class MailboxPanelView : MonoBehaviour
         {
             MailboxClaimResult result = await mailboxService.ClaimAllAsync();
 
-            if (!result.Succeeded && result.Failure != MailboxClaimFailure.NoClaimableMail)
-                Debug.LogWarning($"[MailboxPanelView] Claim all failed: {result.Failure}");
+            if (!result.Succeeded)
+            {
+                if (result.Failure != MailboxClaimFailure.NoClaimableMail)
+                    Debug.LogWarning($"[MailboxPanelView] Claim all failed: {result.Failure}");
+
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+            }
 
             await RefreshAsync();
         }
