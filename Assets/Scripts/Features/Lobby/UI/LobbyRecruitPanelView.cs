@@ -32,6 +32,10 @@ public class LobbyRecruitPanelView : MonoBehaviour
     [SerializeField] private RecruitResultPopupView resultPopup;
     [SerializeField] private GemConfirmPopupView gemConfirmPopup;
 
+    [Header("Presentation")]
+    [SerializeField] private RecruitPresentationController presentationController;
+    [SerializeField] private RecruitPresentationConfigSO presentationConfig;
+
     private GachaDataSO currentBanner;
     private LobbyRecruitPresenter presenter;
     private RecruitPanelViewState currentState;
@@ -43,6 +47,15 @@ public class LobbyRecruitPanelView : MonoBehaviour
             UserDataManager.Instance.UserData,
             UserDataManager.Instance.InventoryService,
             UserDataManager.Instance.GachaService);
+
+        if (presentationController == null)
+            presentationController = GetComponent<RecruitPresentationController>();
+
+        if (presentationController == null)
+            presentationController = gameObject.AddComponent<RecruitPresentationController>();
+
+        presentationController.Initialize(resultPopup, presentationConfig);
+        presentationController.PresentationCompleted += Refresh;
 
         normalButton.onClick.AddListener(SelectNormalBanner);
         specialButton.onClick.AddListener(SelectSpecialBanner);
@@ -100,8 +113,9 @@ public class LobbyRecruitPanelView : MonoBehaviour
         bannerImage.sprite = currentState.BannerImage;
         pityText.text = $"앞으로 {currentState.RemainingPity}회 모집 안에 전설 유닛 확정 획득";
 
-        recruitOneButton.interactable = !isRecruiting && currentState.CanRecruitOne;
-        recruitTenButton.interactable = !isRecruiting && currentState.CanRecruitTen;
+        bool canInput = !isRecruiting && !presentationController.IsPresenting;
+        recruitOneButton.interactable = canInput && currentState.CanRecruitOne;
+        recruitTenButton.interactable = canInput && currentState.CanRecruitTen;
     }
 
     private void OpenRatePopup()
@@ -121,7 +135,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void TryRecruit(int count)
     {
-        if (isRecruiting)
+        if (isRecruiting || presentationController.IsPresenting)
             return;
 
         GachaDataSO banner = currentBanner;
@@ -160,7 +174,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
             UserDataManager.Instance.RaiseResourceUpdated();
             UserDataManager.Instance.RaiseInventoryUpdated();
             UserDataManager.Instance.RaiseRosterUpdated();
-            resultPopup.Open(new List<GachaResult>(result.Results));
+            presentationController.Present(result.Results);
             Refresh();
         }
         finally
@@ -172,6 +186,9 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (presentationController != null)
+            presentationController.PresentationCompleted -= Refresh;
+
         if (normalButton != null)
             normalButton.onClick.RemoveListener(SelectNormalBanner);
 
