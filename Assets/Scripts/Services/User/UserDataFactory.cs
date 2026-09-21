@@ -5,7 +5,7 @@ public static class UserDataFactory
 {
     public static UserDataRoot CreateDefault(string userId)
     {
-        return new UserDataRoot
+        UserDataRoot data = new UserDataRoot
         {
             SchemaVersion = UserDataSchema.CurrentVersion,
             Profile = CreateDefaultProfile(userId),
@@ -16,6 +16,9 @@ public static class UserDataFactory
             Gacha = CreateDefaultGacha(),
             Ad = CreateDefaultAd(),
         };
+
+        data.Profile.IconId = ProfileIconResolver.ResolveIconId(data.Profile.IconId, data.Roster);
+        return data;
     }
 
     public static UserGachaData CreateDefaultGacha()
@@ -34,7 +37,8 @@ public static class UserDataFactory
             UserId = userId,
             Nickname = $"User_{userId}",
             Level = 1,
-            Exp = 0
+            Exp = 0,
+            IconId = ProfileIconResolver.ConfiguredDefaultIconId,
         };
     }
 

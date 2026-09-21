@@ -46,6 +46,8 @@ public static class UnitDatabase
         if (string.IsNullOrEmpty(unitId))
             return null;
 
+        Initialize();
+
         unitDict.TryGetValue(unitId, out UnitDataSO unit);
 
         return unit;
@@ -60,6 +62,7 @@ public static class UnitDatabase
 
     public static IReadOnlyCollection<UnitDataSO> GetAll()
     {
+        Initialize();
         return unitDict.Values;
     }
 }

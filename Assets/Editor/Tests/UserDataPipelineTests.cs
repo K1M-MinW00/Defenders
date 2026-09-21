@@ -116,6 +116,34 @@ public sealed class UserDataPipelineTests
         Assert.That(data.Profile.Nickname, Is.EqualTo("OldName"));
     }
 
+    [Test]
+    public void Normalize_AssignsDefaultProfileIcon_WhenMissing()
+    {
+        UserDataRoot data = CreateValidData();
+        data.Profile.IconId = null;
+        data.Roster.OwnedUnits.Add(new UserUnitData { UnitId = "unit_knight", Level = 1 });
+
+        bool changed = UserDataNormalizer.Normalize(data, UserId);
+
+        Assert.That(changed, Is.True);
+        Assert.That(data.Profile.IconId, Is.EqualTo("unit_knight"));
+    }
+
+    [Test]
+    public async Task ProfileUpdate_RejectsUnownedIcon()
+    {
+        UserDataRoot data = CreateValidData();
+        data.Roster.OwnedUnits.Add(new UserUnitData { UnitId = "unit_knight", Level = 1 });
+        FakeUserDataRepository repository = new();
+        ProfileUpdateUseCase useCase = new(repository, UserId, data);
+
+        bool succeeded = await useCase.UpdateIconAsync("unit_wizard");
+
+        Assert.That(succeeded, Is.False);
+        Assert.That(repository.SaveProfileCallCount, Is.Zero);
+        Assert.That(data.Profile.IconId, Is.EqualTo("unit_knight"));
+    }
+
     private static UserDataRoot CreateValidData()
     {
         return new UserDataRoot

@@ -6,6 +6,7 @@ public class NewUserConfigSO : ScriptableObject
 {
     [Header("Profile")]
     public int StartLevel = 1;
+    public string DefaultProfileIconId = "unit_knight";
 
     [Header("Resource")]
     public int StartGold = 0;

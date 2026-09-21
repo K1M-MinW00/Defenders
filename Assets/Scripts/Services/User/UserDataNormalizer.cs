@@ -44,6 +44,13 @@ public static class UserDataNormalizer
             changed = true;
         }
 
+        string resolvedIconId = ProfileIconResolver.ResolveIconId(data.Profile.IconId, data.Roster);
+        if (data.Profile.IconId != resolvedIconId)
+        {
+            data.Profile.IconId = resolvedIconId;
+            changed = true;
+        }
+
         if (data.Progress == null)
         {
             data.Progress = UserDataFactory.CreateDefaultProgress();

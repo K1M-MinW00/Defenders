@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,27 +19,26 @@ public class EditProfilePanelView : MonoBehaviour
     [SerializeField] private Button confirmButton;
 
     private readonly List<ProfileIconSlotUI> slots = new();
-
     private string currentIconId;
     private string selectedIconId;
-
     private bool isSaving;
 
     private void Awake()
     {
         panelRoot.SetActive(false);
-
         cancelButton.onClick.AddListener(Close);
         confirmButton.onClick.AddListener(HandleConfirmButtonClicked);
     }
 
     private void OnEnable()
     {
-        currentIconId = UserDataManager.Instance.UserData.Profile.IconId;
+        UserDataRoot userData = UserDataManager.Instance.UserData;
+        currentIconId = ProfileIconResolver.ResolveIconId(userData.Profile.IconId, userData.Roster);
         selectedIconId = currentIconId;
 
         RefreshPreviewIcon();
-        CreateIconSlots();
+        CreateIconSlots(userData.Roster);
+        RefreshButtons();
     }
 
     private void OnDisable()
@@ -49,33 +48,34 @@ public class EditProfilePanelView : MonoBehaviour
 
     private void Close()
     {
-        if (isSaving)
-            return;
-
-        panelRoot.SetActive(false);
+        if (!isSaving)
+            panelRoot.SetActive(false);
     }
 
-    private void CreateIconSlots()
+    private void CreateIconSlots(UserRosterData roster)
     {
         ClearSlots();
+        HashSet<string> addedIds = new();
 
-        var ownedUnits = UserDataManager.Instance.UserData.Roster.OwnedUnits;
+        if (roster?.OwnedUnits == null)
+            return;
 
-        foreach (var unit in ownedUnits)
+        foreach (UserUnitData unit in roster.OwnedUnits)
         {
-            string unitId = unit.UnitId;
+            string unitId = unit?.UnitId;
             Sprite iconSprite = UnitDatabase.GetIcon(unitId);
+            if (string.IsNullOrWhiteSpace(unitId) || iconSprite == null || !addedIds.Add(unitId))
+                continue;
 
             ProfileIconSlotUI slot = Instantiate(slotPrefab, contentRoot);
             slot.Initialize(unitId, iconSprite, HandleIconSelected);
-
             slots.Add(slot);
         }
     }
 
     private void ClearSlots()
     {
-        foreach (var slot in slots)
+        foreach (ProfileIconSlotUI slot in slots)
         {
             if (slot != null)
                 Destroy(slot.gameObject);
@@ -83,39 +83,58 @@ public class EditProfilePanelView : MonoBehaviour
 
         slots.Clear();
     }
+
     private void HandleIconSelected(string iconId)
     {
+        if (!ProfileIconResolver.IsSelectable(iconId, UserDataManager.Instance.UserData.Roster))
+            return;
+
         selectedIconId = iconId;
         RefreshPreviewIcon();
+        RefreshButtons();
     }
 
     private void RefreshPreviewIcon()
     {
-        previewIconImage.sprite = UnitDatabase.GetIcon(selectedIconId);
+        UserDataRoot userData = UserDataManager.Instance.UserData;
+        previewIconImage.sprite = ProfileIconResolver.ResolveIcon(selectedIconId, userData.Roster);
+    }
+
+    private void RefreshButtons()
+    {
+        bool hasChanged = selectedIconId != currentIconId;
+        confirmButton.interactable = !isSaving && hasChanged;
+        cancelButton.interactable = !isSaving;
     }
 
     private async void HandleConfirmButtonClicked()
     {
-        if (isSaving)
+        if (isSaving || selectedIconId == currentIconId)
             return;
 
-        if (selectedIconId == currentIconId)
+        isSaving = true;
+        RefreshButtons();
+
+        bool succeeded = await UserDataManager.Instance.UpdateProfileIconAsync(selectedIconId);
+
+        isSaving = false;
+        if (!succeeded)
         {
-            Close();
+            UIFeedbackToast.Show("프로필 아이콘 저장에 실패했습니다.");
+            RefreshButtons();
             return;
         }
 
-        isSaving = true;
-
-        confirmButton.interactable = false;
-        cancelButton.interactable = false;
-
-        await UserDataManager.Instance.UpdateProfileIconAsync(selectedIconId);
-
-        confirmButton.interactable = true;
-        cancelButton.interactable = true;
-
-        isSaving = false;
+        currentIconId = selectedIconId;
         Close();
+    }
+
+    private void OnDestroy()
+    {
+        if (cancelButton != null)
+            cancelButton.onClick.RemoveListener(Close);
+
+        if (confirmButton != null)
+            confirmButton.onClick.RemoveListener(HandleConfirmButtonClicked);
     }
 }

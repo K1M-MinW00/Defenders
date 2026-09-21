@@ -11,12 +11,17 @@ public partial class UserDataManager
             RaiseProfileUpdated();
     }
 
-    public async Task UpdateProfileIconAsync(string iconId)
+    public async Task<bool> UpdateProfileIconAsync(string iconId)
     {
         if (ProfileUpdateUseCase == null)
-            return;
+            return false;
 
         if (await ProfileUpdateUseCase.UpdateIconAsync(iconId))
+        {
             RaiseProfileUpdated();
+            return true;
+        }
+
+        return false;
     }
 }

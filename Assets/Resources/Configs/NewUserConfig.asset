@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: NewUserConfig
   m_EditorClassIdentifier: Assembly-CSharp::NewUserConfigSO
   StartLevel: 1
+  DefaultProfileIconId: unit_knight
   StartGold: 10000
   StartGem: 300
   StartFuel: 100

@@ -30,7 +30,7 @@ public sealed class ProfileUpdateUseCase
 
     public Task<bool> UpdateIconAsync(string iconId)
     {
-        if (string.IsNullOrWhiteSpace(iconId))
+        if (!ProfileIconResolver.IsSelectable(iconId, userData.Roster))
             return Task.FromResult(false);
 
         return UpdateAsync(profile => profile.IconId = iconId);

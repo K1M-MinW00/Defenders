@@ -9,5 +9,5 @@ public class UserProfileData
     [FirestoreProperty] public int Level { get; set; } = 1;
     [FirestoreProperty] public int Exp { get; set; } = 0;
 
-    [FirestoreProperty] public string IconId { get; set; } = "icon_knight";
+    [FirestoreProperty] public string IconId { get; set; } = "unit_knight";
 }
