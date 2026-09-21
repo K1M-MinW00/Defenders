@@ -27,6 +27,7 @@ public partial class UserDataManager : MonoBehaviour
 
     public event Action OnProfileUpdated;
     public event Action OnResourceUpdated;
+    public event Action OnInventoryUpdated;
     public event Action OnRosterUpdated;
     public event Action OnProgressUpdated;
 
@@ -176,6 +177,11 @@ public partial class UserDataManager : MonoBehaviour
     public void RaiseResourceUpdated()
     {
         OnResourceUpdated?.Invoke();
+    }
+
+    public void RaiseInventoryUpdated()
+    {
+        OnInventoryUpdated?.Invoke();
     }
 
     public void RaiseRosterUpdated()

@@ -155,6 +155,7 @@ public class UnitPromotionPanel : MonoBehaviour
             }
 
             promotionSucceeded = true;
+            UserDataManager.Instance.RaiseInventoryUpdated();
             UserDataManager.Instance.RaiseRosterUpdated();
         }
         finally

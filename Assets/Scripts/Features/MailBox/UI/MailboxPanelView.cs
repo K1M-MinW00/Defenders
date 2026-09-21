@@ -123,6 +123,10 @@ public class MailboxPanelView : MonoBehaviour
                 Debug.LogWarning($"[MailboxPanelView] Claim failed: {result.Failure}");
                 UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
             }
+            else
+            {
+                RaiseRewardDataUpdated();
+            }
 
             await RefreshAsync();
         }
@@ -154,6 +158,10 @@ public class MailboxPanelView : MonoBehaviour
                     Debug.LogWarning($"[MailboxPanelView] Claim all failed: {result.Failure}");
 
                 UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+            }
+            else
+            {
+                RaiseRewardDataUpdated();
             }
 
             await RefreshAsync();
@@ -203,6 +211,13 @@ public class MailboxPanelView : MonoBehaviour
         }
 
         RefreshButtonStates();
+    }
+
+    private static void RaiseRewardDataUpdated()
+    {
+        UserDataManager.Instance.RaiseResourceUpdated();
+        UserDataManager.Instance.RaiseInventoryUpdated();
+        UserDataManager.Instance.RaiseRosterUpdated();
     }
 
     private void RefreshButtonStates()

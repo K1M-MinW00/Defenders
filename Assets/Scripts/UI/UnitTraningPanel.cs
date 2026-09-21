@@ -335,6 +335,7 @@ public class UnitTrainingPanel : MonoBehaviour
             materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
 
             UserDataManager.Instance.RaiseResourceUpdated();
+            UserDataManager.Instance.RaiseInventoryUpdated();
             UserDataManager.Instance.RaiseRosterUpdated();
             ResetSelection();
         }

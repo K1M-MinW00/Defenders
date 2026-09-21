@@ -161,6 +161,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
             }
 
             UserDataManager.Instance.RaiseResourceUpdated();
+            UserDataManager.Instance.RaiseInventoryUpdated();
             UserDataManager.Instance.RaiseRosterUpdated();
             resultPopup.Open(new List<GachaResult>(result.Results));
             Refresh();
