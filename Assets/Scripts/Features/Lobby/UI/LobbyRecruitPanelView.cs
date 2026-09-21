@@ -54,10 +54,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
         if (presentationController == null)
             presentationController = gameObject.AddComponent<RecruitPresentationController>();
 
-        presentationController.Initialize(
-            resultPopup,
-            presentationConfig,
-            new UnitDetailPresenter(UserDataManager.Instance.RosterService));
+        presentationController.Initialize(resultPopup, presentationConfig);
         presentationController.PresentationCompleted += Refresh;
 
         normalButton.onClick.AddListener(SelectNormalBanner);

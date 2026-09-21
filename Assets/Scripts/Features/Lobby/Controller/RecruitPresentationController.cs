@@ -17,7 +17,6 @@ public sealed class RecruitPresentationController : MonoBehaviour
 
     private RecruitResultPopupView resultPopup;
     private RecruitPresentationConfigSO config;
-    private UnitDetailPresenter unitDetailPresenter;
     private Coroutine presentationRoutine;
     private bool isPresenting;
     private bool ownsOverlayView;
@@ -27,15 +26,13 @@ public sealed class RecruitPresentationController : MonoBehaviour
 
     public void Initialize(
         RecruitResultPopupView popup,
-        RecruitPresentationConfigSO presentationConfig,
-        UnitDetailPresenter detailPresenter)
+        RecruitPresentationConfigSO presentationConfig)
     {
         if (resultPopup != null)
             resultPopup.SkipRequested -= Skip;
 
         resultPopup = popup;
         config = presentationConfig;
-        unitDetailPresenter = detailPresenter;
 
         if (resultPopup != null)
         {
@@ -79,12 +76,12 @@ public sealed class RecruitPresentationController : MonoBehaviour
 
     private IEnumerator PlayRoutine(IReadOnlyList<GachaResult> results)
     {
-        List<UnitDetailViewState> introUnits = SelectNewHighestRarityUnits(results);
+        List<UnitDataSO> introUnits = SelectNewHighestRarityUnits(results);
         float detailDuration = config != null
             ? config.NewUnitDetailDuration
             : DefaultNewUnitDetailDuration;
 
-        foreach (UnitDetailViewState unit in introUnits)
+        foreach (UnitDataSO unit in introUnits)
         {
             PlayUnitIntro(unit);
 
@@ -113,14 +110,14 @@ public sealed class RecruitPresentationController : MonoBehaviour
         CompletePresentation();
     }
 
-    private void PlayUnitIntro(UnitDetailViewState unit)
+    private void PlayUnitIntro(UnitDataSO unit)
     {
         if (unit == null)
             return;
 
-        Rarity rarity = unit.Rarity;
+        Rarity rarity = unit.rarity;
         SetIntroVisible(introRoot != null);
-        overlayView?.ShowUnitDetail(unit, GetRarityColor(rarity));
+        overlayView?.ShowUnitIntro(unit, GetRarityColor(rarity));
 
         if (introAnimator != null && config != null)
         {
@@ -176,10 +173,10 @@ public sealed class RecruitPresentationController : MonoBehaviour
             introRoot.SetActive(visible);
     }
 
-    private List<UnitDetailViewState> SelectNewHighestRarityUnits(IReadOnlyList<GachaResult> results)
+    private static List<UnitDataSO> SelectNewHighestRarityUnits(IReadOnlyList<GachaResult> results)
     {
-        List<UnitDetailViewState> selectedUnits = new();
-        if (results == null || unitDetailPresenter == null)
+        List<UnitDataSO> selectedUnits = new();
+        if (results == null)
             return selectedUnits;
 
         bool foundNewUnit = false;
@@ -208,11 +205,7 @@ public sealed class RecruitPresentationController : MonoBehaviour
                 continue;
 
             if (addedUnitIds.Add(unit.unitId))
-            {
-                UnitDetailViewState detailState = unitDetailPresenter.Build(unit.unitId);
-                if (detailState != null)
-                    selectedUnits.Add(detailState);
-            }
+                selectedUnits.Add(unit);
         }
 
         return selectedUnits;
