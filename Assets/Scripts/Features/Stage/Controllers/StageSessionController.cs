@@ -97,6 +97,7 @@ public class StageSessionController : MonoBehaviour
 
     private async void OnWaveWin()
     {
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
         rewardService.GiveWaveReward(CurrentWave);
         stageTimeController.ExitCombatPhase();
         CurrentWaveIndex++;
@@ -113,6 +114,7 @@ public class StageSessionController : MonoBehaviour
 
     private void OnWaveLose()
     {
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
         stageTimeController.ExitCombatPhase();
         CurrentState = StageState.StageFail;
         stageUI.SetPhase(CurrentState);
@@ -144,6 +146,8 @@ public class StageSessionController : MonoBehaviour
         StopCurrentPhase();
 
         CurrentState = StageState.StageFail;
+
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
 
         stageTimeController.Resume();
         stageTimeController.ExitCombatPhase();

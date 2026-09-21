@@ -42,6 +42,9 @@ public class StagePauseUI : MonoBehaviour
 
         timeController.OnPauseChanged += HandlePauseChanged;
 
+        if (GameSettingsManager.Instance != null)
+            GameSettingsManager.Instance.OnSoundChanged += HandleExternalSoundChanged;
+
         RefreshToggleStates();
     }
 
@@ -67,6 +70,9 @@ public class StagePauseUI : MonoBehaviour
 
         if (timeController != null)
             timeController.OnPauseChanged -= HandlePauseChanged;
+
+        if (GameSettingsManager.Instance != null)
+            GameSettingsManager.Instance.OnSoundChanged -= HandleExternalSoundChanged;
     }
 
     private void HandlePauseChanged(bool isPaused)
@@ -81,9 +87,13 @@ public class StagePauseUI : MonoBehaviour
     {
         suppressToggleEvent = true;
 
-        soundToggle.isOn = GameSettingsManager.Instance.SoundEnabled;
-        vibrationToggle.isOn = GameSettingsManager.Instance.VibrationEnabled;
-        pushToggle.isOn = GameSettingsManager.Instance.PushEnabled;
+        GameSettingsManager settings = GameSettingsManager.Instance;
+        if (settings != null)
+        {
+            soundToggle.SetIsOnWithoutNotify(settings.SoundEnabled);
+            vibrationToggle.SetIsOnWithoutNotify(settings.VibrationEnabled);
+            pushToggle.SetIsOnWithoutNotify(settings.PushEnabled);
+        }
 
         suppressToggleEvent = false;
     }
@@ -104,7 +114,12 @@ public class StagePauseUI : MonoBehaviour
         if (suppressToggleEvent)
             return;
 
-        GameSettingsManager.Instance.SetSound(isOn);
+        GameSettingsManager.Instance?.SetSound(isOn);
+    }
+
+    private void HandleExternalSoundChanged(bool isOn)
+    {
+        soundToggle?.SetIsOnWithoutNotify(isOn);
     }
 
     private void HandleVibrationChanged(bool isOn)

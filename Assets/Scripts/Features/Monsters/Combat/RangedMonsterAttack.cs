@@ -44,6 +44,7 @@ public class RangedMonsterAttack : MonoBehaviour, IMonsterAttack
             return false;
 
         owner.PlayAttack();
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.MonsterAttack);
 
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
         Vector3 targetPos = target.transform.position;

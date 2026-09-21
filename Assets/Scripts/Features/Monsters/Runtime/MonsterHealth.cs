@@ -33,6 +33,7 @@ public class MonsterHealth : MonoBehaviour, IDamageable
 
         damage = Mathf.Min(damage, CurrentHp);
         CurrentHp -= damage;
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.MonsterHit);
 
         int finalDamage = (int)damage;
 

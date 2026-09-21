@@ -30,6 +30,7 @@ public class MeleeMonsterAttack : MonoBehaviour, IMonsterAttack
             return false;
 
         owner.PlayAttack();
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.MonsterAttack);
 
         target.Health.TakeDamage(owner.AtkDamage);
 

@@ -72,6 +72,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         owner.SkillController.NotifyAttackStarted(target);
         owner.FaceTarget();
         owner.Animation.PlayAttack();
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitAttack);
 
         return true;
     }

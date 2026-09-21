@@ -49,6 +49,7 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
         
         owner.FaceTarget();
         owner.Animation.PlayAttack();
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitAttack);
 
         return true;
     }

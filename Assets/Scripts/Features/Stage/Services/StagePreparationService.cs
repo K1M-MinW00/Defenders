@@ -65,6 +65,7 @@ public class StagePreparationService : MonoBehaviour
         if (!success)
             return false;
 
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
         return true;
     }
 
@@ -122,6 +123,7 @@ public class StagePreparationService : MonoBehaviour
         if (!success)
             return false;
 
+        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
         return true;
     }
 
