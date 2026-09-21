@@ -18,40 +18,51 @@ MonoBehaviour:
   startAndLobbyBgm: {fileID: 0}
   battleBgm: {fileID: 0}
   bgmVolume: 0.7
+  initialSfxPoolSize: 8
+  maxSfxPoolSize: 16
   sfxEntries:
   - cue: 0
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.05
+    priority: 0
   - cue: 1
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.08
+    priority: 1
   - cue: 2
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.05
+    priority: 0
   - cue: 3
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.1
+    priority: 2
   - cue: 4
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.1
+    priority: 2
   - cue: 5
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.08
+    priority: 1
   - cue: 6
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.05
+    priority: 0
   - cue: 7
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.2
+    priority: 2
   - cue: 8
     clip: {fileID: 0}
     volume: 1
     minInterval: 0.2
+    priority: 2
