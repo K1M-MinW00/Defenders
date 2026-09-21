@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,6 +24,9 @@ public class LobbyBattlePanelView : MonoBehaviour
     [SerializeField] private string gameSceneName = "GameScene";
     [SerializeField] private Button startButton;
 
+    private LobbyBattlePresenter presenter;
+    private bool isSubscribed;
+
     private void Awake()
     {
         startButton.onClick.AddListener(HandleStartButtonClicked);
@@ -33,13 +34,13 @@ public class LobbyBattlePanelView : MonoBehaviour
 
     private void OnEnable()
     {
-        UserDataRoot userData = UserDataManager.Instance.UserData;
-
-        if (userData == null)
+        UserDataManager manager = UserDataManager.Instance;
+        if (manager?.UserData == null)
             return;
 
-        Refresh();
+        presenter ??= new LobbyBattlePresenter(manager.UserData, GameConfig.UserLevelProgression);
         SubscribeEvents();
+        Refresh();
     }
 
     private void OnDisable()
@@ -49,119 +50,78 @@ public class LobbyBattlePanelView : MonoBehaviour
 
     private void SubscribeEvents()
     {
-        UserDataManager.Instance.OnProfileUpdated += HandleProfileUpdated;
-        UserDataManager.Instance.OnProgressUpdated += HandleProgressUpdated;
-        UserDataManager.Instance.OnResourceUpdated += HandleResourceUpdated;
+        if (isSubscribed || UserDataManager.Instance == null)
+            return;
+
+        UserDataManager.Instance.OnProfileUpdated += Refresh;
+        UserDataManager.Instance.OnProgressUpdated += Refresh;
+        UserDataManager.Instance.OnResourceUpdated += Refresh;
+        UserDataManager.Instance.OnRosterUpdated += Refresh;
+        isSubscribed = true;
     }
 
     private void UnsubscribeEvents()
     {
-        if (UserDataManager.Instance == null)
+        if (!isSubscribed || UserDataManager.Instance == null)
             return;
 
-        UserDataManager.Instance.OnProfileUpdated -= HandleProfileUpdated;
-        UserDataManager.Instance.OnProgressUpdated -= HandleProgressUpdated;
-        UserDataManager.Instance.OnResourceUpdated -= HandleResourceUpdated;
-    }
-
-    private void HandleProfileUpdated()
-    {
-        RefreshProfile(UserDataManager.Instance.UserData);
-    }
-
-    private void HandleProgressUpdated()
-    {
-        RefreshProgress(UserDataManager.Instance.UserData);
-    }
-
-    private void HandleResourceUpdated()
-    {
-        RefreshResources(UserDataManager.Instance.UserData);
+        UserDataManager.Instance.OnProfileUpdated -= Refresh;
+        UserDataManager.Instance.OnProgressUpdated -= Refresh;
+        UserDataManager.Instance.OnResourceUpdated -= Refresh;
+        UserDataManager.Instance.OnRosterUpdated -= Refresh;
+        isSubscribed = false;
     }
 
     public void Refresh()
     {
-        UserDataRoot userData = UserDataManager.Instance.UserData;
-
-        if (userData == null)
+        LobbyBattleViewState state = presenter?.Build();
+        if (state == null)
         {
-            Debug.LogError("LobbyPanelUI Refresh failed. UserData is null.");
+            startButton.interactable = false;
             return;
         }
 
-        RefreshProfile(userData);
-        RefreshProgress(userData);
-        RefreshResources(userData);
-    }
-
-    private void RefreshProfile(UserDataRoot userData)
-    {
-        UserProfileData profile = userData.Profile;
-
-        levelText.text = profile.Level.ToString();
-        powerText.text = userData.Roster.Power.ToString();
-
-        profileIconImage.sprite = UnitDatabase.GetIcon(profile.IconId);
-
-        expSlider.value = GetNormalizedExp(profile.Exp, profile.Level);
-    }
-
-    private void RefreshProgress(UserDataRoot userData)
-    {
-        UserProgressData progress = userData.Progress;
-
-        sectorStageText.text = $"{progress.CurrentSector}-{progress.CurrentStage}";
-
-        bestWaveText.text = progress.BestWaveCleared.ToString();
-    }
-
-    private void RefreshResources(UserDataRoot userData)
-    {
-        UserResourceData resource = userData.Resource;
-
-        goldText.text = resource.Gold.ToString("N0");
-        gemText.text = resource.Gem.ToString("N0");
-        fuelText.text = $"{resource.Fuel} / {resource.MaxFuel}";
+        profileIconImage.sprite = state.ProfileIcon;
+        levelText.text = state.Level.ToString();
+        powerText.text = state.Power.ToString("N0");
+        expSlider.value = state.NormalizedExp;
+        sectorStageText.text = $"{state.Sector}-{state.Stage}";
+        bestWaveText.text = state.BestWaveCleared.ToString();
+        goldText.text = state.Gold.ToString("N0");
+        gemText.text = state.Gem.ToString("N0");
+        fuelText.text = $"{state.Fuel} / {state.MaxFuel}";
+        startButton.interactable = state.CanStartBattle;
     }
 
     private void HandleStartButtonClicked()
     {
-        UserDataRoot userData = UserDataManager.Instance.UserData;
+        StageEnterData enterData = null;
+        LobbyBattleStartFailure failure = LobbyBattleStartFailure.UserDataUnavailable;
 
-        if (userData == null)
+        if (presenter == null || !presenter.TryBuildStageEnterData(out enterData, out failure))
         {
-            Debug.LogError("Start battle failed. UserData is null.");
+            UIFeedbackToast.Show(GetStartFailureMessage(failure));
             return;
         }
-
-        List<string> selectedUnitIds = userData.Roster.SelectedUnitIds;
-
-        if (selectedUnitIds == null || selectedUnitIds.Count == 0)
-        {
-            Debug.LogError("Start battle failed. SelectedUnitIds is empty.");
-            return;
-        }
-
-        StageEnterData enterData = new(userData.Progress.CurrentSector, userData.Progress.CurrentStage, selectedUnitIds);
 
         StageEnterHolder.Set(enterData);
-
         SceneManager.LoadScene(gameSceneName);
     }
 
-    // TODO : ���� UserLevelTable �Ǵ� UserLevelCalculator �� �̵�
-    private float GetNormalizedExp(int exp, int level)
+    private static string GetStartFailureMessage(LobbyBattleStartFailure failure)
     {
-        int requiredExp = GetRequiredExp(level);
-
-        if (requiredExp <= 0)
-            return 0f;
-
-        return (float)exp / requiredExp;
+        return failure switch
+        {
+            LobbyBattleStartFailure.EmptyFormation => "전투에 참여할 유닛을 편성해주세요.",
+            LobbyBattleStartFailure.InvalidFormation => "편성 정보가 올바르지 않습니다.",
+            LobbyBattleStartFailure.InvalidProgress => "스테이지 진행 정보를 확인할 수 없습니다.",
+            _ => "전투를 시작할 수 없습니다.",
+        };
     }
 
-    private int GetRequiredExp(int level)
+    private void OnDestroy()
     {
-        return 100 + (level - 1) * 50;
+        if (startButton != null)
+            startButton.onClick.RemoveListener(HandleStartButtonClicked);
     }
 }

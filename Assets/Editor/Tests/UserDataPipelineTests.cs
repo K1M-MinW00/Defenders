@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Firebase.Firestore;
 using NUnit.Framework;
+using UnityEngine;
 
 public sealed class UserDataPipelineTests
 {
@@ -142,6 +143,42 @@ public sealed class UserDataPipelineTests
         Assert.That(succeeded, Is.False);
         Assert.That(repository.SaveProfileCallCount, Is.Zero);
         Assert.That(data.Profile.IconId, Is.EqualTo("unit_knight"));
+    }
+
+    [Test]
+    public void LobbyBattlePresenter_BuildsStateAndStageEntry()
+    {
+        UserDataRoot data = CreateValidData();
+        data.Profile.Exp = 50;
+        data.Roster.OwnedUnits.Add(new UserUnitData { UnitId = "unit_knight", Level = 1 });
+        data.Roster.SelectedUnitIds.Add("unit_knight");
+        UserLevelProgressionSO progression = Resources.Load<UserLevelProgressionSO>("Configs/UserLevelProgression");
+        LobbyBattlePresenter presenter = new(data, progression);
+
+        LobbyBattleViewState state = presenter.Build();
+        bool succeeded = presenter.TryBuildStageEnterData(out StageEnterData enterData, out LobbyBattleStartFailure failure);
+
+        Assert.That(state, Is.Not.Null);
+        Assert.That(state.NormalizedExp, Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(state.CanStartBattle, Is.True);
+        Assert.That(succeeded, Is.True);
+        Assert.That(failure, Is.EqualTo(LobbyBattleStartFailure.None));
+        Assert.That(enterData.SelectedUnitIds, Is.EqualTo(new[] { "unit_knight" }));
+    }
+
+    [Test]
+    public void LobbyBattlePresenter_RejectsInvalidFormation()
+    {
+        UserDataRoot data = CreateValidData();
+        data.Roster.OwnedUnits.Add(new UserUnitData { UnitId = "unit_knight", Level = 1 });
+        data.Roster.SelectedUnitIds.Add("unit_wizard");
+        LobbyBattlePresenter presenter = new(data, null);
+
+        bool succeeded = presenter.TryBuildStageEnterData(out StageEnterData enterData, out LobbyBattleStartFailure failure);
+
+        Assert.That(succeeded, Is.False);
+        Assert.That(enterData, Is.Null);
+        Assert.That(failure, Is.EqualTo(LobbyBattleStartFailure.InvalidFormation));
     }
 
     private static UserDataRoot CreateValidData()
