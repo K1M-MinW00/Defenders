@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
 
 public class MailboxPanelView : MonoBehaviour
 {
@@ -13,11 +15,13 @@ public class MailboxPanelView : MonoBehaviour
     [SerializeField] private Button deleteAllButton;
 
     private MailboxService mailboxService;
+    private readonly Dictionary<string, MailSlotUI> slotsByMailId = new();
+    private readonly List<string> staleMailIds = new();
     private bool isProcessing;
 
     private void Awake()
     {
-        receiveAllButton.onClick.AddListener(HandleReceivceAllButtonClicked);
+        receiveAllButton.onClick.AddListener(HandleReceiveAllButtonClicked);
         deleteAllButton.onClick.AddListener(HandleDeleteAllButtonClicked);
     }
 
@@ -25,26 +29,82 @@ public class MailboxPanelView : MonoBehaviour
     {
         mailboxService = UserDataManager.Instance.MailboxService;
 
-        await RefreshAsync();
+        SetProcessing(true);
+
+        try
+        {
+            await RefreshAsync();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[MailboxPanelView] Load failed: {exception}");
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+        }
+        finally
+        {
+            SetProcessing(false);
+        }
     }
 
     public async Task RefreshAsync()
     {
-        ClearSlots();
-
         await mailboxService.LoadMailsAsync();
-
-        foreach (MailData mail in mailboxService.CachedMails)
-        {
-            CreateMailSlot(mail);
-        }
+        ReconcileSlots(mailboxService.CachedMails);
+        RefreshButtonStates();
     }
 
-    private void CreateMailSlot(MailData mail)
+    private void ReconcileSlots(IReadOnlyList<MailData> mails)
     {
-        MailSlotUI slot = Instantiate(mailSlotPrefab, contentRoot);
+        HashSet<string> visibleMailIds = new();
 
-        slot.Setup(mail,HandleMailClicked);
+        for (int i = 0; i < mails.Count; i++)
+        {
+            MailData mail = mails[i];
+            if (mail == null || string.IsNullOrWhiteSpace(mail.MailId) || !visibleMailIds.Add(mail.MailId))
+                continue;
+
+            MailSlotUI slot = GetOrCreateSlot(mail.MailId);
+            slot.transform.SetSiblingIndex(i);
+            slot.Setup(mail, HandleMailClicked);
+            slot.SetInteractionEnabled(!isProcessing);
+        }
+
+        RemoveStaleSlots(visibleMailIds);
+    }
+
+    private MailSlotUI GetOrCreateSlot(string mailId)
+    {
+        if (slotsByMailId.TryGetValue(mailId, out MailSlotUI slot) && slot != null)
+            return slot;
+
+        slot = Instantiate(mailSlotPrefab, contentRoot);
+        slotsByMailId[mailId] = slot;
+        return slot;
+    }
+
+    private void RemoveStaleSlots(HashSet<string> visibleMailIds)
+    {
+        staleMailIds.Clear();
+
+        foreach (string mailId in slotsByMailId.Keys)
+        {
+            if (!visibleMailIds.Contains(mailId))
+                staleMailIds.Add(mailId);
+        }
+
+        foreach (string mailId in staleMailIds)
+        {
+            MailSlotUI slot = slotsByMailId[mailId];
+            if (slot != null)
+            {
+                slot.gameObject.SetActive(false);
+                Destroy(slot.gameObject);
+            }
+
+            slotsByMailId.Remove(mailId);
+        }
+
+        staleMailIds.Clear();
     }
 
     private async void HandleMailClicked(MailData mail)
@@ -52,7 +112,7 @@ public class MailboxPanelView : MonoBehaviour
         if (isProcessing)
             return;
 
-        isProcessing = true;
+        SetProcessing(true);
 
         try
         {
@@ -66,25 +126,23 @@ public class MailboxPanelView : MonoBehaviour
 
             await RefreshAsync();
         }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[MailboxPanelView] Claim refresh failed: {exception}");
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+        }
         finally
         {
-            isProcessing = false;
+            SetProcessing(false);
         }
     }
 
-    private void ClearSlots()
-    {
-        for (int i = contentRoot.childCount - 1; i >= 0; i--)
-        {
-            Destroy(contentRoot.GetChild(i).gameObject);
-        }
-    }
-    private async void HandleReceivceAllButtonClicked()
+    private async void HandleReceiveAllButtonClicked()
     {
         if (isProcessing)
             return;
 
-        isProcessing = true;
+        SetProcessing(true);
 
         try
         {
@@ -100,9 +158,14 @@ public class MailboxPanelView : MonoBehaviour
 
             await RefreshAsync();
         }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[MailboxPanelView] Claim all refresh failed: {exception}");
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+        }
         finally
         {
-            isProcessing = false;
+            SetProcessing(false);
         }
     }
 
@@ -111,16 +174,71 @@ public class MailboxPanelView : MonoBehaviour
         if (isProcessing)
             return;
 
-        isProcessing = true;
+        SetProcessing(true);
 
         try
         {
             await mailboxService.DeleteAllAsync();
             await RefreshAsync();
         }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[MailboxPanelView] Delete failed: {exception}");
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxDeleteFailed);
+        }
         finally
         {
-            isProcessing = false;
+            SetProcessing(false);
         }
+    }
+
+    private void SetProcessing(bool processing)
+    {
+        isProcessing = processing;
+
+        foreach (MailSlotUI slot in slotsByMailId.Values)
+        {
+            if (slot != null)
+                slot.SetInteractionEnabled(!processing);
+        }
+
+        RefreshButtonStates();
+    }
+
+    private void RefreshButtonStates()
+    {
+        bool hasClaimableMail = false;
+        bool hasClaimedMail = false;
+        DateTime now = DateTime.UtcNow;
+
+        if (mailboxService?.CachedMails != null)
+        {
+            foreach (MailData mail in mailboxService.CachedMails)
+            {
+                if (mail == null)
+                    continue;
+
+                hasClaimedMail |= mail.Claimed;
+                hasClaimableMail |= !mail.Claimed && mail.ExpireAt != null &&
+                    mail.ExpireAt.ToDateTime() > now;
+            }
+        }
+
+        if (receiveAllButton != null)
+            receiveAllButton.interactable = !isProcessing && hasClaimableMail;
+
+        if (deleteAllButton != null)
+            deleteAllButton.interactable = !isProcessing && hasClaimedMail;
+    }
+
+    private void OnDestroy()
+    {
+        if (receiveAllButton != null)
+            receiveAllButton.onClick.RemoveListener(HandleReceiveAllButtonClicked);
+
+        if (deleteAllButton != null)
+            deleteAllButton.onClick.RemoveListener(HandleDeleteAllButtonClicked);
+
+        slotsByMailId.Clear();
     }
 }

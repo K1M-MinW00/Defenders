@@ -1,6 +1,8 @@
 public static class LobbyOperationFeedbackMessages
 {
     public const string AdUnavailable = "광고를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+    public const string MailboxLoadFailed = "우편함을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+    public const string MailboxDeleteFailed = "우편 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.";
 
     public static string Get(RecruitUnitsFailure failure)
     {

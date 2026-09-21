@@ -17,6 +17,7 @@ public class MailSlotUI : MonoBehaviour
     [SerializeField] private Button button;
 
     private MailData currentMail;
+    private bool canClaim;
 
     public void Setup(MailData mail, Action<MailData> onClick)
     {
@@ -29,7 +30,8 @@ public class MailSlotUI : MonoBehaviour
 
         expireText.text = GetExpireText(remain);
 
-        button.interactable = !mail.Claimed && remain.TotalSeconds > 0;
+        canClaim = !mail.Claimed && remain.TotalSeconds > 0;
+        SetInteractionEnabled(true);
 
         CreateRewardSlots(mail);
 
@@ -40,13 +42,22 @@ public class MailSlotUI : MonoBehaviour
             if (currentMail.Claimed)
                 return;
 
-            onClick?.Invoke(mail);
+            onClick?.Invoke(currentMail);
         });
+    }
+
+    public void SetInteractionEnabled(bool enabled)
+    {
+        if (button != null)
+            button.interactable = enabled && canClaim;
     }
 
     private void CreateRewardSlots(MailData mail)
     {
         ClearRewardSlots();
+
+        if (mail.Rewards == null)
+            return;
 
         foreach (RewardData reward in mail.Rewards)
         {
