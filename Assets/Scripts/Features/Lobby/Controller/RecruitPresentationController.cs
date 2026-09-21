@@ -5,7 +5,7 @@ using UnityEngine;
 
 public sealed class RecruitPresentationController : MonoBehaviour
 {
-    private const float DefaultIntroDuration = 0.65f;
+    private const float DefaultNewUnitDetailDuration = 1f;
     private const float DefaultRevealInterval = 0.18f;
     private const float DefaultCardRevealDuration = 0.22f;
 
@@ -74,15 +74,22 @@ public sealed class RecruitPresentationController : MonoBehaviour
 
     private IEnumerator PlayRoutine(IReadOnlyList<GachaResult> results)
     {
-        PlayIntro(GetHighestRarity(results));
+        List<UnitDataSO> introUnits = SelectNewHighestRarityUnits(results);
+        float detailDuration = config != null
+            ? config.NewUnitDetailDuration
+            : DefaultNewUnitDetailDuration;
 
-        float introDuration = config != null ? config.IntroDuration : DefaultIntroDuration;
-        float elapsed = 0f;
-        while (elapsed < introDuration)
+        foreach (UnitDataSO unit in introUnits)
         {
-            elapsed += Time.unscaledDeltaTime;
-            overlayView?.SetIntroProgress(introDuration > 0f ? elapsed / introDuration : 1f);
-            yield return null;
+            PlayUnitIntro(unit);
+
+            float elapsed = 0f;
+            while (elapsed < detailDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                overlayView?.SetIntroProgress(detailDuration > 0f ? elapsed / detailDuration : 1f);
+                yield return null;
+            }
         }
 
         SetIntroVisible(false);
@@ -101,10 +108,14 @@ public sealed class RecruitPresentationController : MonoBehaviour
         CompletePresentation();
     }
 
-    private void PlayIntro(Rarity rarity)
+    private void PlayUnitIntro(UnitDataSO unit)
     {
+        if (unit == null)
+            return;
+
+        Rarity rarity = unit.rarity;
         SetIntroVisible(introRoot != null);
-        overlayView?.ShowIntro(rarity, GetRarityColor(rarity));
+        overlayView?.ShowUnitDetail(unit, GetRarityColor(rarity));
 
         if (introAnimator != null && config != null)
         {
@@ -160,19 +171,42 @@ public sealed class RecruitPresentationController : MonoBehaviour
             introRoot.SetActive(visible);
     }
 
-    private static Rarity GetHighestRarity(IReadOnlyList<GachaResult> results)
+    private static List<UnitDataSO> SelectNewHighestRarityUnits(IReadOnlyList<GachaResult> results)
     {
-        Rarity highest = Rarity.Normal;
+        List<UnitDataSO> selectedUnits = new();
         if (results == null)
-            return highest;
+            return selectedUnits;
+
+        bool foundNewUnit = false;
+        Rarity highest = Rarity.Normal;
 
         foreach (GachaResult result in results)
         {
-            if (result?.Unit != null && result.Unit.rarity > highest)
+            if (result?.Unit == null || !result.IsNewUnit)
+                continue;
+
+            if (!foundNewUnit || result.Unit.rarity > highest)
+            {
                 highest = result.Unit.rarity;
+                foundNewUnit = true;
+            }
         }
 
-        return highest;
+        if (!foundNewUnit)
+            return selectedUnits;
+
+        HashSet<string> addedUnitIds = new(StringComparer.Ordinal);
+        foreach (GachaResult result in results)
+        {
+            UnitDataSO unit = result?.Unit;
+            if (unit == null || !result.IsNewUnit || unit.rarity != highest)
+                continue;
+
+            if (addedUnitIds.Add(unit.unitId))
+                selectedUnits.Add(unit);
+        }
+
+        return selectedUnits;
     }
 
     private Color GetRarityColor(Rarity rarity)

@@ -14,14 +14,14 @@ public sealed class RecruitPresentationConfigSO : ScriptableObject
     }
 
     [Header("Timing")]
-    [SerializeField, Min(0f)] private float introDuration = 0.65f;
+    [SerializeField, Min(0f)] private float newUnitDetailDuration = 1f;
     [SerializeField, Min(0f)] private float revealInterval = 0.18f;
     [SerializeField, Min(0f)] private float cardRevealDuration = 0.22f;
 
     [Header("Rarity Presentation")]
     [SerializeField] private RarityPresentation[] rarityPresentations;
 
-    public float IntroDuration => introDuration;
+    public float NewUnitDetailDuration => newUnitDetailDuration;
     public float RevealInterval => revealInterval;
     public float CardRevealDuration => cardRevealDuration;
 

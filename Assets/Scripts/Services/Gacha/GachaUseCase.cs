@@ -209,6 +209,7 @@ public sealed class GachaUseCase
         if (ownedUnit == null)
         {
             roster.OwnedUnits.Add(new UserUnitData { UnitId = unit.unitId, Level = 1 });
+            result.IsNewUnit = true;
             return;
         }
 
