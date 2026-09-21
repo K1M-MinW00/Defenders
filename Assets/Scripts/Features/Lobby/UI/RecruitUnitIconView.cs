@@ -81,7 +81,12 @@ public class RecruitUnitIconView : MonoBehaviour
 
     private void EnsureCanvasGroup()
     {
+        if (revealCanvasGroup != null)
+            return;
+
+        revealCanvasGroup = GetComponent<CanvasGroup>();
+
         if (revealCanvasGroup == null)
-            revealCanvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+            revealCanvasGroup = gameObject.AddComponent<CanvasGroup>();
     }
 }
