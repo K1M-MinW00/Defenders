@@ -9,7 +9,7 @@ public sealed class FuelPanelPresenter
         this.userData = userData ?? throw new ArgumentNullException(nameof(userData));
     }
 
-    public FuelPanelViewState Build(bool isRewardAdBusy, DateTime utcNow)
+    public FuelPanelViewState Build(bool isRewardAdBusy, bool isRewardAdReady, DateTime utcNow)
     {
         if (userData.Resource == null || userData.Ad == null)
             return null;
@@ -29,7 +29,7 @@ public sealed class FuelPanelPresenter
             FullRecoverSeconds = StaminaService.GetRemainingSecondsToFullFuel(resources),
             DailyAdWatchCount = watchCount,
             DailyAdLimit = AdDailyLimitPolicy.DailyAdLimit,
-            CanRequestRewardAd = !isRewardAdBusy && watchCount < AdDailyLimitPolicy.DailyAdLimit,
+            CanRequestRewardAd = !isRewardAdBusy && isRewardAdReady && watchCount < AdDailyLimitPolicy.DailyAdLimit,
         };
     }
 

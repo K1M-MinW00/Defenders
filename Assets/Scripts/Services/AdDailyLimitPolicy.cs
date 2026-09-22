@@ -10,7 +10,7 @@ public static class AdDailyLimitPolicy
         if (adData == null)
             return false;
 
-        string today = utcNow.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        string today = NormalizeUtc(utcNow).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
 
         if (adData.AdWatchDate == today)
             return false;
@@ -35,12 +35,14 @@ public static class AdDailyLimitPolicy
         if (adData == null)
             return 0;
 
-        return type switch
+        int count = type switch
         {
             DailyAdType.Fuel => adData.FuelAdWatchCount,
             DailyAdType.Gem => adData.GemAdWatchCount,
             _ => 0,
         };
+
+        return Math.Max(0, count);
     }
 
     public static bool TryConsume(UserAdData adData, DailyAdType type, DateTime utcNow)
@@ -51,15 +53,20 @@ public static class AdDailyLimitPolicy
         switch (type)
         {
             case DailyAdType.Fuel:
-                adData.FuelAdWatchCount++;
+                adData.FuelAdWatchCount = GetWatchCount(adData, type) + 1;
                 return true;
 
             case DailyAdType.Gem:
-                adData.GemAdWatchCount++;
+                adData.GemAdWatchCount = GetWatchCount(adData, type) + 1;
                 return true;
 
             default:
                 return false;
         }
+    }
+
+    private static DateTime NormalizeUtc(DateTime value)
+    {
+        return value.Kind == DateTimeKind.Utc ? value : value.ToUniversalTime();
     }
 }

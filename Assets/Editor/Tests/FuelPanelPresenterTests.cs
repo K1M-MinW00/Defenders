@@ -9,7 +9,7 @@ public sealed class FuelPanelPresenterTests
         UserDataRoot userData = CreateUserData(80, 100, 1, "2026-09-22");
         FuelPanelPresenter presenter = new(userData);
 
-        FuelPanelViewState state = presenter.Build(false, utcNow);
+        FuelPanelViewState state = presenter.Build(false, true, utcNow);
 
         Assert(state != null, "Fuel panel state should be created.");
         Assert(state.Fuel == 80 && state.MaxFuel == 100, "Fuel values should be preserved.");
@@ -23,7 +23,7 @@ public sealed class FuelPanelPresenterTests
         UserDataRoot userData = CreateUserData(100, 100, 2, "2026-09-21");
         FuelPanelPresenter presenter = new(userData);
 
-        FuelPanelViewState state = presenter.Build(true, utcNow);
+        FuelPanelViewState state = presenter.Build(true, true, utcNow);
 
         Assert(state.DailyAdWatchCount == 0, "Expired daily ad count should reset in the view state.");
         Assert(!state.CanRequestRewardAd, "Reward ad should remain disabled while an operation is pending.");

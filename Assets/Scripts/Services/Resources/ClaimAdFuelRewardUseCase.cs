@@ -7,15 +7,21 @@ public sealed class ClaimAdFuelRewardUseCase
     private readonly IUserDataRepository repository;
     private readonly string userId;
     private readonly UserDataRoot userData;
+    private readonly Func<DateTime> utcNowProvider;
     private bool isExecuting;
 
-    public ClaimAdFuelRewardUseCase(IUserDataRepository repository, string userId, UserDataRoot userData)
+    public ClaimAdFuelRewardUseCase(
+        IUserDataRepository repository,
+        string userId,
+        UserDataRoot userData,
+        Func<DateTime> utcNowProvider = null)
     {
         this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         this.userId = string.IsNullOrWhiteSpace(userId)
             ? throw new ArgumentException("User ID is null or empty.", nameof(userId))
             : userId;
         this.userData = userData ?? throw new ArgumentNullException(nameof(userData));
+        this.utcNowProvider = utcNowProvider ?? (() => DateTime.UtcNow);
     }
 
     public async Task<ClaimAdFuelRewardResult> ExecuteAsync(int fuelAmount)
@@ -25,7 +31,7 @@ public sealed class ClaimAdFuelRewardUseCase
 
         UserResourceData nextResources = UserDataCloner.Copy(userData.Resource);
         UserAdData nextAd = UserDataCloner.Copy(userData.Ad);
-        DateTime utcNow = DateTime.UtcNow;
+        DateTime utcNow = utcNowProvider();
 
         StaminaService.RefreshFuel(nextResources);
 

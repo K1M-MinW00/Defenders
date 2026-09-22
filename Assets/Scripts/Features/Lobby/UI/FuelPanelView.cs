@@ -34,6 +34,8 @@ public class FuelPanelView : MonoBehaviour
             return;
 
         SubscribeEvents();
+        SubscribeAdEvents();
+        AdManager.Instance?.EnsureRewardedAdLoading();
         refreshTimer = 0f;
         Refresh();
     }
@@ -41,6 +43,7 @@ public class FuelPanelView : MonoBehaviour
     private void OnDisable()
     {
         UnsubscribeEvents();
+        UnsubscribeAdEvents();
     }
 
     private void Update()
@@ -87,9 +90,27 @@ public class FuelPanelView : MonoBehaviour
         isSubscribed = false;
     }
 
+    private void SubscribeAdEvents()
+    {
+        if (AdManager.Instance != null)
+            AdManager.Instance.RewardedStateChanged += HandleRewardedAdStateChanged;
+    }
+
+    private void UnsubscribeAdEvents()
+    {
+        if (AdManager.Instance != null)
+            AdManager.Instance.RewardedStateChanged -= HandleRewardedAdStateChanged;
+    }
+
+    private void HandleRewardedAdStateChanged(RewardedAdState state)
+    {
+        Refresh();
+    }
+
     private void Refresh()
     {
-        FuelPanelViewState state = presenter?.Build(isAdRequestPending, DateTime.UtcNow);
+        bool isAdReady = AdManager.Instance?.IsRewardedAdReady == true;
+        FuelPanelViewState state = presenter?.Build(isAdRequestPending, isAdReady, DateTime.UtcNow);
         if (state == null)
         {
             rewardAdButton.interactable = false;
@@ -131,8 +152,8 @@ public class FuelPanelView : MonoBehaviour
         hasAdClosed = false;
         Refresh();
 
-        bool shown = AdManager.Instance.ShowRewardAd(HandleAdRewardEarned, HandleAdClosed);
-        if (shown)
+        RewardedAdShowResult showResult = AdManager.Instance.ShowRewardedAd(HandleAdRewardEarned, HandleAdCompleted);
+        if (showResult == RewardedAdShowResult.Started)
             return;
 
         isAdRequestPending = false;
@@ -140,7 +161,7 @@ public class FuelPanelView : MonoBehaviour
         Refresh();
     }
 
-    private void HandleAdClosed()
+    private void HandleAdCompleted(RewardedAdCompletion completion)
     {
         hasAdClosed = true;
         if (!isSavingAdReward)
@@ -207,5 +228,6 @@ public class FuelPanelView : MonoBehaviour
     private void OnDestroy()
     {
         UnsubscribeEvents();
+        UnsubscribeAdEvents();
     }
 }
