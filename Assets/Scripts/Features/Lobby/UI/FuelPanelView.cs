@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class FuelPanelView : MonoBehaviour
 {
+    [Header("Fuel")]
     [SerializeField] private TMP_Text fuelText;
     [SerializeField] private TMP_Text nextRecoverText;
     [SerializeField] private TMP_Text fullRecoverText;
@@ -13,12 +14,15 @@ public class FuelPanelView : MonoBehaviour
     [SerializeField] private TMP_Text dailyAdText;
     [SerializeField] private Button rewardAdButton;
 
+    [Header("Operation Values")]
+    [SerializeField, Min(1)] private int rewardAdFuelAmount = 30;
+    [SerializeField, Min(1)] private int purchaseFuelAmount = 30;
+    [SerializeField, Min(1)] private int purchaseFuelGemCost = 100;
 
-    [SerializeField] private int rewardAdFuelAmount = 30;
-    [SerializeField] private int purchaseFuelAmount = 30;
-    [SerializeField] private int purchaseFuelGemCost = 100;
-
-    private float timer;
+    private FuelPanelPresenter presenter;
+    private UserDataManager userDataManager;
+    private float refreshTimer;
+    private bool isSubscribed;
     private bool isAdRequestPending;
     private bool isSavingAdReward;
     private bool hasAdClosed;
@@ -26,123 +30,147 @@ public class FuelPanelView : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!TryInitialize())
+            return;
+
+        SubscribeEvents();
+        refreshTimer = 0f;
         Refresh();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
     }
 
     private void Update()
     {
-        timer += Time.deltaTime;
-
-        if (timer < 1f)
+        refreshTimer += Time.unscaledDeltaTime;
+        if (refreshTimer < 1f)
             return;
 
-        timer = 0f;
+        refreshTimer = 0f;
         Refresh();
+    }
+
+    private bool TryInitialize()
+    {
+        userDataManager = UserDataManager.Instance;
+        if (userDataManager?.UserData == null ||
+            userDataManager.PurchaseFuelUseCase == null ||
+            userDataManager.ClaimAdFuelRewardUseCase == null)
+        {
+            Debug.LogError("[FuelPanelView] User data services are not ready.");
+            rewardAdButton.interactable = false;
+            return false;
+        }
+
+        presenter ??= new FuelPanelPresenter(userDataManager.UserData);
+        return true;
+    }
+
+    private void SubscribeEvents()
+    {
+        if (isSubscribed)
+            return;
+
+        userDataManager.OnResourceUpdated += Refresh;
+        isSubscribed = true;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (!isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnResourceUpdated -= Refresh;
+        isSubscribed = false;
     }
 
     private void Refresh()
     {
-        if (UserDataManager.Instance == null)
+        FuelPanelViewState state = presenter?.Build(isAdRequestPending, DateTime.UtcNow);
+        if (state == null)
+        {
+            rewardAdButton.interactable = false;
             return;
+        }
 
-        UserDataRoot userData = UserDataManager.Instance.UserData;
-
-        UserResourceData resources = UserDataCloner.Copy(userData.Resource);
-        UserAdData adData = UserDataCloner.Copy(userData.Ad);
-
-        StaminaService.RefreshFuel(resources);
-        AdDailyLimitPolicy.Refresh(adData, DateTime.UtcNow);
-
-        RefreshFuelUI(resources);
-        RefreshRewardAdUI(adData);
+        fuelText.text = $"{state.Fuel}/{state.MaxFuel}";
+        nextRecoverText.text = $"다음 충전까지 {FormatDuration(state.NextRecoverSeconds)}";
+        fullRecoverText.text = $"최대 충전까지 {FormatDuration(state.FullRecoverSeconds)}";
+        dailyAdText.text = $"일일 광고 시청 ({state.DailyAdWatchCount}/{state.DailyAdLimit})";
+        rewardAdButton.interactable = state.CanRequestRewardAd;
     }
 
-    private void RefreshFuelUI(UserResourceData resources)
+    private static string FormatDuration(int seconds)
     {
-        fuelText.text = $"{resources.Fuel}/{resources.MaxFuel}";
-
-        int nextSeconds = StaminaService.GetRemainingSecondsToNextFuel(resources);
-
-        nextRecoverText.text = $"다음 충전까지 {Format(nextSeconds)}";
-
-        int fullSeconds = StaminaService.GetRemainingSecondsToFullFuel(resources);
-
-        fullRecoverText.text = $"최대 충전까지 {Format(fullSeconds)}";
-    }
-
-    private string Format(int seconds)
-    {
-        TimeSpan t = TimeSpan.FromSeconds(seconds);
-
-        return $"{t.Hours:00}:{t.Minutes:00}:{t.Seconds:00}";
-    }
-
-    private void RefreshRewardAdUI(UserAdData adData)
-    {
-        int count = AdDailyLimitPolicy.GetWatchCount(adData, DailyAdType.Fuel);
-
-        dailyAdText.text = $"일일 광고 시청 ({count}/{AdDailyLimitPolicy.DailyAdLimit})";
-
-        rewardAdButton.interactable = !isAdRequestPending && count < AdDailyLimitPolicy.DailyAdLimit;
+        TimeSpan duration = TimeSpan.FromSeconds(Math.Max(0, seconds));
+        int totalHours = (int)duration.TotalHours;
+        return $"{totalHours:00}:{duration.Minutes:00}:{duration.Seconds:00}";
     }
 
     public void OnClickRewardAd()
     {
-        if (isAdRequestPending)
+        if (isAdRequestPending || presenter == null)
             return;
 
-        UserAdData adData = UserDataCloner.Copy(UserDataManager.Instance.UserData.Ad);
-
-        if (!AdDailyLimitPolicy.CanWatch(adData, DailyAdType.Fuel, DateTime.UtcNow))
+        if (!presenter.CanWatchRewardAd(DateTime.UtcNow))
         {
-            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(
-                ClaimAdFuelRewardFailure.DailyLimitReached));
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(ClaimAdFuelRewardFailure.DailyLimitReached));
+            return;
+        }
+
+        if (AdManager.Instance == null)
+        {
+            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
             return;
         }
 
         isAdRequestPending = true;
         hasAdClosed = false;
-        rewardAdButton.interactable = false;
+        Refresh();
 
-        bool shown = AdManager.Instance.ShowRewardAd(
-            HandleAdRewardEarned,
-            () =>
-            {
-                hasAdClosed = true;
+        bool shown = AdManager.Instance.ShowRewardAd(HandleAdRewardEarned, HandleAdClosed);
+        if (shown)
+            return;
 
-                if (!isSavingAdReward)
-                    isAdRequestPending = false;
+        isAdRequestPending = false;
+        UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
+        Refresh();
+    }
 
-                Refresh();
-            });
-
-        if (!shown)
-        {
+    private void HandleAdClosed()
+    {
+        hasAdClosed = true;
+        if (!isSavingAdReward)
             isAdRequestPending = false;
-            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
-            Refresh();
-        }
+
+        Refresh();
     }
 
     private async void HandleAdRewardEarned()
     {
+        if (isSavingAdReward || userDataManager == null)
+            return;
+
         isSavingAdReward = true;
 
         try
         {
-            ClaimAdFuelRewardResult result = await UserDataManager.Instance.ClaimAdFuelRewardUseCase
-                .ExecuteAsync(rewardAdFuelAmount);
-
+            ClaimAdFuelRewardResult result = await userDataManager.ClaimAdFuelRewardUseCase.ExecuteAsync(rewardAdFuelAmount);
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Ad fuel reward failed: {result.Failure}");
                 UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+                return;
             }
+
+            userDataManager.RaiseResourceUpdated();
         }
         finally
         {
             isSavingAdReward = false;
-
             if (hasAdClosed)
                 isAdRequestPending = false;
 
@@ -152,27 +180,32 @@ public class FuelPanelView : MonoBehaviour
 
     public async void OnClickPurchaseFuel()
     {
-        if (isPurchasingFuel)
+        if (isPurchasingFuel || userDataManager == null)
             return;
 
         isPurchasingFuel = true;
 
         try
         {
-            PurchaseFuelResult result = await UserDataManager.Instance.PurchaseFuelUseCase
-                .ExecuteAsync(purchaseFuelGemCost, purchaseFuelAmount);
-
+            PurchaseFuelResult result = await userDataManager.PurchaseFuelUseCase.ExecuteAsync(purchaseFuelGemCost, purchaseFuelAmount);
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Fuel purchase failed: {result.Failure}");
                 UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+                return;
             }
 
-            Refresh();
+            userDataManager.RaiseResourceUpdated();
         }
         finally
         {
             isPurchasingFuel = false;
+            Refresh();
         }
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeEvents();
     }
 }

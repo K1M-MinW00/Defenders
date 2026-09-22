@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class UserDataPipelineTestRunner
 {
-    private const int TestCount = 17;
+    private const int TestCount = 19;
 
     [MenuItem("Tools/Tests/Run User Data Pipeline Tests")]
     public static async void RunFromMenu()
@@ -61,5 +61,9 @@ public static class UserDataPipelineTestRunner
         LobbyTabSelectionTests lobbyTabTests = new();
         lobbyTabTests.TrySelect_RejectsInvalidAndDuplicateSelection();
         lobbyTabTests.TrySelect_AllowsChangingSelection();
+
+        FuelPanelPresenterTests fuelPanelTests = new();
+        fuelPanelTests.Build_CreatesFuelAndAdState();
+        fuelPanelTests.Build_ResetsExpiredAdCountAndHonorsBusyState();
     }
 }
