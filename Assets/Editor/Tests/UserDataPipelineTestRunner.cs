@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class UserDataPipelineTestRunner
 {
-    private const int TestCount = 39;
+    private const int TestCount = 40;
 
     [MenuItem("Tools/Tests/Run User Data Pipeline Tests")]
     public static async void RunFromMenu()
@@ -98,5 +98,8 @@ public static class UserDataPipelineTestRunner
         catalogTests.ItemCatalog_RejectsDuplicateIds();
         catalogTests.NewUserConfig_RejectsUnknownDefaultUnit();
         catalogTests.ProjectConfigs_AreFullyInitialized();
+
+        GameDataProjectValidatorTests validationTests = new();
+        validationTests.ProjectData_HasNoBlockingValidationErrors();
     }
 }

@@ -1,0 +1,256 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
+using UnityEngine;
+
+public enum GameDataValidationSeverity
+{
+    Warning,
+    Error,
+}
+
+public readonly struct GameDataValidationIssue
+{
+    public GameDataValidationIssue(GameDataValidationSeverity severity, string assetPath, string message)
+    {
+        Severity = severity;
+        AssetPath = assetPath;
+        Message = message;
+    }
+
+    public GameDataValidationSeverity Severity { get; }
+    public string AssetPath { get; }
+    public string Message { get; }
+}
+
+public sealed class GameDataValidationReport
+{
+    private readonly List<GameDataValidationIssue> issues = new();
+
+    public IReadOnlyList<GameDataValidationIssue> Issues => issues;
+    public int ErrorCount => issues.Count(issue => issue.Severity == GameDataValidationSeverity.Error);
+    public int WarningCount => issues.Count(issue => issue.Severity == GameDataValidationSeverity.Warning);
+    public bool HasErrors => ErrorCount > 0;
+
+    public void AddError(UnityEngine.Object asset, string message) =>
+        Add(GameDataValidationSeverity.Error, asset, message);
+
+    public void AddWarning(UnityEngine.Object asset, string message) =>
+        Add(GameDataValidationSeverity.Warning, asset, message);
+
+    public string Format()
+    {
+        StringBuilder builder = new();
+        builder.Append($"Game data validation: {ErrorCount} error(s), {WarningCount} warning(s)");
+        foreach (GameDataValidationIssue issue in issues)
+        {
+            builder.AppendLine();
+            builder.Append($"[{issue.Severity}] {issue.AssetPath}: {issue.Message}");
+        }
+
+        return builder.ToString();
+    }
+
+    private void Add(GameDataValidationSeverity severity, UnityEngine.Object asset, string message)
+    {
+        string path = asset != null ? AssetDatabase.GetAssetPath(asset) : string.Empty;
+        issues.Add(new GameDataValidationIssue(
+            severity,
+            string.IsNullOrWhiteSpace(path) ? "Project" : path,
+            message));
+    }
+}
+
+public static class GameDataProjectValidator
+{
+    public static GameDataValidationReport Validate()
+    {
+        GameDataValidationReport report = new();
+        UnitDataSO[] unitAssets = LoadAllAssets<UnitDataSO>();
+        ItemDataSO[] itemAssets = LoadAllAssets<ItemDataSO>();
+
+        IUnitCatalog units = TryCreateCatalog(() => new UnitCatalog(unitAssets), "Unit catalog", report);
+        IItemCatalog items = TryCreateCatalog(() => new ItemCatalog(itemAssets), "Item catalog", report);
+
+        ValidateRequiredConfigs(units, report);
+        ValidateUnits(unitAssets, items, report);
+        ValidateItems(itemAssets, report);
+        ValidateGachaBanners(units, items, report);
+        return report;
+    }
+
+    private static void ValidateRequiredConfigs(IUnitCatalog units, GameDataValidationReport report)
+    {
+        NewUserConfigSO newUser = LoadRequired<NewUserConfigSO>("Configs/NewUserConfig", report);
+        UserLevelProgressionSO levelProgression = LoadRequired<UserLevelProgressionSO>("Configs/UserLevelProgression", report);
+        GachaEconomyConfigSO economy = LoadRequired<GachaEconomyConfigSO>("Configs/GachaEconomyConfig", report);
+        GameIconSetSO icons = LoadRequired<GameIconSetSO>("Database/GameIconSet", report);
+
+        if (newUser != null && units != null && !newUser.TryValidate(units, out string newUserError))
+            report.AddError(newUser, newUserError);
+        if (levelProgression != null && !levelProgression.TryValidate(out string levelError))
+            report.AddError(levelProgression, levelError);
+        if (economy != null && !economy.TryValidate(out string economyError))
+            report.AddError(economy, economyError);
+        if (icons != null && !icons.TryValidate(out string iconError))
+            report.AddError(icons, iconError);
+    }
+
+    private static void ValidateUnits(IEnumerable<UnitDataSO> units, IItemCatalog items, GameDataValidationReport report)
+    {
+        foreach (UnitDataSO unit in units)
+        {
+            if (string.IsNullOrWhiteSpace(unit.displayName))
+                report.AddWarning(unit, "Display name is empty.");
+            if (unit.icon == null)
+                report.AddWarning(unit, "Icon is missing.");
+            if (unit.unitPrefab == null)
+                report.AddWarning(unit, "Unit prefab is missing.");
+            if (unit.maxLevel <= 0)
+                report.AddError(unit, "Max level must be positive.");
+
+            if (unit.promotionCost == null)
+                continue;
+
+            for (int i = 0; i < unit.promotionCost.Length; i++)
+            {
+                PromotionCost cost = unit.promotionCost[i];
+                if (cost == null)
+                {
+                    report.AddError(unit, $"Promotion cost at index {i} is null.");
+                    continue;
+                }
+
+                if (cost.Count <= 0)
+                    report.AddError(unit, $"Promotion cost at index {i} must be positive.");
+                if (string.IsNullOrWhiteSpace(cost.MaterialId))
+                {
+                    report.AddError(unit, $"Promotion material ID at index {i} is empty.");
+                    continue;
+                }
+
+                ItemDataSO material = items?.Get(cost.MaterialId);
+                if (material == null)
+                    report.AddError(unit, $"Promotion material does not exist: {cost.MaterialId}");
+                else if (material.Category != ItemCategory.Material)
+                    report.AddError(unit, $"Promotion item is not a material: {cost.MaterialId}");
+            }
+        }
+    }
+
+    private static void ValidateItems(IEnumerable<ItemDataSO> items, GameDataValidationReport report)
+    {
+        foreach (ItemDataSO item in items)
+        {
+            if (string.IsNullOrWhiteSpace(item.ItemName))
+                report.AddWarning(item, "Item name is empty.");
+            if (item.Icon == null)
+                report.AddWarning(item, "Item icon is missing.");
+        }
+    }
+
+    private static void ValidateGachaBanners(IUnitCatalog units, IItemCatalog items, GameDataValidationReport report)
+    {
+        foreach (GachaDataSO banner in LoadAllAssets<GachaDataSO>())
+        {
+            if (!banner.TryValidate(out string bannerError))
+            {
+                report.AddError(banner, bannerError);
+                continue;
+            }
+
+            ItemDataSO ticket = items?.Get(banner.TicketItemId);
+            if (ticket == null)
+                report.AddError(banner, $"Recruit ticket does not exist: {banner.TicketItemId}");
+            else if (ticket.Category != ItemCategory.Consumable)
+                report.AddError(banner, $"Recruit ticket is not consumable: {banner.TicketItemId}");
+
+            ValidatePoolReferences(banner, banner.NormalPool, units, report);
+            ValidatePoolReferences(banner, banner.RarePool, units, report);
+            ValidatePoolReferences(banner, banner.LegendPool, units, report);
+        }
+    }
+
+    private static void ValidatePoolReferences(
+        GachaDataSO banner,
+        IEnumerable<UnitDataSO> pool,
+        IUnitCatalog units,
+        GameDataValidationReport report)
+    {
+        if (pool == null || units == null)
+            return;
+
+        foreach (UnitDataSO unit in pool)
+        {
+            if (unit != null && units.Get(unit.unitId) != unit)
+                report.AddError(banner, $"Recruit pool references a unit outside the canonical catalog: {unit.unitId}");
+        }
+    }
+
+    private static T LoadRequired<T>(string resourcesPath, GameDataValidationReport report) where T : UnityEngine.Object
+    {
+        T asset = Resources.Load<T>(resourcesPath);
+        if (asset == null)
+            report.AddError(null, $"Required asset is missing: Resources/{resourcesPath}");
+        return asset;
+    }
+
+    private static TCatalog TryCreateCatalog<TCatalog>(
+        Func<TCatalog> create,
+        string name,
+        GameDataValidationReport report) where TCatalog : class
+    {
+        try
+        {
+            return create();
+        }
+        catch (Exception exception)
+        {
+            report.AddError(null, $"{name} is invalid: {exception.Message}");
+            return null;
+        }
+    }
+
+    private static T[] LoadAllAssets<T>() where T : UnityEngine.Object
+    {
+        return AssetDatabase.FindAssets($"t:{typeof(T).Name}")
+            .Select(AssetDatabase.GUIDToAssetPath)
+            .Select(AssetDatabase.LoadAssetAtPath<T>)
+            .Where(asset => asset != null)
+            .ToArray();
+    }
+}
+
+public static class GameDataValidationMenu
+{
+    [MenuItem("Tools/Validation/Validate Game Data")]
+    public static void ValidateFromMenu()
+    {
+        GameDataValidationReport report = GameDataProjectValidator.Validate();
+        if (report.HasErrors)
+            Debug.LogError(report.Format());
+        else if (report.WarningCount > 0)
+            Debug.LogWarning(report.Format());
+        else
+            Debug.Log(report.Format());
+    }
+}
+
+public sealed class GameDataBuildPreprocessor : IPreprocessBuildWithReport
+{
+    public int callbackOrder => 0;
+
+    public void OnPreprocessBuild(BuildReport buildReport)
+    {
+        GameDataValidationReport report = GameDataProjectValidator.Validate();
+        if (report.HasErrors)
+            throw new BuildFailedException(report.Format());
+
+        if (report.WarningCount > 0)
+            Debug.LogWarning(report.Format());
+    }
+}
