@@ -17,8 +17,14 @@ public class LobbyUnitPanelView : MonoBehaviour
     [Header("Text")]
     [SerializeField] private TMP_Text goldText;
 
-    [Header("Responsive Grid")]
-    [SerializeField, Min(1)] private int maxColumns = 5;
+    [Header("Responsive Cards")]
+    [SerializeField, Min(1)] private int fixedColumns = 5;
+    [SerializeField, Range(1f, 1.2f)] private float maxCardScale = 1.08f;
+
+    private Vector2 ownedBaseCellSize;
+    private Vector2 ownedBaseSpacing;
+    private float selectedBaseSpacing;
+    private bool hasCapturedLayout;
 
     private readonly Dictionary<string, UnitCardUI> cardsByUnitId = new();
     private readonly List<string> staleCardIds = new();
@@ -204,28 +210,67 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private void RefreshGridLayouts()
     {
-        UpdateGridColumns(selectedUnitRoot);
-        UpdateGridColumns(ownedUnitRoot);
-    }
-
-    private void UpdateGridColumns(Transform root)
-    {
-        if (root is not RectTransform rectTransform ||
-            !root.TryGetComponent(out GridLayoutGroup grid) ||
-            rectTransform.rect.width <= 0f)
+        if (ownedUnitRoot is not RectTransform ownedRect ||
+            !ownedUnitRoot.TryGetComponent(out GridLayoutGroup ownedGrid) ||
+            ownedRect.rect.width <= 0f)
         {
             return;
         }
 
-        float availableWidth = rectTransform.rect.width - grid.padding.horizontal;
-        float itemWidth = grid.cellSize.x + grid.spacing.x;
+        CaptureBaseLayout(ownedGrid);
 
-        if (availableWidth <= 0f || itemWidth <= 0f)
+        float requiredWidth = ownedBaseCellSize.x * fixedColumns +
+                              ownedBaseSpacing.x * (fixedColumns - 1) +
+                              ownedGrid.padding.horizontal;
+        float scale = requiredWidth > 0f
+            ? Mathf.Clamp(ownedRect.rect.width / requiredWidth, 1f, maxCardScale)
+            : 1f;
+
+        ownedGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        ownedGrid.constraintCount = fixedColumns;
+        ownedGrid.cellSize = ownedBaseCellSize * scale;
+        ownedGrid.spacing = ownedBaseSpacing * scale;
+
+        ResizeSelectedCards(scale);
+    }
+
+    private void CaptureBaseLayout(GridLayoutGroup ownedGrid)
+    {
+        if (hasCapturedLayout)
             return;
 
-        int columns = Mathf.FloorToInt((availableWidth + grid.spacing.x) / itemWidth);
-        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        grid.constraintCount = Mathf.Clamp(columns, 1, maxColumns);
+        ownedBaseCellSize = ownedGrid.cellSize;
+        ownedBaseSpacing = ownedGrid.spacing;
+
+        if (selectedUnitRoot != null &&
+            selectedUnitRoot.TryGetComponent(out HorizontalLayoutGroup selectedLayout))
+        {
+            selectedBaseSpacing = selectedLayout.spacing;
+        }
+
+        hasCapturedLayout = true;
+    }
+
+    private void ResizeSelectedCards(float scale)
+    {
+        if (selectedUnitRoot == null)
+            return;
+
+        if (selectedUnitRoot.TryGetComponent(out HorizontalLayoutGroup selectedLayout))
+            selectedLayout.spacing = selectedBaseSpacing * scale;
+
+        for (int i = 0; i < selectedUnitRoot.childCount; i++)
+        {
+            if (selectedUnitRoot.GetChild(i) is not RectTransform cardRect)
+                continue;
+
+            cardRect.SetSizeWithCurrentAnchors(
+                RectTransform.Axis.Horizontal,
+                ownedBaseCellSize.x * scale);
+            cardRect.SetSizeWithCurrentAnchors(
+                RectTransform.Axis.Vertical,
+                ownedBaseCellSize.y * scale);
+        }
     }
 
     private async void HandleCardClicked(UnitCardUI card, LobbyUnitViewModel vm)

@@ -40584,6 +40584,7 @@ GameObject:
   - component: {fileID: 1107053048}
   - component: {fileID: 1107053047}
   - component: {fileID: 1107053051}
+  - component: {fileID: 910000000000000001}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -40716,6 +40717,34 @@ MonoBehaviour:
     highlight: {fileID: 2105559131}
     panel: {fileID: 1339739191}
   defaultTabIndex: 2
+--- !u!114 &910000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107053046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7e1fda94986456eb281742ee0d2d92a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SafeAreaFitter
+  targets:
+  - {fileID: 1935653297}
+  - {fileID: 526748102}
+  - {fileID: 752886862}
+  - {fileID: 897349501}
+  - {fileID: 556910486}
+  - {fileID: 1487790630}
+  - {fileID: 1907200043}
+  - {fileID: 775638019}
+  - {fileID: 1094746024}
+  - {fileID: 1102741574}
+  - {fileID: 1116901235}
+  - {fileID: 383759066}
+  - {fileID: 1264811927}
+  applyHorizontal: 1
+  applyVertical: 1
 --- !u!1 &1107290719
 GameObject:
   m_ObjectHideFlags: 0
