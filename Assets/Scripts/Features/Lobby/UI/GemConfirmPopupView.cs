@@ -26,7 +26,6 @@ public class GemConfirmPopupView : MonoBehaviour
 
         messageText.text = $"{gemCost:N0} 개를 사용하여 모집하시겠습니까?";
         gameObject.SetActive(true);
-        PopupBackStack.Push(this, OnCancel);
         return true;
     }
 
@@ -49,8 +48,6 @@ public class GemConfirmPopupView : MonoBehaviour
 
     private void OnDisable()
     {
-        PopupBackStack.Remove(this);
-
         if (!isConfirming)
             confirmation.Cancel();
     }
