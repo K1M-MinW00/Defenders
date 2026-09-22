@@ -11,15 +11,34 @@ public class RateGroupView : MonoBehaviour
 
     public void Setup(string rarityName, float rate, List<UnitDataSO> units)
     {
-        titleText.text = $"{rarityName} ({rate}%)";
+        if (titleText != null)
+            titleText.text = $"{rarityName} ({rate:0.##}%)";
+
+        if (contentRoot == null)
+        {
+            Debug.LogError($"[RateGroupView] Content root is not assigned for {rarityName}.", this);
+            return;
+        }
 
         foreach (Transform child in contentRoot)
         {
             Destroy(child.gameObject);
         }
 
+        if (slotPrefab == null)
+        {
+            Debug.LogError($"[RateGroupView] Slot prefab is not assigned for {rarityName}.", this);
+            return;
+        }
+
+        if (units == null)
+            return;
+
         foreach (UnitDataSO unit in units)
         {
+            if (unit == null)
+                continue;
+
             RecruitUnitIconView slot = Instantiate(slotPrefab, contentRoot);
 
             slot.Setup(unit);
@@ -27,7 +46,7 @@ public class RateGroupView : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(
-            contentRoot as RectTransform);
+        if (contentRoot is RectTransform contentRect)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
     }
 }
