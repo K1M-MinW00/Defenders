@@ -138,7 +138,9 @@ public class LobbyRecruitPanelView : MonoBehaviour
         gemText.text = currentState.GemCount.ToString("N0");
         ticketText.text = currentState.TicketCount.ToString("N0");
         ticketImage.sprite = currentState.TicketIcon;
-        bannerImage.sprite = currentState.BannerImage;
+        bannerImage.sprite = currentState.PortraitImage;
+        bannerImage.preserveAspect = currentState.HasPickup;
+        bannerImage.enabled = currentState.PortraitImage != null;
         pityText.text = $"앞으로 {currentState.RemainingPity}회 모집 안에 전설 유닛 확정 획득";
 
         bool canInput = !isRecruiting && !presentationController.IsPresenting;

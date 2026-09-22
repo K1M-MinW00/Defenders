@@ -28,7 +28,8 @@ public sealed class LobbyRecruitPresenter
         return new RecruitPanelViewState
         {
             Banner = banner,
-            BannerImage = banner.BannerImage,
+            PortraitImage = banner.PickupUnit != null ? banner.PickupUnit.icon : banner.BannerImage,
+            HasPickup = banner.RecruitType == RecruitType.Special && banner.PickupUnit != null,
             TicketIcon = ticket?.Icon,
             GemCount = gemCount,
             TicketCount = ticketCount,

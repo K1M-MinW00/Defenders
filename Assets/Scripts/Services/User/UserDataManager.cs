@@ -119,7 +119,12 @@ public partial class UserDataManager : MonoBehaviour
         UnitTrainingUseCase = new UnitTrainingUseCase(repository, CurrentUserId, UserData);
         UnitPromotionUseCase = new UnitPromotionUseCase(repository, CurrentUserId, UserData);
         UnitLimitBreakUseCase = new UnitLimitBreakUseCase(repository, CurrentUserId, UserData);
-        GachaUseCase = new GachaUseCase(repository, CurrentUserId, UserData, new UnityGachaRandom());
+        GachaUseCase = new GachaUseCase(
+            repository,
+            CurrentUserId,
+            UserData,
+            new UnityGachaRandom(),
+            GameConfig.GachaEconomy);
         PurchaseFuelUseCase = new PurchaseFuelUseCase(repository, CurrentUserId, UserData);
         ClaimAdFuelRewardUseCase = new ClaimAdFuelRewardUseCase(repository, CurrentUserId, UserData);
         UnitFormationUseCase = new UnitFormationUseCase(repository, CurrentUserId, UserData);

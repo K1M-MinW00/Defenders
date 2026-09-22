@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 public sealed class GachaUseCase
 {
     private readonly IUserDataRepository repository;
-    private readonly IGachaRandom random;
+    private readonly GachaRoller roller;
+    private readonly GachaEconomyConfigSO economyConfig;
     private readonly string userId;
     private readonly UserDataRoot userData;
     private bool isExecuting;
@@ -15,14 +16,16 @@ public sealed class GachaUseCase
         IUserDataRepository repository,
         string userId,
         UserDataRoot userData,
-        IGachaRandom random)
+        IGachaRandom random,
+        GachaEconomyConfigSO economyConfig)
     {
         this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         this.userId = string.IsNullOrWhiteSpace(userId)
             ? throw new ArgumentException("User ID is null or empty.", nameof(userId))
             : userId;
         this.userData = userData ?? throw new ArgumentNullException(nameof(userData));
-        this.random = random ?? throw new ArgumentNullException(nameof(random));
+        roller = new GachaRoller(random);
+        this.economyConfig = economyConfig ?? throw new ArgumentNullException(nameof(economyConfig));
     }
 
     public async Task<RecruitUnitsResult> ExecuteAsync(RecruitUnitsCommand command)
@@ -31,9 +34,11 @@ public sealed class GachaUseCase
             return RecruitUnitsResult.Fail(RecruitUnitsFailure.InvalidRequest);
 
         GachaDataSO banner = command.Banner;
+        UnitDataSO pickupUnit = null;
 
         if (!IsValidBanner(banner) || userData.Resource == null || userData.Inventory == null ||
-            userData.Gacha == null || userData.Roster == null)
+            userData.Gacha == null || userData.Roster == null ||
+            !banner.TryResolvePickup(command.PickupUnitOverride, out pickupUnit))
         {
             return RecruitUnitsResult.Fail(RecruitUnitsFailure.InvalidBanner);
         }
@@ -62,8 +67,8 @@ public sealed class GachaUseCase
         {
             Rarity rarity = IsLegendGuaranteed(nextGacha, banner)
                 ? Rarity.Legend
-                : RollRarity(banner);
-            UnitDataSO unit = RollUnit(banner, rarity);
+                : roller.RollRarity(banner);
+            UnitDataSO unit = roller.RollUnit(banner, rarity, pickupUnit);
 
             if (unit == null || string.IsNullOrWhiteSpace(unit.unitId))
                 return RecruitUnitsResult.Fail(RecruitUnitsFailure.EmptyPool);
@@ -141,28 +146,6 @@ public sealed class GachaUseCase
         return GetPity(gacha, banner.RecruitType) >= banner.LegendPityCount - 1;
     }
 
-    private Rarity RollRarity(GachaDataSO banner)
-    {
-        float roll = random.Range(0f, 100f);
-
-        if (roll < banner.LegendRate)
-            return Rarity.Legend;
-
-        roll -= banner.LegendRate;
-
-        return roll < banner.RareRate ? Rarity.Rare : Rarity.Normal;
-    }
-
-    private UnitDataSO RollUnit(GachaDataSO banner, Rarity rarity)
-    {
-        IReadOnlyList<UnitDataSO> pool = banner.GetPool(rarity);
-
-        if (pool == null || pool.Count == 0)
-            return null;
-
-        return pool[random.Range(0, pool.Count)];
-    }
-
     private static int GetPity(UserGachaData gacha, RecruitType recruitType)
     {
         return recruitType == RecruitType.Special ? gacha.SpecialPity : gacha.NormalPity;
@@ -178,7 +161,7 @@ public sealed class GachaUseCase
             gacha.NormalPity = nextPity;
     }
 
-    private static void GiveUnit(
+    private void GiveUnit(
         UserRosterData roster,
         UnitDataSO unit,
         GachaResult result,
@@ -201,17 +184,6 @@ public sealed class GachaUseCase
         }
 
         result.IsDuplicateReward = true;
-        duplicateReward += GetDuplicateReward(unit.rarity);
-    }
-
-    private static int GetDuplicateReward(Rarity rarity)
-    {
-        return rarity switch
-        {
-            Rarity.Normal => 30,
-            Rarity.Rare => 100,
-            Rarity.Legend => 300,
-            _ => 0,
-        };
+        duplicateReward += economyConfig.GetDuplicateGemReward(unit.rarity);
     }
 }

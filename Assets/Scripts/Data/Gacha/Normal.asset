@@ -16,6 +16,7 @@ MonoBehaviour:
   bannerName: "\uC77C\uBC18 \uBAA8\uC9D1"
   bannerImage: {fileID: 1202984965197363600, guid: 25431b7bc0c8a5d47a10821d4223c1ab, type: 3}
   pickupUnit: {fileID: 0}
+  pickupRateWithinRarity: 50
   normalRate: 85
   rareRate: 13
   legendRate: 2

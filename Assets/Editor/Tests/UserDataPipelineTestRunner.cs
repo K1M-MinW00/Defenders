@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class UserDataPipelineTestRunner
 {
-    private const int TestCount = 28;
+    private const int TestCount = 31;
 
     [MenuItem("Tools/Tests/Run User Data Pipeline Tests")]
     public static async void RunFromMenu()
@@ -82,5 +82,8 @@ public static class UserDataPipelineTestRunner
         gachaDataTests.TryValidate_AcceptsCompleteBanner();
         gachaDataTests.TryValidate_RejectsUnitInWrongRarityPool();
         gachaDataTests.ProjectBanners_AreValid();
+        gachaDataTests.TryResolvePickup_UsesConfiguredSpecialUnit();
+        gachaDataTests.GachaRoller_AppliesFiftyPercentPickupWithinRolledRarity();
+        gachaDataTests.EconomyConfig_LoadsConfiguredDuplicateRewards();
     }
 }

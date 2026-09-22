@@ -3,7 +3,8 @@ using UnityEngine;
 public sealed class RecruitPanelViewState
 {
     public GachaDataSO Banner { get; set; }
-    public Sprite BannerImage { get; set; }
+    public Sprite PortraitImage { get; set; }
+    public bool HasPickup { get; set; }
     public Sprite TicketIcon { get; set; }
     public int GemCount { get; set; }
     public int TicketCount { get; set; }

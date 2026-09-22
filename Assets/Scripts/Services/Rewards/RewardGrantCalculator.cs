@@ -141,21 +141,15 @@ public static class RewardGrantCalculator
             }
             else
             {
-                resources.Gem = checked(resources.Gem + GetDuplicateReward(unit.rarity));
+                GachaEconomyConfigSO economyConfig = GameConfig.GachaEconomy;
+                if (economyConfig == null)
+                    return false;
+
+                resources.Gem = checked(resources.Gem + economyConfig.GetDuplicateGemReward(unit.rarity));
             }
         }
 
         return true;
     }
 
-    private static int GetDuplicateReward(Rarity rarity)
-    {
-        return rarity switch
-        {
-            Rarity.Normal => 30,
-            Rarity.Rare => 100,
-            Rarity.Legend => 300,
-            _ => 0,
-        };
-    }
 }

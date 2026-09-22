@@ -11,6 +11,7 @@ public class GachaDataSO : ScriptableObject
 
     [Header("Pickup Unit")]
     [SerializeField] private UnitDataSO pickupUnit;
+    [SerializeField, Range(0f, 100f)] private float pickupRateWithinRarity = 50f;
 
     [Header("Rates")]
     [Range(0, 100)]
@@ -38,6 +39,7 @@ public class GachaDataSO : ScriptableObject
     public string BannerName => bannerName;
     public Sprite BannerImage => bannerImage;
     public UnitDataSO PickupUnit => pickupUnit;
+    public float PickupRateWithinRarity => pickupRateWithinRarity;
     public float NormalRate => normalRate;
     public float RareRate => rareRate;
     public float LegendRate => legendRate;
@@ -59,6 +61,32 @@ public class GachaDataSO : ScriptableObject
         };
     }
 
+    public bool TryResolvePickup(UnitDataSO requestedPickup, out UnitDataSO resolvedPickup)
+    {
+        resolvedPickup = null;
+        if (recruitType != RecruitType.Special)
+            return requestedPickup == null;
+
+        UnitDataSO candidate = requestedPickup != null ? requestedPickup : pickupUnit;
+        if (candidate == null || string.IsNullOrWhiteSpace(candidate.unitId))
+            return false;
+
+        IReadOnlyList<UnitDataSO> pool = GetPool(candidate.rarity);
+        if (pool == null)
+            return false;
+
+        for (int i = 0; i < pool.Count; i++)
+        {
+            if (pool[i] != null && pool[i].unitId == candidate.unitId)
+            {
+                resolvedPickup = pool[i];
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public bool TryValidate(out string error)
     {
         if (string.IsNullOrWhiteSpace(ticketItemId))
@@ -71,6 +99,11 @@ public class GachaDataSO : ScriptableObject
             return Fail("Recruit rates cannot be negative.", out error);
         if (Mathf.Abs(normalRate + rareRate + legendRate - 100f) > 0.01f)
             return Fail("Recruit rates must add up to 100%.", out error);
+        if (recruitType == RecruitType.Special &&
+            (pickupRateWithinRarity <= 0f || pickupRateWithinRarity > 100f))
+        {
+            return Fail("Special recruit pickup rate must be greater than 0% and at most 100%.", out error);
+        }
 
         if (!IsValidPool(legendPool, Rarity.Legend) ||
             (normalRate > 0f && !IsValidPool(normalPool, Rarity.Normal)) ||
@@ -78,6 +111,9 @@ public class GachaDataSO : ScriptableObject
         {
             return Fail("A required pool is empty or contains an invalid unit rarity.", out error);
         }
+
+        if (pickupUnit != null && !TryResolvePickup(pickupUnit, out _))
+            return Fail("Pickup unit must belong to its matching rarity pool.", out error);
 
         error = string.Empty;
         return true;
@@ -88,10 +124,14 @@ public class GachaDataSO : ScriptableObject
         if (pool == null || pool.Count == 0)
             return false;
 
+        HashSet<string> unitIds = new();
         for (int i = 0; i < pool.Count; i++)
         {
-            if (pool[i] == null || string.IsNullOrWhiteSpace(pool[i].unitId) || pool[i].rarity != expectedRarity)
+            if (pool[i] == null || string.IsNullOrWhiteSpace(pool[i].unitId) ||
+                pool[i].rarity != expectedRarity || !unitIds.Add(pool[i].unitId))
+            {
                 return false;
+            }
         }
 
         return true;
