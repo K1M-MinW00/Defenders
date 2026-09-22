@@ -19,8 +19,7 @@ public class EditProfilePanelView : MonoBehaviour
     [SerializeField] private Button confirmButton;
 
     private readonly List<ProfileIconSlotUI> slots = new();
-    private string currentIconId;
-    private string selectedIconId;
+    private ProfileIconEditPresenter presenter;
     private bool isSaving;
 
     private void Awake()
@@ -32,13 +31,18 @@ public class EditProfilePanelView : MonoBehaviour
 
     private void OnEnable()
     {
-        UserDataRoot userData = UserDataManager.Instance.UserData;
-        currentIconId = ProfileIconResolver.ResolveIconId(userData.Profile.IconId, userData.Roster);
-        selectedIconId = currentIconId;
+        UserDataRoot userData = UserDataManager.Instance?.UserData;
+        if (userData == null)
+        {
+            Debug.LogError("[EditProfilePanelView] User data is not ready.");
+            confirmButton.interactable = false;
+            return;
+        }
 
-        RefreshPreviewIcon();
-        CreateIconSlots(userData.Roster);
-        RefreshButtons();
+        presenter ??= new ProfileIconEditPresenter(userData);
+        ProfileIconEditState state = presenter.Open(isSaving);
+        ApplyState(state);
+        CreateIconSlots(state.Options);
     }
 
     private void OnDisable()
@@ -52,23 +56,17 @@ public class EditProfilePanelView : MonoBehaviour
             panelRoot.SetActive(false);
     }
 
-    private void CreateIconSlots(UserRosterData roster)
+    private void CreateIconSlots(IReadOnlyList<ProfileIconOption> options)
     {
         ClearSlots();
-        HashSet<string> addedIds = new();
 
-        if (roster?.OwnedUnits == null)
+        if (options == null)
             return;
 
-        foreach (UserUnitData unit in roster.OwnedUnits)
+        foreach (ProfileIconOption option in options)
         {
-            string unitId = unit?.UnitId;
-            Sprite iconSprite = UnitDatabase.GetIcon(unitId);
-            if (string.IsNullOrWhiteSpace(unitId) || iconSprite == null || !addedIds.Add(unitId))
-                continue;
-
             ProfileIconSlotUI slot = Instantiate(slotPrefab, contentRoot);
-            slot.Initialize(unitId, iconSprite, HandleIconSelected);
+            slot.Initialize(option.IconId, option.Icon, HandleIconSelected);
             slots.Add(slot);
         }
     }
@@ -86,46 +84,45 @@ public class EditProfilePanelView : MonoBehaviour
 
     private void HandleIconSelected(string iconId)
     {
-        if (!ProfileIconResolver.IsSelectable(iconId, UserDataManager.Instance.UserData.Roster))
+        if (presenter == null || !presenter.TrySelect(iconId))
             return;
 
-        selectedIconId = iconId;
-        RefreshPreviewIcon();
-        RefreshButtons();
+        ApplyState(presenter.Build(isSaving));
     }
 
-    private void RefreshPreviewIcon()
+    private void ApplyState(ProfileIconEditState state)
     {
-        UserDataRoot userData = UserDataManager.Instance.UserData;
-        previewIconImage.sprite = ProfileIconResolver.ResolveIcon(selectedIconId, userData.Roster);
-    }
+        if (state == null)
+            return;
 
-    private void RefreshButtons()
-    {
-        bool hasChanged = selectedIconId != currentIconId;
-        confirmButton.interactable = !isSaving && hasChanged;
+        previewIconImage.sprite = state.PreviewIcon;
+        confirmButton.interactable = state.CanSave;
         cancelButton.interactable = !isSaving;
     }
 
     private async void HandleConfirmButtonClicked()
     {
-        if (isSaving || selectedIconId == currentIconId)
+        if (isSaving || presenter == null)
+            return;
+
+        ProfileIconEditState state = presenter.Build(false);
+        if (!state.CanSave)
             return;
 
         isSaving = true;
-        RefreshButtons();
+        ApplyState(presenter.Build(true));
 
-        bool succeeded = await UserDataManager.Instance.UpdateProfileIconAsync(selectedIconId);
+        bool succeeded = await UserDataManager.Instance.UpdateProfileIconAsync(presenter.SelectedIconId);
 
         isSaving = false;
         if (!succeeded)
         {
             UIFeedbackToast.Show("프로필 아이콘 저장에 실패했습니다.");
-            RefreshButtons();
+            ApplyState(presenter.Build(false));
             return;
         }
 
-        currentIconId = selectedIconId;
+        presenter.MarkSaved();
         Close();
     }
 

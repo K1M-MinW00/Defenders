@@ -15,8 +15,7 @@ public class EditNicknamePanelView : MonoBehaviour
     [SerializeField] private Button confirmButton;
 
     private TMP_Text confirmButtonLabel;
-    private string currentNickname;
-    private int currentGemCost;
+    private NicknameEditPresenter presenter;
     private bool isSaving;
 
     private void Awake()
@@ -32,11 +31,17 @@ public class EditNicknamePanelView : MonoBehaviour
 
     private void OnEnable()
     {
-        UserProfileData profile = UserDataManager.Instance.UserData.Profile;
-        currentNickname = profile.Nickname;
-        currentGemCost = profile.HasUsedFreeNicknameChange
-            ? GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500
-            : 0;
+        UserDataRoot userData = UserDataManager.Instance?.UserData;
+        if (userData?.Profile == null)
+        {
+            Debug.LogError("[EditNicknamePanelView] User profile is not ready.");
+            confirmButton.interactable = false;
+            return;
+        }
+
+        int paidChangeCost = GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500;
+        presenter ??= new NicknameEditPresenter(userData, paidChangeCost);
+        string currentNickname = presenter.Open();
 
         nicknameInput.SetTextWithoutNotify(currentNickname);
         RefreshButton();
@@ -56,17 +61,12 @@ public class EditNicknamePanelView : MonoBehaviour
 
     private void RefreshButton()
     {
-        string normalized = NicknamePolicy.Normalize(nicknameInput.text);
-        bool hasChanged = normalized != currentNickname;
-        confirmButton.interactable = !isSaving && hasChanged && NicknamePolicy.IsValid(normalized);
+        NicknameEditState state = presenter?.Build(nicknameInput.text, isSaving);
+        confirmButton.interactable = state?.CanSave == true;
         cancelButton.interactable = !isSaving;
 
-        if (confirmButtonLabel != null)
-        {
-            confirmButtonLabel.text = currentGemCost > 0
-                ? $"변경 (보석 {currentGemCost:N0})"
-                : "무료 변경";
-        }
+        if (confirmButtonLabel != null && state != null)
+            confirmButtonLabel.text = state.ConfirmLabel;
     }
 
     private async void HandleConfirmButtonClicked()
@@ -74,9 +74,11 @@ public class EditNicknamePanelView : MonoBehaviour
         if (isSaving)
             return;
 
-        string nickname = NicknamePolicy.Normalize(nicknameInput.text);
-        if (!NicknamePolicy.IsValid(nickname) || nickname == currentNickname)
+        NicknameEditState state = presenter?.Build(nicknameInput.text, false);
+        if (state?.CanSave != true)
             return;
+
+        string nickname = state.NormalizedNickname;
 
         isSaving = true;
         RefreshButton();
@@ -91,7 +93,7 @@ public class EditNicknamePanelView : MonoBehaviour
             return;
         }
 
-        currentNickname = nickname;
+        presenter.MarkSaved(nickname);
         Close();
     }
 
