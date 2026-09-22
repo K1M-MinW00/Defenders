@@ -103,6 +103,38 @@ public sealed class GachaDataSOTests
         Assert(config.GetDuplicateGemReward(Rarity.Legend) == 300, "Legend duplicate reward should come from config.");
     }
 
+    public void RatePreview_SplitsPickupFromItsRarityRate()
+    {
+        GachaDataSO banner = CreateBanner();
+        SetField(banner, "recruitType", RecruitType.Special);
+        SetField(banner, "normalRate", 96f);
+        SetField(banner, "rareRate", 3f);
+        SetField(banner, "legendRate", 1f);
+
+        UnitDataSO pickup = banner.LegendPool[0];
+        UnitDataSO otherLegendA = CreateUnit("legend_other_a", Rarity.Legend);
+        UnitDataSO otherLegendB = CreateUnit("legend_other_b", Rarity.Legend);
+        SetField(banner, "legendPool", new List<UnitDataSO> { pickup, otherLegendA, otherLegendB });
+        SetField(banner, "pickupUnit", pickup);
+
+        try
+        {
+            IReadOnlyList<RecruitRatePreviewRow> rows = RecruitRatePreviewBuilder.Build(banner);
+
+            Assert(rows.Count == 4, "Special preview should split the pickup rarity into two rows.");
+            Assert(rows[0].Units.Count == 1 && rows[0].Units[0] == pickup, "The first row should contain only the pickup unit.");
+            Assert(Math.Abs(rows[0].TotalRate - 0.5f) < 0.001f, "Pickup absolute rate should be 50% of its 1% rarity rate.");
+            Assert(rows[1].Units.Count == 2 && Math.Abs(rows[1].TotalRate - 0.5f) < 0.001f,
+                "Other legend units should share the remaining 0.5% rate.");
+            Assert(Math.Abs(rows[2].TotalRate - 3f) < 0.001f, "Rare row should retain its configured rate.");
+            Assert(Math.Abs(rows[3].TotalRate - 96f) < 0.001f, "Normal row should retain its configured rate.");
+        }
+        finally
+        {
+            DestroyBanner(banner);
+        }
+    }
+
     private static GachaDataSO CreateBanner()
     {
         GachaDataSO banner = ScriptableObject.CreateInstance<GachaDataSO>();

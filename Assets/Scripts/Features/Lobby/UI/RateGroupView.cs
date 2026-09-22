@@ -9,14 +9,14 @@ public class RateGroupView : MonoBehaviour
     [SerializeField] private Transform contentRoot;
     [SerializeField] private RecruitUnitIconView slotPrefab;
 
-    public void Setup(string rarityName, float rate, IReadOnlyList<UnitDataSO> units)
+    public void Setup(string label, float rate, IReadOnlyList<UnitDataSO> units)
     {
         if (titleText != null)
-            titleText.text = $"{rarityName} ({rate:0.##}%)";
+            titleText.text = $"{label} ({rate:0.##}%)";
 
         if (contentRoot == null)
         {
-            Debug.LogError($"[RateGroupView] Content root is not assigned for {rarityName}.", this);
+            Debug.LogError($"[RateGroupView] Content root is not assigned for {label}.", this);
             return;
         }
 
@@ -27,7 +27,7 @@ public class RateGroupView : MonoBehaviour
 
         if (slotPrefab == null)
         {
-            Debug.LogError($"[RateGroupView] Slot prefab is not assigned for {rarityName}.", this);
+            Debug.LogError($"[RateGroupView] Slot prefab is not assigned for {label}.", this);
             return;
         }
 
