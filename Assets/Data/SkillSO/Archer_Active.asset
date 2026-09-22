@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Archer_Active
   m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
   skillName: "\uAD00\uD1B5 \uC77C\uACA9"
-  description: 
   icon: {fileID: 4766318457999732543, guid: 96460c55c5a814045a192f741ea727c4, type: 3}
   skillType: 0
+  skillSound:
+    clip: {fileID: 8300000, guid: 520365ebbbc081e46bc212352af5cb10, type: 3}
+    volume: 1
   upgrades:
   - promotionLevel: 0
     description: "\uC801\uC744 \uAFF0\uB6AB\uB294 \uAC15\uB825\uD55C \uD654\uC0B4\uC744

@@ -17,6 +17,12 @@ MonoBehaviour:
   icon: {fileID: 3682586899303601402, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
   rarity: 2
   unitPrefab: {fileID: 8124817616355146090, guid: 93d5a249e97a5da4fa9d26a5046abadd, type: 3}
+  attackSound:
+    clip: {fileID: 8300000, guid: dccb67c98fcf3ed4fa1554efb1455765, type: 3}
+    volume: 1
+  hitSound:
+    clip: {fileID: 8300000, guid: 9d4c7d6cd717b05458448e232ec1adb0, type: 3}
+    volume: 1
   passiveSkill: {fileID: 11400000, guid: b173404acfb915644965f28ffec84853, type: 2}
   activeSkill: {fileID: 11400000, guid: 6e0fb1f292aa8a245bcdcdc30d73d6d4, type: 2}
   baseStats:
