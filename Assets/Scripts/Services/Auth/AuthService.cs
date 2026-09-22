@@ -4,28 +4,13 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public sealed class AuthService : MonoBehaviour
+public sealed class AuthService : PersistentSingleton<AuthService>
 {
-    public static AuthService Instance { get; private set; }
-
     public bool IsInitialized { get; private set; }
     public bool IsBusy { get; private set; }
 
     private FirebaseAuth auth;
     private FirebaseUser CurrentUser => auth?.CurrentUser;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-
 
     public async Task<AuthLoginResult> SignInAsync()
     {

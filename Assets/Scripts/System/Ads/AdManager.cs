@@ -3,13 +3,11 @@ using System.Collections;
 using GoogleMobileAds.Api;
 using UnityEngine;
 
-public sealed class AdManager : MonoBehaviour
+public sealed class AdManager : PersistentSingleton<AdManager>
 {
     private const string RewardedAdUnitId = "ca-app-pub-3940256099942544/5224354917";
     private const float InitialRetryDelaySeconds = 2f;
     private const float MaxRetryDelaySeconds = 30f;
-
-    public static AdManager Instance { get; private set; }
 
     public RewardedAdState RewardedState { get; private set; } = RewardedAdState.Uninitialized;
     public bool IsRewardedAdReady => RewardedState == RewardedAdState.Ready && rewardedAd != null && rewardedAd.CanShowAd();
@@ -24,16 +22,8 @@ public sealed class AdManager : MonoBehaviour
     private int consecutiveLoadFailures;
     private bool isFinalizingSession;
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
         InitializeAds();
     }
 
@@ -220,16 +210,12 @@ public sealed class AdManager : MonoBehaviour
         RewardedStateChanged?.Invoke(state);
     }
 
-    private void OnDestroy()
+    protected override void OnSingletonDestroyed()
     {
-        if (Instance != this)
-            return;
-
         loadGeneration++;
         CancelRetry();
         DisposeRewardedAd();
         rewardEarnedCallback = null;
         completedCallback = null;
-        Instance = null;
     }
 }

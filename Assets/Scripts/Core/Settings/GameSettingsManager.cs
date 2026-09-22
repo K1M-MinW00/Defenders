@@ -1,10 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-public class GameSettingsManager : MonoBehaviour
+public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManager>
 {
-    public static GameSettingsManager Instance { get; private set; }
-
     private const string SoundKey = "Setting_Sound";
     private const string LanguageKey = "Setting_Language";
     
@@ -23,17 +21,8 @@ public class GameSettingsManager : MonoBehaviour
     public bool PushEnabled { get; private set; }
 
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
         Load();
         Apply();
     }

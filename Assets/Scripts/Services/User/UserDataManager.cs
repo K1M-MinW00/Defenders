@@ -2,9 +2,8 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public partial class UserDataManager : MonoBehaviour
+public partial class UserDataManager : PersistentSingleton<UserDataManager>
 {
-    public static UserDataManager Instance { get; private set; }
     public UserDataRoot UserData { get; private set; }
     public InventoryService InventoryService { get; private set; }
     public MailboxService MailboxService { get; private set; }
@@ -33,18 +32,6 @@ public partial class UserDataManager : MonoBehaviour
 
     private IUserDataRepository repository;
     private UserDataLoader userDataLoader;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
 
     public bool Initialize(IUserDataRepository dataRepository = null)
     {

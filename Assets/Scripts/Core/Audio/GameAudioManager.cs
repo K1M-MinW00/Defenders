@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [DefaultExecutionOrder(-1000)]
-public sealed class GameAudioManager : MonoBehaviour
+public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
 {
     private sealed class SfxVoice
     {
@@ -42,8 +42,6 @@ public sealed class GameAudioManager : MonoBehaviour
     private const string ConfigResourcePath = "Configs/GameAudioConfig";
     private const string SoundPreferenceKey = "Setting_Sound";
 
-    public static GameAudioManager Instance { get; private set; }
-
     private GameAudioConfigSO config;
     private AudioSource bgmSource;
     private Transform sfxPoolRoot;
@@ -64,17 +62,8 @@ public sealed class GameAudioManager : MonoBehaviour
         root.AddComponent<GameAudioManager>();
     }
 
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
         config = Resources.Load<GameAudioConfigSO>(ConfigResourcePath);
         bgmSource = CreateSource("BGM", true);
         CreateSfxPool();
@@ -355,13 +344,9 @@ public sealed class GameAudioManager : MonoBehaviour
         return null;
     }
 
-    private void OnDestroy()
+    protected override void OnSingletonDestroyed()
     {
-        if (Instance != this)
-            return;
-
         SceneManager.sceneLoaded -= HandleSceneLoaded;
         UnbindSettings();
-        Instance = null;
     }
 }
