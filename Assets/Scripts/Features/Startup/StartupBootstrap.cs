@@ -1,4 +1,3 @@
-﻿using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,8 +9,7 @@ public class StartupBootstrap : MonoBehaviour
 
     private bool isReadyToStart;
     private bool isBooting;
-
-    private const float LoadingStepDelay = 0.1f;
+    private bool hasFailed;
 
     private async void Start()
     {
@@ -25,62 +23,28 @@ public class StartupBootstrap : MonoBehaviour
 
         isBooting = true;
         isReadyToStart = false;
+        hasFailed = false;
 
         try
         {
-            if (!ValidateReferences())
-                return;
-
-            loadingView.SetStartButtonVisible(false);
-            loadingView.SetStatus("Initializing...");
-            loadingView.SetProgress(0.05f);
-
-            ItemDatabase.Initialize();
-            UnitDatabase.Initialize();
-            GameIconDatabase.Initialize();
-            GameConfig.Initialize();
-
-            await WaitForSecondsAsync(LoadingStepDelay);
-
-            loadingView.SetStatus("Checking Login...");
-            loadingView.SetProgress(0.3f);
-
-            AuthLoginResult loginResult = await AuthService.Instance.SignInAsync();
-            if (!loginResult.Succeeded)
+            if (!TryCreateFlow(out StartupFlow flow, out string validationError))
             {
-                SetFailed("Login Failed");
+                SetFailed(validationError);
                 return;
             }
 
-            string userId = loginResult.UserId;
-            Debug.Log($"[StartupBootstrap] Login Success. UID: {userId}");
-
-            await WaitForSecondsAsync(LoadingStepDelay);
-
-            loadingView.SetStatus("Loading User Data...");
-            loadingView.SetProgress(0.7f);
-
-            bool loadOk = await UserDataManager.Instance.LoadOrCreateAsync(userId);
-            if (!loadOk)
+            loadingView.SetActionButton("Start", false);
+            StartupBootResult result = await flow.RunAsync(HandleStageChanged);
+            if (!result.Succeeded)
             {
-                SetFailed("User Data Load Failed");
+                Debug.LogError($"[StartupBootstrap] Boot failed ({result.Failure}): {result.ErrorMessage}");
+                SetFailed(GetFailureMessage(result.Failure));
                 return;
             }
-
-            await WaitForSecondsAsync(LoadingStepDelay);
-
-            loadingView.SetStatus("Game Ready");
-            loadingView.SetProgress(1.0f);
 
             await WaitUntilProgressCompleted();
-
-            loadingView.SetStartButtonVisible(true);
+            loadingView.SetActionButton("Start", true);
             isReadyToStart = true;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"[StartupBootstrap] Boot exception: {e}");
-            SetFailed("Boot Failed");
         }
         finally
         {
@@ -90,60 +54,105 @@ public class StartupBootstrap : MonoBehaviour
 
     public void StartGame()
     {
+        if (hasFailed && !isBooting)
+        {
+            _ = BootAsync();
+            return;
+        }
+
         if (!isReadyToStart)
             return;
 
         isReadyToStart = false;
-        loadingView.SetStartButtonVisible(false);
+        loadingView.SetActionButton("Start", false);
         SceneManager.LoadScene(nextSceneName);
     }
 
-    private bool ValidateReferences()
+    private bool TryCreateFlow(out StartupFlow flow, out string errorMessage)
     {
+        flow = null;
+        errorMessage = null;
+
         if (loadingView == null)
         {
-            Debug.LogError("[StartupBootstrap] LoadingUI reference is missing.");
+            errorMessage = "Loading view is missing.";
             return false;
         }
 
         if (AuthService.Instance == null)
         {
-            Debug.LogError("[StartupBootstrap] AuthManager reference is missing.");
-            loadingView.SetStatus("AuthManager Missing");
+            errorMessage = "Authentication service is missing.";
             return false;
         }
 
+        if (UserDataManager.Instance == null)
+        {
+            errorMessage = "User data service is missing.";
+            return false;
+        }
+
+        flow = new StartupFlow(InitializeLocalData, AuthService.Instance.SignInAsync, UserDataManager.Instance.LoadOrCreateAsync);
         return true;
+    }
+
+    private static void InitializeLocalData()
+    {
+        ItemDatabase.Initialize();
+        UnitDatabase.Initialize();
+        GameIconDatabase.Initialize();
+        GameConfig.Initialize();
+    }
+
+    private void HandleStageChanged(StartupBootStage stage)
+    {
+        switch (stage)
+        {
+            case StartupBootStage.Initializing:
+                loadingView.SetStatus("Initializing...");
+                loadingView.SetProgress(0.05f);
+                break;
+            case StartupBootStage.SigningIn:
+                loadingView.SetStatus("Checking Login...");
+                loadingView.SetProgress(0.3f);
+                break;
+            case StartupBootStage.LoadingUserData:
+                loadingView.SetStatus("Loading User Data...");
+                loadingView.SetProgress(0.7f);
+                break;
+            case StartupBootStage.Ready:
+                loadingView.SetStatus("Game Ready");
+                loadingView.SetProgress(1f);
+                break;
+        }
     }
 
     private void SetFailed(string message)
     {
         Debug.LogError($"[StartupBootstrap] {message}");
         isReadyToStart = false;
+        hasFailed = true;
 
         if (loadingView != null)
         {
             loadingView.SetStatus(message);
-            loadingView.SetStartButtonVisible(false);
+            loadingView.SetActionButton("Retry", true);
         }
     }
 
-    private async Task WaitForSecondsAsync(float seconds)
+    private static string GetFailureMessage(StartupBootFailure failure)
     {
-        float elapsed = 0f;
-
-        while (elapsed < seconds)
+        return failure switch
         {
-            elapsed += Time.deltaTime;
-            await Task.Yield();
-        }
+            StartupBootFailure.LoginFailed => "Login Failed",
+            StartupBootFailure.UserDataLoadFailed => "User Data Load Failed",
+            StartupBootFailure.MissingService => "Required Service Missing",
+            _ => "Boot Failed"
+        };
     }
 
     private async Task WaitUntilProgressCompleted()
     {
         while (!loadingView.IsProgressCompleted())
-        {
             await Task.Yield();
-        }
     }
 }

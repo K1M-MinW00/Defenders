@@ -13,6 +13,7 @@ public class StartupLoadingView : MonoBehaviour
     [SerializeField] private float smoothSpeed = 3f;
 
     private float targetProgress;
+    private TMP_Text startButtonLabel;
 
     private void Awake()
     {
@@ -26,6 +27,7 @@ public class StartupLoadingView : MonoBehaviour
 
         if (startButton != null)
         {
+            startButtonLabel = startButton.GetComponentInChildren<TMP_Text>(true);
             startButton.gameObject.SetActive(false);
             startButton.interactable = false;
         }
@@ -33,6 +35,9 @@ public class StartupLoadingView : MonoBehaviour
 
     private void Update()
     {
+        if (progressSlider == null)
+            return;
+
         if (Mathf.Approximately(progressSlider.value, targetProgress))
             return;
 
@@ -56,8 +61,16 @@ public class StartupLoadingView : MonoBehaviour
 
     public void SetStartButtonVisible(bool visible)
     {
+        SetActionButton("Start", visible);
+    }
+
+    public void SetActionButton(string label, bool visible)
+    {
         if (startButton == null)
             return;
+
+        if (startButtonLabel != null)
+            startButtonLabel.text = label;
 
         startButton.gameObject.SetActive(visible);
         startButton.interactable = visible;
