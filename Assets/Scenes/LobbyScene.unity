@@ -40743,7 +40743,7 @@ MonoBehaviour:
   - {fileID: 1116901235}
   - {fileID: 383759066}
   - {fileID: 1264811927}
-  applyHorizontal: 1
+  applyHorizontal: 0
   applyVertical: 1
 --- !u!1 &1107290719
 GameObject:

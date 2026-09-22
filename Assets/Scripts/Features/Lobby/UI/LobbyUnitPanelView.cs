@@ -19,6 +19,7 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     [Header("Responsive Cards")]
     [SerializeField, Min(1)] private int fixedColumns = 5;
+    [SerializeField, Range(0.8f, 1f)] private float minCardScale = 0.9f;
     [SerializeField, Range(1f, 1.2f)] private float maxCardScale = 1.08f;
 
     private Vector2 ownedBaseCellSize;
@@ -223,7 +224,7 @@ public class LobbyUnitPanelView : MonoBehaviour
                               ownedBaseSpacing.x * (fixedColumns - 1) +
                               ownedGrid.padding.horizontal;
         float scale = requiredWidth > 0f
-            ? Mathf.Clamp(ownedRect.rect.width / requiredWidth, 1f, maxCardScale)
+            ? Mathf.Clamp(ownedRect.rect.width / requiredWidth, minCardScale, maxCardScale)
             : 1f;
 
         ownedGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
