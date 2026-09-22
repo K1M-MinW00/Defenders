@@ -9,10 +9,7 @@ public sealed class RecruitPresentationController : MonoBehaviour
     private const float DefaultRevealInterval = 0.18f;
     private const float DefaultCardRevealDuration = 0.22f;
 
-    [Header("Optional Intro Presentation")]
-    [SerializeField] private GameObject introRoot;
-    [SerializeField] private Animator introAnimator;
-    [SerializeField] private AudioSource audioSource;
+    [Header("Optional Runtime Overlay Override")]
     [SerializeField] private RecruitPresentationOverlayView overlayView;
 
     private RecruitResultPopupView resultPopup;
@@ -94,7 +91,6 @@ public sealed class RecruitPresentationController : MonoBehaviour
             }
         }
 
-        SetIntroVisible(false);
         overlayView?.ShowRevealMode();
 
         float revealInterval = config != null ? config.RevealInterval : DefaultRevealInterval;
@@ -116,22 +112,7 @@ public sealed class RecruitPresentationController : MonoBehaviour
             return;
 
         Rarity rarity = unit.rarity;
-        SetIntroVisible(introRoot != null);
         overlayView?.ShowUnitIntro(unit, GetRarityColor(rarity));
-
-        if (introAnimator != null && config != null)
-        {
-            string trigger = config.GetAnimatorTrigger(rarity);
-            if (!string.IsNullOrWhiteSpace(trigger))
-                introAnimator.SetTrigger(trigger);
-        }
-
-        if (audioSource != null && config != null)
-        {
-            AudioClip clip = config.GetIntroClip(rarity);
-            if (clip != null)
-                audioSource.PlayOneShot(clip);
-        }
     }
 
     private void StopCurrentPresentation(bool revealAll)
@@ -144,7 +125,6 @@ public sealed class RecruitPresentationController : MonoBehaviour
 
         presentationRoutine = null;
         isPresenting = false;
-        SetIntroVisible(false);
         overlayView?.Hide();
 
         if (revealAll)
@@ -165,12 +145,6 @@ public sealed class RecruitPresentationController : MonoBehaviour
             resultPopup.RevealAll();
 
         PresentationCompleted?.Invoke();
-    }
-
-    private void SetIntroVisible(bool visible)
-    {
-        if (introRoot != null)
-            introRoot.SetActive(visible);
     }
 
     private static List<UnitDataSO> SelectNewHighestRarityUnits(IReadOnlyList<GachaResult> results)

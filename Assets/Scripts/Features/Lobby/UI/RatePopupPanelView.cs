@@ -6,6 +6,8 @@ public class RatePopupPanelView : MonoBehaviour
     [SerializeField] private RateGroupView rareGroup;
     [SerializeField] private RateGroupView normalGroup;
 
+    private Coroutine rebuildRoutine;
+
     public bool Open(GachaDataSO banner)
     {
         if (banner == null)
@@ -20,16 +22,39 @@ public class RatePopupPanelView : MonoBehaviour
             return false;
         }
 
-        legendGroup.Setup("전설", banner.legendRate, banner.legendPool);
-        rareGroup.Setup("희귀", banner.rareRate, banner.rarePool);
-        normalGroup.Setup("일반", banner.normalRate, banner.normalPool);
-
         gameObject.SetActive(true);
+        legendGroup.Setup("전설", banner.LegendRate, banner.LegendPool);
+        rareGroup.Setup("희귀", banner.RareRate, banner.RarePool);
+        normalGroup.Setup("일반", banner.NormalRate, banner.NormalPool);
+
+        if (rebuildRoutine != null)
+            StopCoroutine(rebuildRoutine);
+
+        rebuildRoutine = StartCoroutine(RebuildNextFrame());
         return true;
     }
 
     public void Close()
     {
         gameObject.SetActive(false);
+    }
+
+    private System.Collections.IEnumerator RebuildNextFrame()
+    {
+        yield return null;
+        Canvas.ForceUpdateCanvases();
+        legendGroup.RebuildLayout();
+        rareGroup.RebuildLayout();
+        normalGroup.RebuildLayout();
+
+        if (transform is RectTransform popupRect)
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(popupRect);
+
+        rebuildRoutine = null;
+    }
+
+    private void OnDisable()
+    {
+        rebuildRoutine = null;
     }
 }

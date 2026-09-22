@@ -39,10 +39,10 @@ public sealed class GachaUseCase
         }
 
         InventoryStackItem currentTickets = userData.Inventory.Consumables?
-            .FirstOrDefault(item => item != null && item.ItemId == banner.ticketItemId);
+            .FirstOrDefault(item => item != null && item.ItemId == banner.TicketItemId);
         int ticketUseCount = Math.Min(Math.Max(currentTickets?.Count ?? 0, 0), command.Count);
         int gemRecruitCount = command.Count - ticketUseCount;
-        long gemCost = (long)gemRecruitCount * banner.gemCost;
+        long gemCost = (long)gemRecruitCount * banner.GemCost;
 
         if (gemCost > int.MaxValue || userData.Resource.Gem < gemCost)
             return RecruitUnitsResult.Fail(RecruitUnitsFailure.InsufficientCurrency);
@@ -52,7 +52,7 @@ public sealed class GachaUseCase
         UserGachaData nextGacha = UserDataCloner.Copy(userData.Gacha);
         UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
 
-        ConsumeTickets(nextInventory, banner.ticketItemId, ticketUseCount);
+        ConsumeTickets(nextInventory, banner.TicketItemId, ticketUseCount);
         nextResources.Gem -= (int)gemCost;
 
         List<GachaResult> results = new(command.Count);
@@ -68,7 +68,7 @@ public sealed class GachaUseCase
             if (unit == null || string.IsNullOrWhiteSpace(unit.unitId))
                 return RecruitUnitsResult.Fail(RecruitUnitsFailure.EmptyPool);
 
-            UpdatePity(nextGacha, banner.recruitType, rarity);
+            UpdatePity(nextGacha, banner.RecruitType, rarity);
 
             GachaResult result = new()
             {
@@ -115,25 +115,12 @@ public sealed class GachaUseCase
 
     private static bool IsValidBanner(GachaDataSO banner)
     {
-        if (banner == null || string.IsNullOrWhiteSpace(banner.ticketItemId) ||
-            banner.gemCost < 0 || banner.legendPityCount <= 0 ||
-            banner.normalRate < 0f || banner.rareRate < 0f || banner.legendRate < 0f)
-        {
+        if (banner == null || !banner.TryValidate(out _))
             return false;
-        }
 
-        ItemDataSO ticket = ItemDatabase.Get(banner.ticketItemId);
+        ItemDataSO ticket = ItemDatabase.Get(banner.TicketItemId);
 
-        if (ticket == null || ticket.Category != ItemCategory.Consumable ||
-            banner.legendPool == null || banner.legendPool.Count == 0 ||
-            (banner.normalRate > 0f && (banner.normalPool == null || banner.normalPool.Count == 0)) ||
-            (banner.rareRate > 0f && (banner.rarePool == null || banner.rarePool.Count == 0)))
-        {
-            return false;
-        }
-
-        float rateTotal = banner.normalRate + banner.rareRate + banner.legendRate;
-        return Math.Abs(rateTotal - 100f) <= 0.01f;
+        return ticket != null && ticket.Category == ItemCategory.Consumable;
     }
 
     private static void ConsumeTickets(UserInventoryData inventory, string ticketId, int count)
@@ -151,30 +138,24 @@ public sealed class GachaUseCase
 
     private bool IsLegendGuaranteed(UserGachaData gacha, GachaDataSO banner)
     {
-        return GetPity(gacha, banner.recruitType) >= banner.legendPityCount - 1;
+        return GetPity(gacha, banner.RecruitType) >= banner.LegendPityCount - 1;
     }
 
     private Rarity RollRarity(GachaDataSO banner)
     {
         float roll = random.Range(0f, 100f);
 
-        if (roll < banner.legendRate)
+        if (roll < banner.LegendRate)
             return Rarity.Legend;
 
-        roll -= banner.legendRate;
+        roll -= banner.LegendRate;
 
-        return roll < banner.rareRate ? Rarity.Rare : Rarity.Normal;
+        return roll < banner.RareRate ? Rarity.Rare : Rarity.Normal;
     }
 
     private UnitDataSO RollUnit(GachaDataSO banner, Rarity rarity)
     {
-        List<UnitDataSO> pool = rarity switch
-        {
-            Rarity.Normal => banner.normalPool,
-            Rarity.Rare => banner.rarePool,
-            Rarity.Legend => banner.legendPool,
-            _ => null,
-        };
+        IReadOnlyList<UnitDataSO> pool = banner.GetPool(rarity);
 
         if (pool == null || pool.Count == 0)
             return null;

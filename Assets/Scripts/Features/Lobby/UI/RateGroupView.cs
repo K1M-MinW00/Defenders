@@ -9,7 +9,7 @@ public class RateGroupView : MonoBehaviour
     [SerializeField] private Transform contentRoot;
     [SerializeField] private RecruitUnitIconView slotPrefab;
 
-    public void Setup(string rarityName, float rate, List<UnitDataSO> units)
+    public void Setup(string rarityName, float rate, IReadOnlyList<UnitDataSO> units)
     {
         if (titleText != null)
             titleText.text = $"{rarityName} ({rate:0.##}%)";
@@ -44,9 +44,15 @@ public class RateGroupView : MonoBehaviour
             slot.Setup(unit);
         }
 
-        Canvas.ForceUpdateCanvases();
+        RebuildLayout();
+    }
 
-        if (contentRoot is RectTransform contentRect)
-            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+    public void RebuildLayout()
+    {
+        if (contentRoot is not RectTransform contentRect)
+            return;
+
+        LayoutRebuilder.MarkLayoutForRebuild(contentRect);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
     }
 }

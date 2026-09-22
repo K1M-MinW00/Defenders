@@ -9,8 +9,6 @@ public sealed class RecruitPresentationConfigSO : ScriptableObject
     {
         public Rarity rarity;
         public Color color;
-        public string animatorTrigger;
-        public AudioClip introClip;
     }
 
     [Header("Timing")]
@@ -45,31 +43,4 @@ public sealed class RecruitPresentationConfigSO : ScriptableObject
         };
     }
 
-    public string GetAnimatorTrigger(Rarity rarity)
-    {
-        if (rarityPresentations == null)
-            return string.Empty;
-
-        foreach (RarityPresentation presentation in rarityPresentations)
-        {
-            if (presentation.rarity == rarity)
-                return presentation.animatorTrigger;
-        }
-
-        return string.Empty;
-    }
-
-    public AudioClip GetIntroClip(Rarity rarity)
-    {
-        if (rarityPresentations == null)
-            return null;
-
-        foreach (RarityPresentation presentation in rarityPresentations)
-        {
-            if (presentation.rarity == rarity)
-                return presentation.introClip;
-        }
-
-        return null;
-    }
 }

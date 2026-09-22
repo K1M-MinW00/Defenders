@@ -33,11 +33,12 @@ public class LobbyRecruitPanelView : MonoBehaviour
     [SerializeField] private GemConfirmPopupView gemConfirmPopup;
 
     [Header("Presentation")]
-    [SerializeField] private RecruitPresentationController presentationController;
+    [Tooltip("Optional. Leave empty to use the built-in timing and rarity colors.")]
     [SerializeField] private RecruitPresentationConfigSO presentationConfig;
 
     private GachaDataSO currentBanner;
     private LobbyRecruitPresenter presenter;
+    private RecruitPresentationController presentationController;
     private RecruitPanelViewState currentState;
     private bool isRecruiting;
     private bool isSubscribed;

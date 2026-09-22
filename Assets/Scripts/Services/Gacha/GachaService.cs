@@ -28,9 +28,9 @@ public sealed class GachaService
         if (banner == null)
             return 0;
 
-        int currentPity = GetCurrentPity(banner.recruitType);
+        int currentPity = GetCurrentPity(banner.RecruitType);
 
-        return Mathf.Max(0, banner.legendPityCount - currentPity);
+        return Mathf.Max(0, banner.LegendPityCount - currentPity);
     }
 
 }

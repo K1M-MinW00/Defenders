@@ -21,14 +21,14 @@ public sealed class LobbyRecruitPresenter
         if (banner == null)
             return null;
 
-        ItemDataSO ticket = ItemDatabase.Get(banner.ticketItemId);
+        ItemDataSO ticket = ItemDatabase.Get(banner.TicketItemId);
         int gemCount = userData.Resource?.Gem ?? 0;
-        int ticketCount = inventoryService.GetItemCount(banner.ticketItemId);
+        int ticketCount = inventoryService.GetItemCount(banner.TicketItemId);
 
         return new RecruitPanelViewState
         {
             Banner = banner,
-            BannerImage = banner.bannerImage,
+            BannerImage = banner.BannerImage,
             TicketIcon = ticket?.Icon,
             GemCount = gemCount,
             TicketCount = ticketCount,
@@ -43,11 +43,11 @@ public sealed class LobbyRecruitPresenter
         if (banner == null || recruitCount <= 0)
             return new RecruitCostModel();
 
-        int ownedTickets = inventoryService.GetItemCount(banner.ticketItemId);
+        int ownedTickets = inventoryService.GetItemCount(banner.TicketItemId);
         int ticketUse = Math.Min(ownedTickets, recruitCount);
         int shortage = recruitCount - ticketUse;
 
-        long requiredGem = (long)shortage * Math.Max(0, banner.gemCost);
+        long requiredGem = (long)shortage * Math.Max(0, banner.GemCost);
 
         return new RecruitCostModel
         {
@@ -62,11 +62,11 @@ public sealed class LobbyRecruitPresenter
         int ticketCount,
         int gemCount)
     {
-        if (banner == null || recruitCount <= 0 || banner.gemCost < 0)
+        if (banner == null || recruitCount <= 0 || banner.GemCost < 0)
             return false;
 
         int shortage = Math.Max(0, recruitCount - ticketCount);
-        long requiredGem = (long)shortage * banner.gemCost;
+        long requiredGem = (long)shortage * banner.GemCost;
 
         return requiredGem <= gemCount;
     }
