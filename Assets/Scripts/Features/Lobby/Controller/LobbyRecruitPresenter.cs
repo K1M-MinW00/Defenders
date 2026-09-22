@@ -21,7 +21,7 @@ public sealed class LobbyRecruitPresenter
         if (banner == null)
             return null;
 
-        ItemDataSO ticket = ItemDatabase.Get(banner.TicketItemId);
+        ItemDataSO ticket = GameConfig.Items.Get(banner.TicketItemId);
         int gemCount = userData.Resource?.Gem ?? 0;
         int ticketCount = inventoryService.GetItemCount(banner.TicketItemId);
 

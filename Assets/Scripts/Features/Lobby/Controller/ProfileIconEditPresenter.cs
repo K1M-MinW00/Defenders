@@ -57,7 +57,7 @@ public sealed class ProfileIconEditPresenter
         foreach (UserUnitData unit in userData.Roster.OwnedUnits)
         {
             string unitId = unit?.UnitId;
-            Sprite icon = UnitDatabase.GetIcon(unitId);
+            Sprite icon = GameConfig.Units.GetIcon(unitId);
             if (string.IsNullOrWhiteSpace(unitId) || icon == null || !addedIds.Add(unitId))
                 continue;
 

@@ -37,7 +37,7 @@ public static class ProfileIconResolver
 
     public static Sprite ResolveIcon(string iconId, UserRosterData roster)
     {
-        return UnitDatabase.GetIcon(ResolveIconId(iconId, roster));
+        return GameConfig.Units.GetIcon(ResolveIconId(iconId, roster));
     }
 
     public static bool IsSelectable(string iconId, UserRosterData roster)
@@ -56,12 +56,12 @@ public static class ProfileIconResolver
 
     private static bool HasIcon(string iconId)
     {
-        return !string.IsNullOrWhiteSpace(iconId) && UnitDatabase.GetIcon(iconId) != null;
+        return !string.IsNullOrWhiteSpace(iconId) && GameConfig.Units.GetIcon(iconId) != null;
     }
 
     private static string FindFirstAvailableIconId()
     {
-        IReadOnlyCollection<UnitDataSO> units = UnitDatabase.GetAll();
+        IReadOnlyCollection<UnitDataSO> units = GameConfig.Units.GetAll();
         if (units == null)
             return string.Empty;
 

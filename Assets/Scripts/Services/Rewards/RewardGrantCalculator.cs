@@ -75,7 +75,7 @@ public static class RewardGrantCalculator
 
     private static bool AddStackItem(UserInventoryData inventory, string itemId, int amount)
     {
-        ItemDataSO item = ItemDatabase.Get(itemId);
+        ItemDataSO item = GameConfig.Items.Get(itemId);
 
         if (item == null || !item.Stackable || item.Category == ItemCategory.Equipment)
             return false;
@@ -97,7 +97,7 @@ public static class RewardGrantCalculator
 
     private static bool AddEquipment(UserInventoryData inventory, string itemId, int amount)
     {
-        ItemDataSO item = ItemDatabase.Get(itemId);
+        ItemDataSO item = GameConfig.Items.Get(itemId);
 
         if (item == null || item.Category != ItemCategory.Equipment)
             return false;
@@ -121,7 +121,7 @@ public static class RewardGrantCalculator
         string unitId,
         int amount)
     {
-        UnitDataSO unit = UnitDatabase.Get(unitId);
+        UnitDataSO unit = GameConfig.Units.Get(unitId);
 
         if (unit == null)
             return false;

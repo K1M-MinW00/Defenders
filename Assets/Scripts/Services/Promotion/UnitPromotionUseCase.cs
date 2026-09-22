@@ -23,7 +23,7 @@ public sealed class UnitPromotionUseCase
         if (isExecuting || command == null || string.IsNullOrWhiteSpace(command.UnitId))
             return PromoteUnitResult.Fail(PromoteUnitFailure.InvalidRequest);
 
-        UnitDataSO unitDefinition = UnitDatabase.Get(command.UnitId);
+        UnitDataSO unitDefinition = GameConfig.Units.Get(command.UnitId);
         UserUnitData currentUnit = userData.Roster?.OwnedUnits?
             .FirstOrDefault(unit => unit != null && unit.UnitId == command.UnitId);
 
@@ -36,7 +36,7 @@ public sealed class UnitPromotionUseCase
             return PromoteUnitResult.Fail(PromoteUnitFailure.MaxPromotion);
 
         PromotionCost cost = costs[currentUnit.Promotion];
-        MaterialDataSO material = cost == null ? null : ItemDatabase.Get(cost.MaterialId) as MaterialDataSO;
+        MaterialDataSO material = cost == null ? null : GameConfig.Items.Get(cost.MaterialId) as MaterialDataSO;
 
         if (cost == null || string.IsNullOrWhiteSpace(cost.MaterialId) || cost.Count <= 0 ||
             material == null || material.MaterialType != MaterialType.Promotion)

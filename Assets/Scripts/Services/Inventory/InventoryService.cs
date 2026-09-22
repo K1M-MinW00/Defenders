@@ -26,7 +26,7 @@ public sealed class InventoryService
             if (x == null)
                 return false;
 
-            MaterialDataSO data = ItemDatabase.Get(x.ItemId) as MaterialDataSO;
+            MaterialDataSO data = GameConfig.Items.Get(x.ItemId) as MaterialDataSO;
             return data != null && data.MaterialType == type;
         }).ToList();
     }

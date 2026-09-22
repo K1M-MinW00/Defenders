@@ -132,7 +132,7 @@ public class InventoryPanelView : MonoBehaviour
         HashSet<string> visibleKeys,
         ref int siblingIndex)
     {
-        ItemDataSO itemData = ItemDatabase.Get(itemId);
+        ItemDataSO itemData = GameConfig.Items.Get(itemId);
         if (itemData == null || !visibleKeys.Add(key))
             return;
 

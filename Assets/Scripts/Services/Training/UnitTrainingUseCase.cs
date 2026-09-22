@@ -27,7 +27,7 @@ public sealed class UnitTrainingUseCase
             return TrainUnitResult.Fail(TrainUnitFailure.InvalidRequest);
         }
 
-        UnitDataSO unitDefinition = UnitDatabase.Get(command.UnitId);
+        UnitDataSO unitDefinition = GameConfig.Units.Get(command.UnitId);
         UserUnitData currentUnit = userData.Roster?.OwnedUnits?
             .FirstOrDefault(unit => unit != null && unit.UnitId == command.UnitId);
 
@@ -99,7 +99,7 @@ public sealed class UnitTrainingUseCase
                 return false;
             }
 
-            MaterialDataSO material = ItemDatabase.Get(pair.Key) as MaterialDataSO;
+            MaterialDataSO material = GameConfig.Items.Get(pair.Key) as MaterialDataSO;
 
             if (material == null || material.MaterialType != MaterialType.Training || material.Value <= 0)
             {

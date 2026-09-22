@@ -123,7 +123,7 @@ public sealed class GachaUseCase
         if (banner == null || !banner.TryValidate(out _))
             return false;
 
-        ItemDataSO ticket = ItemDatabase.Get(banner.TicketItemId);
+        ItemDataSO ticket = GameConfig.Items.Get(banner.TicketItemId);
 
         return ticket != null && ticket.Category == ItemCategory.Consumable;
     }

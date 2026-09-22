@@ -38,7 +38,7 @@ public static class UnitTrainingPreviewCalculator
                 if (pair.Value <= 0)
                     continue;
 
-                MaterialDataSO material = ItemDatabase.Get(pair.Key) as MaterialDataSO;
+                MaterialDataSO material = GameConfig.Items.Get(pair.Key) as MaterialDataSO;
 
                 if (material == null || material.MaterialType != MaterialType.Training || material.Value <= 0)
                     continue;

@@ -114,7 +114,7 @@ public class UnitPromotionPanel : MonoBehaviour
             return;
         }
 
-        MaterialDataSO material = ItemDatabase.Get(cost.MaterialId) as MaterialDataSO;
+        MaterialDataSO material = GameConfig.Items.Get(cost.MaterialId) as MaterialDataSO;
 
         if (material == null)
         {

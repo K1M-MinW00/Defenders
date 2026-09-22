@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class UserDataPipelineTestRunner
 {
-    private const int TestCount = 34;
+    private const int TestCount = 37;
 
     [MenuItem("Tools/Tests/Run User Data Pipeline Tests")]
     public static async void RunFromMenu()
@@ -38,6 +38,7 @@ public static class UserDataPipelineTestRunner
 
     private static async Task RunAllAsync()
     {
+        GameConfig.Initialize();
         UserDataPipelineTests tests = new();
 
         await tests.LoadOrCreateAsync_CreatesDefaultData_WhenUserDoesNotExist();
@@ -90,5 +91,10 @@ public static class UserDataPipelineTestRunner
         GameIconProviderTests iconProviderTests = new();
         iconProviderTests.ProjectIconSet_IsComplete();
         iconProviderTests.Provider_MapsResourcesAndRarityFrames();
+
+        GameCatalogTests catalogTests = new();
+        catalogTests.ProjectCatalogs_LoadAndResolveEveryAsset();
+        catalogTests.UnitCatalog_RejectsDuplicateIds();
+        catalogTests.ItemCatalog_RejectsDuplicateIds();
     }
 }

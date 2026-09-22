@@ -31,7 +31,7 @@ public class UnitSummoner : MonoBehaviour
 
         foreach (string unitId in selectedUnitIds)
         {
-            UnitDataSO data = UnitDatabase.Get(unitId);
+            UnitDataSO data = GameConfig.Units.Get(unitId);
 
             if (data != null)
                 result.Add(data);

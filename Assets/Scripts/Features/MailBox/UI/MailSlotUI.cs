@@ -104,7 +104,7 @@ public class MailSlotUI : MonoBehaviour
 
     private void CreateItemSlot(RewardData reward, IGameIconProvider icons)
     {
-        ItemDataSO itemData = ItemDatabase.Get(reward.Id);
+        ItemDataSO itemData = GameConfig.Items.Get(reward.Id);
 
         if (itemData == null)
             return;
@@ -121,7 +121,7 @@ public class MailSlotUI : MonoBehaviour
 
     private void CreateUnitSlot(RewardData reward, IGameIconProvider icons)
     {
-        UnitDataSO unitData = UnitDatabase.Get(reward.Id);
+        UnitDataSO unitData = GameConfig.Units.Get(reward.Id);
 
         if (unitData == null)
             return;
@@ -133,7 +133,7 @@ public class MailSlotUI : MonoBehaviour
 
     private void CreateEquipmentSlot(RewardData reward, IGameIconProvider icons)
     {
-        ItemDataSO equipmentData = ItemDatabase.Get(reward.Id);
+        ItemDataSO equipmentData = GameConfig.Items.Get(reward.Id);
 
         if (equipmentData == null)
             return;

@@ -85,7 +85,7 @@ public sealed class LobbyBattlePresenter
         foreach (string unitId in userData.Roster.SelectedUnitIds)
         {
             if (string.IsNullOrWhiteSpace(unitId) || !ownedIds.Contains(unitId) ||
-                UnitDatabase.Get(unitId) == null || !selectedIds.Add(unitId))
+                GameConfig.Units.Get(unitId) == null || !selectedIds.Add(unitId))
             {
                 selectedUnitIds = null;
                 return LobbyBattleStartFailure.InvalidFormation;

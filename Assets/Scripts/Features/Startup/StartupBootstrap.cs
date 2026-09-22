@@ -97,8 +97,6 @@ public class StartupBootstrap : MonoBehaviour
 
     private static void InitializeLocalData()
     {
-        ItemDatabase.Initialize();
-        UnitDatabase.Initialize();
         GameConfig.Initialize();
     }
 

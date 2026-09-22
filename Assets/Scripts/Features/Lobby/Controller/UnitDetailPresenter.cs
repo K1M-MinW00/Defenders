@@ -14,7 +14,7 @@ public sealed class UnitDetailPresenter
         if (string.IsNullOrWhiteSpace(unitId))
             return null;
 
-        UnitDataSO definition = UnitDatabase.Get(unitId);
+        UnitDataSO definition = GameConfig.Units.Get(unitId);
         UserUnitData userUnit = rosterService.GetUnit(unitId);
 
         if (definition == null || userUnit == null)

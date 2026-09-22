@@ -6,7 +6,7 @@ public sealed class UnitTrainingPreviewCalculatorTests
     [OneTimeSetUp]
     public void InitializeDatabase()
     {
-        ItemDatabase.Initialize();
+        GameConfig.Initialize();
     }
 
     [Test]

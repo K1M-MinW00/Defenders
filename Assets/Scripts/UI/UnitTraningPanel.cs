@@ -99,7 +99,7 @@ public class UnitTrainingPanel : MonoBehaviour
             if (item == null || string.IsNullOrWhiteSpace(item.ItemId) || item.Count <= 0)
                 continue;
 
-            MaterialDataSO materialData = ItemDatabase.Get(item.ItemId) as MaterialDataSO;
+            MaterialDataSO materialData = GameConfig.Items.Get(item.ItemId) as MaterialDataSO;
 
             if (materialData == null)
                 continue;
@@ -277,7 +277,7 @@ public class UnitTrainingPanel : MonoBehaviour
             if (item == null)
                 continue;
 
-            MaterialDataSO material = ItemDatabase.Get(item.ItemId) as MaterialDataSO;
+            MaterialDataSO material = GameConfig.Items.Get(item.ItemId) as MaterialDataSO;
 
             if (material == null || material.Value <= 0)
                 continue;

@@ -52,7 +52,7 @@ public sealed class LobbyUnitPanelPresenter
             if (string.IsNullOrWhiteSpace(unitId) || !selectedSet.Add(unitId))
                 continue;
 
-            UnitDataSO definition = UnitDatabase.Get(unitId);
+            UnitDataSO definition = GameConfig.Units.Get(unitId);
             if (definition == null)
             {
                 Debug.LogWarning($"[LobbyUnitPanelPresenter] Unit definition not found: {unitId}");
@@ -69,7 +69,7 @@ public sealed class LobbyUnitPanelPresenter
         HashSet<string> selectedSet,
         ICollection<LobbyUnitViewModel> availableUnits)
     {
-        foreach (UnitDataSO definition in UnitDatabase.GetAll())
+        foreach (UnitDataSO definition in GameConfig.Units.GetAll())
         {
             if (definition == null || string.IsNullOrWhiteSpace(definition.unitId) ||
                 selectedSet.Contains(definition.unitId))
