@@ -149,7 +149,7 @@ public class UnitPromotionPanel : MonoBehaviour
 
         try
         {
-            PromoteUnitResult result = await UserDataManager.Instance.UnitPromotionUseCase.ExecuteAsync(
+            PromoteUnitResult result = await UserDataManager.Instance.PromoteUnitAsync(
                 new PromoteUnitCommand(currentUnitData.unitId));
 
             if (!result.Succeeded)
@@ -160,8 +160,6 @@ public class UnitPromotionPanel : MonoBehaviour
             }
 
             promotionSucceeded = true;
-            UserDataManager.Instance.RaiseInventoryUpdated();
-            UserDataManager.Instance.RaiseRosterUpdated();
         }
         finally
         {

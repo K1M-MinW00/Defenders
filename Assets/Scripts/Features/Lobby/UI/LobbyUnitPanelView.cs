@@ -254,21 +254,16 @@ public class LobbyUnitPanelView : MonoBehaviour
 
         try
         {
-            bool success;
-
             if (vm.IsSelected)
             {
                 // 전투 명단 내부 위치 교환
-                success = await SwapSelectedUnitPositionAsync(pendingSwapUnitId, vm.UnitId);
+                await SwapSelectedUnitPositionAsync(pendingSwapUnitId, vm.UnitId);
             }
             else
             {
                 // 전투 명단 유닛 ↔ 대기 명단 유닛 교체
-                success = await ReplaceSelectedUnitAsync(pendingSwapUnitId, vm.UnitId);
+                await ReplaceSelectedUnitAsync(pendingSwapUnitId, vm.UnitId);
             }
-
-            if (success)
-                RefreshView();
         }
         finally
         {
@@ -309,9 +304,9 @@ public class LobbyUnitPanelView : MonoBehaviour
         Debug.Log($"[LobbyUnitTabUI] Swap mode started: {pendingSwapUnitId}");
     }
 
-    private async Task<bool> SwapSelectedUnitPositionAsync(string firstUnitId, string secondUnitId)
+    private async Task SwapSelectedUnitPositionAsync(string firstUnitId, string secondUnitId)
     {
-        FormationChangeResult result = await UserDataManager.Instance.UnitFormationUseCase.ExecuteAsync(
+        FormationChangeResult result = await UserDataManager.Instance.ChangeFormationAsync(
             new FormationChangeCommand(
                 FormationChangeType.SwapPositions,
                 firstUnitId,
@@ -323,12 +318,11 @@ public class LobbyUnitPanelView : MonoBehaviour
             UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
         }
 
-        return result.Succeeded;
     }
 
-    private async Task<bool> ReplaceSelectedUnitAsync(string oldUnitId, string newUnitId)
+    private async Task ReplaceSelectedUnitAsync(string oldUnitId, string newUnitId)
     {
-        FormationChangeResult result = await UserDataManager.Instance.UnitFormationUseCase.ExecuteAsync(
+        FormationChangeResult result = await UserDataManager.Instance.ChangeFormationAsync(
             new FormationChangeCommand(
                 FormationChangeType.ReplaceUnit,
                 oldUnitId,
@@ -340,7 +334,6 @@ public class LobbyUnitPanelView : MonoBehaviour
             UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
         }
 
-        return result.Succeeded;
     }
 
     private void ClearPendingSwap()

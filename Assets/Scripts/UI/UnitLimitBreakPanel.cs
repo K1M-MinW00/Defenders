@@ -163,7 +163,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
 
         try
         {
-            LimitBreakUnitResult result = await UserDataManager.Instance.UnitLimitBreakUseCase.ExecuteAsync(
+            LimitBreakUnitResult result = await UserDataManager.Instance.LimitBreakUnitAsync(
                 new LimitBreakUnitCommand(currentUnitData.unitId));
 
             if (!result.Succeeded)
@@ -173,7 +173,6 @@ public class UnitLimitBreakPanel : MonoBehaviour
                 return;
             }
 
-            UserDataManager.Instance.RaiseRosterUpdated();
         }
         finally
         {

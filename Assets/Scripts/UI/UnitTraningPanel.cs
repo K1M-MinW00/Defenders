@@ -319,7 +319,7 @@ public class UnitTrainingPanel : MonoBehaviour
 
         try
         {
-            TrainUnitResult result = await UserDataManager.Instance.UnitTrainingUseCase.ExecuteAsync(
+            TrainUnitResult result = await UserDataManager.Instance.TrainUnitAsync(
                 new TrainUnitCommand(currentUnitData.unitId, selectedMaterials));
 
             if (!result.Succeeded)
@@ -334,9 +334,6 @@ public class UnitTrainingPanel : MonoBehaviour
             resource = UserDataManager.Instance.UserData.Resource;
             materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
 
-            UserDataManager.Instance.RaiseResourceUpdated();
-            UserDataManager.Instance.RaiseInventoryUpdated();
-            UserDataManager.Instance.RaiseRosterUpdated();
             ResetSelection();
         }
         finally
