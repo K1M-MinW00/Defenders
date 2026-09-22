@@ -40,14 +40,10 @@ public class LobbyRecruitPanelView : MonoBehaviour
     private LobbyRecruitPresenter presenter;
     private RecruitPanelViewState currentState;
     private bool isRecruiting;
+    private bool isSubscribed;
 
     private void Awake()
     {
-        presenter = new LobbyRecruitPresenter(
-            UserDataManager.Instance.UserData,
-            UserDataManager.Instance.InventoryService,
-            UserDataManager.Instance.GachaService);
-
         if (presentationController == null)
             presentationController = GetComponent<RecruitPresentationController>();
 
@@ -67,18 +63,49 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void OnEnable()
     {
-        UserDataManager.Instance.OnResourceUpdated += Refresh;
-        UserDataManager.Instance.OnInventoryUpdated += Refresh;
+        if (!TryInitialize())
+            return;
+
+        SubscribeEvents();
         SelectBanner(normalBanner);
     }
 
     private void OnDisable()
     {
-        if (UserDataManager.Instance == null)
+        UnsubscribeEvents();
+    }
+
+    private bool TryInitialize()
+    {
+        UserDataManager manager = UserDataManager.Instance;
+        if (manager?.UserData == null || manager.InventoryService == null || manager.GachaService == null)
+        {
+            Debug.LogError("[LobbyRecruitPanelView] User data services are not ready.");
+            return false;
+        }
+
+        presenter ??= new LobbyRecruitPresenter(manager.UserData, manager.InventoryService, manager.GachaService);
+        return true;
+    }
+
+    private void SubscribeEvents()
+    {
+        if (isSubscribed)
+            return;
+
+        UserDataManager.Instance.OnResourceUpdated += Refresh;
+        UserDataManager.Instance.OnInventoryUpdated += Refresh;
+        isSubscribed = true;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (!isSubscribed || UserDataManager.Instance == null)
             return;
 
         UserDataManager.Instance.OnResourceUpdated -= Refresh;
         UserDataManager.Instance.OnInventoryUpdated -= Refresh;
+        isSubscribed = false;
     }
 
     private void SelectNormalBanner()
@@ -186,6 +213,8 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnsubscribeEvents();
+
         if (presentationController != null)
             presentationController.PresentationCompleted -= Refresh;
 

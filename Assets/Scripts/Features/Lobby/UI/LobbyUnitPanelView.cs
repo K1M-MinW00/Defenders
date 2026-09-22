@@ -29,17 +29,14 @@ public class LobbyUnitPanelView : MonoBehaviour
     private UnitCardUI pendingSwapCard;
     private string pendingSwapUnitId;
     private bool isChangingFormation;
-
-    private void Awake()
-    {
-        resource = UserDataManager.Instance.UserData.Resource;
-        presenter = new LobbyUnitPanelPresenter(UserDataManager.Instance.RosterService);
-    }
+    private bool isSubscribed;
 
     private void OnEnable()
     {
-        UserDataManager.Instance.OnResourceUpdated += RefreshGold;
-        UserDataManager.Instance.OnRosterUpdated += RefreshView;
+        if (!TryInitialize())
+            return;
+
+        SubscribeEvents();
         RefreshView();
     }
 
@@ -47,11 +44,41 @@ public class LobbyUnitPanelView : MonoBehaviour
     {
         ClearPendingSwap();
 
-        if (UserDataManager.Instance == null)
+        UnsubscribeEvents();
+    }
+
+    private bool TryInitialize()
+    {
+        UserDataManager manager = UserDataManager.Instance;
+        if (manager?.UserData?.Resource == null || manager.RosterService == null)
+        {
+            Debug.LogError("[LobbyUnitPanelView] User data services are not ready.");
+            return false;
+        }
+
+        resource = manager.UserData.Resource;
+        presenter ??= new LobbyUnitPanelPresenter(manager.RosterService);
+        return true;
+    }
+
+    private void SubscribeEvents()
+    {
+        if (isSubscribed)
+            return;
+
+        UserDataManager.Instance.OnResourceUpdated += RefreshGold;
+        UserDataManager.Instance.OnRosterUpdated += RefreshView;
+        isSubscribed = true;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (!isSubscribed || UserDataManager.Instance == null)
             return;
 
         UserDataManager.Instance.OnResourceUpdated -= RefreshGold;
         UserDataManager.Instance.OnRosterUpdated -= RefreshView;
+        isSubscribed = false;
     }
 
     private void RefreshGold()
@@ -327,6 +354,8 @@ public class LobbyUnitPanelView : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnsubscribeEvents();
+
         foreach (UnitCardUI card in cardsByUnitId.Values)
         {
             if (card == null)

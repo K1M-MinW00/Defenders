@@ -15,17 +15,17 @@ public class LobbyTabView : MonoBehaviour
     [SerializeField] private TabEntry[] tabs;
     [SerializeField] private int defaultTabIndex = 2;
 
-    private int selectedTabIndex = -1;
     private UnityAction[] clickHandlers;
+    private LobbyTabSelection selection;
 
     private void Awake()
     {
-        if (tabs == null)
-            return;
+        int tabCount = tabs?.Length ?? 0;
+        selection = new LobbyTabSelection(tabCount);
+        clickHandlers = new UnityAction[tabCount];
+        SetAllTabsInactive();
 
-        clickHandlers = new UnityAction[tabs.Length];
-
-        for (int i = 0; i < tabs.Length; i++)
+        for (int i = 0; i < tabCount; i++)
         {
             TabEntry entry = tabs[i];
             if (entry?.button == null)
@@ -47,9 +47,14 @@ public class LobbyTabView : MonoBehaviour
 
     public void ShowTab(int tabIndex)
     {
-        if (tabs == null || tabIndex < 0 || tabIndex >= tabs.Length || selectedTabIndex == tabIndex)
+        if (selection == null || !selection.TrySelect(tabIndex))
             return;
 
+        ApplySelection(tabIndex);
+    }
+
+    private void ApplySelection(int tabIndex)
+    {
         for (int i = 0; i < tabs.Length; i++)
         {
             TabEntry entry = tabs[i];
@@ -65,7 +70,18 @@ public class LobbyTabView : MonoBehaviour
                 entry.highlight.SetActive(isSelected);
         }
 
-        selectedTabIndex = tabIndex;
+    }
+
+    private void SetAllTabsInactive()
+    {
+        if (tabs == null)
+            return;
+
+        foreach (TabEntry entry in tabs)
+        {
+            entry?.panel?.SetActive(false);
+            entry?.highlight?.SetActive(false);
+        }
     }
 
     private void OnDestroy()
