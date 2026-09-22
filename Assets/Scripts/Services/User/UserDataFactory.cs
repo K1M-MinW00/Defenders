@@ -36,7 +36,7 @@ public static class UserDataFactory
         {
             UserId = userId,
             Nickname = $"User_{userId}",
-            Level = 1,
+            Level = GameConfig.NewUserConfig.StartLevel,
             Exp = 0,
             IconId = ProfileIconResolver.ConfiguredDefaultIconId,
         };

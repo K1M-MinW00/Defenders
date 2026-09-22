@@ -18,4 +18,16 @@ public sealed class GachaEconomyConfigSO : ScriptableObject
             _ => 0,
         };
     }
+
+    public bool TryValidate(out string error)
+    {
+        if (normalDuplicateGem < 0 || rareDuplicateGem < 0 || legendDuplicateGem < 0)
+        {
+            error = "Duplicate unit rewards cannot be negative.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
 }

@@ -49,6 +49,36 @@ public sealed class GameCatalogTests
         }
     }
 
+    public void NewUserConfig_RejectsUnknownDefaultUnit()
+    {
+        UnitDataSO unit = CreateUnit("known");
+        NewUserConfigSO config = ScriptableObject.CreateInstance<NewUserConfigSO>();
+        config.DefaultProfileIconId = "known";
+        config.DefaultOwnedUnitIds = new System.Collections.Generic.List<string> { "known", "missing" };
+
+        try
+        {
+            UnitCatalog catalog = new(new[] { unit });
+            Assert(!config.TryValidate(catalog, out _), "Unknown default units should invalidate new user config.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unit);
+            UnityEngine.Object.DestroyImmediate(config);
+        }
+    }
+
+    public void ProjectConfigs_AreFullyInitialized()
+    {
+        GameConfig.Initialize();
+
+        Assert(GameConfig.IsInitialized, "All required game configs should initialize atomically.");
+        Assert(GameConfig.NewUserConfig.TryValidate(GameConfig.Units, out string error),
+            $"Project new user config should be valid: {error}");
+        Assert(UserDataFactory.CreateDefaultProfile("test-user").Level == GameConfig.NewUserConfig.StartLevel,
+            "Default profile level should come from NewUserConfig.");
+    }
+
     private static UnitDataSO CreateUnit(string id)
     {
         UnitDataSO unit = ScriptableObject.CreateInstance<UnitDataSO>();

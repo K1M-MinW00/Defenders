@@ -29,4 +29,25 @@ public sealed class UserLevelProgressionSO : ScriptableObject
         int requiredExp = GetRequiredExp(level);
         return requiredExp > 0 ? Mathf.Clamp01((float)Mathf.Max(0, exp) / requiredExp) : 0f;
     }
+
+    public bool TryValidate(out string error)
+    {
+        if (requiredExpByLevel == null || requiredExpByLevel.Count == 0)
+        {
+            error = "At least one level experience requirement is needed.";
+            return false;
+        }
+
+        for (int i = 0; i < requiredExpByLevel.Count; i++)
+        {
+            if (requiredExpByLevel[i] <= 0)
+            {
+                error = $"Required experience must be positive at index {i}.";
+                return false;
+            }
+        }
+
+        error = string.Empty;
+        return true;
+    }
 }
