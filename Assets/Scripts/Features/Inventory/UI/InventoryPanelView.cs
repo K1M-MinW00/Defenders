@@ -146,9 +146,9 @@ public class InventoryPanelView : MonoBehaviour
         slot.transform.SetSiblingIndex(siblingIndex++);
         slot.Setup(
             itemData.Icon,
+            GameConfig.Icons.GetRarityFrame(itemData.Rarity),
             count,
             itemData.Stackable,
-            itemData.Rarity,
             () => detailPopup?.Show(itemData, count));
     }
 

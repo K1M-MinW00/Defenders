@@ -19,7 +19,7 @@ public class MailSlotUI : MonoBehaviour
     private MailData currentMail;
     private bool canClaim;
 
-    public void Setup(MailData mail, Action<MailData> onClick)
+    public void Setup(MailData mail, Action<MailData> onClick, IGameIconProvider icons)
     {
         currentMail = mail;
 
@@ -33,7 +33,7 @@ public class MailSlotUI : MonoBehaviour
         canClaim = !mail.Claimed && remain.TotalSeconds > 0;
         SetInteractionEnabled(true);
 
-        CreateRewardSlots(mail);
+        CreateRewardSlots(mail, icons);
 
         button.onClick.RemoveAllListeners();
 
@@ -52,7 +52,7 @@ public class MailSlotUI : MonoBehaviour
             button.interactable = enabled && canClaim;
     }
 
-    private void CreateRewardSlots(MailData mail)
+    private void CreateRewardSlots(MailData mail, IGameIconProvider icons)
     {
         ClearRewardSlots();
 
@@ -64,40 +64,45 @@ public class MailSlotUI : MonoBehaviour
             switch (reward.Type)
             {
                 case RewardType.Gold:
-                    CreateResourceSlot(GameIconDatabase.GetResourceIcon(RewardType.Gold), reward.Amount);
+                    CreateResourceSlot(icons, RewardType.Gold, reward.Amount);
                     break;
 
                 case RewardType.Gem:
-                    CreateResourceSlot(GameIconDatabase.GetResourceIcon(RewardType.Gem), reward.Amount);
+                    CreateResourceSlot(icons, RewardType.Gem, reward.Amount);
                     break;
 
                 case RewardType.Fuel:
-                    CreateResourceSlot(GameIconDatabase.GetResourceIcon(RewardType.Fuel), reward.Amount);
+                    CreateResourceSlot(icons, RewardType.Fuel, reward.Amount);
                     break;
 
                 case RewardType.Item:
-                    CreateItemSlot(reward);
+                    CreateItemSlot(reward, icons);
                     break;
 
                 case RewardType.Unit:
-                    CreateUnitSlot(reward);
+                    CreateUnitSlot(reward, icons);
                     break;
 
                 case RewardType.Equipment:
-                    CreateEquipmentSlot(reward);
+                    CreateEquipmentSlot(reward, icons);
                     break;
             }
         }
     }
 
-    private void CreateResourceSlot(Sprite icon, int amount)
+    private void CreateResourceSlot(IGameIconProvider icons, RewardType type, int amount)
     {
         CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
 
-        slot.Setup(icon, amount, true, Rarity.Normal, null);
+        slot.Setup(
+            icons.GetResourceIcon(type),
+            icons.GetRarityFrame(Rarity.Normal),
+            amount,
+            true,
+            null);
     }
 
-    private void CreateItemSlot(RewardData reward)
+    private void CreateItemSlot(RewardData reward, IGameIconProvider icons)
     {
         ItemDataSO itemData = ItemDatabase.Get(reward.Id);
 
@@ -106,10 +111,15 @@ public class MailSlotUI : MonoBehaviour
 
         CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
 
-        slot.Setup(itemData.Icon, reward.Amount, itemData.Stackable, itemData.Rarity, null);
+        slot.Setup(
+            itemData.Icon,
+            icons.GetRarityFrame(itemData.Rarity),
+            reward.Amount,
+            itemData.Stackable,
+            null);
     }
 
-    private void CreateUnitSlot(RewardData reward)
+    private void CreateUnitSlot(RewardData reward, IGameIconProvider icons)
     {
         UnitDataSO unitData = UnitDatabase.Get(reward.Id);
 
@@ -118,10 +128,10 @@ public class MailSlotUI : MonoBehaviour
 
         CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
 
-        slot.Setup(unitData.icon, 1, false, unitData.rarity, null);
+        slot.Setup(unitData.icon, icons.GetRarityFrame(unitData.rarity), 1, false, null);
     }
 
-    private void CreateEquipmentSlot(RewardData reward)
+    private void CreateEquipmentSlot(RewardData reward, IGameIconProvider icons)
     {
         ItemDataSO equipmentData = ItemDatabase.Get(reward.Id);
 
@@ -130,7 +140,7 @@ public class MailSlotUI : MonoBehaviour
 
         CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
 
-        slot.Setup(equipmentData.Icon, 1, false, equipmentData.Rarity, null);
+        slot.Setup(equipmentData.Icon, icons.GetRarityFrame(equipmentData.Rarity), 1, false, null);
     }
 
     private void ClearRewardSlots()

@@ -99,7 +99,6 @@ public class StartupBootstrap : MonoBehaviour
     {
         ItemDatabase.Initialize();
         UnitDatabase.Initialize();
-        GameIconDatabase.Initialize();
         GameConfig.Initialize();
     }
 

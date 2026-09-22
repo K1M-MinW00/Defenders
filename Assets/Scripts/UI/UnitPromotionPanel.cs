@@ -126,7 +126,12 @@ public class UnitPromotionPanel : MonoBehaviour
         int owned = UserDataManager.Instance.InventoryService.GetItemCount(material.ItemId);
 
         CommonSlotUI slot = Instantiate(materialSlotPrefab, materialRoot);
-        slot.SetupRequirement(material.Icon, owned, cost.Count, material.Rarity, null);
+        slot.SetupRequirement(
+            material.Icon,
+            GameConfig.Icons.GetRarityFrame(material.Rarity),
+            owned,
+            cost.Count,
+            null);
 
         promotionButton.interactable = owned >= cost.Count;
     }

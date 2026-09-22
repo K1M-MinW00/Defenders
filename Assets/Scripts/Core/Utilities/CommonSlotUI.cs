@@ -14,21 +14,21 @@ public class CommonSlotUI : MonoBehaviour
     [SerializeField] private Color normalCountColor = Color.white;
     [SerializeField] private Color insufficientCountColor = new(1f, 0.25f, 0.25f, 1f);
 
-    public void Setup(Sprite icon, int count, bool showCount, Rarity rarity, Action onClick)
+    public void Setup(Sprite icon, Sprite frame, int count, bool showCount, Action onClick)
     {
-        SetVisuals(icon, rarity);
+        SetVisuals(icon, frame);
         SetCount(showCount, count.ToString(), normalCountColor);
         SetClickHandler(onClick);
     }
 
     public void SetupRequirement(
         Sprite icon,
+        Sprite frame,
         int ownedCount,
         int requiredCount,
-        Rarity rarity,
         Action onClick)
     {
-        SetVisuals(icon, rarity);
+        SetVisuals(icon, frame);
 
         bool sufficient = ownedCount >= requiredCount;
         Color countColor = sufficient ? normalCountColor : insufficientCountColor;
@@ -36,13 +36,13 @@ public class CommonSlotUI : MonoBehaviour
         SetClickHandler(onClick);
     }
 
-    private void SetVisuals(Sprite icon, Rarity rarity)
+    private void SetVisuals(Sprite icon, Sprite frame)
     {
         if (iconImage != null)
             iconImage.sprite = icon;
 
         if (frameImage != null)
-            frameImage.sprite = GameIconDatabase.GetRarityFrame(rarity);
+            frameImage.sprite = frame;
     }
 
     private void SetCount(bool visible, string text, Color color)

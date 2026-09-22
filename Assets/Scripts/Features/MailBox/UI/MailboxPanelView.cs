@@ -65,7 +65,7 @@ public class MailboxPanelView : MonoBehaviour
 
             MailSlotUI slot = GetOrCreateSlot(mail.MailId);
             slot.transform.SetSiblingIndex(i);
-            slot.Setup(mail, HandleMailClicked);
+            slot.Setup(mail, HandleMailClicked, GameConfig.Icons);
             slot.SetInteractionEnabled(!isProcessing);
         }
 
