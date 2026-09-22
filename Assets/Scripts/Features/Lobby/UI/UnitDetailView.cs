@@ -81,6 +81,7 @@ public class UnitDetailView : MonoBehaviour
         else
             gameObject.SetActive(true);
 
+        PopupBackStack.Push(this, Close);
         Render();
         BindTabPanels();
     }
@@ -88,6 +89,8 @@ public class UnitDetailView : MonoBehaviour
 
     public void Close()
     {
+        PopupBackStack.Remove(this);
+
         if (detailRoot != null)
             detailRoot.SetActive(false);
         else

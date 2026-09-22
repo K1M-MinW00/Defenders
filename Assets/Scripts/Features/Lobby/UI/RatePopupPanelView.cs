@@ -30,6 +30,7 @@ public class RatePopupPanelView : MonoBehaviour
         }
 
         gameObject.SetActive(true);
+        PopupBackStack.Push(this, Close);
         InitializeGroupViews();
 
         System.Collections.Generic.IReadOnlyList<RecruitRatePreviewRow> rows = RecruitRatePreviewBuilder.Build(banner);
@@ -59,6 +60,7 @@ public class RatePopupPanelView : MonoBehaviour
 
     public void Close()
     {
+        PopupBackStack.Remove(this);
         gameObject.SetActive(false);
     }
 
@@ -80,6 +82,7 @@ public class RatePopupPanelView : MonoBehaviour
 
     private void OnDisable()
     {
+        PopupBackStack.Remove(this);
         rebuildRoutine = null;
     }
 

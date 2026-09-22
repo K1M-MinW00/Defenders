@@ -32,6 +32,7 @@ public class RecruitResultPopupView : MonoBehaviour
     public void Prepare(IReadOnlyList<GachaResult> results)
     {
         gameObject.SetActive(true);
+        PopupBackStack.Push(this, HandleCloseButton);
         Clear();
         isPresenting = true;
 
@@ -73,7 +74,13 @@ public class RecruitResultPopupView : MonoBehaviour
 
     public void Close()
     {
+        PopupBackStack.Remove(this);
         gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        PopupBackStack.Remove(this);
     }
 
     private void HandleCloseButton()
