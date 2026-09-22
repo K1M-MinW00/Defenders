@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class StartupBootstrap : MonoBehaviour
 {
@@ -52,7 +51,7 @@ public class StartupBootstrap : MonoBehaviour
         }
     }
 
-    public void StartGame()
+    public async void StartGame()
     {
         if (hasFailed && !isBooting)
         {
@@ -65,7 +64,12 @@ public class StartupBootstrap : MonoBehaviour
 
         isReadyToStart = false;
         loadingView.SetActionButton("Start", false);
-        SceneManager.LoadScene(nextSceneName);
+        loadingView.SetStatus("Loading Lobby...");
+
+        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(nextSceneName);
+
+        if (result != SceneTransitionResult.Succeeded && this != null)
+            SetFailed(GetSceneTransitionFailureMessage(result));
     }
 
     private bool TryCreateFlow(out StartupFlow flow, out string errorMessage)
@@ -144,6 +148,16 @@ public class StartupBootstrap : MonoBehaviour
             StartupBootFailure.UserDataLoadFailed => "User Data Load Failed",
             StartupBootFailure.MissingService => "Required Service Missing",
             _ => "Boot Failed"
+        };
+    }
+
+    private static string GetSceneTransitionFailureMessage(SceneTransitionResult result)
+    {
+        return result switch
+        {
+            SceneTransitionResult.InvalidScene => "Lobby Scene Missing",
+            SceneTransitionResult.AlreadyLoading => "Scene Is Already Loading",
+            _ => "Lobby Load Failed",
         };
     }
 

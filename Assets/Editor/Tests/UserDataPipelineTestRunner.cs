@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class UserDataPipelineTestRunner
 {
-    private const int TestCount = 40;
+    private const int TestCount = 43;
 
     [MenuItem("Tools/Tests/Run User Data Pipeline Tests")]
     public static async void RunFromMenu()
@@ -101,5 +101,10 @@ public static class UserDataPipelineTestRunner
 
         GameDataProjectValidatorTests validationTests = new();
         validationTests.ProjectData_HasNoBlockingValidationErrors();
+
+        SceneFlowServiceTests sceneFlowTests = new();
+        await sceneFlowTests.LoadAsync_CompletesValidScene();
+        await sceneFlowTests.LoadAsync_RejectsConcurrentTransition();
+        await sceneFlowTests.LoadAsync_RecoversAfterFailure();
     }
 }

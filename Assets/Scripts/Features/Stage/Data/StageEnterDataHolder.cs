@@ -13,4 +13,9 @@
         Data = null;
         return data;
     }
+
+    public static void Clear()
+    {
+        Data = null;
+    }
 }

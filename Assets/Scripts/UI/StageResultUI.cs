@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class StageResultUI : MonoBehaviour
 {
@@ -36,9 +35,11 @@ public class StageResultUI : MonoBehaviour
         if (stageFailPanel != null)
             stageFailPanel.SetActive(false);
     }
-    public void OnClickReturnToLobby()
+    public async void OnClickReturnToLobby()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(lobbySceneName);
+        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
+        if (result != SceneTransitionResult.Succeeded && this != null)
+            Debug.LogError($"[StageResultUI] Failed to return to lobby: {result}");
     }
 }

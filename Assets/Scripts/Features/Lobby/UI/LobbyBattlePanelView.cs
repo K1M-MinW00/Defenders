@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LobbyBattlePanelView : MonoBehaviour
@@ -26,6 +25,7 @@ public class LobbyBattlePanelView : MonoBehaviour
 
     private LobbyBattlePresenter presenter;
     private bool isSubscribed;
+    private bool isStartingBattle;
 
     private void Awake()
     {
@@ -93,8 +93,11 @@ public class LobbyBattlePanelView : MonoBehaviour
         startButton.interactable = state.CanStartBattle;
     }
 
-    private void HandleStartButtonClicked()
+    private async void HandleStartButtonClicked()
     {
+        if (isStartingBattle)
+            return;
+
         StageEnterData enterData = null;
         LobbyBattleStartFailure failure = LobbyBattleStartFailure.UserDataUnavailable;
 
@@ -105,7 +108,17 @@ public class LobbyBattlePanelView : MonoBehaviour
         }
 
         StageEnterHolder.Set(enterData);
-        SceneManager.LoadScene(gameSceneName);
+        isStartingBattle = true;
+        startButton.interactable = false;
+
+        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(gameSceneName);
+        if (result == SceneTransitionResult.Succeeded || this == null)
+            return;
+
+        StageEnterHolder.Clear();
+        isStartingBattle = false;
+        Refresh();
+        UIFeedbackToast.Show(GetSceneTransitionFailureMessage(result));
     }
 
     private static string GetStartFailureMessage(LobbyBattleStartFailure failure)
@@ -116,6 +129,16 @@ public class LobbyBattlePanelView : MonoBehaviour
             LobbyBattleStartFailure.InvalidFormation => "편성 정보가 올바르지 않습니다.",
             LobbyBattleStartFailure.InvalidProgress => "스테이지 진행 정보를 확인할 수 없습니다.",
             _ => "전투를 시작할 수 없습니다.",
+        };
+    }
+
+    private static string GetSceneTransitionFailureMessage(SceneTransitionResult result)
+    {
+        return result switch
+        {
+            SceneTransitionResult.InvalidScene => "전투 씬이 빌드 설정에 없습니다.",
+            SceneTransitionResult.AlreadyLoading => "다른 화면으로 이동 중입니다.",
+            _ => "전투 화면을 불러오지 못했습니다.",
         };
     }
 
