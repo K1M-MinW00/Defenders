@@ -54,7 +54,7 @@ public class UnitHealth : MonoBehaviour, IDamageable
         currentHp = Mathf.Max(0f, currentHp - finalDamage);
 
         if (finalDamage > 0f)
-            GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitHit);
+            GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.hitSound, GameAudioCue.UnitHit, GameAudioPriority.Low, 0.05f);
         
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
 

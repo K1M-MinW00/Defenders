@@ -9,6 +9,9 @@ public class SkillDataSO : ScriptableObject
     public Sprite icon;
     public SkillType skillType; // 패시브 , 액티브
 
+    [Header("Audio")]
+    public AudioClipSettings skillSound = new();
+
     [Header("Promotion Progression")]
     [Tooltip("스킬 해금 및 강화 단계 정보. promotionLevel 오름차순으로 작성")]
     public List<SkillUpgradeData> upgrades = new();

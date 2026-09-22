@@ -8,8 +8,7 @@ public class GameAudioConfigSO : ScriptableObject
     private struct SfxEntry
     {
         public GameAudioCue cue;
-        public AudioClip clip;
-        [Range(0f, 1f)] public float volume;
+        public AudioClipSettings audio;
         [Min(0f)] public float minInterval;
         public GameAudioPriority priority;
     }
@@ -20,20 +19,18 @@ public class GameAudioConfigSO : ScriptableObject
     [SerializeField] private string battleSceneName = "GameScene";
 
     [Header("BGM")]
-    [SerializeField] private AudioClip startAndLobbyBgm;
-    [SerializeField] private AudioClip battleBgm;
-    [SerializeField, Range(0f, 1f)] private float bgmVolume = 0.7f;
+    [SerializeField] private AudioClipSettings startAndLobbyBgm = new();
+    [SerializeField] private AudioClipSettings battleBgm = new();
 
     [Header("SFX")]
     [SerializeField, Min(1)] private int initialSfxPoolSize = 8;
     [SerializeField, Min(1)] private int maxSfxPoolSize = 16;
     [SerializeField] private SfxEntry[] sfxEntries = Array.Empty<SfxEntry>();
 
-    public float BgmVolume => bgmVolume;
     public int InitialSfxPoolSize => Mathf.Max(1, initialSfxPoolSize);
     public int MaxSfxPoolSize => Mathf.Max(InitialSfxPoolSize, maxSfxPoolSize);
 
-    public AudioClip GetBgm(string sceneName)
+    public AudioClipSettings GetBgm(string sceneName)
     {
         if (sceneName == startSceneName || sceneName == lobbySceneName)
             return startAndLobbyBgm;
@@ -43,25 +40,22 @@ public class GameAudioConfigSO : ScriptableObject
 
     public bool TryGetSfx(
         GameAudioCue cue,
-        out AudioClip clip,
-        out float volume,
+        out AudioClipSettings audio,
         out float minInterval,
         out GameAudioPriority priority)
     {
         foreach (SfxEntry entry in sfxEntries)
         {
-            if (entry.cue != cue || entry.clip == null)
+            if (entry.cue != cue || entry.audio == null || !entry.audio.IsValid)
                 continue;
 
-            clip = entry.clip;
-            volume = entry.volume;
+            audio = entry.audio;
             minInterval = entry.minInterval;
             priority = entry.priority;
             return true;
         }
 
-        clip = null;
-        volume = 0f;
+        audio = null;
         minInterval = 0f;
         priority = GameAudioPriority.Low;
         return false;

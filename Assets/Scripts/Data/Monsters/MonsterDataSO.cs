@@ -8,6 +8,10 @@ public class MonsterDataSO : ScriptableObject
     public string displayName;
     public GameObject prefab;
 
+    [Header("Audio")]
+    public AudioClipSettings attackSound = new();
+    public AudioClipSettings hitSound = new();
+
     [Header("Base Stats")]
     [SerializeField] private MonsterStats baseStats;
 

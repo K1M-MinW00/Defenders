@@ -104,32 +104,64 @@ public sealed class GameAudioManager : MonoBehaviour
 
         if (!config.TryGetSfx(
                 cue,
-                out AudioClip clip,
-                out float volume,
+                out AudioClipSettings audio,
                 out float minInterval,
                 out GameAudioPriority priority))
             return;
 
+        PlaySfx(audio, priority, cue, minInterval);
+    }
+
+    public void PlaySfx(
+        AudioClipSettings audio,
+        GameAudioPriority priority,
+        GameAudioCue throttleGroup,
+        float minInterval)
+    {
+        if (!IsSoundEnabled() || audio == null || !audio.IsValid)
+            return;
+
         float now = Time.unscaledTime;
-        if (lastSfxPlayedAt.TryGetValue(cue, out float lastPlayedAt) && now < lastPlayedAt + minInterval)
+        if (lastSfxPlayedAt.TryGetValue(throttleGroup, out float lastPlayedAt) && now < lastPlayedAt + minInterval)
             return;
 
         SfxVoice voice = AcquireSfxVoice(priority);
         if (voice == null)
             return;
 
-        lastSfxPlayedAt[cue] = now;
-        voice.Play(clip, volume, priority, now);
+        lastSfxPlayedAt[throttleGroup] = now;
+        voice.Play(audio.Clip, audio.Volume, priority, now);
     }
 
-    public void PlayBgm(AudioClip clip)
+    public void PlayCharacterSfx(
+        AudioClipSettings audio,
+        GameAudioCue fallbackCue,
+        GameAudioPriority priority,
+        float minInterval)
     {
-        if (clip == null || bgmSource.clip == clip)
+        if (audio != null && audio.IsValid)
+        {
+            PlaySfx(audio, priority, fallbackCue, minInterval);
+            return;
+        }
+
+        PlaySfx(fallbackCue);
+    }
+
+    public void PlayBgm(AudioClipSettings track)
+    {
+        if (track == null || !track.IsValid)
             return;
 
+        if (bgmSource.clip == track.Clip)
+        {
+            bgmSource.volume = track.Volume;
+            return;
+        }
+
         bgmSource.Stop();
-        bgmSource.clip = clip;
-        bgmSource.volume = config != null ? config.BgmVolume : 1f;
+        bgmSource.clip = track.Clip;
+        bgmSource.volume = track.Volume;
 
         if (IsSoundEnabled())
             bgmSource.Play();
@@ -220,9 +252,9 @@ public sealed class GameAudioManager : MonoBehaviour
         if (config == null)
             return;
 
-        AudioClip targetClip = config.GetBgm(sceneName);
-        if (targetClip != null)
-            PlayBgm(targetClip);
+        AudioClipSettings targetTrack = config.GetBgm(sceneName);
+        if (targetTrack != null && targetTrack.IsValid)
+            PlayBgm(targetTrack);
     }
 
     private void BindSettings()

@@ -4,6 +4,7 @@ using UnityEngine;
 public class MonsterHealth : MonoBehaviour, IDamageable
 {
     private MonsterStats stats;
+    private MonsterController owner;
 
     public float MaxHp {  get; private set; }
     public float CurrentHp { get; private set; }
@@ -11,6 +12,11 @@ public class MonsterHealth : MonoBehaviour, IDamageable
 
     public event Action<MonsterHealth> OnDead;
     public event Action<MonsterHealth, float> OnHpChanged;
+
+    private void Awake()
+    {
+        owner = GetComponent<MonsterController>();
+    }
 
     public void Initialize(MonsterStats s)
     {
@@ -33,7 +39,7 @@ public class MonsterHealth : MonoBehaviour, IDamageable
 
         damage = Mathf.Min(damage, CurrentHp);
         CurrentHp -= damage;
-        GameAudioManager.Instance?.PlaySfx(GameAudioCue.MonsterHit);
+        GameAudioManager.Instance?.PlayCharacterSfx(owner?.Data?.hitSound, GameAudioCue.MonsterHit, GameAudioPriority.Low, 0.05f);
 
         int finalDamage = (int)damage;
 

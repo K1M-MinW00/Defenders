@@ -15,54 +15,66 @@ MonoBehaviour:
   startSceneName: StartScene
   lobbySceneName: LobbyScene
   battleSceneName: GameScene
-  startAndLobbyBgm: {fileID: 0}
-  battleBgm: {fileID: 0}
-  bgmVolume: 0.7
+  startAndLobbyBgm:
+    clip: {fileID: 8300000, guid: 829b6d03db62d4946aa5d139946c98e3, type: 3}
+    volume: 0.7
+  battleBgm:
+    clip: {fileID: 8300000, guid: 05ddec1ce324e6647af74da283b34432, type: 3}
+    volume: 0.7
   initialSfxPoolSize: 8
   maxSfxPoolSize: 16
   sfxEntries:
   - cue: 0
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 8300000, guid: c837b26522f2cfc42ad3a57fdacf7b4b, type: 3}
+      volume: 1
     minInterval: 0.05
     priority: 0
   - cue: 1
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 8300000, guid: 3f260e5b54b7a614bb6bf77e7e371d41, type: 3}
+      volume: 1
     minInterval: 0.08
     priority: 1
   - cue: 2
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 0}
+      volume: 1
     minInterval: 0.05
     priority: 0
   - cue: 3
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 0}
+      volume: 1
     minInterval: 0.1
     priority: 2
   - cue: 4
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 8300000, guid: c837b26522f2cfc42ad3a57fdacf7b4b, type: 3}
+      volume: 1
     minInterval: 0.1
     priority: 2
   - cue: 5
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 8300000, guid: 3f260e5b54b7a614bb6bf77e7e371d41, type: 3}
+      volume: 1
     minInterval: 0.08
     priority: 1
   - cue: 6
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 0}
+      volume: 1
     minInterval: 0.05
     priority: 0
   - cue: 7
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 8300000, guid: 83019633a4760a2459abce8ad1f3c2d9, type: 3}
+      volume: 1
     minInterval: 0.2
     priority: 2
   - cue: 8
-    clip: {fileID: 0}
-    volume: 1
+    audio:
+      clip: {fileID: 8300000, guid: 66576bdd798d017468882c7f609a4195, type: 3}
+      volume: 1
     minInterval: 0.2
     priority: 2

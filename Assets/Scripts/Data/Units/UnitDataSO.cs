@@ -12,11 +12,15 @@ public class UnitDataSO : ScriptableObject
     public Rarity rarity;
     public GameObject unitPrefab;
 
+    [Header("Audio")]
+    public AudioClipSettings attackSound = new();
+    public AudioClipSettings hitSound = new();
+
     [Header("Skills")]
     public SkillDataSO passiveSkill;
     public SkillDataSO activeSkill;
 
-    [Header("Base Stats (Lv1, 1º∫)")]
+    [Header("Base Stats (Lv1, 1ÏÑ±)")]
     public UnitStats baseStats = new UnitStats();
 
     [Header("Level Growth")]
@@ -25,7 +29,7 @@ public class UnitDataSO : ScriptableObject
     public int hpGrowthValue = 20;
 
     [Header("Star Growth")]
-    [Tooltip("¿Œµ¶Ω∫ 0 = 1º∫, 1 = 2º∫, 2 = 3º∫, 3 = 4º∫")]
+    [Tooltip("Ïù∏Îç±Ïä§ 0 = 1ÏÑ±, 1 = 2ÏÑ±, 2 = 3ÏÑ±, 3 = 4ÏÑ±")]
     public float[] starAttackMultipliers = { 1f, 1.35f, 1.8f, 2.4f };
     public float[] starHpMultipliers = { 1f, 1.35f, 1.8f, 2.4f };
     public float[] starDetectRangeMultipliers = { 1f, 1.2f, 1.5f, 2f };

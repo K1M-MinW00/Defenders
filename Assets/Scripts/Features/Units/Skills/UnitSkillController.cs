@@ -127,7 +127,7 @@ public class UnitSkillController : MonoBehaviour
         isSkillRunning = true;
 
         activeSkill.OnSkillStart(currentContext);
-        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSkill);
+        GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.activeSkill?.skillSound, GameAudioCue.UnitSkill, GameAudioPriority.High, 0.1f);
         OnSkillStarted?.Invoke();
         NotifyActiveSkillStarted();
 
