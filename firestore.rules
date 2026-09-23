@@ -1,0 +1,106 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function hasValidUserShape(data) {
+      return data.keys().hasAll([
+          'SchemaVersion',
+          'CreatedAt',
+          'UpdatedAt',
+          'Profile',
+          'Resource',
+          'Roster',
+          'Progress',
+          'Inventory',
+          'Gacha',
+          'Ad'
+        ]) &&
+        data.keys().hasOnly([
+          'SchemaVersion',
+          'CreatedAt',
+          'UpdatedAt',
+          'Profile',
+          'Resource',
+          'Roster',
+          'Progress',
+          'Inventory',
+          'Gacha',
+          'Ad'
+        ]) &&
+        data.SchemaVersion is int &&
+        data.SchemaVersion >= 0 &&
+        data.CreatedAt is timestamp &&
+        data.UpdatedAt is timestamp &&
+        data.Profile is map &&
+        data.Resource is map &&
+        data.Roster is map &&
+        data.Progress is map &&
+        data.Inventory is map &&
+        data.Gacha is map &&
+        data.Ad is map;
+    }
+
+    function isLegacyTimestampRepair() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['CreatedAt', 'UpdatedAt']) &&
+        request.resource.data.UpdatedAt == request.time &&
+        (
+          (!('CreatedAt' in resource.data) &&
+           request.resource.data.CreatedAt == request.time) ||
+          ('CreatedAt' in resource.data &&
+           request.resource.data.CreatedAt == resource.data.CreatedAt)
+        );
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list, delete: if false;
+
+      allow create: if isOwner(userId) &&
+        hasValidUserShape(request.resource.data) &&
+        request.resource.data.SchemaVersion == 1 &&
+        request.resource.data.CreatedAt == request.time &&
+        request.resource.data.UpdatedAt == request.time;
+
+      allow update: if isOwner(userId) &&
+        (
+          isLegacyTimestampRepair() ||
+          (
+            hasValidUserShape(request.resource.data) &&
+            request.resource.data.CreatedAt == resource.data.CreatedAt &&
+            request.resource.data.UpdatedAt == request.time &&
+            (
+              !('SchemaVersion' in resource.data) ||
+              request.resource.data.SchemaVersion >= resource.data.SchemaVersion
+            )
+          )
+        );
+    }
+
+    match /mailboxes/{userId} {
+      allow read, write: if false;
+
+      match /mails/{mailId} {
+        allow read: if isOwner(userId);
+        allow create: if false;
+
+        allow update: if isOwner(userId) &&
+          resource.data.Claimed == false &&
+          request.resource.data.Claimed == true &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['Claimed']);
+
+        allow delete: if isOwner(userId) &&
+          (resource.data.Claimed == true ||
+           (resource.data.ExpireAt is timestamp && resource.data.ExpireAt <= request.time));
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
