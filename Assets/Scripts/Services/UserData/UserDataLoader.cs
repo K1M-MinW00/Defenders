@@ -22,7 +22,12 @@ public sealed class UserDataLoader
             UserDataRoot newUserData = UserDataFactory.CreateDefault(userId);
             StaminaService.InitializeFullFuel(newUserData.Resource);
             await repository.CreateAsync(userId, newUserData);
-            return newUserData;
+
+            UserDataLoadResult createdResult = await repository.LoadAsync(userId);
+            if (!createdResult.Exists || createdResult.Data == null)
+                throw new InvalidOperationException("Created user data could not be loaded.");
+
+            return createdResult.Data;
         }
 
         UserDataRoot userData = loadResult.Data;

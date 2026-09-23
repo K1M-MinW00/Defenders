@@ -29,17 +29,22 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
         if (!snapshot.Exists)
             return UserDataLoadResult.NotFound();
 
-        UserDataRoot data = snapshot.ConvertTo<UserDataRoot>();
+        Dictionary<string, object> storedFields = snapshot.ToDictionary();
+        Dictionary<string, object> missingTimestampFields = new();
 
-        if (!snapshot.ToDictionary().ContainsKey(CreatedAtField))
+        if (!storedFields.ContainsKey(CreatedAtField))
+            missingTimestampFields.Add(CreatedAtField, FieldValue.ServerTimestamp);
+
+        if (!storedFields.ContainsKey(UpdatedAtField))
+            missingTimestampFields.Add(UpdatedAtField, FieldValue.ServerTimestamp);
+
+        if (missingTimestampFields.Count > 0)
         {
-            await userRef.UpdateAsync(new Dictionary<string, object>
-            {
-                { CreatedAtField, FieldValue.ServerTimestamp },
-                { UpdatedAtField, FieldValue.ServerTimestamp },
-            });
+            await userRef.UpdateAsync(missingTimestampFields);
+            snapshot = await userRef.GetSnapshotAsync();
         }
 
+        UserDataRoot data = snapshot.ConvertTo<UserDataRoot>();
         return UserDataLoadResult.Found(data);
     }
 
