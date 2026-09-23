@@ -11,6 +11,7 @@ public class EditNicknamePanelView : MonoBehaviour
     [SerializeField] private TMP_InputField nicknameInput;
 
     [Header("Button")]
+    [SerializeField] private Button backdropButton;
     [SerializeField] private Button cancelButton;
     [SerializeField] private Button confirmButton;
 
@@ -20,13 +21,19 @@ public class EditNicknamePanelView : MonoBehaviour
 
     private void Awake()
     {
-        panelRoot.SetActive(false);
+        backdropButton?.onClick.AddListener(Close);
         nicknameInput.characterLimit = NicknamePolicy.MaxLength;
         confirmButtonLabel = confirmButton.GetComponentInChildren<TMP_Text>(true);
 
         cancelButton.onClick.AddListener(Close);
         confirmButton.onClick.AddListener(HandleConfirmButtonClicked);
         nicknameInput.onValueChanged.AddListener(HandleNicknameInputChanged);
+    }
+
+    public void Open()
+    {
+        if (!isSaving && panelRoot != null)
+            panelRoot.SetActive(true);
     }
 
     private void OnEnable()
@@ -48,7 +55,7 @@ public class EditNicknamePanelView : MonoBehaviour
         nicknameInput.ActivateInputField();
     }
 
-    private void Close()
+    public void Close()
     {
         if (!isSaving)
             panelRoot.SetActive(false);
@@ -111,6 +118,9 @@ public class EditNicknamePanelView : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (backdropButton != null)
+            backdropButton.onClick.RemoveListener(Close);
+
         if (cancelButton != null)
             cancelButton.onClick.RemoveListener(Close);
 

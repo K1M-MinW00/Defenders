@@ -1227,19 +1227,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 29754358}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1487790628}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &29754358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22337,8 +22325,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingsPanelView
   panelRoot: {fileID: 556910485}
-  editProfilePopupRoot: {fileID: 1487790628}
-  editNicknamePopupRoot: {fileID: 1907200040}
+  editProfilePopup: {fileID: 1487790631}
+  editNicknamePopup: {fileID: 1907200041}
   iconImage: {fileID: 735008526}
   nicknameText: {fileID: 634605137}
   levelText: {fileID: 2063787101}
@@ -22633,19 +22621,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 561681322}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1487790628}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &561681322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30487,19 +30463,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 839813280}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1907200040}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &839813280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33860,19 +33824,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 926897543}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 556910485}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &926897543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55326,8 +55278,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11da23262299d7d4b9533f8a097fa927, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EditProfileController
+  m_EditorClassIdentifier: Assembly-CSharp::EditProfilePanelView
   panelRoot: {fileID: 1487790628}
+  backdropButton: {fileID: 29754357}
   previewIconImage: {fileID: 1435472417}
   contentRoot: {fileID: 415356853}
   slotPrefab: {fileID: 395010933177974868, guid: ac5842cd3b63d404abd39856eacf9374, type: 3}
@@ -56805,19 +56758,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1518392885}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1487790628}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1518392885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67590,10 +67531,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 556910485}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 556910489}
+        m_TargetAssemblyTypeName: SettingsPanelView, Assembly-CSharp
+        m_MethodName: Open
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -73181,8 +73122,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3a4c8d7f593fe34ca90b5602d16f5a4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NicknameEditPanel
+  m_EditorClassIdentifier: Assembly-CSharp::EditNicknamePanelView
   panelRoot: {fileID: 1907200040}
+  backdropButton: {fileID: 839813279}
   nicknameInput: {fileID: 1255787243}
   cancelButton: {fileID: 2002292818}
   confirmButton: {fileID: 519796812}
@@ -77044,19 +76986,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2002292816}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1907200040}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &2004756285
 GameObject:
   m_ObjectHideFlags: 0

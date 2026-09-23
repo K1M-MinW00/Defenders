@@ -7,8 +7,8 @@ public class SettingsPanelView : MonoBehaviour
 {
     [Header("Root")]
     [SerializeField] private GameObject panelRoot;
-    [SerializeField] private GameObject editProfilePopupRoot;
-    [SerializeField] private GameObject editNicknamePopupRoot;
+    [SerializeField] private EditProfilePanelView editProfilePopup;
+    [SerializeField] private EditNicknamePanelView editNicknamePopup;
 
     [Header("Profile")]
     [SerializeField] private Image iconImage;
@@ -33,7 +33,6 @@ public class SettingsPanelView : MonoBehaviour
 
     private void Awake()
     {
-        panelRoot.SetActive(false);
         ConfigureLanguageOptions();
 
         closeButton.onClick.AddListener(Close);
@@ -43,6 +42,12 @@ public class SettingsPanelView : MonoBehaviour
         linkAccountButton.onClick.AddListener(ShowAccountLinkNotice);
         soundToggle.onValueChanged.AddListener(HandleSoundToggleChanged);
         languageDropdown.onValueChanged.AddListener(HandleLanguageDropdownChanged);
+    }
+
+    public void Open()
+    {
+        if (panelRoot != null)
+            panelRoot.SetActive(true);
     }
 
     private void OnEnable()
@@ -92,12 +97,12 @@ public class SettingsPanelView : MonoBehaviour
 
     private void OpenProfileEditor()
     {
-        editProfilePopupRoot.SetActive(true);
+        editProfilePopup?.Open();
     }
 
     private void OpenNicknameEditor()
     {
-        editNicknamePopupRoot.SetActive(true);
+        editNicknamePopup?.Open();
     }
 
     private void CopyUserId()
