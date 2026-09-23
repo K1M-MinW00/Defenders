@@ -7,9 +7,6 @@ using UnityEngine;
 
 public sealed class FirestoreUserDataRepository : IUserDataRepository
 {
-    private const string UsersCollection = "users";
-    private const string CreatedAtField = "CreatedAt";
-    private const string UpdatedAtField = "UpdatedAt";
     private const int MaxAttempts = 3;
 
     private readonly FirebaseFirestore firestore;
@@ -37,11 +34,11 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
         Dictionary<string, object> storedFields = snapshot.ToDictionary();
         Dictionary<string, object> missingTimestampFields = new();
 
-        if (!storedFields.ContainsKey(CreatedAtField))
-            missingTimestampFields.Add(CreatedAtField, FieldValue.ServerTimestamp);
+        if (!storedFields.ContainsKey(FirestoreDataContract.UserFields.CreatedAt))
+            missingTimestampFields.Add(FirestoreDataContract.UserFields.CreatedAt, FieldValue.ServerTimestamp);
 
-        if (!storedFields.ContainsKey(UpdatedAtField))
-            missingTimestampFields.Add(UpdatedAtField, FieldValue.ServerTimestamp);
+        if (!storedFields.ContainsKey(FirestoreDataContract.UserFields.UpdatedAt))
+            missingTimestampFields.Add(FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp);
 
         if (missingTimestampFields.Count > 0)
         {
@@ -77,25 +74,16 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
     }
 
     public Task SaveProfileAsync(string userId, UserProfileData profile) =>
-        SaveSectionAsync(userId, "Profile", profile);
+        SaveSectionAsync(userId, FirestoreDataContract.UserFields.Profile, profile);
 
     public Task SaveResourcesAsync(string userId, UserResourceData resources) =>
-        SaveSectionAsync(userId, "Resource", resources);
+        SaveSectionAsync(userId, FirestoreDataContract.UserFields.Resource, resources);
 
     public Task SaveProgressAsync(string userId, UserProgressData progress) =>
-        SaveSectionAsync(userId, "Progress", progress);
+        SaveSectionAsync(userId, FirestoreDataContract.UserFields.Progress, progress);
 
     public Task SaveRosterAsync(string userId, UserRosterData roster) =>
-        SaveSectionAsync(userId, "Roster", roster);
-
-    public Task SaveInventoryAsync(string userId, UserInventoryData inventory) =>
-        SaveSectionAsync(userId, "Inventory", inventory);
-
-    public Task SaveGachaAsync(string userId, UserGachaData gacha) =>
-        SaveSectionAsync(userId, "Gacha", gacha);
-
-    public Task SaveAdAsync(string userId, UserAdData ad) =>
-        SaveSectionAsync(userId, "Ad", ad);
+        SaveSectionAsync(userId, FirestoreDataContract.UserFields.Roster, roster);
 
     public Task SaveSectionsAsync(string userId, UserDataUpdate update)
     {
@@ -104,16 +92,16 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
 
         Dictionary<string, object> fields = new()
         {
-            { UpdatedAtField, FieldValue.ServerTimestamp },
+            { FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp },
         };
 
-        AddSection(fields, "Profile", update.Profile);
-        AddSection(fields, "Resource", update.Resources);
-        AddSection(fields, "Progress", update.Progress);
-        AddSection(fields, "Roster", update.Roster);
-        AddSection(fields, "Inventory", update.Inventory);
-        AddSection(fields, "Gacha", update.Gacha);
-        AddSection(fields, "Ad", update.Ad);
+        AddSection(fields, FirestoreDataContract.UserFields.Profile, update.Profile);
+        AddSection(fields, FirestoreDataContract.UserFields.Resource, update.Resources);
+        AddSection(fields, FirestoreDataContract.UserFields.Progress, update.Progress);
+        AddSection(fields, FirestoreDataContract.UserFields.Roster, update.Roster);
+        AddSection(fields, FirestoreDataContract.UserFields.Inventory, update.Inventory);
+        AddSection(fields, FirestoreDataContract.UserFields.Gacha, update.Gacha);
+        AddSection(fields, FirestoreDataContract.UserFields.Ad, update.Ad);
 
         if (fields.Count == 1)
             throw new ArgumentException("At least one user data section is required.", nameof(update));
@@ -132,7 +120,7 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
             () => GetUserDocument(userId).UpdateAsync(new Dictionary<string, object>
             {
                 { fieldName, value },
-                { UpdatedAtField, FieldValue.ServerTimestamp },
+                { FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp },
             }),
             $"Save user data section '{fieldName}'");
     }
@@ -142,7 +130,7 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
         if (string.IsNullOrWhiteSpace(userId))
             throw new ArgumentException("User ID is null or empty.", nameof(userId));
 
-        return firestore.Collection(UsersCollection).Document(userId);
+        return firestore.Collection(FirestoreDataContract.UsersCollection).Document(userId);
     }
 
     private static void AddSection<T>(Dictionary<string, object> fields, string fieldName, T value)
@@ -156,19 +144,19 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
     {
         Dictionary<string, object> fields = new()
         {
-            { "SchemaVersion", data.SchemaVersion },
-            { "Profile", data.Profile },
-            { "Resource", data.Resource },
-            { "Roster", data.Roster },
-            { "Progress", data.Progress },
-            { "Inventory", data.Inventory },
-            { "Gacha", data.Gacha },
-            { "Ad", data.Ad },
-            { UpdatedAtField, FieldValue.ServerTimestamp },
+            { FirestoreDataContract.UserFields.SchemaVersion, data.SchemaVersion },
+            { FirestoreDataContract.UserFields.Profile, data.Profile },
+            { FirestoreDataContract.UserFields.Resource, data.Resource },
+            { FirestoreDataContract.UserFields.Roster, data.Roster },
+            { FirestoreDataContract.UserFields.Progress, data.Progress },
+            { FirestoreDataContract.UserFields.Inventory, data.Inventory },
+            { FirestoreDataContract.UserFields.Gacha, data.Gacha },
+            { FirestoreDataContract.UserFields.Ad, data.Ad },
+            { FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp },
         };
 
         if (includeCreatedAt)
-            fields.Add(CreatedAtField, FieldValue.ServerTimestamp);
+            fields.Add(FirestoreDataContract.UserFields.CreatedAt, FieldValue.ServerTimestamp);
 
         return fields;
     }

@@ -1,4 +1,5 @@
-﻿using Firebase.Firestore;
+﻿#if UNITY_EDITOR
+using Firebase.Firestore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,9 +34,9 @@ public static class GMFirestoreService
         try
         {
             await db
-                .Collection("mailboxes")
+                .Collection(FirestoreDataContract.MailboxesCollection)
                 .Document(uid)
-                .Collection("mails")
+                .Collection(FirestoreDataContract.MailsCollection)
                 .Document(mailId)
                 .SetAsync(mail);
 
@@ -49,3 +50,4 @@ public static class GMFirestoreService
         }
     }
 }
+#endif

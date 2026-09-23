@@ -9,9 +9,6 @@ public interface IUserDataRepository
     Task SaveResourcesAsync(string userId, UserResourceData resources);
     Task SaveProgressAsync(string userId, UserProgressData progress);
     Task SaveRosterAsync(string userId, UserRosterData roster);
-    Task SaveInventoryAsync(string userId, UserInventoryData inventory);
-    Task SaveGachaAsync(string userId, UserGachaData gacha);
-    Task SaveAdAsync(string userId, UserAdData ad);
     Task SaveSectionsAsync(string userId, UserDataUpdate update);
 }
 

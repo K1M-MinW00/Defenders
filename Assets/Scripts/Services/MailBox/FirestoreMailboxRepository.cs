@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 public sealed class FirestoreMailboxRepository : IMailboxRepository
 {
-    private const string UsersCollection = "users";
-    private const string MailboxCollection = "mailboxes";
-    private const string MailCollection = "mails";
     private const int MaxClaimCount = 100;
     private const int DeleteBatchSize = 450;
 
@@ -61,7 +58,9 @@ public sealed class FirestoreMailboxRepository : IMailboxRepository
         if (distinctIds == null || distinctIds.Count == 0 || distinctIds.Count > MaxClaimCount)
             return Task.FromResult(MailboxClaimResult.Fail(MailboxClaimFailure.InvalidRequest));
 
-        DocumentReference userReference = firestore.Collection(UsersCollection).Document(userId);
+        DocumentReference userReference = firestore
+            .Collection(FirestoreDataContract.UsersCollection)
+            .Document(userId);
         List<DocumentReference> mailReferences = distinctIds
             .Select(id => GetMailCollection(userId).Document(id))
             .ToList();
@@ -108,10 +107,10 @@ public sealed class FirestoreMailboxRepository : IMailboxRepository
 
             transaction.Update(userReference, new Dictionary<string, object>
             {
-                { "Resource", grantResult.Resources },
-                { "Inventory", grantResult.Inventory },
-                { "Roster", grantResult.Roster },
-                { "UpdatedAt", FieldValue.ServerTimestamp },
+                { FirestoreDataContract.UserFields.Resource, grantResult.Resources },
+                { FirestoreDataContract.UserFields.Inventory, grantResult.Inventory },
+                { FirestoreDataContract.UserFields.Roster, grantResult.Roster },
+                { FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp },
             });
 
             HashSet<string> claimedIds = claimableMails.Select(mail => mail.MailId).ToHashSet();
@@ -119,7 +118,7 @@ public sealed class FirestoreMailboxRepository : IMailboxRepository
             foreach (DocumentReference mailReference in mailReferences)
             {
                 if (claimedIds.Contains(mailReference.Id))
-                    transaction.Update(mailReference, "Claimed", true);
+                    transaction.Update(mailReference, FirestoreDataContract.MailFields.Claimed, true);
             }
 
             return MailboxClaimResult.Success(
@@ -154,9 +153,9 @@ public sealed class FirestoreMailboxRepository : IMailboxRepository
 
     private CollectionReference GetMailCollection(string userId)
     {
-        return firestore.Collection(MailboxCollection)
+        return firestore.Collection(FirestoreDataContract.MailboxesCollection)
             .Document(userId)
-            .Collection(MailCollection);
+            .Collection(FirestoreDataContract.MailsCollection);
     }
 
     private static bool IsExpired(MailData mail, DateTime now)
