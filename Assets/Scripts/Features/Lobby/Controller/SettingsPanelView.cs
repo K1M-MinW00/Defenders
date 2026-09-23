@@ -9,6 +9,7 @@ public class SettingsPanelView : MonoBehaviour
     [SerializeField] private GameObject panelRoot;
     [SerializeField] private EditProfilePanelView editProfilePopup;
     [SerializeField] private EditNicknamePanelView editNicknamePopup;
+    [SerializeField] private SimplePopupView accountLinkPopup;
 
     [Header("Profile")]
     [SerializeField] private Image iconImage;
@@ -39,7 +40,7 @@ public class SettingsPanelView : MonoBehaviour
         editProfileButton.onClick.AddListener(OpenProfileEditor);
         editNicknameButton.onClick.AddListener(OpenNicknameEditor);
         copyUidButton.onClick.AddListener(CopyUserId);
-        linkAccountButton.onClick.AddListener(ShowAccountLinkNotice);
+        linkAccountButton.onClick.AddListener(OpenAccountLinkPopup);
         soundToggle.onValueChanged.AddListener(HandleSoundToggleChanged);
         languageDropdown.onValueChanged.AddListener(HandleLanguageDropdownChanged);
     }
@@ -118,9 +119,9 @@ public class SettingsPanelView : MonoBehaviour
         UIFeedbackToast.Show("사용자 ID를 복사했습니다.");
     }
 
-    private static void ShowAccountLinkNotice()
+    private void OpenAccountLinkPopup()
     {
-        UIFeedbackToast.Show("계정 연결 기능은 추후 지원될 예정입니다.");
+        accountLinkPopup?.Open();
     }
 
     private void HandleSoundToggleChanged(bool enabled)
@@ -179,7 +180,7 @@ public class SettingsPanelView : MonoBehaviour
         editProfileButton?.onClick.RemoveListener(OpenProfileEditor);
         editNicknameButton?.onClick.RemoveListener(OpenNicknameEditor);
         copyUidButton?.onClick.RemoveListener(CopyUserId);
-        linkAccountButton?.onClick.RemoveListener(ShowAccountLinkNotice);
+        linkAccountButton?.onClick.RemoveListener(OpenAccountLinkPopup);
         soundToggle?.onValueChanged.RemoveListener(HandleSoundToggleChanged);
         languageDropdown?.onValueChanged.RemoveListener(HandleLanguageDropdownChanged);
     }

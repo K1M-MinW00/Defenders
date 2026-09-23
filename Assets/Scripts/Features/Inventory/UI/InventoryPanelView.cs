@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class InventoryPanelView : MonoBehaviour
 {
+    public void Open() => gameObject.SetActive(true);
+    public void Close() => gameObject.SetActive(false);
+
     private enum InventoryTab
     {
         Consumables,

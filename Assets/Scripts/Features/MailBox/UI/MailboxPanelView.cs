@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 public class MailboxPanelView : MonoBehaviour
 {
+    public void Open() => gameObject.SetActive(true);
+    public void Close() => gameObject.SetActive(false);
+
     [Header("Mail List")]
     [SerializeField] private Transform contentRoot;
     [SerializeField] private MailSlotUI mailSlotPrefab;

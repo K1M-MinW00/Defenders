@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class FuelPanelView : MonoBehaviour
 {
+    public void Open() => gameObject.SetActive(true);
+    public void Close() => gameObject.SetActive(false);
+
     [Header("Fuel")]
     [SerializeField] private TMP_Text fuelText;
     [SerializeField] private TMP_Text nextRecoverText;
