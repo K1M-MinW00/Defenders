@@ -7,14 +7,17 @@ public partial class UserDataManager
         if (UnitTrainingUseCase == null)
             return TrainUnitResult.Fail(TrainUnitFailure.InvalidRequest);
 
-        TrainUnitResult result = await UnitTrainingUseCase.ExecuteAsync(command);
-        if (!result.Succeeded)
-            return result;
+        return await RunSerializedMutationAsync(async () =>
+        {
+            TrainUnitResult result = await UnitTrainingUseCase.ExecuteAsync(command);
+            if (!result.Succeeded)
+                return result;
 
-        RaiseResourceUpdated();
-        RaiseInventoryUpdated();
-        RaiseRosterUpdated();
-        return result;
+            RaiseResourceUpdated();
+            RaiseInventoryUpdated();
+            RaiseRosterUpdated();
+            return result;
+        });
     }
 
     public async Task<PromoteUnitResult> PromoteUnitAsync(PromoteUnitCommand command)
@@ -22,13 +25,16 @@ public partial class UserDataManager
         if (UnitPromotionUseCase == null)
             return PromoteUnitResult.Fail(PromoteUnitFailure.InvalidRequest);
 
-        PromoteUnitResult result = await UnitPromotionUseCase.ExecuteAsync(command);
-        if (!result.Succeeded)
-            return result;
+        return await RunSerializedMutationAsync(async () =>
+        {
+            PromoteUnitResult result = await UnitPromotionUseCase.ExecuteAsync(command);
+            if (!result.Succeeded)
+                return result;
 
-        RaiseInventoryUpdated();
-        RaiseRosterUpdated();
-        return result;
+            RaiseInventoryUpdated();
+            RaiseRosterUpdated();
+            return result;
+        });
     }
 
     public async Task<LimitBreakUnitResult> LimitBreakUnitAsync(LimitBreakUnitCommand command)
@@ -36,12 +42,15 @@ public partial class UserDataManager
         if (UnitLimitBreakUseCase == null)
             return LimitBreakUnitResult.Fail(LimitBreakUnitFailure.InvalidRequest);
 
-        LimitBreakUnitResult result = await UnitLimitBreakUseCase.ExecuteAsync(command);
-        if (!result.Succeeded)
-            return result;
+        return await RunSerializedMutationAsync(async () =>
+        {
+            LimitBreakUnitResult result = await UnitLimitBreakUseCase.ExecuteAsync(command);
+            if (!result.Succeeded)
+                return result;
 
-        RaiseRosterUpdated();
-        return result;
+            RaiseRosterUpdated();
+            return result;
+        });
     }
 
     public async Task<FormationChangeResult> ChangeFormationAsync(FormationChangeCommand command)
@@ -49,10 +58,13 @@ public partial class UserDataManager
         if (UnitFormationUseCase == null)
             return FormationChangeResult.Fail(FormationChangeFailure.InvalidRequest);
 
-        FormationChangeResult result = await UnitFormationUseCase.ExecuteAsync(command);
-        if (result.Succeeded)
-            RaiseRosterUpdated();
+        return await RunSerializedMutationAsync(async () =>
+        {
+            FormationChangeResult result = await UnitFormationUseCase.ExecuteAsync(command);
+            if (result.Succeeded)
+                RaiseRosterUpdated();
 
-        return result;
+            return result;
+        });
     }
 }

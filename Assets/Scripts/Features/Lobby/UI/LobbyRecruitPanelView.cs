@@ -191,7 +191,7 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
         try
         {
-            RecruitUnitsResult result = await UserDataManager.Instance.GachaUseCase.ExecuteAsync(
+            RecruitUnitsResult result = await UserDataManager.Instance.RecruitUnitsAsync(
                 new RecruitUnitsCommand(banner, count));
 
             if (!result.Succeeded)
@@ -201,9 +201,6 @@ public class LobbyRecruitPanelView : MonoBehaviour
                 return;
             }
 
-            UserDataManager.Instance.RaiseResourceUpdated();
-            UserDataManager.Instance.RaiseInventoryUpdated();
-            UserDataManager.Instance.RaiseRosterUpdated();
             presentationController.Present(result.Results);
             Refresh();
         }

@@ -62,9 +62,7 @@ public class FuelPanelView : MonoBehaviour
     private bool TryInitialize()
     {
         userDataManager = UserDataManager.Instance;
-        if (userDataManager?.UserData == null ||
-            userDataManager.PurchaseFuelUseCase == null ||
-            userDataManager.ClaimAdFuelRewardUseCase == null)
+        if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
         {
             Debug.LogError("[FuelPanelView] User data services are not ready.");
             rewardAdButton.interactable = false;
@@ -182,7 +180,7 @@ public class FuelPanelView : MonoBehaviour
 
         try
         {
-            ClaimAdFuelRewardResult result = await userDataManager.ClaimAdFuelRewardUseCase.ExecuteAsync(rewardAdFuelAmount);
+            ClaimAdFuelRewardResult result = await userDataManager.ClaimAdFuelRewardAsync(rewardAdFuelAmount);
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Ad fuel reward failed: {result.Failure}");
@@ -190,7 +188,6 @@ public class FuelPanelView : MonoBehaviour
                 return;
             }
 
-            userDataManager.RaiseResourceUpdated();
         }
         finally
         {
@@ -211,7 +208,7 @@ public class FuelPanelView : MonoBehaviour
 
         try
         {
-            PurchaseFuelResult result = await userDataManager.PurchaseFuelUseCase.ExecuteAsync(purchaseFuelGemCost, purchaseFuelAmount);
+            PurchaseFuelResult result = await userDataManager.PurchaseFuelAsync(purchaseFuelGemCost, purchaseFuelAmount);
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Fuel purchase failed: {result.Failure}");
@@ -219,7 +216,6 @@ public class FuelPanelView : MonoBehaviour
                 return;
             }
 
-            userDataManager.RaiseResourceUpdated();
         }
         finally
         {

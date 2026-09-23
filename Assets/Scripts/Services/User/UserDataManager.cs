@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -9,14 +10,14 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     public MailboxService MailboxService { get; private set; }
     public GachaService GachaService { get; private set; }
     public RosterService RosterService { get; private set; }
-    public UnitTrainingUseCase UnitTrainingUseCase { get; private set; }
-    public UnitPromotionUseCase UnitPromotionUseCase { get; private set; }
-    public UnitLimitBreakUseCase UnitLimitBreakUseCase { get; private set; }
-    public GachaUseCase GachaUseCase { get; private set; }
-    public PurchaseFuelUseCase PurchaseFuelUseCase { get; private set; }
-    public ClaimAdFuelRewardUseCase ClaimAdFuelRewardUseCase { get; private set; }
-    public UnitFormationUseCase UnitFormationUseCase { get; private set; }
-    public ProfileUpdateUseCase ProfileUpdateUseCase { get; private set; }
+    private UnitTrainingUseCase UnitTrainingUseCase { get; set; }
+    private UnitPromotionUseCase UnitPromotionUseCase { get; set; }
+    private UnitLimitBreakUseCase UnitLimitBreakUseCase { get; set; }
+    private GachaUseCase GachaUseCase { get; set; }
+    private PurchaseFuelUseCase PurchaseFuelUseCase { get; set; }
+    private ClaimAdFuelRewardUseCase ClaimAdFuelRewardUseCase { get; set; }
+    private UnitFormationUseCase UnitFormationUseCase { get; set; }
+    private ProfileUpdateUseCase ProfileUpdateUseCase { get; set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -32,6 +33,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
 
     private IUserDataRepository repository;
     private UserDataLoader userDataLoader;
+    private readonly SemaphoreSlim mutationQueue = new(1, 1);
 
     public bool Initialize(IUserDataRepository dataRepository = null)
     {
@@ -124,15 +126,18 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
 
     public async Task<bool> SaveUserProgressAsync(UserProgressData progress)
     {
-        bool success = await SaveProgressAsync(progress);
-
-        if (success && UserData != null)
+        return await RunSerializedMutationAsync(async () =>
         {
-            UserData.Progress = progress;
-            RaiseProgressUpdated();
-        }
+            bool success = await SaveProgressAsync(progress);
 
-        return success;
+            if (success && UserData != null)
+            {
+                UserData.Progress = progress;
+                RaiseProgressUpdated();
+            }
+
+            return success;
+        });
     }
 
     private async Task<bool> SaveSectionAsync<T>(T value, Func<Task> saveOperation, string sectionName)
@@ -159,6 +164,23 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         {
             Debug.LogError($"[UserDataManager] Save {sectionName} failed: {e}");
             return false;
+        }
+    }
+
+    private async Task<T> RunSerializedMutationAsync<T>(Func<Task<T>> operation)
+    {
+        if (operation == null)
+            throw new ArgumentNullException(nameof(operation));
+
+        await mutationQueue.WaitAsync();
+
+        try
+        {
+            return await operation();
+        }
+        finally
+        {
+            mutationQueue.Release();
         }
     }
 
