@@ -1,13 +1,16 @@
+using Firebase;
 using Firebase.Firestore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public sealed class FirestoreUserDataRepository : IUserDataRepository
 {
     private const string UsersCollection = "users";
     private const string CreatedAtField = "CreatedAt";
     private const string UpdatedAtField = "UpdatedAt";
+    private const int MaxAttempts = 3;
 
     private readonly FirebaseFirestore firestore;
 
@@ -24,7 +27,9 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
     public async Task<UserDataLoadResult> LoadAsync(string userId)
     {
         DocumentReference userRef = GetUserDocument(userId);
-        DocumentSnapshot snapshot = await userRef.GetSnapshotAsync();
+        DocumentSnapshot snapshot = await ExecuteWithRetryAsync(
+            () => userRef.GetSnapshotAsync(),
+            "Load user data");
 
         if (!snapshot.Exists)
             return UserDataLoadResult.NotFound();
@@ -40,8 +45,12 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
 
         if (missingTimestampFields.Count > 0)
         {
-            await userRef.UpdateAsync(missingTimestampFields);
-            snapshot = await userRef.GetSnapshotAsync();
+            await ExecuteWithRetryAsync(
+                () => userRef.UpdateAsync(missingTimestampFields),
+                "Repair user timestamps");
+            snapshot = await ExecuteWithRetryAsync(
+                () => userRef.GetSnapshotAsync(),
+                "Reload repaired user data");
         }
 
         UserDataRoot data = snapshot.ConvertTo<UserDataRoot>();
@@ -52,14 +61,19 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
     {
         ValidateData(data);
 
-        return GetUserDocument(userId).SetAsync(BuildRootFields(data, includeCreatedAt: true));
+        return ExecuteWithRetryAsync(
+            () => GetUserDocument(userId).SetAsync(BuildRootFields(data, includeCreatedAt: true)),
+            "Create user data",
+            allowRetry: false);
     }
 
     public Task SaveAllAsync(string userId, UserDataRoot data)
     {
         ValidateData(data);
 
-        return GetUserDocument(userId).UpdateAsync(BuildRootFields(data, includeCreatedAt: false));
+        return ExecuteWithRetryAsync(
+            () => GetUserDocument(userId).UpdateAsync(BuildRootFields(data, includeCreatedAt: false)),
+            "Save all user data");
     }
 
     public Task SaveProfileAsync(string userId, UserProfileData profile) =>
@@ -104,7 +118,9 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
         if (fields.Count == 1)
             throw new ArgumentException("At least one user data section is required.", nameof(update));
 
-        return GetUserDocument(userId).UpdateAsync(fields);
+        return ExecuteWithRetryAsync(
+            () => GetUserDocument(userId).UpdateAsync(fields),
+            "Save user data sections");
     }
 
     private Task SaveSectionAsync<T>(string userId, string fieldName, T value)
@@ -112,11 +128,13 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
         if (value == null)
             throw new ArgumentNullException(nameof(value));
 
-        return GetUserDocument(userId).UpdateAsync(new Dictionary<string, object>
-        {
-            { fieldName, value },
-            { UpdatedAtField, FieldValue.ServerTimestamp },
-        });
+        return ExecuteWithRetryAsync(
+            () => GetUserDocument(userId).UpdateAsync(new Dictionary<string, object>
+            {
+                { fieldName, value },
+                { UpdatedAtField, FieldValue.ServerTimestamp },
+            }),
+            $"Save user data section '{fieldName}'");
     }
 
     private DocumentReference GetUserDocument(string userId)
@@ -159,5 +177,59 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
     {
         if (data == null)
             throw new ArgumentNullException(nameof(data));
+    }
+
+    private static async Task ExecuteWithRetryAsync(
+        Func<Task> operation,
+        string operationName,
+        bool allowRetry = true)
+    {
+        await ExecuteWithRetryAsync(async () =>
+        {
+            await operation();
+            return true;
+        }, operationName, allowRetry);
+    }
+
+    private static async Task<T> ExecuteWithRetryAsync<T>(
+        Func<Task<T>> operation,
+        string operationName,
+        bool allowRetry = true)
+    {
+        int maxAttempts = allowRetry ? MaxAttempts : 1;
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                return await operation();
+            }
+            catch (FirebaseException exception)
+                when (attempt < maxAttempts && IsTransient(exception.ErrorCode))
+            {
+                int delayMilliseconds = 250 * attempt * attempt;
+                Debug.LogWarning(
+                    $"[FirestoreUserDataRepository] {operationName} transient failure " +
+                    $"(code: {exception.ErrorCode}, attempt: {attempt}/{maxAttempts}). Retrying...");
+                await Task.Delay(delayMilliseconds);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[FirestoreUserDataRepository] {operationName} failed: {exception}");
+                throw;
+            }
+        }
+
+        throw new InvalidOperationException($"{operationName} retry loop ended unexpectedly.");
+    }
+
+    private static bool IsTransient(int errorCode)
+    {
+        // Firestore uses gRPC canonical status codes.
+        return errorCode == 4 ||  // DeadlineExceeded
+               errorCode == 8 ||  // ResourceExhausted
+               errorCode == 10 || // Aborted
+               errorCode == 13 || // Internal
+               errorCode == 14;   // Unavailable
     }
 }
