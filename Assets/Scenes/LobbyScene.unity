@@ -15770,7 +15770,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ec0e30327bde164a9680ae5ff174b5f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupUI
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryPanelView
   contentRoot: {fileID: 1793687666}
   slotPrefab: {fileID: 1185242590003644129, guid: dafd29809587c6f43a0f548f831d2a68, type: 3}
   detailPopup: {fileID: 1264811926}
@@ -24508,10 +24508,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 526748099}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 526748103}
+        m_TargetAssemblyTypeName: RatePopupPanelView, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -28986,10 +28986,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1264811925}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1264811926}
+        m_TargetAssemblyTypeName: ItemDetailPanelView, Assembly-CSharp
+        m_MethodName: Hide
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -32778,7 +32778,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd28349651a8e0142b0132b9ff686ca6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitDetailPanel
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDetailView
   detailRoot: {fileID: 897349500}
   rarity_text: {fileID: 2075982114}
   rarity_Img: {fileID: 2117034959}
@@ -32816,7 +32816,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d104a4f775e90c74e93e34d8fef588d0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LobbyTabController
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyTabView
   tabs:
   - button: {fileID: 566079728}
     highlight: {fileID: 1731178877}
@@ -33563,7 +33563,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97df1a59fea9f2747b18d0f47f0f910b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LobbyBattleUIController
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyBattlePanelView
   profileIconImage: {fileID: 1598045749}
   levelText: {fileID: 2087826697}
   powerText: {fileID: 220768200}
@@ -40654,7 +40654,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d104a4f775e90c74e93e34d8fef588d0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LobbyTabController
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyTabView
   tabs:
   - button: {fileID: 1491304668}
     highlight: {fileID: 616693820}
@@ -40924,7 +40924,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ae638a97fb091e4b9267d24e55ca13c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MailboxPopupUI
+  m_EditorClassIdentifier: Assembly-CSharp::MailboxPanelView
   contentRoot: {fileID: 2120025854}
   mailSlotPrefab: {fileID: 5429823053583687306, guid: be8cf701d2f7040478c87e2b4c8728c6, type: 3}
   receiveAllButton: {fileID: 273880304}
@@ -47512,7 +47512,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 345608577289c2842b41715cddd287af, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemDetailPopupUI
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDetailPanelView
   iconImage: {fileID: 1107290722}
   nameText: {fileID: 1404772002}
   countText: {fileID: 621838252}
@@ -49580,7 +49580,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d104a4f775e90c74e93e34d8fef588d0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LobbyTabController
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyTabView
   tabs:
   - button: {fileID: 142232220}
     highlight: {fileID: 1129829790}
@@ -72490,7 +72490,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 282b6b9b618d8b14b922abc42907c319, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LobbyUnitTabUI
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyUnitPanelView
   selectedUnitRoot: {fileID: 1032109879}
   ownedUnitRoot: {fileID: 25353361}
   unitCardPrefab: {fileID: 7216777218687801293, guid: c7b846c0809a24748b6395ce2da9d22f, type: 3}
