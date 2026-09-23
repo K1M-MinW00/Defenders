@@ -12,7 +12,7 @@ public class StageDataProvider
         if (cache.TryGetValue(key, out StageDataSO cached))
             return cached;
 
-        string path = $"StageData/Stage_{sector}_{stage}";
+        string path = $"GameData/Stages/Stage_{sector}_{stage}";
         StageDataSO data = Resources.Load<StageDataSO>(path);
 
         if (data == null)

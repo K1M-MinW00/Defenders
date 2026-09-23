@@ -16,12 +16,12 @@ public static class GameConfig
         if (IsInitialized)
             return;
 
-        NewUserConfigSO newUserConfig = LoadRequired<NewUserConfigSO>("Configs/NewUserConfig");
-        UserLevelProgressionSO levelProgression = LoadRequired<UserLevelProgressionSO>("Configs/UserLevelProgression");
-        GachaEconomyConfigSO gachaEconomy = LoadRequired<GachaEconomyConfigSO>("Configs/GachaEconomyConfig");
-        GameIconSetSO iconSet = LoadRequired<GameIconSetSO>("Database/GameIconSet");
-        IUnitCatalog units = new UnitCatalog(Resources.LoadAll<UnitDataSO>("UnitData"));
-        IItemCatalog items = new ItemCatalog(Resources.LoadAll<ItemDataSO>("Items"));
+        NewUserConfigSO newUserConfig = LoadRequired<NewUserConfigSO>("GameData/Configs/NewUserConfig");
+        UserLevelProgressionSO levelProgression = LoadRequired<UserLevelProgressionSO>("GameData/Configs/UserLevelProgression");
+        GachaEconomyConfigSO gachaEconomy = LoadRequired<GachaEconomyConfigSO>("GameData/Configs/GachaEconomyConfig");
+        GameIconSetSO iconSet = LoadRequired<GameIconSetSO>("GameData/Catalogs/GameIconSet");
+        IUnitCatalog units = new UnitCatalog(Resources.LoadAll<UnitDataSO>("GameData/Units"));
+        IItemCatalog items = new ItemCatalog(Resources.LoadAll<ItemDataSO>("GameData/Items"));
         IGameIconProvider icons = new GameIconProvider(iconSet);
 
         Validate(newUserConfig.TryValidate(units, out string newUserError), "NewUserConfig", newUserError);

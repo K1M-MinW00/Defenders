@@ -39,7 +39,7 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
         }
     }
 
-    private const string ConfigResourcePath = "Configs/GameAudioConfig";
+    private const string ConfigResourcePath = "GameData/Configs/GameAudioConfig";
     private const string SoundPreferenceKey = "Setting_Sound";
 
     private GameAudioConfigSO config;

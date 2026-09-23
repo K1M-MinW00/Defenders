@@ -65,7 +65,7 @@ public sealed class PromotionStatBonus
 
 public static class PromotionProgressionDatabase
 {
-    private const string ResourcePath = "Database/PromotionProgression";
+    private const string ResourcePath = "GameData/Catalogs/PromotionProgression";
     private static PromotionProgressionSO progression;
 
     public static PromotionProgressionSO Get()
