@@ -184,27 +184,27 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         }
     }
 
-    public void RaiseProfileUpdated()
+    private void RaiseProfileUpdated()
     {
         OnProfileUpdated?.Invoke();
     }
 
-    public void RaiseResourceUpdated()
+    private void RaiseResourceUpdated()
     {
         OnResourceUpdated?.Invoke();
     }
 
-    public void RaiseInventoryUpdated()
+    private void RaiseInventoryUpdated()
     {
         OnInventoryUpdated?.Invoke();
     }
 
-    public void RaiseRosterUpdated()
+    private void RaiseRosterUpdated()
     {
         OnRosterUpdated?.Invoke();
     }
 
-    public void RaiseProgressUpdated()
+    private void RaiseProgressUpdated()
     {
         OnProgressUpdated?.Invoke();
     }

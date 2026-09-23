@@ -39,7 +39,7 @@ public sealed class MailboxService
             .ToList();
     }
 
-    public Task<MailboxClaimResult> ClaimMailAsync(MailData mail)
+    internal Task<MailboxClaimResult> ClaimMailAsync(MailData mail)
     {
         if (mail == null || mail.Claimed || IsExpired(mail))
             return Task.FromResult(MailboxClaimResult.Fail(MailboxClaimFailure.InvalidRequest));
@@ -47,7 +47,7 @@ public sealed class MailboxService
         return ClaimAsync(new[] { mail.MailId });
     }
 
-    public Task<MailboxClaimResult> ClaimAllAsync()
+    internal Task<MailboxClaimResult> ClaimAllAsync()
     {
         List<string> claimableIds = CachedMails
             .Where(mail => mail != null && !mail.Claimed && !IsExpired(mail))

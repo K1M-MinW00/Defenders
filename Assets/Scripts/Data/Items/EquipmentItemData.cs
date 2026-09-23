@@ -1,8 +1,10 @@
-﻿[System.Serializable]
+﻿using Firebase.Firestore;
+
+[System.Serializable]
+[FirestoreData]
 public class EquipmentItemData
 {
-    public string UniqueId;
-    public string ItemId;
-
-    public int Level;
+    [FirestoreProperty] public string UniqueId { get; set; }
+    [FirestoreProperty] public string ItemId { get; set; }
+    [FirestoreProperty] public int Level { get; set; } = 1;
 }

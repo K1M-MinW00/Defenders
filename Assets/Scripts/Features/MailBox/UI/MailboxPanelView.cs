@@ -119,18 +119,13 @@ public class MailboxPanelView : MonoBehaviour
 
         try
         {
-            MailboxClaimResult result = await mailboxService.ClaimMailAsync(mail);
+            MailboxClaimResult result = await UserDataManager.Instance.ClaimMailAsync(mail);
 
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[MailboxPanelView] Claim failed: {result.Failure}");
                 UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
             }
-            else
-            {
-                RaiseRewardDataUpdated();
-            }
-
             await RefreshAsync();
         }
         catch (Exception exception)
@@ -153,7 +148,7 @@ public class MailboxPanelView : MonoBehaviour
 
         try
         {
-            MailboxClaimResult result = await mailboxService.ClaimAllAsync();
+            MailboxClaimResult result = await UserDataManager.Instance.ClaimAllMailAsync();
 
             if (!result.Succeeded)
             {
@@ -162,11 +157,6 @@ public class MailboxPanelView : MonoBehaviour
 
                 UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
             }
-            else
-            {
-                RaiseRewardDataUpdated();
-            }
-
             await RefreshAsync();
         }
         catch (Exception exception)
@@ -214,13 +204,6 @@ public class MailboxPanelView : MonoBehaviour
         }
 
         RefreshButtonStates();
-    }
-
-    private static void RaiseRewardDataUpdated()
-    {
-        UserDataManager.Instance.RaiseResourceUpdated();
-        UserDataManager.Instance.RaiseInventoryUpdated();
-        UserDataManager.Instance.RaiseRosterUpdated();
     }
 
     private void RefreshButtonStates()
