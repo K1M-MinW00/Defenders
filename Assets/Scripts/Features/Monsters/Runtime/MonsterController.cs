@@ -5,19 +5,20 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(MonsterHealth))]
+[RequireComponent(typeof(MonsterTargetingController))]
 public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 {
     [Header("References")]
     private ModelView view;
-    private UnitRoster unitRoster;
     private NavMeshAgent agent;
     private IMonsterAttack attackBehavior;
     private StagePoolManager poolManager;
+    private MonsterTargetingController targeting;
 
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
     public NavMeshAgent Agent => agent;
-    public UnitController Target { get; private set; }
+    public UnitController Target => targeting != null ? targeting.CurrentTarget : null;
     public MonsterHealth Health { get; private set; }
     public StagePoolManager PoolManager => poolManager;
     public float AttackRange => FinalStats.atkRange;
@@ -51,6 +52,9 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
         poolable = GetComponent<Poolable>();
 
         Health = GetComponent<MonsterHealth>();
+        targeting = GetComponent<MonsterTargetingController>();
+        if (targeting == null)
+            targeting = gameObject.AddComponent<MonsterTargetingController>();
         Health.OnDead += HandleDead;
 
         agent.updateRotation = false;
@@ -66,8 +70,8 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     {
         Data = data;
         FinalStats = data.Stats;
-        this.unitRoster = unitRoster;
         this.poolManager = poolManager;
+        targeting.Initialize(unitRoster);
 
         ApplyStats();
     }
@@ -88,7 +92,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
     public void OnDespawn()
     {
-        Target = null;
+        targeting.ClearTarget();
         StopMovement();
     }
 
@@ -111,22 +115,13 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
 
     // --- Targeting / Movement Helpers ---
-    public void ClearTarget() => Target = null;
-    public void SetTarget(UnitController newTarget) => Target = newTarget;
-    public bool HasValidTarget()
-    {
-        bool valid = CombatTargetSelector.IsValid(Target);
-        if (!valid)
-            ClearTarget();
-
-        return valid;
-    }
+    public void ClearTarget() => targeting.ClearTarget();
+    public void SetTarget(UnitController newTarget) => targeting.SetTarget(newTarget);
+    public bool HasValidTarget() => targeting.HasValidTarget();
 
     public bool TryFindClosestAliveUnit()
     {
-        UnitController closest = unitRoster.FindClosestAlive(transform.position);
-        SetTarget(closest);
-        return HasValidTarget();
+        return targeting.TryAcquireClosest(transform.position);
     }
 
     public void MoveTo(Vector3 dest)
@@ -165,7 +160,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
         if (!HasValidTarget())
             return false;
 
-        return CombatTargetSelector.IsWithinRange(Target, transform.position, AttackRange);
+        return targeting.IsCurrentTargetInRange(transform.position, AttackRange);
     }
 
     public void TryAttackCurrentTarget()

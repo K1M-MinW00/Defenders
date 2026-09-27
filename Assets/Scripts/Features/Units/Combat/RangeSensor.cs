@@ -29,25 +29,7 @@ public class RangeSensor : MonoBehaviour
     public MonsterController GetClosestAlive(Vector3 from)
     {
         CleanupDeadOrNull();
-
-        float closestDistSqr = float.PositiveInfinity;
-
-        MonsterController best = null;
-
-        foreach (var enemy in inRange)
-        {
-            if (enemy == null || enemy.Health.IsDead)
-                continue;
-
-            float distSqr = (enemy.transform.position - from).sqrMagnitude;
-            if (distSqr < closestDistSqr)
-            {
-                closestDistSqr = distSqr;
-                best = enemy;
-            }
-        }
-
-        return best;
+        return CombatTargetSelector.FindClosest(inRange, from);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -58,7 +40,7 @@ public class RangeSensor : MonoBehaviour
         if (!other.TryGetComponent(out MonsterController monster))
             return;
 
-        if (monster.Health.IsDead)
+        if (!CombatTargetSelector.IsValid(monster))
             return;
 
         inRange.Add(monster);
@@ -75,9 +57,9 @@ public class RangeSensor : MonoBehaviour
         inRange.Remove(monster);
     }
 
-    // ¸ó½ºÅÍ°¡ Destroy µÇ°Å³ª, Á×¾î¼­ ³²¾ÆÀÖÀ» ¼ö ÀÖÀ¸´Ï Á¤¸®¿ë
+    // ëª¬ìŠ¤í„°ê°€ Destroy ë˜ê±°ë‚˜, ì£½ì–´ì„œ ë‚¨ì•„ìžˆì„ ìˆ˜ ìžˆìœ¼ë‹ˆ ì •ë¦¬ìš©
     public void CleanupDeadOrNull()
     {
-        inRange.RemoveWhere(m => m == null || m.Health.IsDead);
+        inRange.RemoveWhere(monster => !CombatTargetSelector.IsValid(monster));
     }
 }

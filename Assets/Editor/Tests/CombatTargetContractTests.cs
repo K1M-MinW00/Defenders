@@ -12,6 +12,26 @@ public sealed class CombatTargetContractTests
     }
 
     [Test]
+    public void MonsterTargeting_StartsWithoutAValidTarget()
+    {
+        GameObject gameObject = new("MonsterTargeting");
+
+        try
+        {
+            MonsterTargetingController targeting = gameObject.AddComponent<MonsterTargetingController>();
+            targeting.Initialize(null);
+
+            Assert.That(targeting.CurrentTarget, Is.Null);
+            Assert.That(targeting.HasValidTarget(), Is.False);
+            Assert.That(targeting.TryAcquireClosest(Vector3.zero), Is.False);
+        }
+        finally
+        {
+            Object.DestroyImmediate(gameObject);
+        }
+    }
+
+    [Test]
     public void HealthComponents_ExposeCommonHealthContract()
     {
         Assert.That(typeof(ICombatHealth).IsAssignableFrom(typeof(UnitHealth)), Is.True);
