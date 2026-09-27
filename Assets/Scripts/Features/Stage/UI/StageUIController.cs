@@ -34,7 +34,8 @@ public class StageUIController : MonoBehaviour
             return;
         }
 
-        phaseUIView?.SetPhase(session.CurrentState);
+        session.PhaseChanged -= HandlePhaseChanged;
+        session.PhaseChanged += HandlePhaseChanged;
 
         hudPresenter?.Initialize(
             session.CurrentStageData,
@@ -49,7 +50,7 @@ public class StageUIController : MonoBehaviour
         unitDragActionUI?.Initialize(economy);
 
         hpSummaryUI?.Initialize(monsterHpTracker, unitHpTracker);
-        resultUI?.Initialize();
+        resultUI?.Initialize(session);
         waveTrackUI?.Initialize(session.CurrentStageData);
 
         timeController?.Initialize();
@@ -62,6 +63,9 @@ public class StageUIController : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (session != null)
+            session.PhaseChanged -= HandlePhaseChanged;
+
         hudPresenter?.Dispose();
         prepareActionUI?.Dispose();
 
@@ -82,6 +86,11 @@ public class StageUIController : MonoBehaviour
 
         if (monsterSpawner != null && session?.CurrentWave != null)
             hudPresenter?.RefreshMonsterCount(session.CurrentWave.TotalMonsterCount);
+    }
+
+    private void HandlePhaseChanged(StageState previous, StageState current)
+    {
+        SetPhase(current);
     }
 
     public void RefreshWaveUI(int currentWaveIndex)

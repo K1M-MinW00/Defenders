@@ -1,9 +1,10 @@
 public enum StageState
 {
     None,
+    Loading,
     Preparing,
     Combat,
-    Reward,
+    WaveCleared,
     StageClear,
     StageFail,
 }

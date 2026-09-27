@@ -7,9 +7,11 @@ public class StageResultUI : MonoBehaviour
 
     [Header("Scene")]
     [SerializeField] private string lobbySceneName = "LobbyScene";
+    private StageSessionController session;
 
-    public void Initialize()
+    public void Initialize(StageSessionController stageSession)
     {
+        session = stageSession;
         HideAll();
     }
 
@@ -37,6 +39,12 @@ public class StageResultUI : MonoBehaviour
     }
     public async void OnClickReturnToLobby()
     {
+        if (session == null || !await session.TryPrepareExitAsync())
+        {
+            Debug.LogWarning("[StageResultUI] Progress is not saved yet. Lobby transition was blocked; press again to retry.");
+            return;
+        }
+
         Time.timeScale = 1f;
         SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
         if (result != SceneTransitionResult.Succeeded && this != null)

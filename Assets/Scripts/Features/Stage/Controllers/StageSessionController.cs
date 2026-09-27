@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -19,11 +20,20 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageDataSO currentStageData;
     private StageEnterData enterData;
     private StageDataProvider stageDataProvider;
+    private readonly StagePhaseMachine phaseMachine = new();
+    private bool stageClearRewardGranted;
+    private bool stageClearSavePending;
+    private bool stageClearSaveInProgress;
 
-
-    public StageState CurrentState { get; private set; } = StageState.None;
+    public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
     public int CurrentWaveIndex { get; private set; }
+
+    public event Action<StageState, StageState> PhaseChanged
+    {
+        add => phaseMachine.Changed += value;
+        remove => phaseMachine.Changed -= value;
+    }
 
     public WaveData CurrentWave =>
         currentStageData != null && CurrentWaveIndex < currentStageData.waves.Count
@@ -32,6 +42,9 @@ public class StageSessionController : MonoBehaviour
 
     private void Start()
     {
+        if (!TransitionTo(StageState.Loading))
+            return;
+
         if (!GameConfig.IsInitialized)
             GameConfig.Initialize();
 
@@ -59,7 +72,9 @@ public class StageSessionController : MonoBehaviour
     {
         currentStageData = stageData;
         CurrentWaveIndex = 0;
-        CurrentState = StageState.None;
+        stageClearRewardGranted = false;
+        stageClearSavePending = false;
+        stageClearSaveInProgress = false;
 
         bootstrapper.InitializeStage(stageData,enterData);
 
@@ -70,9 +85,9 @@ public class StageSessionController : MonoBehaviour
     }
     public void EnterPreparePhase()
     {
-        CurrentState = StageState.Preparing;
+        if (!TransitionTo(StageState.Preparing))
+            return;
 
-        stageUI.SetPhase(CurrentState);
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         monsterPrewarmService.PrewarmForWave(CurrentWave);
@@ -90,8 +105,9 @@ public class StageSessionController : MonoBehaviour
 
     public void EnterCombatPhase()
     {
-        CurrentState = StageState.Combat;
-        stageUI.SetPhase(CurrentState);
+        if (!TransitionTo(StageState.Combat))
+            return;
+
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         preparationService.ExitPrepareMode();
@@ -109,7 +125,9 @@ public class StageSessionController : MonoBehaviour
         if (CurrentState != StageState.Combat)
             return;
 
-        CurrentState = StageState.Reward;
+        if (!TransitionTo(StageState.WaveCleared))
+            return;
+
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
         rewardService.GiveWaveReward(CurrentWave);
         stageTimeController.ExitCombatPhase();
@@ -149,8 +167,9 @@ public class StageSessionController : MonoBehaviour
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
         stageTimeController.ExitCombatPhase();
-        CurrentState = StageState.StageFail;
-        stageUI.SetPhase(CurrentState);
+        if (!TransitionTo(StageState.StageFail))
+            return;
+
         stageUI.ShowStageFail();
 
         bool saved = await progressService.ApplyStageFailAsync(currentStageData, CurrentWaveIndex);
@@ -160,14 +179,50 @@ public class StageSessionController : MonoBehaviour
 
     private async Task HandleStageClear()
     {
-        CurrentState = StageState.StageClear;
-        rewardService.GiveStageClearReward(currentStageData);
-        bool saved = await progressService.ApplyStageClearAsync(currentStageData);
-        if (!saved)
-            Debug.LogWarning($"Stage clear progress save failed: {currentStageData?.StageKey}");
+        if (!stageClearRewardGranted)
+        {
+            rewardService.GiveStageClearReward(currentStageData);
+            stageClearRewardGranted = true;
+        }
 
-        stageUI.SetPhase(CurrentState);
         stageUI.ShowStageClear();
+        await TrySaveStageClearAsync();
+    }
+
+    private async Task<bool> TrySaveStageClearAsync()
+    {
+        if (stageClearSaveInProgress)
+            return false;
+
+        stageClearSaveInProgress = true;
+        stageClearSavePending = true;
+        try
+        {
+            bool saved = await progressService.ApplyStageClearAsync(currentStageData);
+            if (!saved)
+            {
+                Debug.LogWarning($"Stage clear progress save failed. Lobby exit is blocked until retry succeeds: {currentStageData?.StageKey}");
+                return false;
+            }
+
+            stageClearSavePending = false;
+            return CurrentState == StageState.StageClear || TransitionTo(StageState.StageClear);
+        }
+        finally
+        {
+            stageClearSaveInProgress = false;
+        }
+    }
+
+    public async Task<bool> TryPrepareExitAsync()
+    {
+        if (stageClearSavePending && !await TrySaveStageClearAsync())
+            return false;
+
+        if (CurrentState != StageState.StageClear && CurrentState != StageState.StageFail)
+            return false;
+
+        return true;
     }
 
     private void StopCurrentPhase()
@@ -181,5 +236,14 @@ public class StageSessionController : MonoBehaviour
     {
         stageTimeController.Resume();
         _ = HandleWaveLoseAsync(stopCurrentPhase: true);
+    }
+
+    private bool TransitionTo(StageState next)
+    {
+        if (phaseMachine.TryTransition(next))
+            return true;
+
+        Debug.LogError($"Invalid stage phase transition: {CurrentState} -> {next}");
+        return false;
     }
 }
