@@ -16,7 +16,7 @@ public class GameCameraController : MonoBehaviour
 
     [Header("Pan")]
     [SerializeField] private float panSmoothness = 1f;
-    [SerializeField] private LayerMask dragBlockLayer; // ¿Ø¥÷¿Ã ¿÷¥¬ ∑π¿ÃæÓ
+    [SerializeField] private LayerMask dragBlockLayer; // Ïú†ÎãõÏù¥ ÏûàÎäî Î†àÏù¥Ïñ¥
     [SerializeField] private bool allowPanInCombat = true;
 
     [Header("Move Bounds")]
@@ -30,18 +30,24 @@ public class GameCameraController : MonoBehaviour
     private bool isDragging;
     private Vector3 lastPointerWorldPos;
     private int activeFingerId = -1;
+    private bool hasValidBounds;
 
     private void Awake()
     {
         if (cam == null)
             cam = GetComponent<Camera>();
 
+        hasValidBounds = minBound != null && maxBound != null;
+
         if (!cam.orthographic)
-            Debug.LogWarning($"{name}: GameCameraController ¥¬ Orthographic Camera ±‚¡ÿ¿∏∑Œ ¿€º∫µ«æ˙Ω¿¥œ¥Ÿ.");
+            Debug.LogWarning($"{name}: GameCameraController Îäî Orthographic Camera Í∏∞Ï§ÄÏúºÎ°ú ÏûëÏÑ±ÎêòÏóàÏäµÎãàÎã§.");
     }
 
     private void Update()
     {
+        if (!hasValidBounds)
+            return;
+
         HandleZoom();
         HandlePan();
         ClampCameraPosition();
@@ -49,8 +55,16 @@ public class GameCameraController : MonoBehaviour
 
     public void Initialize(Transform minBound, Transform maxBound)
     {
+        if (minBound == null || maxBound == null)
+        {
+            hasValidBounds = false;
+            Debug.LogError($"[{nameof(GameCameraController)}] Camera bounds are missing. Check the StageMapContext on the map prefab.", this);
+            return;
+        }
+
         this.minBound = minBound;
         this.maxBound = maxBound;
+        hasValidBounds = true;
 
         ResetCameraToDefaultImmediate();
     }
@@ -120,7 +134,7 @@ public class GameCameraController : MonoBehaviour
         cam.orthographicSize = Mathf.Clamp(nextZoom, minZoom, maxZoom);
         ClampCameraPosition();
 
-        // «…ƒ° ¡ﬂø°¥¬ µÂ∑°±◊ «ÿ¡¶
+        // ÌïÄÏπò Ï§ëÏóêÎäî ÎìúÎûòÍ∑∏ Ìï¥Ï†ú
         isDragging = false;
         activeFingerId = -1;
     }
@@ -222,7 +236,7 @@ public class GameCameraController : MonoBehaviour
 
     private void ClampCameraPosition()
     {
-        if (!cam.orthographic)
+        if (cam == null || !cam.orthographic || !hasValidBounds || minBound == null || maxBound == null)
             return;
 
         float halfHeight = cam.orthographicSize;
@@ -235,7 +249,7 @@ public class GameCameraController : MonoBehaviour
 
         Vector3 pos = transform.position;
 
-        // ƒ´∏ﬁ∂Û ∫‰∞° bounds∫∏¥Ÿ ¥ı ≈´ ∞ÊøÏ ¡ﬂæ” ∞Ì¡§
+        // Ïπ¥Î©îÎùº Î∑∞Í∞Ä boundsÎ≥¥Îã§ Îçî ÌÅ∞ Í≤ΩÏö∞ Ï§ëÏïô Í≥†Ï†ï
         if (minX > maxX)
             pos.x = (minBound.position.x + maxBound.position.x) * 0.5f;
         else
@@ -289,6 +303,9 @@ public class GameCameraController : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
+        if (minBound == null || maxBound == null)
+            return;
+
         Gizmos.color = Color.cyan;
         Vector3 center = new Vector3((minBound.position.x + maxBound.position.x) * 0.5f, (minBound.position.y + maxBound.position.y) * 0.5f, 0f);
         Vector3 size = new Vector3(maxBound.position.x - minBound.position.x, maxBound.position.y - minBound.position.y, 0f);

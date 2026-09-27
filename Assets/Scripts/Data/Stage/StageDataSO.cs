@@ -29,6 +29,12 @@ public class StageDataSO : ScriptableObject
             return Fail("Map prefab is missing.", out error);
         if (!mapPrefab.TryGetComponent(out StageMapContext mapContext))
             return Fail("Map prefab does not contain StageMapContext on its root.", out error);
+        if (mapContext.MinBound == null || mapContext.MaxBound == null)
+            return Fail("Map context camera bounds are missing.", out error);
+        if (mapContext.UnitSpawnPoint == null)
+            return Fail("Map context unit spawn point is missing.", out error);
+        if (mapContext.PlacementArea == null)
+            return Fail("Map context placement area is missing.", out error);
         if (economyConfig == null)
             return Fail("Economy config is missing.", out error);
         if (waves == null || (waves.Count != 3 && waves.Count != 5 && waves.Count != 10))
