@@ -6,7 +6,7 @@ public class PlacementController : MonoBehaviour
     [Header("Reference")]
     [SerializeField] private Camera mainCam;
     [SerializeField] private UIDropRouter uiDropRouter;
-    [SerializeField] private StageUIController_ stageUIController;
+    [SerializeField] private StageUIController stageUIController;
     [SerializeField] private TilemapPlacementArea placementArea;
 
     [Header("Section")]

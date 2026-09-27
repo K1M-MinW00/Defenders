@@ -8020,7 +8020,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fb7a043f1c6a4e44b7d4daca2fcb784, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageProgressService
-  stagesPerSector: 5
 --- !u!1 &1232054689
 GameObject:
   m_ObjectHideFlags: 0
@@ -14718,7 +14717,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0054e7b3741abfc4fb4fea39e87bf293, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StageUIController_
+  m_EditorClassIdentifier: Assembly-CSharp::StageUIController
   phaseUIView: {fileID: 2138733315}
   hudPresenter: {fileID: 2138733314}
   prepareActionUI: {fileID: 2138733313}

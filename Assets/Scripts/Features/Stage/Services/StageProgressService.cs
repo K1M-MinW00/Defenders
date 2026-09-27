@@ -3,64 +3,87 @@ using UnityEngine;
 
 public class StageProgressService : MonoBehaviour
 {
-    [SerializeField] private int stagesPerSector = 5;
-
-    public async Task ApplyStageClearAsync(StageDataSO clearedStage)
+    public async Task<bool> RecordWaveClearAsync(StageDataSO stage, int clearedWaveCount)
     {
-        if (clearedStage == null)
+        if (!TryGetCurrentProgress(stage, out UserProgressData currentProgress))
+            return false;
+
+        UserProgressData nextProgress;
+
+        try
         {
-            Debug.LogError("ApplyStageClearAsync failed. StageDataSO is null.");
-            return;
+            nextProgress = StageProgressRules.RecordClearedWave(
+                currentProgress,
+                stage.sector,
+                stage.stage,
+                clearedWaveCount);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"RecordWaveClearAsync failed: {exception.Message}");
+            return false;
         }
 
-        UserDataRoot userData = UserDataManager.Instance.UserData;
+        if (nextProgress.BestWaveCleared == currentProgress.BestWaveCleared)
+            return true;
 
-        if (userData == null || userData.Progress == null)
-        {
-            Debug.LogError("ApplyStageClearAsync failed. UserData or Progress is null.");
-            return;
-        }
-
-        UserProgressData currentProgress = userData.Progress;
-
-        // 현재 진행 중인 스테이지와 방금 클리어한 스테이지가 일치할 때만 전진
-        if (currentProgress.CurrentSector != clearedStage.sector ||
-            currentProgress.CurrentStage != clearedStage.stage)
-        {
-            Debug.LogWarning(
-                $"Stage clear ignored. Current: {currentProgress.CurrentSector}-{currentProgress.CurrentStage}, Cleared: {clearedStage.StageKey}"
-            );
-            return;
-        }
-
-        UserProgressData nextProgress = new()
-        {
-            CurrentSector = currentProgress.CurrentSector,
-            CurrentStage = currentProgress.CurrentStage,
-            BestWaveCleared = currentProgress.BestWaveCleared,
-        };
-
-        AdvanceProgress(nextProgress);
-
-        await UserDataManager.Instance.SaveUserProgressAsync(nextProgress);
+        return await UserDataManager.Instance.SaveUserProgressAsync(nextProgress);
     }
 
-    public Task ApplyStageFailAsync(StageDataSO failedStage, int clearedWaveCount)
+    public async Task<bool> ApplyStageClearAsync(StageDataSO clearedStage)
     {
-        // 현재 기획에서는 실패 시 진행도 저장 없음
-        return Task.CompletedTask;
+        if (!TryGetCurrentProgress(clearedStage, out UserProgressData currentProgress))
+            return false;
+
+        UserProgressData nextProgress;
+
+        try
+        {
+            nextProgress = StageProgressRules.AdvanceAfterStageClear(
+                currentProgress,
+                clearedStage.sector,
+                clearedStage.stage);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"ApplyStageClearAsync failed: {exception.Message}");
+            return false;
+        }
+
+        return await UserDataManager.Instance.SaveUserProgressAsync(nextProgress);
     }
 
-    private void AdvanceProgress(UserProgressData progress)
+    public Task<bool> ApplyStageFailAsync(StageDataSO failedStage, int clearedWaveCount)
     {
-        if (progress.CurrentStage < stagesPerSector)
+        return RecordWaveClearAsync(failedStage, clearedWaveCount);
+    }
+
+    private static bool TryGetCurrentProgress(StageDataSO stage, out UserProgressData progress)
+    {
+        progress = null;
+
+        if (stage == null)
         {
-            progress.CurrentStage++;
+            Debug.LogError("Stage progress update failed. StageDataSO is null.");
+            return false;
         }
-        else
+
+        UserDataManager manager = UserDataManager.Instance;
+        UserDataRoot userData = manager != null ? manager.UserData : null;
+        progress = userData?.Progress;
+
+        if (progress == null)
         {
-            progress.CurrentSector++;
-            progress.CurrentStage = 1;
+            Debug.LogError("Stage progress update failed. UserData or Progress is null.");
+            return false;
         }
+
+        if (StageProgressRules.IsCurrentStage(progress, stage.sector, stage.stage))
+            return true;
+
+        Debug.LogWarning(
+            $"Stage progress update ignored. Current: {progress.CurrentSector}-{progress.CurrentStage}, " +
+            $"Requested: {stage.StageKey}");
+        return false;
     }
 }

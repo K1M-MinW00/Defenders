@@ -9,7 +9,7 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageRewardService rewardService;
     [SerializeField] private StagePreparationService preparationService;
     [SerializeField] private StageBootstrapper bootstrapper;
-    [SerializeField] private StageUIController_ stageUI;
+    [SerializeField] private StageUIController stageUI;
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
     [SerializeField] private StageTimeController stageTimeController;
@@ -95,37 +95,72 @@ public class StageSessionController : MonoBehaviour
         waveController.StartWave(CurrentWave, OnWaveWin, OnWaveLose);
     }
 
-    private async void OnWaveWin()
+    private void OnWaveWin()
     {
+        _ = HandleWaveWinAsync();
+    }
+
+    private async Task HandleWaveWinAsync()
+    {
+        if (CurrentState != StageState.Combat)
+            return;
+
+        CurrentState = StageState.Reward;
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
         rewardService.GiveWaveReward(CurrentWave);
         stageTimeController.ExitCombatPhase();
-        CurrentWaveIndex++;
 
-        if (CurrentWave == null)
+        int clearedWaveCount = CurrentWaveIndex + 1;
+        bool isLastWave = currentStageData == null || clearedWaveCount >= currentStageData.waves.Count;
+
+        if (isLastWave)
         {
             await HandleStageClear();
             return;
         }
-        
+
+        bool saved = await progressService.RecordWaveClearAsync(currentStageData, clearedWaveCount);
+        if (!saved)
+            Debug.LogWarning($"Wave progress save failed: {currentStageData.StageKey}, cleared waves: {clearedWaveCount}");
+
+        CurrentWaveIndex = clearedWaveCount;
         EnterPreparePhase();
-        stageUI.RefreshWaveUI(CurrentWaveIndex);
     }
 
     private void OnWaveLose()
     {
+        _ = HandleWaveLoseAsync(stopCurrentPhase: false);
+    }
+
+    private async Task HandleWaveLoseAsync(bool stopCurrentPhase)
+    {
+        bool canFail = CurrentState == StageState.Combat ||
+                       (stopCurrentPhase && CurrentState == StageState.Preparing);
+
+        if (!canFail)
+            return;
+
+        if (stopCurrentPhase)
+            StopCurrentPhase();
+
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
         stageTimeController.ExitCombatPhase();
         CurrentState = StageState.StageFail;
         stageUI.SetPhase(CurrentState);
         stageUI.ShowStageFail();
+
+        bool saved = await progressService.ApplyStageFailAsync(currentStageData, CurrentWaveIndex);
+        if (!saved)
+            Debug.LogWarning($"Stage failure progress save failed: {currentStageData?.StageKey}");
     }
 
     private async Task HandleStageClear()
     {
         CurrentState = StageState.StageClear;
         rewardService.GiveStageClearReward(currentStageData);
-        await progressService.ApplyStageClearAsync(currentStageData);
+        bool saved = await progressService.ApplyStageClearAsync(currentStageData);
+        if (!saved)
+            Debug.LogWarning($"Stage clear progress save failed: {currentStageData?.StageKey}");
 
         stageUI.SetPhase(CurrentState);
         stageUI.ShowStageClear();
@@ -140,19 +175,7 @@ public class StageSessionController : MonoBehaviour
 
     public void RequestStageFail()
     {
-        if (CurrentState == StageState.StageFail || CurrentState == StageState.StageClear)
-            return;
-
-        StopCurrentPhase();
-
-        CurrentState = StageState.StageFail;
-
-        GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
-
         stageTimeController.Resume();
-        stageTimeController.ExitCombatPhase();
-
-        stageUI.SetPhase(CurrentState);
-        stageUI.ShowStageFail();
+        _ = HandleWaveLoseAsync(stopCurrentPhase: true);
     }
 }
