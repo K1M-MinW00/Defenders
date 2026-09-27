@@ -18,7 +18,7 @@ public class StageSessionController : MonoBehaviour
     [Header("Runtime")]
     [SerializeField] private StageDataSO currentStageData;
     private StageEnterData enterData;
-    private readonly StageDataProvider stageDataProvider = new();
+    private StageDataProvider stageDataProvider;
 
 
     public StageState CurrentState { get; private set; } = StageState.None;
@@ -32,6 +32,10 @@ public class StageSessionController : MonoBehaviour
 
     private void Start()
     {
+        if (!GameConfig.IsInitialized)
+            GameConfig.Initialize();
+
+        stageDataProvider = new StageDataProvider(GameConfig.Stages);
         enterData = StageEnterHolder.Consume();
 
         if(enterData == null)

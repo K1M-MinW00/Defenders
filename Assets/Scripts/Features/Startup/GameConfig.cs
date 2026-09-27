@@ -8,8 +8,9 @@ public static class GameConfig
     public static IGameIconProvider Icons { get; private set; }
     public static IUnitCatalog Units { get; private set; }
     public static IItemCatalog Items { get; private set; }
+    public static IStageCatalog Stages { get; private set; }
     public static bool IsInitialized => NewUserConfig != null && UserLevelProgression != null &&
-        GachaEconomy != null && Icons != null && Units != null && Items != null;
+        GachaEconomy != null && Icons != null && Units != null && Items != null && Stages != null;
 
     public static void Initialize()
     {
@@ -22,6 +23,7 @@ public static class GameConfig
         GameIconSetSO iconSet = LoadRequired<GameIconSetSO>("GameData/Catalogs/GameIconSet");
         IUnitCatalog units = new UnitCatalog(Resources.LoadAll<UnitDataSO>("GameData/Units"));
         IItemCatalog items = new ItemCatalog(Resources.LoadAll<ItemDataSO>("GameData/Items"));
+        IStageCatalog stages = new StageCatalog(Resources.LoadAll<StageDataSO>("GameData/Stages"));
         IGameIconProvider icons = new GameIconProvider(iconSet);
 
         Validate(newUserConfig.TryValidate(units, out string newUserError), "NewUserConfig", newUserError);
@@ -33,6 +35,7 @@ public static class GameConfig
         GachaEconomy = gachaEconomy;
         Units = units;
         Items = items;
+        Stages = stages;
         Icons = icons;
     }
 

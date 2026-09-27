@@ -5,7 +5,7 @@ public sealed class GameIconProviderTests
 {
     public void ProjectIconSet_IsComplete()
     {
-        GameIconSetSO iconSet = Resources.Load<GameIconSetSO>("Database/GameIconSet");
+        GameIconSetSO iconSet = Resources.Load<GameIconSetSO>("GameData/Catalogs/GameIconSet");
 
         Assert(iconSet != null, "Game icon set should be available from Resources.");
         Assert(iconSet.TryValidate(out string error), $"Game icon set should be complete: {error}");
@@ -13,7 +13,7 @@ public sealed class GameIconProviderTests
 
     public void Provider_MapsResourcesAndRarityFrames()
     {
-        GameIconSetSO iconSet = Resources.Load<GameIconSetSO>("Database/GameIconSet");
+        GameIconSetSO iconSet = Resources.Load<GameIconSetSO>("GameData/Catalogs/GameIconSet");
         GameIconProvider provider = new(iconSet);
 
         Assert(provider.GetResourceIcon(RewardType.Gold) == iconSet.Gold, "Gold icon should come from the configured icon set.");

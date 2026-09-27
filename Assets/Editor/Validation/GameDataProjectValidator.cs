@@ -72,23 +72,26 @@ public static class GameDataProjectValidator
         GameDataValidationReport report = new();
         UnitDataSO[] unitAssets = LoadAllAssets<UnitDataSO>();
         ItemDataSO[] itemAssets = LoadAllAssets<ItemDataSO>();
+        StageDataSO[] stageAssets = LoadAllAssets<StageDataSO>();
 
         IUnitCatalog units = TryCreateCatalog(() => new UnitCatalog(unitAssets), "Unit catalog", report);
         IItemCatalog items = TryCreateCatalog(() => new ItemCatalog(itemAssets), "Item catalog", report);
+        IStageCatalog stages = TryCreateCatalog(() => new StageCatalog(stageAssets), "Stage catalog", report);
 
         ValidateRequiredConfigs(units, report);
         ValidateUnits(unitAssets, items, report);
         ValidateItems(itemAssets, report);
         ValidateGachaBanners(units, items, report);
+        ValidateStages(stageAssets, stages, report);
         return report;
     }
 
     private static void ValidateRequiredConfigs(IUnitCatalog units, GameDataValidationReport report)
     {
-        NewUserConfigSO newUser = LoadRequired<NewUserConfigSO>("Configs/NewUserConfig", report);
-        UserLevelProgressionSO levelProgression = LoadRequired<UserLevelProgressionSO>("Configs/UserLevelProgression", report);
-        GachaEconomyConfigSO economy = LoadRequired<GachaEconomyConfigSO>("Configs/GachaEconomyConfig", report);
-        GameIconSetSO icons = LoadRequired<GameIconSetSO>("Database/GameIconSet", report);
+        NewUserConfigSO newUser = LoadRequired<NewUserConfigSO>("GameData/Configs/NewUserConfig", report);
+        UserLevelProgressionSO levelProgression = LoadRequired<UserLevelProgressionSO>("GameData/Configs/UserLevelProgression", report);
+        GachaEconomyConfigSO economy = LoadRequired<GachaEconomyConfigSO>("GameData/Configs/GachaEconomyConfig", report);
+        GameIconSetSO icons = LoadRequired<GameIconSetSO>("GameData/Catalogs/GameIconSet", report);
 
         if (newUser != null && units != null && !newUser.TryValidate(units, out string newUserError))
             report.AddError(newUser, newUserError);
@@ -150,6 +153,24 @@ public static class GameDataProjectValidator
                 report.AddWarning(item, "Item name is empty.");
             if (item.Icon == null)
                 report.AddWarning(item, "Item icon is missing.");
+        }
+    }
+
+    private static void ValidateStages(
+        IEnumerable<StageDataSO> stages,
+        IStageCatalog catalog,
+        GameDataValidationReport report)
+    {
+        foreach (StageDataSO stage in stages)
+        {
+            if (!stage.TryValidate(out string error))
+            {
+                report.AddError(stage, error);
+                continue;
+            }
+
+            if (catalog != null && catalog.Get(stage.sector, stage.stage) != stage)
+                report.AddError(stage, $"Stage is outside the canonical catalog: {stage.StageKey}");
         }
     }
 

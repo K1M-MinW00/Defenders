@@ -191,7 +191,7 @@ public sealed class UserDataPipelineTests
         data.Profile.Exp = 50;
         data.Roster.OwnedUnits.Add(new UserUnitData { UnitId = "unit_knight", Level = 1 });
         data.Roster.SelectedUnitIds.Add("unit_knight");
-        UserLevelProgressionSO progression = Resources.Load<UserLevelProgressionSO>("Configs/UserLevelProgression");
+        UserLevelProgressionSO progression = Resources.Load<UserLevelProgressionSO>("GameData/Configs/UserLevelProgression");
         LobbyBattlePresenter presenter = new(data, progression);
 
         LobbyBattleViewState state = presenter.Build();

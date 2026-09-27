@@ -9,12 +9,17 @@ public sealed class GameCatalogTests
 
         Assert(GameConfig.Units != null && GameConfig.Units.GetAll().Count > 0, "Unit catalog should not be empty.");
         Assert(GameConfig.Items != null && GameConfig.Items.GetAll().Count > 0, "Item catalog should not be empty.");
+        Assert(GameConfig.Stages != null && GameConfig.Stages.GetAll().Count > 0, "Stage catalog should not be empty.");
 
         foreach (UnitDataSO unit in GameConfig.Units.GetAll())
             Assert(GameConfig.Units.Get(unit.unitId) == unit, $"Unit should resolve by ID: {unit.unitId}");
 
         foreach (ItemDataSO item in GameConfig.Items.GetAll())
             Assert(GameConfig.Items.Get(item.ItemId) == item, $"Item should resolve by ID: {item.ItemId}");
+
+        foreach (StageDataSO stage in GameConfig.Stages.GetAll())
+            Assert(GameConfig.Stages.Get(stage.sector, stage.stage) == stage,
+                $"Stage should resolve by sector and stage: {stage.StageKey}");
     }
 
     public void UnitCatalog_RejectsDuplicateIds()

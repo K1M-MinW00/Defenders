@@ -1,27 +1,21 @@
-﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class StageDataProvider
+public sealed class StageDataProvider
 {
-    private readonly Dictionary<string, StageDataSO> cache = new();
+    private readonly IStageCatalog catalog;
+
+    public StageDataProvider(IStageCatalog catalog)
+    {
+        this.catalog = catalog ?? throw new System.ArgumentNullException(nameof(catalog));
+    }
 
     public StageDataSO Load(int sector, int stage)
     {
-        string key = $"{sector}-{stage}";
-
-        if (cache.TryGetValue(key, out StageDataSO cached))
-            return cached;
-
-        string path = $"GameData/Stages/Stage_{sector}_{stage}";
-        StageDataSO data = Resources.Load<StageDataSO>(path);
+        StageDataSO data = catalog.Get(sector, stage);
 
         if (data == null)
-        {
-            Debug.LogError($"StageDataSO not found. Path: {path}");
-            return null;
-        }
+            Debug.LogError($"StageDataSO not found in catalog: {sector}-{stage}");
 
-        cache[key] = data;
         return data;
     }
 }

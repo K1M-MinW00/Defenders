@@ -95,7 +95,7 @@ public sealed class GachaDataSOTests
 
     public void EconomyConfig_LoadsConfiguredDuplicateRewards()
     {
-        GachaEconomyConfigSO config = Resources.Load<GachaEconomyConfigSO>("Configs/GachaEconomyConfig");
+        GachaEconomyConfigSO config = Resources.Load<GachaEconomyConfigSO>("GameData/Configs/GachaEconomyConfig");
 
         Assert(config != null, "Gacha economy config should be available from Resources.");
         Assert(config.GetDuplicateGemReward(Rarity.Normal) == 30, "Normal duplicate reward should come from config.");
