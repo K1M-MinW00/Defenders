@@ -18,6 +18,20 @@ public sealed class CombatHealthState
         IsDead = false;
     }
 
+    public void SetMaximum(float max, bool restoreFull)
+    {
+        float nextMax = Mathf.Max(0f, max);
+        if (restoreFull)
+        {
+            Initialize(nextMax);
+            return;
+        }
+
+        float ratio = Max > 0f ? Current / Max : 1f;
+        Max = nextMax;
+        Current = IsDead ? 0f : Mathf.Clamp(Max * ratio, 0f, Max);
+    }
+
     public float TakeDamage(float amount)
     {
         if (IsDead || amount <= 0f)

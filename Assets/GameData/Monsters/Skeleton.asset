@@ -15,8 +15,15 @@ MonoBehaviour:
   monsterId: Skeleton
   displayName: Skeleton
   prefab: {fileID: 1049210806528777896, guid: 2c7c4a5e8a35940458a0156486052fbb, type: 3}
-  moveSpeed: 2
-  atkPerSec: 1
-  attackRange: 2
-  maxHp: 30
-  atk: 10
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
+  baseStats:
+    maxHp: 30
+    moveSpeed: 2
+    atkDamage: 10
+    atkRange: 2
+    atkPerSec: 1

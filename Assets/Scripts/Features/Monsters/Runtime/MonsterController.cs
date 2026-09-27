@@ -22,7 +22,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     public MonsterHealth Health { get; private set; }
     public StagePoolManager PoolManager => poolManager;
     public float AttackRange => FinalStats.atkRange;
-    public float AttackCooldown => 1f / FinalStats.atkPerSec;
+    public float AttackCooldown => 1f / Mathf.Max(0.01f, FinalStats.atkPerSec);
     public float AtkDamage => FinalStats.atkDamage;
     public Transform TargetTransform => transform;
     public ICombatHealth CombatHealth => Health;
@@ -69,7 +69,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     public void Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
     {
         Data = data;
-        FinalStats = data.CreateRuntimeStats();
+        FinalStats = MonsterStatCalculator.Calculate(data);
         this.poolManager = poolManager;
         targeting.Initialize(unitRoster);
 

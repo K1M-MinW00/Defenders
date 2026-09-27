@@ -2,6 +2,9 @@
 {
     public static UnitStats Calculate(UnitDataSO unitData, UserUnitData userUnit)
     {
+        if (unitData == null || userUnit == null)
+            return default;
+
         UnitStats stats = unitData.GetOriginStats(userUnit.Level);
 
         UnitStatModifier modifier = new();
@@ -33,9 +36,13 @@
         if (limitBreak <= 0)
             return;
 
-        for (int i = 0; i < limitBreak; i++)
+        int effectCount = Mathf.Min(limitBreak, unitData.limitBreaks?.Count ?? 0);
+        for (int i = 0; i < effectCount; i++)
         {
             LimitBreakData effect = unitData.limitBreaks[i];
+
+            if (effect == null)
+                continue;
 
             AddPercentModifier(modifier, effect.statType, effect.value);
         }

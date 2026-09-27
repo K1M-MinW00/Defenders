@@ -11,10 +11,7 @@ public class UnitStatService : MonoBehaviour
 
     public void BuildInitialStats(StageUnitInitData initData)
     {
-        UnitDataSO data = initData.UnitData;
-        int level = initData.UserData.Level;
-
-        UnitStats origin = data.GetOriginStats(level);
+        UnitStats origin = UnitStatCalculator.Calculate(initData.UnitData, initData.UserData);
         owner.Runtime.SetOriginStats(origin);
 
         Recalculate(StatRefreshPolicy.FullHeal);
@@ -28,7 +25,7 @@ public class UnitStatService : MonoBehaviour
         owner.Runtime.SetRuntimeBaseStats(stageBaseStats);
         owner.Runtime.SetFinalStats(finalStats);
         
-        owner.Health.ApplyStatRefresh(finalStats.MaxHp);
+        owner.Health.ApplyStatRefresh(finalStats.MaxHp, statRefreshPolicy);
         owner.Targeting.ApplyRange(owner.Runtime.FinalStats.DetectRange);
     }
 

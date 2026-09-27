@@ -21,12 +21,13 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
     }
 
-    public void ApplyStatRefresh(float newMaxHp)
+    public void ApplyStatRefresh(float newMaxHp, StatRefreshPolicy refreshPolicy)
     {
-        if (Mathf.Approximately(MaxHp, newMaxHp))
+        bool fullHeal = refreshPolicy == StatRefreshPolicy.FullHeal;
+        if (!fullHeal && Mathf.Approximately(MaxHp, newMaxHp))
             return;
 
-        state.Initialize(Mathf.Max(MaxHp, newMaxHp));
+        state.SetMaximum(newMaxHp, fullHeal);
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
     }
 

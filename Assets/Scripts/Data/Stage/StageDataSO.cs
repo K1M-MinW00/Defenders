@@ -88,6 +88,8 @@ public class StageDataSO : ScriptableObject
                         return Fail($"{location} is null.", out error);
                     if (entry.data == null)
                         return Fail($"{location} has no monster data.", out error);
+                    if (!entry.data.TryValidate(out string monsterError))
+                        return Fail($"{location} has invalid monster data: {monsterError}", out error);
                     if (entry.count <= 0)
                         return Fail($"{location} must spawn at least one monster.", out error);
                     if (entry.spawnPointIndex < 0 || entry.spawnPointIndex >= spawnPointCount)
