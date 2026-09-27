@@ -49,7 +49,11 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
         if (CurrentHp <= 0f)
             NotifyDead();
 
-        return DamageResult.Applied(request.Amount, appliedDamage, resolution.IsLethal);
+        return DamageResult.Applied(
+            request.Amount,
+            appliedDamage,
+            resolution.IsLethal,
+            resolution.IsCritical);
     }
 
     public void Kill() => Die();

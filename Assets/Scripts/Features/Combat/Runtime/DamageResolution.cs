@@ -5,6 +5,7 @@ public readonly struct DamageResolution
     public float AppliedAmount { get; }
     public bool CanApply => RejectReason == DamageRejectReason.None && AppliedAmount > 0f;
     public bool IsLethal { get; }
+    public bool IsCritical { get; }
     public DamageRejectReason RejectReason { get; }
 
     private DamageResolution(
@@ -12,12 +13,14 @@ public readonly struct DamageResolution
         float modifiedAmount,
         float appliedAmount,
         bool isLethal,
+        bool isCritical,
         DamageRejectReason rejectReason)
     {
         RequestedAmount = requestedAmount;
         ModifiedAmount = modifiedAmount;
         AppliedAmount = appliedAmount;
         IsLethal = isLethal;
+        IsCritical = isCritical;
         RejectReason = rejectReason;
     }
 
@@ -25,18 +28,20 @@ public readonly struct DamageResolution
         float requestedAmount,
         float modifiedAmount,
         float appliedAmount,
-        bool isLethal)
+        bool isLethal,
+        bool isCritical)
     {
         return new DamageResolution(
             requestedAmount,
             modifiedAmount,
             appliedAmount,
             isLethal,
+            isCritical,
             DamageRejectReason.None);
     }
 
     public static DamageResolution Rejected(float requestedAmount, DamageRejectReason reason)
     {
-        return new DamageResolution(requestedAmount, 0f, 0f, false, reason);
+        return new DamageResolution(requestedAmount, 0f, 0f, false, false, reason);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class UnitController : MonoBehaviour, ICombatTarget
+public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 {
     [Header("Data")]
     [SerializeField] private UnitDataSO unitData;
@@ -47,6 +47,8 @@ public class UnitController : MonoBehaviour, ICombatTarget
     public float Attack => runtime.FinalStats.Attack;
     public float AttackPerSec => runtime.FinalStats.AttackPerSec;
     public float DetectRange => runtime.FinalStats.DetectRange;
+    public float CriticalChance => runtime?.FinalStats.CritChance ?? 0f;
+    public float CriticalDamageMultiplier => runtime?.FinalStats.CritDamage ?? 1f;
 
     public bool IsDead => Health.IsDead;
     public Transform TargetTransform => transform;

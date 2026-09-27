@@ -64,7 +64,11 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
         if (IsDead)
             Die();
 
-        return DamageResult.Applied(request.Amount, appliedDamage, resolution.IsLethal);
+        return DamageResult.Applied(
+            request.Amount,
+            appliedDamage,
+            resolution.IsLethal,
+            resolution.IsCritical);
     }
 
     private float ApplyDefensiveModifiers(float damage)
