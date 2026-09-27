@@ -9,7 +9,7 @@ public static class RewardGrantCalculator
         UserDataRoot source,
         IReadOnlyCollection<RewardData> rewards)
     {
-        if (source?.Resource == null || source.Inventory == null || source.Roster == null)
+        if (source?.Profile == null || source.Resource == null || source.Inventory == null || source.Roster == null)
             return RewardGrantResult.Fail(RewardGrantFailure.InvalidData);
 
         if (rewards == null || rewards.Count == 0 || rewards.Any(reward => reward == null || reward.Amount <= 0))
@@ -18,12 +18,13 @@ public static class RewardGrantCalculator
         UserResourceData resources = UserDataCloner.Copy(source.Resource);
         UserInventoryData inventory = UserDataCloner.Copy(source.Inventory);
         UserRosterData roster = UserDataCloner.Copy(source.Roster);
+        UserProfileData profile = UserDataCloner.Copy(source.Profile);
 
         try
         {
             foreach (RewardData reward in rewards)
             {
-                if (!ApplyReward(reward, resources, inventory, roster))
+                if (!ApplyReward(reward, resources, inventory, roster, profile))
                     return RewardGrantResult.Fail(RewardGrantFailure.InvalidReward);
             }
         }
@@ -32,14 +33,15 @@ public static class RewardGrantCalculator
             return RewardGrantResult.Fail(RewardGrantFailure.Overflow);
         }
 
-        return RewardGrantResult.Success(resources, inventory, roster);
+        return RewardGrantResult.Success(resources, inventory, roster, profile);
     }
 
     private static bool ApplyReward(
         RewardData reward,
         UserResourceData resources,
         UserInventoryData inventory,
-        UserRosterData roster)
+        UserRosterData roster,
+        UserProfileData profile)
     {
         switch (reward.Type)
         {
@@ -68,8 +70,30 @@ public static class RewardGrantCalculator
             case RewardType.Unit:
                 return AddUnit(resources, roster, reward.Id, reward.Amount);
 
+            case RewardType.Experience:
+                return AddExperience(profile, reward.Amount);
+
             default:
                 return false;
+        }
+    }
+
+    private static bool AddExperience(UserProfileData profile, int amount)
+    {
+        UserLevelProgressionSO progression = GameConfig.UserLevelProgression;
+        if (profile == null || progression == null || profile.Level < 1)
+            return false;
+
+        profile.Exp = checked(profile.Exp + amount);
+
+        while (true)
+        {
+            int requiredExp = progression.GetRequiredExp(profile.Level);
+            if (requiredExp <= 0 || profile.Exp < requiredExp)
+                return true;
+
+            profile.Exp -= requiredExp;
+            profile.Level = checked(profile.Level + 1);
         }
     }
 

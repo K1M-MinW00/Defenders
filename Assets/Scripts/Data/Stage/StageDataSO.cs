@@ -20,6 +20,9 @@ public class StageDataSO : ScriptableObject
     [Header("Clear Rewards")]
     public List<RewardData> clearRewards = new();
 
+    [Header("Failure Rewards")]
+    public List<RewardData> failureRewards = new();
+
     public string StageKey => $"{sector}-{stage}";
 
     public bool TryValidate(out string error)
@@ -42,15 +45,12 @@ public class StageDataSO : ScriptableObject
             return Fail("Economy config is missing.", out error);
         if (clearRewards == null || clearRewards.Count == 0)
             return Fail("Stage clear rewards are missing.", out error);
-        for (int rewardIndex = 0; rewardIndex < clearRewards.Count; rewardIndex++)
-        {
-            RewardData reward = clearRewards[rewardIndex];
-            if (reward == null || reward.Amount <= 0)
-                return Fail($"Clear reward {rewardIndex + 1} is invalid.", out error);
-            if ((reward.Type is RewardType.Item or RewardType.Equipment or RewardType.Unit) &&
-                string.IsNullOrWhiteSpace(reward.Id))
-                return Fail($"Clear reward {rewardIndex + 1} requires an ID.", out error);
-        }
+        if (!TryValidateRewards(clearRewards, "Clear", out error))
+            return false;
+        if (failureRewards == null || failureRewards.Count == 0)
+            return Fail("Stage failure rewards are missing.", out error);
+        if (!TryValidateRewards(failureRewards, "Failure", out error))
+            return false;
         if (waves == null || (waves.Count != 3 && waves.Count != 5 && waves.Count != 10))
             return Fail("Wave count must be 3, 5, or 10.", out error);
         if (waves[^1] == null || waves[^1].waveType != WaveType.Boss)
@@ -96,6 +96,22 @@ public class StageDataSO : ScriptableObject
                         return Fail($"{location} has a negative interval or delay.", out error);
                 }
             }
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private static bool TryValidateRewards(List<RewardData> rewards, string label, out string error)
+    {
+        for (int rewardIndex = 0; rewardIndex < rewards.Count; rewardIndex++)
+        {
+            RewardData reward = rewards[rewardIndex];
+            if (reward == null || reward.Amount <= 0)
+                return Fail($"{label} reward {rewardIndex + 1} is invalid.", out error);
+            if ((reward.Type is RewardType.Item or RewardType.Equipment or RewardType.Unit) &&
+                string.IsNullOrWhiteSpace(reward.Id))
+                return Fail($"{label} reward {rewardIndex + 1} requires an ID.", out error);
         }
 
         error = string.Empty;

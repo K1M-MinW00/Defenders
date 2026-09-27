@@ -6,4 +6,5 @@ public enum RewardType
     Item,
     Equipment,
     Unit,
+    Experience,
 }

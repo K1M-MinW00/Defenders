@@ -32,6 +32,32 @@ public sealed class StageOutcomeUseCaseTests
     }
 
     [Test]
+    public async Task Complete_GrantsExperienceAndLevelsUpProfile()
+    {
+        GameConfig.Initialize();
+        UserDataRoot user = CreateUser();
+        user.Profile.Exp = 80;
+        RecordingRepository repository = new();
+        StageDataSO stage = CreateStage(new RewardData { Type = RewardType.Experience, Amount = 50 });
+
+        try
+        {
+            StageOutcomeUseCase useCase = new(repository, "user", user);
+            StageOutcomeResult result = await useCase.CompleteAsync(stage);
+
+            Assert.That(result.Succeeded, Is.True);
+            Assert.That(user.Profile.Level, Is.EqualTo(2));
+            Assert.That(user.Profile.Exp, Is.EqualTo(30));
+            Assert.That(repository.LastUpdate.Profile.Level, Is.EqualTo(2));
+            Assert.That(repository.LastUpdate.Profile.Exp, Is.EqualTo(30));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(stage);
+        }
+    }
+
+    [Test]
     public async Task Fail_RefundsFuelAndRecordsClearedWaves()
     {
         UserDataRoot user = CreateUser();
@@ -43,7 +69,8 @@ public sealed class StageOutcomeUseCaseTests
         try
         {
             StageOutcomeUseCase useCase = new(repository, "user", user);
-            StageOutcomeResult result = await useCase.FailAsync(stage, 3, new[] { fuel });
+            stage.failureRewards = new List<RewardData> { fuel };
+            StageOutcomeResult result = await useCase.FailAsync(stage, 3);
 
             Assert.That(result.Succeeded, Is.True);
             Assert.That(user.Resource.Fuel, Is.EqualTo(45));
@@ -82,6 +109,7 @@ public sealed class StageOutcomeUseCaseTests
     {
         return new UserDataRoot
         {
+            Profile = new UserProfileData { Level = 1 },
             Resource = new UserResourceData { MaxFuel = 100 },
             Inventory = new UserInventoryData(),
             Roster = new UserRosterData(),

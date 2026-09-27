@@ -100,6 +100,7 @@ public sealed class GemShopPurchaseUseCase
                 Resources = grant.Resources,
                 Inventory = grant.Inventory,
                 Roster = grant.Roster,
+                Profile = grant.Profile,
                 Shop = nextShop,
             });
         }
@@ -115,6 +116,7 @@ public sealed class GemShopPurchaseUseCase
         userData.Resource = grant.Resources;
         userData.Inventory = grant.Inventory;
         userData.Roster = grant.Roster;
+        userData.Profile = grant.Profile;
         userData.Shop = nextShop;
 
         int remaining = product.PurchaseLimit <= 0

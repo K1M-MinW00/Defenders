@@ -110,6 +110,7 @@ public sealed class FirestoreMailboxRepository : IMailboxRepository
                 { FirestoreDataContract.UserFields.Resource, grantResult.Resources },
                 { FirestoreDataContract.UserFields.Inventory, grantResult.Inventory },
                 { FirestoreDataContract.UserFields.Roster, grantResult.Roster },
+                { FirestoreDataContract.UserFields.Profile, grantResult.Profile },
                 { FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp },
             });
 
@@ -125,7 +126,8 @@ public sealed class FirestoreMailboxRepository : IMailboxRepository
                 claimedIds.ToList(),
                 grantResult.Resources,
                 grantResult.Inventory,
-                grantResult.Roster);
+                grantResult.Roster,
+                grantResult.Profile);
         });
     }
 

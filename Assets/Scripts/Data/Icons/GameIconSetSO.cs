@@ -7,6 +7,8 @@ public class GameIconSetSO : ScriptableObject
     [SerializeField] private Sprite goldIcon;
     [SerializeField] private Sprite gemIcon;
     [SerializeField] private Sprite fuelIcon;
+    [Tooltip("Optional. Uses the gold icon as a placeholder when empty.")]
+    [SerializeField] private Sprite experienceIcon;
 
     [Header("Rarity Frame")]
     [SerializeField] private Sprite normalFrame;
@@ -16,6 +18,7 @@ public class GameIconSetSO : ScriptableObject
     public Sprite Gold => goldIcon;
     public Sprite Gem => gemIcon;
     public Sprite Fuel => fuelIcon;
+    public Sprite Experience => experienceIcon != null ? experienceIcon : goldIcon;
     public Sprite NormalRarityFrame => normalFrame;
     public Sprite RareRarityFrame => rareFrame;
     public Sprite LegendRarityFrame => legendFrame;

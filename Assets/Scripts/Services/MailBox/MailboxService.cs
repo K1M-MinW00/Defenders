@@ -87,6 +87,7 @@ public sealed class MailboxService
             userData.Resource = result.Resources;
             userData.Inventory = result.Inventory;
             userData.Roster = result.Roster;
+            userData.Profile = result.Profile;
 
             HashSet<string> claimedIds = result.ClaimedMailIds.ToHashSet();
 

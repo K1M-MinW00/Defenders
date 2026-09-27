@@ -40,8 +40,7 @@ public sealed class StageOutcomeUseCase
 
     public Task<StageOutcomeResult> FailAsync(
         StageDataSO stage,
-        int clearedWaveCount,
-        IReadOnlyList<RewardData> failureRewards)
+        int clearedWaveCount)
     {
         if (stage == null)
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
@@ -60,7 +59,7 @@ public sealed class StageOutcomeUseCase
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
         }
 
-        return GrantAndSaveAsync(failureRewards, nextProgress);
+        return GrantAndSaveAsync(stage.failureRewards, nextProgress);
     }
 
     private async Task<StageOutcomeResult> GrantAndSaveAsync(
@@ -78,6 +77,7 @@ public sealed class StageOutcomeUseCase
                 Resources = grant.Resources,
                 Inventory = grant.Inventory,
                 Roster = grant.Roster,
+                Profile = grant.Profile,
                 Progress = nextProgress,
             });
         }
@@ -89,6 +89,7 @@ public sealed class StageOutcomeUseCase
         userData.Resource = grant.Resources;
         userData.Inventory = grant.Inventory;
         userData.Roster = grant.Roster;
+        userData.Profile = grant.Profile;
         userData.Progress = nextProgress;
         return StageOutcomeResult.Success(rewards);
     }

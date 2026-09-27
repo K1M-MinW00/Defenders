@@ -163,7 +163,7 @@ public class StageSessionController : MonoBehaviour
         stageUI.ShowStageFail(
             currentStageData,
             CurrentWaveIndex,
-            rewardService.CreateFailureRewards());
+            currentStageData.failureRewards);
         await TrySaveStageOutcomeAsync(isClear: false);
     }
 

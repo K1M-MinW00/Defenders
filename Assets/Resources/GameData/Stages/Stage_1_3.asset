@@ -120,3 +120,13 @@ MonoBehaviour:
   - type: 1
     id:
     amount: 20
+  - type: 3
+    id: material_exp_2
+    amount: 1
+  - type: 6
+    id:
+    amount: 100
+  failureRewards:
+  - type: 2
+    id:
+    amount: 5

@@ -19,6 +19,7 @@ public sealed class GameIconProviderTests
         Assert(provider.GetResourceIcon(RewardType.Gold) == iconSet.Gold, "Gold icon should come from the configured icon set.");
         Assert(provider.GetResourceIcon(RewardType.Gem) == iconSet.Gem, "Gem icon should come from the configured icon set.");
         Assert(provider.GetResourceIcon(RewardType.Fuel) == iconSet.Fuel, "Fuel icon should come from the configured icon set.");
+        Assert(provider.GetResourceIcon(RewardType.Experience) != null, "Experience should use its configured icon or a placeholder.");
         Assert(provider.GetResourceIcon(RewardType.Item) == null, "Non-resource reward types should not resolve a resource icon.");
         Assert(provider.GetRarityFrame(Rarity.Normal) == iconSet.NormalRarityFrame, "Normal frame should be mapped.");
         Assert(provider.GetRarityFrame(Rarity.Rare) == iconSet.RareRarityFrame, "Rare frame should be mapped.");

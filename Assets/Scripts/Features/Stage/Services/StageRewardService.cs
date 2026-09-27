@@ -5,9 +5,6 @@ using UnityEngine;
 public class StageRewardService : MonoBehaviour
 {
     [SerializeField] private EconomyManager economyManager;
-    [SerializeField, Min(1)] private int failureFuelReward = 5;
-
-    public int FailureFuelReward => failureFuelReward;
 
     public void GiveWaveReward(WaveData waveData)
     {
@@ -28,15 +25,6 @@ public class StageRewardService : MonoBehaviour
     {
         return UserDataManager.Instance.FailStageAsync(
             stageData,
-            clearedWaveCount,
-            CreateFailureRewards());
-    }
-
-    public IReadOnlyList<RewardData> CreateFailureRewards()
-    {
-        return new[]
-        {
-            new RewardData { Type = RewardType.Fuel, Amount = failureFuelReward },
-        };
+            clearedWaveCount);
     }
 }

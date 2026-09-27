@@ -18,27 +18,31 @@ public sealed class MailboxClaimResult
     public UserResourceData Resources { get; }
     public UserInventoryData Inventory { get; }
     public UserRosterData Roster { get; }
+    public UserProfileData Profile { get; }
 
     private MailboxClaimResult(
         MailboxClaimFailure failure,
         IReadOnlyList<string> claimedMailIds = null,
         UserResourceData resources = null,
         UserInventoryData inventory = null,
-        UserRosterData roster = null)
+        UserRosterData roster = null,
+        UserProfileData profile = null)
     {
         Failure = failure;
         ClaimedMailIds = claimedMailIds ?? new List<string>();
         Resources = resources;
         Inventory = inventory;
         Roster = roster;
+        Profile = profile;
     }
 
     public static MailboxClaimResult Success(
         IReadOnlyList<string> claimedMailIds,
         UserResourceData resources,
         UserInventoryData inventory,
-        UserRosterData roster) =>
-        new(MailboxClaimFailure.None, claimedMailIds, resources, inventory, roster);
+        UserRosterData roster,
+        UserProfileData profile) =>
+        new(MailboxClaimFailure.None, claimedMailIds, resources, inventory, roster, profile);
 
     public static MailboxClaimResult Fail(MailboxClaimFailure failure) => new(failure);
 }
