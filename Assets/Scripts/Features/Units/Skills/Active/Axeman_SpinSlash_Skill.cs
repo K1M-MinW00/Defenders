@@ -73,8 +73,8 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
             if (hit == null)
                 continue;
 
-            if (hit.TryGetComponent<IDamageable>(out var dmg))
-                dmg.TakeDamage(damage);
+            if (hit.TryGetComponent<ICombatHealth>(out var combatHealth))
+                combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
         }
     }
 

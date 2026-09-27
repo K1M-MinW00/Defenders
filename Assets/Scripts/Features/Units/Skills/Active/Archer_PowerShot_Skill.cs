@@ -59,7 +59,7 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
         {
             float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
             float damage = owner.Attack * multiplier;
-            arrow.Initialize(damage, projectileSpeed, dir, enemyLayer, projectileLifeTime);
+            arrow.Initialize(damage, projectileSpeed, dir, enemyLayer, projectileLifeTime, owner);
         }
     }
 

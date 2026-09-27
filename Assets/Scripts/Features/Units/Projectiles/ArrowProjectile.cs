@@ -8,7 +8,7 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
 
     private Poolable poolable;
     private LayerMask targetLayer;
-    private float damage;
+    private DamageRequest damageRequest;
     private Vector2 direction;
     private float speed;
     private bool isActive;
@@ -21,9 +21,9 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
             poolable = gameObject.AddComponent<Poolable>();
     }
 
-    public void Initialize(float damage, float speed, Vector2 dir, LayerMask target)
+    public void Initialize(float damage, float speed, Vector2 dir, LayerMask target, ICombatTarget source)
     {
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.BasicAttack);
         this.speed = speed;
         this.direction = dir;
         targetLayer = target;
@@ -50,9 +50,9 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
         if (((1 << collision.gameObject.layer) & targetLayer) == 0)
             return;
 
-        if (collision.TryGetComponent<IDamageable>(out IDamageable damageable))
+        if (collision.TryGetComponent<ICombatHealth>(out ICombatHealth combatHealth))
         {
-            damageable.TakeDamage(damage);
+            combatHealth.ApplyDamage(damageRequest);
         }
 
         ReturnToPool();
@@ -77,7 +77,7 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
         isActive = false;
         CancelInvoke(nameof(ReturnToPool));
 
-        damage = 0f;
+        damageRequest = default;
         speed = 0f;
         direction = Vector2.zero;
         targetLayer = 0;

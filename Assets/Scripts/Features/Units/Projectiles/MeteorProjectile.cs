@@ -10,7 +10,7 @@ public class MeteorProjectile : MonoBehaviour, IPoolable
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
 
-    private float damage;
+    private DamageRequest damageRequest;
     private Vector2 targetPos;
     private float fallSpeed;
     private float explosionRadius;
@@ -18,7 +18,7 @@ public class MeteorProjectile : MonoBehaviour, IPoolable
 
     private bool isActive;
 
-    private readonly HashSet<IDamageable> damagedTargets = new();
+    private readonly HashSet<ICombatHealth> damagedTargets = new();
 
     private void Awake()
     {
@@ -30,9 +30,9 @@ public class MeteorProjectile : MonoBehaviour, IPoolable
         hitFilter.useTriggers = true;
     }
 
-    public void Initialize(float damage, Vector2 targetPos, float fallSpeed, float explosionRadius, LayerMask targetLayer)
+    public void Initialize(float damage, Vector2 targetPos, float fallSpeed, float explosionRadius, LayerMask targetLayer, ICombatTarget source)
     {
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.targetPos = targetPos;
         this.fallSpeed = fallSpeed;
         this.explosionRadius = explosionRadius;
@@ -78,13 +78,13 @@ public class MeteorProjectile : MonoBehaviour, IPoolable
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent(out IDamageable damageable))
+            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
                 continue;
 
-            if (!damagedTargets.Add(damageable))
+            if (!damagedTargets.Add(combatHealth))
                 continue;
 
-            damageable.TakeDamage(damage);
+            combatHealth.ApplyDamage(damageRequest);
         }
     }
 
@@ -110,7 +110,7 @@ public class MeteorProjectile : MonoBehaviour, IPoolable
         CancelInvoke(nameof(ReturnToPool));
 
         targetPos = Vector2.zero;
-        damage = 0f;
+        damageRequest = default;
         fallSpeed = 0f;
         explosionRadius = 0f;
         enemyLayer = 0;

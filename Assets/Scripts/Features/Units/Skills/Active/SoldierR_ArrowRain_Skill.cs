@@ -87,7 +87,7 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
             if (fallingArrow == null)
                 continue;
 
-            fallingArrow.Initialize(landingPoint, damage, hitRadius, enemyLayer);
+            fallingArrow.Initialize(landingPoint, damage, hitRadius, enemyLayer, owner);
         }
     }
 

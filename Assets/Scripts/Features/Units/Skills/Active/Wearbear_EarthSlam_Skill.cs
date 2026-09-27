@@ -16,7 +16,7 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
 
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
-    private readonly HashSet<IDamageable> damagedTargets = new();
+    private readonly HashSet<ICombatHealth> damagedTargets = new();
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.SelfArea;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CastWithoutTarget;
@@ -101,13 +101,13 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent(out IDamageable damageable))
+            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
                 continue;
 
-            if (!damagedTargets.Add(damageable))
+            if (!damagedTargets.Add(combatHealth))
                 continue;
 
-            damageable.TakeDamage(damage);
+            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
 
             // 추후 상태이상 시스템 추가
         }

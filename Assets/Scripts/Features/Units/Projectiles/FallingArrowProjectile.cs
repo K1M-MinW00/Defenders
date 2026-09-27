@@ -13,10 +13,10 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
 
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
-    private readonly HashSet<IDamageable> damagedTargets = new();
+    private readonly HashSet<ICombatHealth> damagedTargets = new();
 
     private Vector2 targetPoint;
-    private float damage;
+    private DamageRequest damageRequest;
     private float hitRadius;
     private bool isActive;
     private bool hasLanded;
@@ -35,10 +35,10 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
         hitFilter.useTriggers = true;
     }
 
-    public void Initialize(Vector2 targetPoint, float damage, float hitRadius, LayerMask enemyLayer)
+    public void Initialize(Vector2 targetPoint, float damage, float hitRadius, LayerMask enemyLayer, ICombatTarget source)
     {
         this.targetPoint = targetPoint;
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.hitRadius = hitRadius;
 
         hitFilter.SetLayerMask(enemyLayer);
@@ -85,13 +85,13 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent<IDamageable>(out var damageable))
+            if (!hit.TryGetComponent<ICombatHealth>(out var combatHealth))
                 continue;
 
-            if (!damagedTargets.Add(damageable))
+            if (!damagedTargets.Add(combatHealth))
                 continue;
 
-            damageable.TakeDamage(damage);
+            combatHealth.ApplyDamage(damageRequest);
         }
     }
 
@@ -120,7 +120,7 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
         damagedTargets.Clear();
 
         targetPoint = Vector2.zero;
-        damage = 0f;
+        damageRequest = default;
         hitRadius = 0f;
     }
 

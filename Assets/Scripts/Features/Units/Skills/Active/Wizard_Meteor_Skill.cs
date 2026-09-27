@@ -53,7 +53,7 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 
         float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
         float damage = owner.Attack * multiplier;
-        projectile.Initialize(damage, targetPos, projectileSpeed, explosionRadius, enemyLayer);
+        projectile.Initialize(damage, targetPos, projectileSpeed, explosionRadius, enemyLayer, owner);
     }
 
     public override void OnSkillEnd(SkillExecutionContext context)

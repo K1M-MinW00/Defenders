@@ -30,7 +30,7 @@ public class ProjectileUnitAttack : RangedUnitAttack
         ArrowProjectile arrow = owner.PoolManager.Spawn(arrowPrefab, spawnPos, rotation, PoolCategory.Projectile);
 
         if (arrow != null)
-            arrow.Initialize(Damage, projectileSpeed, dir, targetLayer);
+            arrow.Initialize(Damage, projectileSpeed, dir, targetLayer, owner);
         
         OnAttackFinished();
     }

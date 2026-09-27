@@ -57,7 +57,7 @@ public class RangedMonsterAttack : MonoBehaviour, IMonsterAttack
         ArrowProjectile arrow = owner.PoolManager.Spawn(projectilePrefab, spawnPos, rotation, PoolCategory.Projectile);
         
         if(arrow != null)
-            arrow.Initialize(owner.AtkDamage, speed, dir, targetLayer);
+            arrow.Initialize(owner.AtkDamage, speed, dir, targetLayer, owner);
 
         return true;
     }

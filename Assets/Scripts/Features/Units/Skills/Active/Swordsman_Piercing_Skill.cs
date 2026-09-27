@@ -22,7 +22,7 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
 
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
-    private readonly HashSet<IDamageable> damagedTargetsPerHit = new();
+    private readonly HashSet<ICombatHealth> damagedTargetsPerHit = new();
 
     private Vector2 origin;
     private Vector2 dir;
@@ -131,13 +131,13 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent(out IDamageable damageable))
+            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
                 continue;
 
-            if (!damagedTargetsPerHit.Add(damageable))
+            if (!damagedTargetsPerHit.Add(combatHealth))
                 continue;
 
-            damageable.TakeDamage(damage);
+            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
         }
     }
 

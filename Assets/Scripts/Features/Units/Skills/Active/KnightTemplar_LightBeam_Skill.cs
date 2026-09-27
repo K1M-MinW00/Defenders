@@ -84,7 +84,7 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
         if (spawnedEffect == null)
             return;
 
-        spawnedEffect.Initialize(center, dir, beamLength, beamWidth, damamge, enemyLayer);
+        spawnedEffect.Initialize(center, dir, beamLength, beamWidth, damamge, enemyLayer, owner);
     }
 
     private void ReturnBeamEffect()

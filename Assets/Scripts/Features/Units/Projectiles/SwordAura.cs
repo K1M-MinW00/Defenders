@@ -5,7 +5,7 @@ public class SwordAura : MonoBehaviour, IPoolable
 {
     private Poolable poolable;
 
-    private float damage;
+    private DamageRequest damageRequest;
     private Vector2 direction;
     private float speed;
     private float lifeTime;
@@ -13,7 +13,7 @@ public class SwordAura : MonoBehaviour, IPoolable
 
     private bool isActive;
 
-    private readonly HashSet<IDamageable> hitTargets = new();
+    private readonly HashSet<ICombatHealth> hitTargets = new();
 
     private void Awake()
     {
@@ -22,9 +22,9 @@ public class SwordAura : MonoBehaviour, IPoolable
             poolable = gameObject.AddComponent<Poolable>();
     }
 
-    public void Initialize(float damage, Vector2 direction, float projectileSpeed, float projectileLifeTime, LayerMask targetLayer)
+    public void Initialize(float damage, Vector2 direction, float projectileSpeed, float projectileLifeTime, LayerMask targetLayer, ICombatTarget source)
     {
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.direction = direction;
         this.speed = projectileSpeed;
         this.lifeTime = projectileLifeTime;
@@ -54,13 +54,13 @@ public class SwordAura : MonoBehaviour, IPoolable
         if (((1 << collision.gameObject.layer) & targetLayer) == 0)
             return;
 
-        if (!collision.TryGetComponent(out IDamageable damageable))
+        if (!collision.TryGetComponent(out ICombatHealth combatHealth))
             return;
 
-        if (!hitTargets.Add(damageable))
+        if (!hitTargets.Add(combatHealth))
             return;
 
-        damageable.TakeDamage(damage);
+        combatHealth.ApplyDamage(damageRequest);
     }
 
     private void ReturnToPool()
@@ -84,7 +84,7 @@ public class SwordAura : MonoBehaviour, IPoolable
         hitTargets.Clear();
         CancelInvoke(nameof(ReturnToPool));
 
-        damage = 0f;
+        damageRequest = default;
         speed = 0f;
         lifeTime = 0f;
         direction = Vector2.zero;

@@ -21,7 +21,7 @@ public class ImplactProjectileUnitAttack : RangedUnitAttack
         MagicImpact impact = owner.PoolManager.Spawn(magicPrefab,spawnPos, Quaternion.identity,PoolCategory.Projectile);
        
         if(impact != null)
-            impact.Initialize(Damage, targetLayer);
+            impact.Initialize(Damage, targetLayer, owner);
 
         OnAttackFinished();
     }

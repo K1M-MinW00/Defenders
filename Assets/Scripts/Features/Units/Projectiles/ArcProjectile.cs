@@ -5,7 +5,7 @@ public class ArcProjectile : MonoBehaviour
     private Vector3 startPos;
     private Vector3 endPos;
 
-    private float damage;
+    private DamageRequest damageRequest;
     private float flightTime;
     private float arcHeight;
 
@@ -14,12 +14,12 @@ public class ArcProjectile : MonoBehaviour
 
     private float timer;
 
-    public void Initialize(Vector3 target, float damage, float flightTime, float arcHeight, float splashRadius, LayerMask targetLayer)
+    public void Initialize(Vector3 target, float damage, float flightTime, float arcHeight, float splashRadius, LayerMask targetLayer, ICombatTarget source)
     {
         this.startPos = transform.position;
         this.endPos = target;
 
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.flightTime = Mathf.Max(0.05f, flightTime);
         this.arcHeight = arcHeight;
 
@@ -56,11 +56,12 @@ public class ArcProjectile : MonoBehaviour
         Collider2D[] hits = Physics2D.OverlapCircleAll(endPos, splashRadius, targetLayer);
         for (int i = 0; i < hits.Length; i++)
         {
-            var ui = hits[i].GetComponent<IDamageable>();
+            ICombatHealth combatHealth = hits[i].GetComponent<ICombatHealth>();
 
-            if (ui == null)
+            if (combatHealth == null)
                 continue;
-            ui.TakeDamage(damage);
+
+            combatHealth.ApplyDamage(damageRequest);
         }
     }
 

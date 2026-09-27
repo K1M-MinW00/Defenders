@@ -7,7 +7,7 @@ public class WaveProjectile : MonoBehaviour
     [Header("Runtime")]
     [SerializeField] private float lifetime = 2f;
 
-    private float damage;
+    private DamageRequest damageRequest;
     private Vector2 direction;
     private float speed;
     private float maxDistance;
@@ -18,11 +18,11 @@ public class WaveProjectile : MonoBehaviour
     private Vector2 startPosition;
     private int currentHitCount;
 
-    private readonly HashSet<IDamageable> hitTargets = new();
+    private readonly HashSet<ICombatHealth> hitTargets = new();
 
-    public void Initialize(float damage,Vector2 direction,float speed,float maxDistance,LayerMask targetLayer,bool pierceTargets,int maxHitCount)
+    public void Initialize(float damage,Vector2 direction,float speed,float maxDistance,LayerMask targetLayer,bool pierceTargets,int maxHitCount, ICombatTarget source)
     {
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.direction = direction.normalized;
         this.speed = speed;
         this.maxDistance = maxDistance;
@@ -56,13 +56,13 @@ public class WaveProjectile : MonoBehaviour
         if (((1 << other.gameObject.layer) & targetLayer) == 0)
             return;
 
-        if (!other.TryGetComponent<IDamageable>(out var damageable))
+        if (!other.TryGetComponent<ICombatHealth>(out var combatHealth))
             return;
 
-        if (!hitTargets.Add(damageable))
+        if (!hitTargets.Add(combatHealth))
             return;
 
-        damageable.TakeDamage(damage);
+        combatHealth.ApplyDamage(damageRequest);
         currentHitCount++;
 
         if (!pierceTargets || currentHitCount >= maxHitCount)

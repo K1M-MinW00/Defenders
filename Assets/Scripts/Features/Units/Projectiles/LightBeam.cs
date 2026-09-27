@@ -8,11 +8,11 @@ public class LightBeam : MonoBehaviour, IPoolable
     private Poolable poolable;
     private BoxCollider2D boxCollider;
 
-    private float damage;
+    private DamageRequest damageRequest;
     private LayerMask enemyLayer;
     private bool isActive;
 
-    private readonly HashSet<IDamageable> damagedTargets = new();
+    private readonly HashSet<ICombatHealth> damagedTargets = new();
 
     private void Awake()
     {
@@ -22,9 +22,9 @@ public class LightBeam : MonoBehaviour, IPoolable
         boxCollider.isTrigger = true;
     }
 
-    public void Initialize(Vector2 center,Vector2 direction,float length,float width,float damage,LayerMask enemyLayer)
+    public void Initialize(Vector2 center,Vector2 direction,float length,float width,float damage,LayerMask enemyLayer, ICombatTarget source)
     {
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.enemyLayer = enemyLayer;
 
         isActive = true;
@@ -58,13 +58,13 @@ public class LightBeam : MonoBehaviour, IPoolable
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        if (!other.TryGetComponent(out IDamageable damageable))
+        if (!other.TryGetComponent(out ICombatHealth combatHealth))
             return;
 
-        if (!damagedTargets.Add(damageable))
+        if (!damagedTargets.Add(combatHealth))
             return;
 
-        damageable.TakeDamage(damage);
+        combatHealth.ApplyDamage(damageRequest);
     }
 
     public void ReturnToPool()
@@ -87,7 +87,7 @@ public class LightBeam : MonoBehaviour, IPoolable
     {
         isActive = false;
 
-        damage = 0f;
+        damageRequest = default;
         enemyLayer = 0;
 
         if (boxCollider != null)

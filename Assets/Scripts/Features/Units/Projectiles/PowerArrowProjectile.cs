@@ -6,14 +6,14 @@ public class PowerArrowProjectile : MonoBehaviour, IPoolable
 {
     private Poolable poolable;
 
-    private float damage;
+    private DamageRequest damageRequest;
     private float speed;
     private float lifeTime;
     private LayerMask enemyLayer;
     private Vector2 direction;
     private bool isActive;
 
-    private readonly HashSet<IDamageable> hitTargets = new();
+    private readonly HashSet<ICombatHealth> hitTargets = new();
 
     private void Awake()
     {
@@ -23,9 +23,9 @@ public class PowerArrowProjectile : MonoBehaviour, IPoolable
             poolable = gameObject.AddComponent<Poolable>();
     }
 
-    public void Initialize(float damage, float speed, Vector2 direction, LayerMask enemyLayer, float lifeTime)
+    public void Initialize(float damage, float speed, Vector2 direction, LayerMask enemyLayer, float lifeTime, ICombatTarget source)
     {
-        this.damage = damage;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.speed = speed;
         this.direction = direction.normalized;
         this.enemyLayer = enemyLayer;
@@ -55,13 +55,13 @@ public class PowerArrowProjectile : MonoBehaviour, IPoolable
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        if (!other.TryGetComponent<IDamageable>(out var damageable))
+        if (!other.TryGetComponent<ICombatHealth>(out var combatHealth))
             return;
 
-        if (!hitTargets.Add(damageable))
+        if (!hitTargets.Add(combatHealth))
             return;
 
-        damageable.TakeDamage(damage);
+        combatHealth.ApplyDamage(damageRequest);
     }
 
     private void ReturnToPool()
@@ -83,7 +83,7 @@ public class PowerArrowProjectile : MonoBehaviour, IPoolable
         isActive = false;
         CancelInvoke(nameof(ReturnToPool));
 
-        damage = 0f;
+        damageRequest = default;
         speed = 0f;
         lifeTime = 0f;
         direction = Vector2.zero;

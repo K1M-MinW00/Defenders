@@ -8,10 +8,10 @@ public class MagicImpact : MonoBehaviour, IPoolable
 
     private Poolable poolable;
     private LayerMask targetLayer;
-    private float damage;
+    private DamageRequest damageRequest;
     private bool isActive;
 
-    private readonly HashSet<IDamageable> hitTargets = new();
+    private readonly HashSet<ICombatHealth> hitTargets = new();
 
 
     private void Awake()
@@ -22,9 +22,9 @@ public class MagicImpact : MonoBehaviour, IPoolable
             poolable = gameObject.AddComponent<Poolable>();
     }
 
-    public void Initialize(float damamge, LayerMask target)
+    public void Initialize(float damage, LayerMask target, ICombatTarget source)
     {
-        this.damage = damamge;
+        damageRequest = new DamageRequest(damage, source, DamageOrigin.BasicAttack);
         targetLayer = target;
 
         isActive = true;
@@ -43,13 +43,13 @@ public class MagicImpact : MonoBehaviour, IPoolable
         if (((1 << collision.gameObject.layer) & targetLayer) == 0)
             return;
 
-        if (!collision.TryGetComponent<IDamageable>(out IDamageable damageable))
+        if (!collision.TryGetComponent<ICombatHealth>(out ICombatHealth combatHealth))
             return;
 
-        if (!hitTargets.Add(damageable))
+        if (!hitTargets.Add(combatHealth))
             return;
 
-        damageable.TakeDamage(damage);
+        combatHealth.ApplyDamage(damageRequest);
 
     }
 
@@ -72,7 +72,7 @@ public class MagicImpact : MonoBehaviour, IPoolable
         isActive = false;
         CancelInvoke(nameof(ReturnToPool));
 
-        damage = 0f;
+        damageRequest = default;
         targetLayer = 0;
     }
 }

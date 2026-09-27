@@ -50,7 +50,7 @@ public class Knight_Cleave_Skill : ActiveSkillBase
             float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
             float damage = owner.Attack * multiplier;
 
-            projectile.Initialize(damage, dir, projectileSpeed, lifeTime, enemyLayer);
+            projectile.Initialize(damage, dir, projectileSpeed, lifeTime, enemyLayer, owner);
         }
     }
 

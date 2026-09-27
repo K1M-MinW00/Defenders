@@ -48,9 +48,9 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
 
         foreach (Collider2D hit in hits)
         {
-            if (hit.TryGetComponent<IDamageable>(out var damageable))
+            if (hit.TryGetComponent<ICombatHealth>(out var combatHealth))
             {
-                damageable.TakeDamage(damage);
+                combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
             }
         }
     }
