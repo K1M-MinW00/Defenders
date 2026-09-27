@@ -69,7 +69,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     public void Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
     {
         Data = data;
-        FinalStats = data.Stats;
+        FinalStats = data.CreateRuntimeStats();
         this.poolManager = poolManager;
         targeting.Initialize(unitRoster);
 

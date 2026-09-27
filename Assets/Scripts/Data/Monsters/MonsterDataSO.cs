@@ -13,7 +13,12 @@ public class MonsterDataSO : ScriptableObject
     public AudioClipSettings hitSound = new();
 
     [Header("Base Stats")]
-    [SerializeField] private MonsterStats baseStats;
+    [SerializeField] private MonsterStats baseStats = new();
 
-    public MonsterStats Stats { get => baseStats; }
+    public float BaseMaxHp => baseStats?.maxHp ?? 0f;
+
+    public MonsterStats CreateRuntimeStats()
+    {
+        return baseStats?.CreateRuntimeCopy() ?? new MonsterStats();
+    }
 }

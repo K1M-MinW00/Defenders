@@ -96,7 +96,7 @@ public class MonsterWaveHpTracker : MonoBehaviour
                 if (entry == null || entry.data == null)
                     continue;
 
-                total += entry.data.Stats.maxHp * entry.count;
+                total += entry.data.BaseMaxHp * entry.count;
             }
         }
 
