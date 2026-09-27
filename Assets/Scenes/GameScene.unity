@@ -11471,6 +11471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1704192572}
   - component: {fileID: 1704192573}
+  - component: {fileID: 1704192574}
   m_Layer: 0
   m_Name: StageSessionController
   m_TagString: Untagged
@@ -11505,17 +11506,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ffb8c28e058274da08c03c82283e2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageSessionController
-  prepareTimerController: {fileID: 1810753396}
-  waveController: {fileID: 2031020138}
+  phaseRuntimeController: {fileID: 1704192574}
   rewardService: {fileID: 1993195384}
-  preparationService: {fileID: 546958804}
   bootstrapper: {fileID: 1609928814}
   stageUI: {fileID: 2138733316}
+  progressService: {fileID: 1221864068}
+  currentStageData: {fileID: 0}
+--- !u!114 &1704192574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704192571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d00e8dad22243b7ae70bf3851493cf8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::StagePhaseRuntimeController
+  prepareTimerController: {fileID: 1810753396}
+  waveController: {fileID: 2031020138}
+  preparationService: {fileID: 546958804}
   monsterSpawner: {fileID: 1990264462}
   monsterPrewarmService: {fileID: 1353128549}
   stageTimeController: {fileID: 1947656518}
-  progressService: {fileID: 1221864068}
-  currentStageData: {fileID: 0}
 --- !u!1 &1717726607
 GameObject:
   m_ObjectHideFlags: 0

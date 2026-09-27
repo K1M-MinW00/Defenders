@@ -5,15 +5,10 @@ using UnityEngine;
 public class StageSessionController : MonoBehaviour
 {
     [Header("Controllers")]
-    [SerializeField] private StagePrepareTimerController prepareTimerController;
-    [SerializeField] private WaveController waveController;
+    [SerializeField] private StagePhaseRuntimeController phaseRuntimeController;
     [SerializeField] private StageRewardService rewardService;
-    [SerializeField] private StagePreparationService preparationService;
     [SerializeField] private StageBootstrapper bootstrapper;
     [SerializeField] private StageUIController stageUI;
-    [SerializeField] private MonsterSpawner monsterSpawner;
-    [SerializeField] private MonsterPrewarmService monsterPrewarmService;
-    [SerializeField] private StageTimeController stageTimeController;
     [SerializeField] private StageProgressService progressService;
 
     [Header("Runtime")]
@@ -88,12 +83,7 @@ public class StageSessionController : MonoBehaviour
 
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
-        monsterPrewarmService.PrewarmForWave(CurrentWave);
-        monsterSpawner.WaveHpTracker.PrepareWave(CurrentWave);
-
-        preparationService.EnterPrepareMode();
-        stageTimeController.ExitCombatPhase();
-        prepareTimerController.StartPreparePhase(OnPrepareFinished);
+        phaseRuntimeController.BeginPreparation(CurrentWave, OnPrepareFinished);
     }
 
     private void OnPrepareFinished()
@@ -108,9 +98,7 @@ public class StageSessionController : MonoBehaviour
 
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
-        preparationService.ExitPrepareMode();
-        stageTimeController.EnterCombatPhase();
-        waveController.StartWave(CurrentWave, OnWaveWin, OnWaveLose);
+        phaseRuntimeController.BeginCombat(CurrentWave, OnWaveWin, OnWaveLose);
     }
 
     private void OnWaveWin()
@@ -128,7 +116,7 @@ public class StageSessionController : MonoBehaviour
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
         rewardService.GiveWaveReward(CurrentWave);
-        stageTimeController.ExitCombatPhase();
+        phaseRuntimeController.CompleteCombat();
 
         int clearedWaveCount = waveSequence.ClearedWaveCount;
 
@@ -168,7 +156,7 @@ public class StageSessionController : MonoBehaviour
             StopCurrentPhase();
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
-        stageTimeController.ExitCombatPhase();
+        phaseRuntimeController.CompleteCombat();
         if (!TransitionTo(StageState.StageFail))
             return;
 
@@ -229,14 +217,12 @@ public class StageSessionController : MonoBehaviour
 
     private void StopCurrentPhase()
     {
-        prepareTimerController.StopPreparePhase();
-        waveController.StopWave();
-        preparationService.ExitPrepareMode();
+        phaseRuntimeController.StopCurrentPhase();
     }
 
     public void RequestStageFail()
     {
-        stageTimeController.Resume();
+        phaseRuntimeController.ResumeTime();
         _ = HandleWaveLoseAsync(stopCurrentPhase: true);
     }
 
