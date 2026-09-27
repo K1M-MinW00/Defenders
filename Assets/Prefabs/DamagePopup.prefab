@@ -172,6 +172,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DamagePopup
   damageText: {fileID: 52190141222350594}
   lifeTime: 0.8
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  criticalColor: {r: 1, g: 0.75, b: 0, a: 1}
+  criticalFontSizeMultiplier: 1.35
 --- !u!114 &2412327091032714089
 MonoBehaviour:
   m_ObjectHideFlags: 0

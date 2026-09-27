@@ -172,7 +172,7 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         monster.Initialize(unitRoster, data, poolManager);
-        monster.Health.OnHpChanged += HandleMonsterDamaged;
+        monster.Health.OnDamaged += HandleMonsterDamaged;
         monster.OnDead += HandleMonsterDead;
 
         waveHpTracker?.RegisterSpawnedMonster(monster);
@@ -183,7 +183,7 @@ public class MonsterSpawner : MonoBehaviour
 
     private void HandleMonsterDead(MonsterController monster)
     {
-        monster.Health.OnHpChanged -= HandleMonsterDamaged;
+        monster.Health.OnDamaged -= HandleMonsterDamaged;
         monster.OnDead -= HandleMonsterDead;
 
         waveHpTracker?.UnregisterMonster(monster);
@@ -194,10 +194,10 @@ public class MonsterSpawner : MonoBehaviour
         OnAliveCountChanged?.Invoke(RemainingCount);
     }
 
-    private void HandleMonsterDamaged(MonsterHealth health, float damage)
+    private void HandleMonsterDamaged(MonsterHealth health, DamageResult result)
     {
         Vector3 worldPos = health.transform.position;
-        damageUIService.Show(worldPos, damage);
+        damageUIService?.Show(worldPos, result);
     }
 
     public MonsterController FindClosestAlive(Vector3 from)

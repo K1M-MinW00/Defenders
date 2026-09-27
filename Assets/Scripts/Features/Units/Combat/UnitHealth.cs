@@ -11,6 +11,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
     public bool IsDead => state.IsDead;
 
     public event Action<UnitController, float, float> OnHpChanged;
+    public event Action<UnitController, DamageResult> OnDamaged;
     public event Action<UnitController> OnDead;
 
     public void Initialize(UnitController owner)
@@ -61,14 +62,18 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
         owner.SkillController.NotifyAfterTakeDamage(appliedDamage);
 
-        if (IsDead)
-            Die();
-
-        return DamageResult.Applied(
+        DamageResult result = DamageResult.Applied(
             request.Amount,
             appliedDamage,
             resolution.IsLethal,
             resolution.IsCritical);
+
+        OnDamaged?.Invoke(owner, result);
+
+        if (IsDead)
+            Die();
+
+        return result;
     }
 
     private float ApplyDefensiveModifiers(float damage)

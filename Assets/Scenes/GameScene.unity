@@ -5670,6 +5670,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageUIService
   poolManager: {fileID: 579660465}
+  unitRoster: {fileID: 1413980709}
   damageUIRoot: {fileID: 1627736769}
   damagePopupPrefab: {fileID: 1287075693170154560, guid: 14ea6137a1ae5ec4591c71a168ca3f06, type: 3}
   prewarmCnt: 20

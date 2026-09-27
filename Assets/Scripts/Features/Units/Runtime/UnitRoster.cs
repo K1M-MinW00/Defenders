@@ -12,6 +12,7 @@ public class UnitRoster : MonoBehaviour
 
     public event Action OnRosterChanged;
     public event Action OnAliveCountChanged;
+    public event Action<UnitController, DamageResult> OnUnitDamaged;
 
     [SerializeField] private float combatAlertCooldown = 0.2f;
     private float lastCombatAlertTime = -999f;
@@ -25,6 +26,7 @@ public class UnitRoster : MonoBehaviour
 
         unit.Health.OnDead += HandleUnitDead;
         unit.Health.OnHpChanged += HandleUnitHpChanged;
+        unit.Health.OnDamaged += HandleUnitDamaged;
 
         lastKnownHp[unit] = unit.Health.CurrentHp;
 
@@ -41,6 +43,7 @@ public class UnitRoster : MonoBehaviour
 
         unit.Health.OnDead -= HandleUnitDead;
         unit.Health.OnHpChanged -= HandleUnitHpChanged;
+        unit.Health.OnDamaged -= HandleUnitDamaged;
 
         lastKnownHp.Remove(unit);
 
@@ -50,6 +53,11 @@ public class UnitRoster : MonoBehaviour
     private void HandleUnitDead(UnitController runtime)
     {
         OnAliveCountChanged?.Invoke();
+    }
+
+    private void HandleUnitDamaged(UnitController unit, DamageResult result)
+    {
+        OnUnitDamaged?.Invoke(unit, result);
     }
 
     private void HandleUnitHpChanged(UnitController unit, float currentHp, float maxHp)

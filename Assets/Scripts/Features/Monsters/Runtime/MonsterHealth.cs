@@ -13,6 +13,7 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
 
     public event Action<MonsterHealth> OnDead;
     public event Action<MonsterHealth, float> OnHpChanged;
+    public event Action<MonsterHealth, DamageResult> OnDamaged;
 
     private void Awake()
     {
@@ -46,14 +47,19 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
         GameAudioManager.Instance?.PlayCharacterSfx(owner?.Data?.hitSound, GameAudioCue.MonsterHit, GameAudioPriority.Low, 0.05f);
 
         OnHpChanged?.Invoke(this, appliedDamage);
-        if (CurrentHp <= 0f)
-            NotifyDead();
 
-        return DamageResult.Applied(
+        DamageResult result = DamageResult.Applied(
             request.Amount,
             appliedDamage,
             resolution.IsLethal,
             resolution.IsCritical);
+
+        OnDamaged?.Invoke(this, result);
+
+        if (CurrentHp <= 0f)
+            NotifyDead();
+
+        return result;
     }
 
     public void Kill() => Die();
