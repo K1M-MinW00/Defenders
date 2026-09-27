@@ -20,6 +20,7 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageDataSO currentStageData;
     private StageEnterData enterData;
     private StageDataProvider stageDataProvider;
+    private StageWaveSequence waveSequence;
     private readonly StagePhaseMachine phaseMachine = new();
     private bool stageClearRewardGranted;
     private bool stageClearSavePending;
@@ -27,7 +28,7 @@ public class StageSessionController : MonoBehaviour
 
     public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
-    public int CurrentWaveIndex { get; private set; }
+    public int CurrentWaveIndex => waveSequence?.CurrentIndex ?? 0;
 
     public event Action<StageState, StageState> PhaseChanged
     {
@@ -35,10 +36,7 @@ public class StageSessionController : MonoBehaviour
         remove => phaseMachine.Changed -= value;
     }
 
-    public WaveData CurrentWave =>
-        currentStageData != null && CurrentWaveIndex < currentStageData.waves.Count
-            ? currentStageData.waves[CurrentWaveIndex]
-            : null;
+    public WaveData CurrentWave => waveSequence?.Current;
 
     private void Start()
     {
@@ -71,7 +69,7 @@ public class StageSessionController : MonoBehaviour
     private void StartStage(StageDataSO stageData, StageEnterData enterData)
     {
         currentStageData = stageData;
-        CurrentWaveIndex = 0;
+        waveSequence = new StageWaveSequence(stageData.waves);
         stageClearRewardGranted = false;
         stageClearSavePending = false;
         stageClearSaveInProgress = false;
@@ -132,10 +130,9 @@ public class StageSessionController : MonoBehaviour
         rewardService.GiveWaveReward(CurrentWave);
         stageTimeController.ExitCombatPhase();
 
-        int clearedWaveCount = CurrentWaveIndex + 1;
-        bool isLastWave = currentStageData == null || clearedWaveCount >= currentStageData.waves.Count;
+        int clearedWaveCount = waveSequence.ClearedWaveCount;
 
-        if (isLastWave)
+        if (waveSequence.IsFinalWave)
         {
             await HandleStageClear();
             return;
@@ -145,7 +142,12 @@ public class StageSessionController : MonoBehaviour
         if (!saved)
             Debug.LogWarning($"Wave progress save failed: {currentStageData.StageKey}, cleared waves: {clearedWaveCount}");
 
-        CurrentWaveIndex = clearedWaveCount;
+        if (!waveSequence.TryMoveNext())
+        {
+            Debug.LogError("Failed to advance to the next wave.");
+            return;
+        }
+
         EnterPreparePhase();
     }
 
