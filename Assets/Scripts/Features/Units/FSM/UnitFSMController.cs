@@ -3,9 +3,9 @@
 public class UnitFSMController : MonoBehaviour
 {
     private UnitController owner;
-    private UnitFSM fsm;
+    private StateMachine fsm;
 
-    public bool IsIdleState => fsm.CurrentState == idleState;
+    public bool IsIdleState => fsm != null && fsm.CurrentState == idleState;
     private IdleState idleState;
     private MoveState moveState;
     private AttackState attackState;
@@ -16,17 +16,51 @@ public class UnitFSMController : MonoBehaviour
     {
         this.owner = owner;
 
-        fsm = new UnitFSM();
-        idleState = new IdleState(owner, fsm);
-        moveState = new MoveState(owner, fsm);
-        attackState = new AttackState(owner, fsm);
-        skillState = new SkillState(owner, fsm);
-        deadState = new DeadState(owner, fsm);
+        fsm = new StateMachine();
+        idleState = new IdleState(owner);
+        moveState = new MoveState(owner);
+        attackState = new AttackState(owner);
+        skillState = new SkillState(owner);
+        deadState = new DeadState(owner);
     }
 
     public void Tick()
     {
-        fsm?.Update();
+        fsm?.Tick();
+    }
+
+    public bool TryChangeToSkill()
+    {
+        if (!owner.SkillController.CanStartSkill())
+            return false;
+
+        ChangeToSkill();
+        return true;
+    }
+
+    public bool TryEnsureTarget(bool includeGlobal)
+    {
+        if (owner.Targeting.HasValidTarget())
+            return true;
+
+        if (owner.Targeting.TryFindTargetInSensor())
+            return true;
+
+        return includeGlobal && owner.Targeting.FindGlobalAliveMonster();
+    }
+
+    public void ChangeToTargetState()
+    {
+        if (!owner.Targeting.HasValidTarget())
+        {
+            ChangeToIdle();
+            return;
+        }
+
+        if (owner.Targeting.IsTargetInRange())
+            ChangeToAttack();
+        else
+            ChangeToMove();
     }
 
     public void ChangeToIdle() => fsm.ChangeState(idleState);

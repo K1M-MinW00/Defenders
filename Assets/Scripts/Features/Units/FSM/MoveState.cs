@@ -3,12 +3,9 @@ using UnityEngine;
 public class MoveState : IState
 {
     private UnitController owner;
-    private UnitFSM fsm;
-
-    public MoveState(UnitController owner, UnitFSM fsm)
+    public MoveState(UnitController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()
@@ -22,24 +19,13 @@ public class MoveState : IState
         if (owner.IsDead)
             return;
 
-        if(owner.SkillController.CanStartSkill())
-        {
-            owner.FSMController.ChangeToSkill();
+        if (owner.FSMController.TryChangeToSkill())
             return;
-        }
 
-        if (!owner.Targeting.HasValidTarget())
+        if (!owner.FSMController.TryEnsureTarget(includeGlobal: true))
         {
-            bool found = owner.Targeting.TryFindTargetInSensor();
-
-            if (!found)
-                found = owner.Targeting.FindGlobalAliveMonster();
-
-            if (!found)
-            {
-                owner.FSMController.ChangeToIdle();
-                return;
-            }
+            owner.FSMController.ChangeToIdle();
+            return;
         }
 
         if (owner.Targeting.IsTargetInRange())

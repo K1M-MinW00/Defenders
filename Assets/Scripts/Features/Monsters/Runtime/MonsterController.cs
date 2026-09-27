@@ -30,10 +30,10 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
     private Poolable poolable;
 
-    private MonsterFSM fsm;
-    public MonsterMoveState moveState;
-    public MonsterAttackState attackState;
-    public MonsterIdleState idleState;
+    private StateMachine fsm;
+    private MonsterMoveState moveState;
+    private MonsterAttackState attackState;
+    private MonsterIdleState idleState;
 
     public event Action<MonsterController> OnDead;
     private Coroutine knockbackRoutine;
@@ -60,10 +60,10 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
         agent.updateRotation = false;
         agent.updateUpAxis = false;
 
-        fsm = new MonsterFSM();
-        moveState = new MonsterMoveState(this, fsm);
-        attackState = new MonsterAttackState(this, fsm);
-        idleState = new MonsterIdleState(this, fsm);
+        fsm = new StateMachine();
+        moveState = new MonsterMoveState(this);
+        attackState = new MonsterAttackState(this);
+        idleState = new MonsterIdleState(this);
     }
 
     public void Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
@@ -81,17 +81,18 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
         if (Health.IsDead)
             return;
 
-        fsm.Update();
+        fsm.Tick();
     }
 
     public void OnSpawn()
     {
         ApplyStats();
-        fsm.ChangeState(idleState);
+        ChangeToIdle();
     }
 
     public void OnDespawn()
     {
+        fsm.Reset();
         targeting.ClearTarget();
         StopMovement();
     }
@@ -183,6 +184,10 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     public void PlayIdle() => view?.PlayIdle();
     public void PlayMove() => view?.PlayMove();
     public void PlayAttack() => view?.PlayAttack();
+
+    public void ChangeToIdle() => fsm.ChangeState(idleState);
+    public void ChangeToMove() => fsm.ChangeState(moveState);
+    public void ChangeToAttack() => fsm.ChangeState(attackState);
 
     public void ApplyKnockback(Vector2 direction, float distance, float duration)
     {

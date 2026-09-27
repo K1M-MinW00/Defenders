@@ -4,15 +4,12 @@ using UnityEngine;
 public class MonsterIdleState : IState
 {
     private MonsterController owner;
-    private MonsterFSM fsm;
-
     private float _nextAcquireTime;
     private float interval = .5f;
 
-    public MonsterIdleState(MonsterController owner, MonsterFSM fsm)
+    public MonsterIdleState(MonsterController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()
@@ -32,7 +29,7 @@ public class MonsterIdleState : IState
         _nextAcquireTime = Time.time + interval;
 
         if (owner.TryFindClosestAliveUnit())
-            fsm.ChangeState(owner.moveState);
+            owner.ChangeToMove();
         
     }
 

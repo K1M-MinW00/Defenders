@@ -1,12 +1,9 @@
 ﻿public class DeadState : IState
 {
     private UnitController owner;
-    private UnitFSM fsm;
-
-    public DeadState(UnitController owner, UnitFSM fsm)
+    public DeadState(UnitController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()

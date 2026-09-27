@@ -1,14 +1,11 @@
 public class SkillState : IState
 {
     private UnitController owner;
-    private UnitFSM fsm;
-
     private bool isWaitingForTarget;
 
-    public SkillState(UnitController owner, UnitFSM fsm)
+    public SkillState(UnitController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()

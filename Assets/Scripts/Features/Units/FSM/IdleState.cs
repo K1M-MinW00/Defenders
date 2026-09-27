@@ -3,12 +3,9 @@ using UnityEngine;
 public class IdleState : IState
 {
     private UnitController owner;
-    private UnitFSM fsm;
-
-    public IdleState(UnitController owner, UnitFSM fsm)
+    public IdleState(UnitController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()
@@ -22,19 +19,13 @@ public class IdleState : IState
         if (owner.IsDead)
             return;
 
-        if(owner.SkillController.CanStartSkill())
-        {
-            owner.FSMController.ChangeToSkill();
-            return;
-        }
-
-        if (!owner.Targeting.TryFindTargetInSensor())
+        if (owner.FSMController.TryChangeToSkill())
             return;
 
-        if (owner.Targeting.IsTargetInRange())
-            owner.FSMController.ChangeToAttack();
-        else
-            owner.FSMController.ChangeToMove();
+        if (!owner.FSMController.TryEnsureTarget(includeGlobal: false))
+            return;
+
+        owner.FSMController.ChangeToTargetState();
     }
 
     public void Exit() { }

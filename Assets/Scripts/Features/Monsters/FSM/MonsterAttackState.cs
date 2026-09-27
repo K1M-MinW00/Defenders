@@ -3,14 +3,11 @@
 public class MonsterAttackState : IState
 {
     private MonsterController owner;
-    private MonsterFSM fsm;
-
     private float _nextAttackTime;
 
-    public MonsterAttackState(MonsterController owner, MonsterFSM fsm)
+    public MonsterAttackState(MonsterController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()
@@ -27,14 +24,17 @@ public class MonsterAttackState : IState
         {
             if (owner.TryFindClosestAliveUnit())
             {
-                fsm.ChangeState(owner.moveState);
+                owner.ChangeToMove();
                 return;
             }
+
+            owner.ChangeToIdle();
+            return;
         }
 
         if(!owner.IsTargetInAttackRange())
         {
-            fsm.ChangeState(owner.moveState);
+            owner.ChangeToMove();
             return;
         }
 

@@ -3,15 +3,12 @@
 public sealed class MonsterMoveState : IState
 {
     private MonsterController owner;
-    private MonsterFSM fsm;
-
     private float _nextRefreshTime;
     private float interval = .25f;
 
-    public MonsterMoveState(MonsterController owner, MonsterFSM fsm)
+    public MonsterMoveState(MonsterController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()
@@ -31,7 +28,7 @@ public sealed class MonsterMoveState : IState
         {
             if (!owner.TryFindClosestAliveUnit())
             {
-                fsm.ChangeState(owner.idleState);
+                owner.ChangeToIdle();
                 return;
             }
             else
@@ -43,7 +40,7 @@ public sealed class MonsterMoveState : IState
 
         if(owner.IsTargetInAttackRange())
         {
-            fsm.ChangeState(owner.attackState);
+            owner.ChangeToAttack();
             return;
         }
 

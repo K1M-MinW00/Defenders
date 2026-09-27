@@ -3,14 +3,11 @@ using UnityEngine;
 public class AttackState : IState
 {
     private UnitController owner;
-    private UnitFSM fsm;
-
     private float lastRefreshTime;
 
-    public AttackState(UnitController owner, UnitFSM fsm)
+    public AttackState(UnitController owner)
     {
         this.owner = owner;
-        this.fsm = fsm;
     }
 
     public void Enter()
@@ -27,24 +24,13 @@ public class AttackState : IState
             return;
 
 
-        if(owner.SkillController.CanStartSkill())
-        {
-            owner.FSMController.ChangeToSkill();
+        if (owner.FSMController.TryChangeToSkill())
             return;
-        }
 
-        if (!owner.Targeting.HasValidTarget())
+        if (!owner.FSMController.TryEnsureTarget(includeGlobal: true))
         {
-            bool found = owner.Targeting.TryFindTargetInSensor();
-
-            if (!found)
-                found = owner.Targeting.FindGlobalAliveMonster();
-            
-            if(!found)
-            {
-                owner.FSMController.ChangeToIdle();
-                return;
-            }
+            owner.FSMController.ChangeToIdle();
+            return;
         }
 
         if(Time.time - lastRefreshTime >= owner.Combat.TargetRefreshInterval)
