@@ -44,21 +44,16 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
     public DamageResult ApplyDamage(DamageRequest request)
     {
-        if (IsDead)
-            return DamageResult.Rejected(request.Amount, DamageRejectReason.TargetAlreadyDead);
+        DamageResolution resolution = DamageResolver.Resolve(
+            request,
+            CurrentHp,
+            IsDead,
+            ApplyDefensiveModifiers);
 
-        if (request.Amount <= 0f)
-            return DamageResult.Rejected(request.Amount, DamageRejectReason.InvalidAmount);
+        if (!resolution.CanApply)
+            return DamageResult.Rejected(request.Amount, resolution.RejectReason);
 
-        float finalDamage = request.Amount;
-
-        owner.SkillController.NotifyBeforeTakeDamage(ref finalDamage);
-
-        finalDamage = Mathf.Max(0f, finalDamage);
-        float appliedDamage = state.TakeDamage(finalDamage);
-
-        if (appliedDamage <= 0f)
-            return DamageResult.Rejected(request.Amount, DamageRejectReason.FullyPrevented);
+        float appliedDamage = state.TakeDamage(resolution.AppliedAmount);
 
         GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.hitSound, GameAudioCue.UnitHit, GameAudioPriority.Low, 0.05f);
         
@@ -69,7 +64,13 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
         if (IsDead)
             Die();
 
-        return DamageResult.Applied(request.Amount, appliedDamage, IsDead);
+        return DamageResult.Applied(request.Amount, appliedDamage, resolution.IsLethal);
+    }
+
+    private float ApplyDefensiveModifiers(float damage)
+    {
+        owner.SkillController.NotifyBeforeTakeDamage(ref damage);
+        return damage;
     }
 
     public void Heal(float amount)

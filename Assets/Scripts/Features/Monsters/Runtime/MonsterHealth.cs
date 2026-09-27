@@ -37,15 +37,11 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
 
     public DamageResult ApplyDamage(DamageRequest request)
     {
-        if (IsDead)
-            return DamageResult.Rejected(request.Amount, DamageRejectReason.TargetAlreadyDead);
+        DamageResolution resolution = DamageResolver.Resolve(request, CurrentHp, IsDead);
+        if (!resolution.CanApply)
+            return DamageResult.Rejected(request.Amount, resolution.RejectReason);
 
-        if (request.Amount <= 0f)
-            return DamageResult.Rejected(request.Amount, DamageRejectReason.InvalidAmount);
-
-        float appliedDamage = state.TakeDamage(request.Amount);
-        if (appliedDamage <= 0f)
-            return DamageResult.Rejected(request.Amount, DamageRejectReason.InvalidAmount);
+        float appliedDamage = state.TakeDamage(resolution.AppliedAmount);
 
         GameAudioManager.Instance?.PlayCharacterSfx(owner?.Data?.hitSound, GameAudioCue.MonsterHit, GameAudioPriority.Low, 0.05f);
 
@@ -53,7 +49,7 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
         if (CurrentHp <= 0f)
             NotifyDead();
 
-        return DamageResult.Applied(request.Amount, appliedDamage, IsDead);
+        return DamageResult.Applied(request.Amount, appliedDamage, resolution.IsLethal);
     }
 
     public void Kill() => Die();
