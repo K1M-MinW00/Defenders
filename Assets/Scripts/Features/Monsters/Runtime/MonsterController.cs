@@ -114,8 +114,12 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     public void ClearTarget() => Target = null;
     public void SetTarget(UnitController newTarget) => Target = newTarget;
     public bool HasValidTarget()
-    { 
-        return Target != null && !Target.IsDead;
+    {
+        bool valid = CombatTargetSelector.IsValid(Target);
+        if (!valid)
+            ClearTarget();
+
+        return valid;
     }
 
     public bool TryFindClosestAliveUnit()
@@ -161,10 +165,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
         if (!HasValidTarget())
             return false;
 
-        float distSqr = (Target.transform.position - transform.position).sqrMagnitude;
-        float range = AttackRange;
-
-        return distSqr <= range * range;
+        return CombatTargetSelector.IsWithinRange(Target, transform.position, AttackRange);
     }
 
     public void TryAttackCurrentTarget()

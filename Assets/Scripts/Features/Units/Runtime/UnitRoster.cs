@@ -92,26 +92,7 @@ public class UnitRoster : MonoBehaviour
 
     public UnitController FindClosestAlive(Vector3 from)
     {
-        UnitController best = null;
-        float bestD = float.PositiveInfinity;
-
-        for (int i = units.Count - 1; i >= 0; --i)
-        {
-            UnitController u = units[i];
-
-            if (u == null || u.IsDead)
-                continue;
-
-            float d = (u.transform.position - from).sqrMagnitude;
-
-            if (d < bestD)
-            {
-                bestD = d;
-                best = u;
-            }
-        }
-
-        return best;
+        return CombatTargetSelector.FindClosest(units, from);
     }
 
     public UnitController FindAny(string unitId, int star, UnitController exclude = null)

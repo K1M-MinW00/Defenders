@@ -30,7 +30,7 @@ public class UnitTargetingController : MonoBehaviour
 
     public bool HasValidTarget()
     {
-        bool valid = currentTarget != null && !currentTarget.Health.IsDead;
+        bool valid = CombatTargetSelector.IsValid(currentTarget);
        
         if (!valid)
             ClearTarget();
@@ -76,9 +76,8 @@ public class UnitTargetingController : MonoBehaviour
         if (!HasValidTarget())
             return false;
 
-        float distSqr = (currentTarget.transform.position - transform.position).sqrMagnitude;
         float range = owner.Runtime.FinalStats.DetectRange;
-        return distSqr <= range * range;
+        return CombatTargetSelector.IsWithinRange(currentTarget, transform.position, range);
     }
 
     public void EnableSensor(bool enable)
