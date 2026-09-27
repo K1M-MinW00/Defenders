@@ -66,10 +66,10 @@ public class ConeMeleeUnitAttack : MeleeUnitAttack
             if (dot < cosThreshold)
                 continue;
 
-            if (!hit.TryGetComponent(out IDamageable damageable))
+            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
                 continue;
 
-            if (!damagedTargets.Add(damageable))
+            if (!damagedTargets.Add(combatHealth))
                 continue;
 
             MonsterController target = hit.GetComponent<MonsterController>();
@@ -79,7 +79,8 @@ public class ConeMeleeUnitAttack : MeleeUnitAttack
 
             float damage = Damage;
             owner.SkillController.NotifyAttackHit(target, ref damage);
-            damageable.TakeDamage(damage);
+            combatHealth.ApplyDamage(
+                new DamageRequest(damage, owner, DamageOrigin.BasicAttack));
         }
     }
 
