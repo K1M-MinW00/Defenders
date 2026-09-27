@@ -5,10 +5,11 @@ public class MonsterHealth : MonoBehaviour, IDamageable
 {
     private MonsterStats stats;
     private MonsterController owner;
+    private readonly CombatHealthState state = new();
 
-    public float MaxHp {  get; private set; }
-    public float CurrentHp { get; private set; }
-    public bool IsDead { get; private set; }
+    public float MaxHp => state.Max;
+    public float CurrentHp => state.Current;
+    public bool IsDead => state.IsDead;
 
     public event Action<MonsterHealth> OnDead;
     public event Action<MonsterHealth, float> OnHpChanged;
@@ -26,10 +27,7 @@ public class MonsterHealth : MonoBehaviour, IDamageable
 
     public void ResetHealth()
     {
-        IsDead = false;
-
-        MaxHp = stats.maxHp;
-        CurrentHp = MaxHp;
+        state.Initialize(stats.maxHp);
     }
 
     public void TakeDamage(float damage)
@@ -37,25 +35,26 @@ public class MonsterHealth : MonoBehaviour, IDamageable
         if (IsDead || damage <= 0f)
             return;
 
-        damage = Mathf.Min(damage, CurrentHp);
-        CurrentHp -= damage;
+        damage = state.TakeDamage(damage);
         GameAudioManager.Instance?.PlayCharacterSfx(owner?.Data?.hitSound, GameAudioCue.MonsterHit, GameAudioPriority.Low, 0.05f);
-
-        int finalDamage = (int)damage;
 
         OnHpChanged?.Invoke(this, damage);
         if (CurrentHp <= 0f)
-            Die();
+            NotifyDead();
     }
 
     public void Kill() => Die();
 
     public void Die()
     {
-        if (IsDead)
+        if (!state.Kill())
             return;
 
-        IsDead  = true;
+        NotifyDead();
+    }
+
+    private void NotifyDead()
+    {
         OnDead?.Invoke(this);
     }
 }
