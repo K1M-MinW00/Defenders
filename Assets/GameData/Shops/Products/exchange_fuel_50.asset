@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11ff0f30f3278204ab33b7ea328b67f7, type: 3}
+  m_Name: exchange_fuel_50
+  m_EditorClassIdentifier: Assembly-CSharp::ExchangeShopProductData
+  ProductId: exchange_fuel_50
+  DisplayName: "\uC5F0\uB8CC"
+  Description: 
+  Tab: 3
+  SortOrder: 0
+  IsEnabled: 1
+  PurchaseType: 2
+  IAPProductId: 
+  Price: 100
+  CostAmount: 100
+  ResetPeriod: 0
+  PurchaseLimit: 0
+  SaleStartUtc: 
+  SaleEndUtc: 
+  Rewards:
+  - type: 2
+    id: 
+    amount: 50
+  ProductImage: {fileID: -8519046227570868254, guid: 40166c57185a03f4eb9312c33f2c920c, type: 3}

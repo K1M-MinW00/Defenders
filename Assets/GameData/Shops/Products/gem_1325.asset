@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c03dc53f7e9b27747ac250968ce17348, type: 3}
+  m_Name: gem_1325
+  m_EditorClassIdentifier: Assembly-CSharp::RechargeShopProductData
+  ProductId: gem_1325
+  DisplayName: 1,325 Gem
+  Description: 
+  Tab: 2
+  SortOrder: 0
+  IsEnabled: 1
+  PurchaseType: 1
+  IAPProductId: 
+  Price: 6500
+  CostAmount: 0
+  ResetPeriod: 0
+  PurchaseLimit: 0
+  SaleStartUtc: 
+  SaleEndUtc: 
+  Rewards:
+  - type: 1
+    id: 
+    amount: 1325
+  GemImage: {fileID: 0}
+  HasFirstPurchaseBonus: 1
+  FirstPurchaseBonusLabel: "\uCCAB \uAD6C\uB9E4 2\uBC30"

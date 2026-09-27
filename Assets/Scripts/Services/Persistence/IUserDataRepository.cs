@@ -21,6 +21,7 @@ public sealed class UserDataUpdate
     public UserInventoryData Inventory { get; set; }
     public UserGachaData Gacha { get; set; }
     public UserAdData Ad { get; set; }
+    public UserShopData Shop { get; set; }
 }
 
 public sealed class UserDataLoadResult

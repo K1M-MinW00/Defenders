@@ -2,6 +2,32 @@ using System.Threading.Tasks;
 
 public partial class UserDataManager
 {
+    public ShopProductState GetShopProductState(ShopProductData product, System.DateTimeOffset? utcNow = null)
+    {
+        return GemShopPurchaseUseCase?.GetState(product, utcNow ?? System.DateTimeOffset.UtcNow)
+            ?? new ShopProductState(false, false, 0, 0, null);
+    }
+
+    public async Task<ShopPurchaseResult> PurchaseShopProductAsync(ShopProductData product)
+    {
+        if (GemShopPurchaseUseCase == null)
+            return ShopPurchaseResult.Fail(ShopPurchaseFailure.InvalidProduct);
+
+        return await RunSerializedMutationAsync(async () =>
+        {
+            ShopPurchaseResult result =
+                await GemShopPurchaseUseCase.ExecuteAsync(product, System.DateTimeOffset.UtcNow);
+            if (!result.Succeeded)
+                return result;
+
+            RaiseResourceUpdated();
+            RaiseInventoryUpdated();
+            RaiseRosterUpdated();
+            RaiseShopUpdated();
+            return result;
+        });
+    }
+
     public async Task<RecruitUnitsResult> RecruitUnitsAsync(RecruitUnitsCommand command)
     {
         if (GachaUseCase == null)

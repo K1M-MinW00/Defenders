@@ -267,6 +267,7 @@ public sealed class UserDataPipelineTests
         {
             CreateCallCount++;
             CreatedData = data;
+            LoadResult = UserDataLoadResult.Found(data);
             return Task.CompletedTask;
         }
 

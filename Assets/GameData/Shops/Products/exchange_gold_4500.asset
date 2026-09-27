@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11ff0f30f3278204ab33b7ea328b67f7, type: 3}
+  m_Name: exchange_gold_4500
+  m_EditorClassIdentifier: Assembly-CSharp::ExchangeShopProductData
+  ProductId: exchange_gold_4500
+  DisplayName: "\uD06C\uB808\uB527"
+  Description: 
+  Tab: 3
+  SortOrder: 0
+  IsEnabled: 1
+  PurchaseType: 2
+  IAPProductId: 
+  Price: 10
+  CostAmount: 10
+  ResetPeriod: 0
+  PurchaseLimit: 0
+  SaleStartUtc: 
+  SaleEndUtc: 
+  Rewards:
+  - type: 0
+    id: 
+    amount: 4500
+  ProductImage: {fileID: 0}

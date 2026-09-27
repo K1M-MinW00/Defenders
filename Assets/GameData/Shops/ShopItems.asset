@@ -12,10 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ae7c696bd97ce41b7c7f045d762cb2, type: 3}
   m_Name: ShopItems
   m_EditorClassIdentifier: Assembly-CSharp::ShopProductGroup
-  DailyPackages: []
-  WeeklyPackages: []
-  MonthlyPackages: []
-  RechargeProducts: []
-  ExchangeProducts: []
-  FreeRechargeProducts:
-  - {fileID: 11400000, guid: 023592cb100e7624dac75eb198c3d68e, type: 2}
+  LimitedProducts:
+  - {fileID: 11400000, guid: dd48d3cf8e3ad0344a12dfafc97d765d, type: 2}
+  DailyPackages:
+  - {fileID: 11400000, guid: fc994ba5e081fe943a3810468a238e6c, type: 2}
+  WeeklyPackages:
+  - {fileID: 11400000, guid: f0bbe01ba9deade4b91f249f6af99e28, type: 2}
+  MonthlyPackages:
+  - {fileID: 11400000, guid: 35bbdc115f4ade24a8964b7eb528ae03, type: 2}
+  RechargeProducts:
+  - {fileID: 11400000, guid: b674ba19460d944458f6649caf3a0b4b, type: 2}
+  - {fileID: 11400000, guid: adfccedefc7b4d84484e73448766ccd5, type: 2}
+  - {fileID: 11400000, guid: 7a976f801d886ac4eb3f2045a1545bca, type: 2}
+  ExchangeProducts:
+  - {fileID: 11400000, guid: f396890b80a1723429ff0a57d1d685f9, type: 2}
+  - {fileID: 11400000, guid: 5a4fff685598b154b940642a29981d22, type: 2}

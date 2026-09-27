@@ -26,6 +26,14 @@ public static class UserDataMigrator
                     MigrateVersion0To1(data);
                     break;
 
+                case 1:
+                    MigrateVersion1To2(data);
+                    break;
+
+                case 2:
+                    MigrateVersion2To3(data);
+                    break;
+
                 default:
                     throw new InvalidOperationException(
                         $"No migration path exists for user data schema version {data.SchemaVersion}.");
@@ -40,5 +48,18 @@ public static class UserDataMigrator
     private static void MigrateVersion0To1(UserDataRoot data)
     {
         data.SchemaVersion = 1;
+    }
+
+    private static void MigrateVersion1To2(UserDataRoot data)
+    {
+        data.Shop ??= UserDataFactory.CreateDefaultShop();
+        data.SchemaVersion = 2;
+    }
+
+    private static void MigrateVersion2To3(UserDataRoot data)
+    {
+        data.Shop ??= UserDataFactory.CreateDefaultShop();
+        data.Shop.SeenTabs ??= new System.Collections.Generic.List<UserShopTabSeenData>();
+        data.SchemaVersion = 3;
     }
 }

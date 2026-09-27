@@ -15,6 +15,7 @@ public static class UserDataFactory
             Inventory = CreateDefaultInventory(),
             Gacha = CreateDefaultGacha(),
             Ad = CreateDefaultAd(),
+            Shop = CreateDefaultShop(),
         };
 
         data.Profile.IconId = ProfileIconResolver.ResolveIconId(data.Profile.IconId, data.Roster);
@@ -92,4 +93,6 @@ public static class UserDataFactory
             GemAdWatchCount = 0,
         };
     }
+
+    public static UserShopData CreateDefaultShop() => new();
 }

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24f07cf3b7bb36640ad1638c437f640c, type: 3}
+  m_Name: daily_preview
+  m_EditorClassIdentifier: Assembly-CSharp::PackageShopProductData
+  ProductId: daily_preview
+  DisplayName: "\uC77C\uC77C \uC131\uC7A5 \uD329"
+  Description: 
+  Tab: 1
+  SortOrder: 0
+  IsEnabled: 1
+  PurchaseType: 1
+  IAPProductId: 
+  Price: 1300
+  CostAmount: 0
+  ResetPeriod: 1
+  PurchaseLimit: 1
+  SaleStartUtc: 
+  SaleEndUtc: 
+  Rewards:
+  - type: 0
+    id: 
+    amount: 5000
+  PackageImage: {fileID: -3960823425239087011, guid: 40166c57185a03f4eb9312c33f2c920c, type: 3}

@@ -92,6 +92,31 @@ public static class UserDataCloner
         };
     }
 
+    public static UserShopData Copy(UserShopData source)
+    {
+        return new UserShopData
+        {
+            Purchases = source?.Purchases?
+                .Where(purchase => purchase != null)
+                .Select(purchase => new UserShopPurchaseData
+                {
+                    ProductId = purchase.ProductId,
+                    PeriodKey = purchase.PeriodKey,
+                    Count = purchase.Count,
+                    LastPurchasedAt = purchase.LastPurchasedAt,
+                })
+                .ToList() ?? new List<UserShopPurchaseData>(),
+            SeenTabs = source?.SeenTabs?
+                .Where(seen => seen != null)
+                .Select(seen => new UserShopTabSeenData
+                {
+                    Tab = seen.Tab,
+                    Marker = seen.Marker,
+                })
+                .ToList() ?? new List<UserShopTabSeenData>(),
+        };
+    }
+
     private static List<InventoryStackItem> CopyStackItems(IEnumerable<InventoryStackItem> source)
     {
         return source?

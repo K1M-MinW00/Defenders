@@ -61,86 +61,17 @@ public class MailSlotUI : MonoBehaviour
 
         foreach (RewardData reward in mail.Rewards)
         {
-            switch (reward.Type)
-            {
-                case RewardType.Gold:
-                    CreateResourceSlot(icons, RewardType.Gold, reward.Amount);
-                    break;
+            if (!RewardPresentationResolver.TryResolve(reward, icons, out RewardPresentation presentation))
+                continue;
 
-                case RewardType.Gem:
-                    CreateResourceSlot(icons, RewardType.Gem, reward.Amount);
-                    break;
-
-                case RewardType.Fuel:
-                    CreateResourceSlot(icons, RewardType.Fuel, reward.Amount);
-                    break;
-
-                case RewardType.Item:
-                    CreateItemSlot(reward, icons);
-                    break;
-
-                case RewardType.Unit:
-                    CreateUnitSlot(reward, icons);
-                    break;
-
-                case RewardType.Equipment:
-                    CreateEquipmentSlot(reward, icons);
-                    break;
-            }
+            CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
+            slot.Setup(
+                presentation.Icon,
+                presentation.Frame,
+                reward.Amount,
+                presentation.ShowAmount,
+                null);
         }
-    }
-
-    private void CreateResourceSlot(IGameIconProvider icons, RewardType type, int amount)
-    {
-        CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
-
-        slot.Setup(
-            icons.GetResourceIcon(type),
-            icons.GetRarityFrame(Rarity.Normal),
-            amount,
-            true,
-            null);
-    }
-
-    private void CreateItemSlot(RewardData reward, IGameIconProvider icons)
-    {
-        ItemDataSO itemData = GameConfig.Items.Get(reward.Id);
-
-        if (itemData == null)
-            return;
-
-        CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
-
-        slot.Setup(
-            itemData.Icon,
-            icons.GetRarityFrame(itemData.Rarity),
-            reward.Amount,
-            itemData.Stackable,
-            null);
-    }
-
-    private void CreateUnitSlot(RewardData reward, IGameIconProvider icons)
-    {
-        UnitDataSO unitData = GameConfig.Units.Get(reward.Id);
-
-        if (unitData == null)
-            return;
-
-        CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
-
-        slot.Setup(unitData.icon, icons.GetRarityFrame(unitData.rarity), 1, false, null);
-    }
-
-    private void CreateEquipmentSlot(RewardData reward, IGameIconProvider icons)
-    {
-        ItemDataSO equipmentData = GameConfig.Items.Get(reward.Id);
-
-        if (equipmentData == null)
-            return;
-
-        CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
-
-        slot.Setup(equipmentData.Icon, icons.GetRarityFrame(equipmentData.Rarity), 1, false, null);
     }
 
     private void ClearRewardSlots()

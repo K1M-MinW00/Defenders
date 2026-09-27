@@ -16,6 +16,7 @@ internal static class FirestoreDataContract
         public const string Inventory = "Inventory";
         public const string Gacha = "Gacha";
         public const string Ad = "Ad";
+        public const string Shop = "Shop";
     }
 
     public static class MailFields

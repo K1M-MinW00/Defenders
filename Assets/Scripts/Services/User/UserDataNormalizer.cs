@@ -104,6 +104,26 @@ public static class UserDataNormalizer
         changed |= NormalizeGacha(data.Gacha);
         changed |= NormalizeAd(data.Ad);
 
+        if (data.Shop == null)
+        {
+            data.Shop = UserDataFactory.CreateDefaultShop();
+            changed = true;
+        }
+
+        if (data.Shop.Purchases == null)
+        {
+            data.Shop.Purchases = new List<UserShopPurchaseData>();
+            changed = true;
+        }
+
+        if (data.Shop.SeenTabs == null)
+        {
+            data.Shop.SeenTabs = new List<UserShopTabSeenData>();
+            changed = true;
+        }
+
+        changed |= NormalizeShop(data.Shop);
+
         return changed;
     }
 
@@ -308,6 +328,39 @@ public static class UserDataNormalizer
         int gemCount = ClampInt(ad.GemAdWatchCount, 0, AdDailyLimitPolicy.DailyAdLimit);
         changed |= SetIfDifferent(ad.FuelAdWatchCount, fuelCount, value => ad.FuelAdWatchCount = value);
         changed |= SetIfDifferent(ad.GemAdWatchCount, gemCount, value => ad.GemAdWatchCount = value);
+        return changed;
+    }
+
+    private static bool NormalizeShop(UserShopData shop)
+    {
+        bool changed = false;
+        HashSet<string> keys = new();
+
+        for (int i = shop.Purchases.Count - 1; i >= 0; i--)
+        {
+            UserShopPurchaseData purchase = shop.Purchases[i];
+            string key = purchase == null ? null : $"{purchase.ProductId}:{purchase.PeriodKey}";
+            if (purchase == null || string.IsNullOrWhiteSpace(purchase.ProductId) ||
+                string.IsNullOrWhiteSpace(purchase.PeriodKey) || purchase.Count <= 0 || !keys.Add(key))
+            {
+                shop.Purchases.RemoveAt(i);
+                changed = true;
+            }
+        }
+
+
+        HashSet<int> seenTabs = new();
+        for (int i = shop.SeenTabs.Count - 1; i >= 0; i--)
+        {
+            UserShopTabSeenData seen = shop.SeenTabs[i];
+            if (seen == null || !Enum.IsDefined(typeof(ShopTabType), seen.Tab) ||
+                string.IsNullOrWhiteSpace(seen.Marker) || !seenTabs.Add(seen.Tab))
+            {
+                shop.SeenTabs.RemoveAt(i);
+                changed = true;
+            }
+        }
+
         return changed;
     }
 

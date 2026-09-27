@@ -79,8 +79,11 @@ public class LobbyTabView : MonoBehaviour
 
         foreach (TabEntry entry in tabs)
         {
-            entry?.panel?.SetActive(false);
-            entry?.highlight?.SetActive(false);
+            if (entry?.panel != null)
+                entry.panel.SetActive(false);
+
+            if (entry?.highlight != null)
+                entry.highlight.SetActive(false);
         }
     }
 

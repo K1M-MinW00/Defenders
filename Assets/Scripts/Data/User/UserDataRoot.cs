@@ -13,4 +13,5 @@ public class UserDataRoot
     [FirestoreProperty] public UserInventoryData Inventory {  get; set; } = new();
     [FirestoreProperty] public UserGachaData Gacha { get; set; } = new();
     [FirestoreProperty] public UserAdData Ad { get; set; } = new();
+    [FirestoreProperty] public UserShopData Shop { get; set; } = new();
 }

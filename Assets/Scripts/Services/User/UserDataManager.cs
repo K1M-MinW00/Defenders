@@ -18,6 +18,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     private ClaimAdFuelRewardUseCase ClaimAdFuelRewardUseCase { get; set; }
     private UnitFormationUseCase UnitFormationUseCase { get; set; }
     private ProfileUpdateUseCase ProfileUpdateUseCase { get; set; }
+    private GemShopPurchaseUseCase GemShopPurchaseUseCase { get; set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -30,6 +31,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     public event Action OnInventoryUpdated;
     public event Action OnRosterUpdated;
     public event Action OnProgressUpdated;
+    public event Action OnShopUpdated;
 
     private IUserDataRepository repository;
     private UserDataLoader userDataLoader;
@@ -119,6 +121,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         UnitFormationUseCase = new UnitFormationUseCase(repository, CurrentUserId, UserData);
         int nicknameCost = GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500;
         ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData, nicknameCost);
+        GemShopPurchaseUseCase = new GemShopPurchaseUseCase(repository, CurrentUserId, UserData);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>
@@ -207,5 +210,10 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     private void RaiseProgressUpdated()
     {
         OnProgressUpdated?.Invoke();
+    }
+
+    private void RaiseShopUpdated()
+    {
+        OnShopUpdated?.Invoke();
     }
 }
