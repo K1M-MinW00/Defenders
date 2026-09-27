@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class UnitHealth : MonoBehaviour, IDamageable
+public class UnitHealth : MonoBehaviour, ICombatHealth
 {
     private UnitController owner;
     private readonly CombatHealthState state = new();

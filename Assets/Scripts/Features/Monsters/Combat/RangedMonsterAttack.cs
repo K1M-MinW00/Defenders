@@ -35,9 +35,9 @@ public class RangedMonsterAttack : MonoBehaviour, IMonsterAttack
         return true;
     }
 
-    public bool TryAttack(UnitController target)
+    public bool TryAttack(ICombatTarget target)
     {
-        if (target == null || target.IsDead)
+        if (target == null || target.TargetTransform == null || target.IsDead)
             return false;
 
         if (!CanAttack())
@@ -47,7 +47,7 @@ public class RangedMonsterAttack : MonoBehaviour, IMonsterAttack
         GameAudioManager.Instance?.PlayCharacterSfx(owner.Data?.attackSound, GameAudioCue.MonsterAttack, GameAudioPriority.Normal, 0.08f);
 
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
-        Vector3 targetPos = target.transform.position;
+        Vector3 targetPos = target.TargetTransform.position;
 
         Vector2 dir = (targetPos - spawnPos).normalized;
 

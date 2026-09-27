@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(MonsterHealth))]
-public class MonsterController : MonoBehaviour, IPoolable
+public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 {
     [Header("References")]
     private ModelView view;
@@ -23,6 +23,9 @@ public class MonsterController : MonoBehaviour, IPoolable
     public float AttackRange => FinalStats.atkRange;
     public float AttackCooldown => 1f / FinalStats.atkPerSec;
     public float AtkDamage => FinalStats.atkDamage;
+    public Transform TargetTransform => transform;
+    public ICombatHealth CombatHealth => Health;
+    public bool IsDead => Health != null && Health.IsDead;
 
     private Poolable poolable;
 

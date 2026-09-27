@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class MonsterHealth : MonoBehaviour, IDamageable
+public class MonsterHealth : MonoBehaviour, ICombatHealth
 {
     private MonsterStats stats;
     private MonsterController owner;

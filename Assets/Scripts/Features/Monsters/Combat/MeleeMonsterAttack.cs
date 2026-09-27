@@ -21,9 +21,9 @@ public class MeleeMonsterAttack : MonoBehaviour, IMonsterAttack
         return true;
     }
 
-    public bool TryAttack(UnitController target)
+    public bool TryAttack(ICombatTarget target)
     {
-        if (target == null || target.IsDead)
+        if (target == null || target.CombatHealth == null || target.IsDead)
             return false;
 
         if (!CanAttack())
@@ -32,7 +32,7 @@ public class MeleeMonsterAttack : MonoBehaviour, IMonsterAttack
         owner.PlayAttack();
         GameAudioManager.Instance?.PlayCharacterSfx(owner.Data?.attackSound, GameAudioCue.MonsterAttack, GameAudioPriority.Normal, 0.08f);
 
-        target.Health.TakeDamage(owner.AtkDamage);
+        target.CombatHealth.TakeDamage(owner.AtkDamage);
 
         return true;
     }

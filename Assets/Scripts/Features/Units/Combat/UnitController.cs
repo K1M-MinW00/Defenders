@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class UnitController : MonoBehaviour
+public class UnitController : MonoBehaviour, ICombatTarget
 {
     [Header("Data")]
     [SerializeField] private UnitDataSO unitData;
@@ -49,6 +49,8 @@ public class UnitController : MonoBehaviour
     public float DetectRange => runtime.FinalStats.DetectRange;
 
     public bool IsDead => Health.IsDead;
+    public Transform TargetTransform => transform;
+    public ICombatHealth CombatHealth => health;
   
     #endregion Property
 
