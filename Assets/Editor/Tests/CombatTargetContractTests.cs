@@ -40,6 +40,32 @@ public sealed class CombatTargetContractTests
     }
 
     [Test]
+    public void DamageRequest_ReturnsAppliedAndLethalResult()
+    {
+        FakeHealth health = new(false);
+        DamageRequest request = new(2f, origin: DamageOrigin.BasicAttack);
+
+        DamageResult result = health.ApplyDamage(request);
+
+        Assert.That(result.RequestedAmount, Is.EqualTo(2f));
+        Assert.That(result.AppliedAmount, Is.EqualTo(1f));
+        Assert.That(result.WasApplied, Is.True);
+        Assert.That(result.WasLethal, Is.True);
+        Assert.That(result.RejectReason, Is.EqualTo(DamageRejectReason.None));
+    }
+
+    [Test]
+    public void DamageRequest_RejectsDamageWhenTargetIsAlreadyDead()
+    {
+        FakeHealth health = new(true);
+
+        DamageResult result = health.ApplyDamage(new DamageRequest(1f));
+
+        Assert.That(result.WasApplied, Is.False);
+        Assert.That(result.RejectReason, Is.EqualTo(DamageRejectReason.TargetAlreadyDead));
+    }
+
+    [Test]
     public void Selector_ReturnsClosestLivingTargetAndChecksRange()
     {
         GameObject nearObject = new("Near");
@@ -95,11 +121,21 @@ public sealed class CombatTargetContractTests
 
         public void TakeDamage(float damage)
         {
-            if (damage <= 0f)
-                return;
+            ApplyDamage(new DamageRequest(damage));
+        }
 
+        public DamageResult ApplyDamage(DamageRequest request)
+        {
+            if (IsDead)
+                return DamageResult.Rejected(request.Amount, DamageRejectReason.TargetAlreadyDead);
+
+            if (request.Amount <= 0f)
+                return DamageResult.Rejected(request.Amount, DamageRejectReason.InvalidAmount);
+
+            float appliedDamage = Mathf.Min(CurrentHp, request.Amount);
             CurrentHp = 0f;
             IsDead = true;
+            return DamageResult.Applied(request.Amount, appliedDamage, true);
         }
     }
 }

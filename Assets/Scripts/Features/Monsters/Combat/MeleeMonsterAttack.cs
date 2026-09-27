@@ -32,7 +32,8 @@ public class MeleeMonsterAttack : MonoBehaviour, IMonsterAttack
         owner.PlayAttack();
         GameAudioManager.Instance?.PlayCharacterSfx(owner.Data?.attackSound, GameAudioCue.MonsterAttack, GameAudioPriority.Normal, 0.08f);
 
-        target.CombatHealth.TakeDamage(owner.AtkDamage);
+        target.CombatHealth.ApplyDamage(
+            new DamageRequest(owner.AtkDamage, owner, DamageOrigin.BasicAttack));
 
         return true;
     }

@@ -16,7 +16,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
     protected Collider2D[] hitBuffer;
     protected ContactFilter2D hitFilter;
-    protected readonly HashSet<IDamageable> damagedTargets = new();
+    protected readonly HashSet<ICombatHealth> damagedTargets = new();
 
     protected float Damage => owner.Attack;
     protected float Cooldown => 1f / owner.AttackPerSec;
@@ -104,7 +104,8 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
         float damage = Damage;
         owner.SkillController.NotifyAttackHit(target, ref damage);
-        target.Health.TakeDamage(damage);
+        target.Health.ApplyDamage(
+            new DamageRequest(damage, owner, DamageOrigin.BasicAttack));
     }
 
     protected virtual void ApplyDamage(Collider2D[] hits,int hitCount)
@@ -121,17 +122,18 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent<IDamageable>(out var damageable))
+            if (!hit.TryGetComponent<ICombatHealth>(out var combatHealth))
                 continue;
 
-            if (!damagedTargets.Add(damageable))
+            if (!damagedTargets.Add(combatHealth))
                 continue;
 
             MonsterController target = hit.GetComponent<MonsterController>();
 
             float damage = Damage;
             owner.SkillController.NotifyAttackHit(target, ref damage);
-            damageable.TakeDamage(damage);
+            combatHealth.ApplyDamage(
+                new DamageRequest(damage, owner, DamageOrigin.BasicAttack));
         }
     }
 

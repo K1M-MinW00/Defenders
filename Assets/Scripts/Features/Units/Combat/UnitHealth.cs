@@ -39,18 +39,28 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
     public void TakeDamage(float damage)
     {
-        if (IsDead || damage <= 0f)
-            return;
+        ApplyDamage(new DamageRequest(damage));
+    }
 
-        float finalDamage = damage;
+    public DamageResult ApplyDamage(DamageRequest request)
+    {
+        if (IsDead)
+            return DamageResult.Rejected(request.Amount, DamageRejectReason.TargetAlreadyDead);
+
+        if (request.Amount <= 0f)
+            return DamageResult.Rejected(request.Amount, DamageRejectReason.InvalidAmount);
+
+        float finalDamage = request.Amount;
 
         owner.SkillController.NotifyBeforeTakeDamage(ref finalDamage);
 
-        finalDamage = Mathf.Max(0f,finalDamage);
+        finalDamage = Mathf.Max(0f, finalDamage);
         float appliedDamage = state.TakeDamage(finalDamage);
 
-        if (appliedDamage > 0f)
-            GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.hitSound, GameAudioCue.UnitHit, GameAudioPriority.Low, 0.05f);
+        if (appliedDamage <= 0f)
+            return DamageResult.Rejected(request.Amount, DamageRejectReason.FullyPrevented);
+
+        GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.hitSound, GameAudioCue.UnitHit, GameAudioPriority.Low, 0.05f);
         
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
 
@@ -58,6 +68,8 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
         if (IsDead)
             Die();
+
+        return DamageResult.Applied(request.Amount, appliedDamage, IsDead);
     }
 
     public void Heal(float amount)
