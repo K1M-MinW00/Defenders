@@ -26598,6 +26598,7 @@ MonoBehaviour:
   gemText: {fileID: 52905969}
   fuelText: {fileID: 183434883}
   gameSceneName: GameScene
+  stageFuelCost: 10
   startButton: {fileID: 824655493}
 --- !u!1 &916172032
 GameObject:

@@ -113,3 +113,10 @@ MonoBehaviour:
         delayAfterGroup: 0.5
       delayAfterSubWave: 1
   economyConfig: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}
+  clearRewards:
+  - type: 0
+    id:
+    amount: 150
+  - type: 1
+    id:
+    amount: 15

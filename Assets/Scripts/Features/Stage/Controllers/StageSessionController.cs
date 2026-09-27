@@ -17,9 +17,9 @@ public class StageSessionController : MonoBehaviour
     private StageDataProvider stageDataProvider;
     private StageWaveSequence waveSequence;
     private readonly StagePhaseMachine phaseMachine = new();
-    private bool stageClearRewardGranted;
-    private bool stageClearSavePending;
-    private bool stageClearSaveInProgress;
+    private bool outcomeSavePending;
+    private bool outcomeSaveInProgress;
+    private bool pendingOutcomeIsClear;
 
     public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
@@ -65,9 +65,9 @@ public class StageSessionController : MonoBehaviour
     {
         currentStageData = stageData;
         waveSequence = new StageWaveSequence(stageData.waves);
-        stageClearRewardGranted = false;
-        stageClearSavePending = false;
-        stageClearSaveInProgress = false;
+        outcomeSavePending = false;
+        outcomeSaveInProgress = false;
+        pendingOutcomeIsClear = false;
 
         bootstrapper.InitializeStage(stageData,enterData);
 
@@ -160,53 +160,56 @@ public class StageSessionController : MonoBehaviour
         if (!TransitionTo(StageState.StageFail))
             return;
 
-        stageUI.ShowStageFail();
-
-        bool saved = await progressService.ApplyStageFailAsync(currentStageData, CurrentWaveIndex);
-        if (!saved)
-            Debug.LogWarning($"Stage failure progress save failed: {currentStageData?.StageKey}");
+        stageUI.ShowStageFail(
+            currentStageData,
+            CurrentWaveIndex,
+            rewardService.CreateFailureRewards());
+        await TrySaveStageOutcomeAsync(isClear: false);
     }
 
     private async Task HandleStageClear()
     {
-        if (!stageClearRewardGranted)
-        {
-            rewardService.GiveStageClearReward(currentStageData);
-            stageClearRewardGranted = true;
-        }
-
-        stageUI.ShowStageClear();
-        await TrySaveStageClearAsync();
+        stageUI.ShowStageClear(
+            currentStageData,
+            waveSequence.ClearedWaveCount,
+            currentStageData.clearRewards);
+        await TrySaveStageOutcomeAsync(isClear: true);
     }
 
-    private async Task<bool> TrySaveStageClearAsync()
+    private async Task<bool> TrySaveStageOutcomeAsync(bool isClear)
     {
-        if (stageClearSaveInProgress)
+        if (outcomeSaveInProgress)
             return false;
 
-        stageClearSaveInProgress = true;
-        stageClearSavePending = true;
+        outcomeSaveInProgress = true;
+        outcomeSavePending = true;
+        pendingOutcomeIsClear = isClear;
         try
         {
-            bool saved = await progressService.ApplyStageClearAsync(currentStageData);
-            if (!saved)
+            StageOutcomeResult result = isClear
+                ? await rewardService.GiveStageClearRewardAsync(currentStageData)
+                : await rewardService.GiveStageFailRewardAsync(currentStageData, CurrentWaveIndex);
+
+            if (!result.Succeeded)
             {
-                Debug.LogWarning($"Stage clear progress save failed. Lobby exit is blocked until retry succeeds: {currentStageData?.StageKey}");
+                Debug.LogWarning(
+                    $"Stage outcome save failed ({result.Failure}). " +
+                    $"Lobby exit is blocked until retry succeeds: {currentStageData?.StageKey}");
                 return false;
             }
 
-            stageClearSavePending = false;
-            return CurrentState == StageState.StageClear || TransitionTo(StageState.StageClear);
+            outcomeSavePending = false;
+            return !isClear || CurrentState == StageState.StageClear || TransitionTo(StageState.StageClear);
         }
         finally
         {
-            stageClearSaveInProgress = false;
+            outcomeSaveInProgress = false;
         }
     }
 
     public async Task<bool> TryPrepareExitAsync()
     {
-        if (stageClearSavePending && !await TrySaveStageClearAsync())
+        if (outcomeSavePending && !await TrySaveStageOutcomeAsync(pendingOutcomeIsClear))
             return false;
 
         if (CurrentState != StageState.StageClear && CurrentState != StageState.StageFail)

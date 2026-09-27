@@ -21,6 +21,7 @@ public class LobbyBattlePanelView : MonoBehaviour
 
     [Header("Battle")]
     [SerializeField] private string gameSceneName = "GameScene";
+    [SerializeField, Min(1)] private int stageFuelCost = 10;
     [SerializeField] private Button startButton;
 
     private LobbyBattlePresenter presenter;
@@ -90,7 +91,7 @@ public class LobbyBattlePanelView : MonoBehaviour
         goldText.text = state.Gold.ToString("N0");
         gemText.text = state.Gem.ToString("N0");
         fuelText.text = $"{state.Fuel} / {state.MaxFuel}";
-        startButton.interactable = state.CanStartBattle;
+        startButton.interactable = state.CanStartBattle && state.Fuel >= stageFuelCost;
     }
 
     private async void HandleStartButtonClicked()
@@ -107,18 +108,33 @@ public class LobbyBattlePanelView : MonoBehaviour
             return;
         }
 
-        StageEnterHolder.Set(enterData);
         isStartingBattle = true;
         startButton.interactable = false;
+
+        StageEntryFuelResult fuelResult =
+            await UserDataManager.Instance.ConsumeStageEntryFuelAsync(stageFuelCost);
+        if (!fuelResult.Succeeded)
+        {
+            isStartingBattle = false;
+            Refresh();
+            UIFeedbackToast.Show(GetFuelFailureMessage(fuelResult.Failure, stageFuelCost));
+            return;
+        }
+
+        StageEnterHolder.Set(enterData);
 
         SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(gameSceneName);
         if (result == SceneTransitionResult.Succeeded || this == null)
             return;
 
         StageEnterHolder.Clear();
+        bool refunded = await UserDataManager.Instance.RefundStageEntryFuelAsync(stageFuelCost);
         isStartingBattle = false;
         Refresh();
-        UIFeedbackToast.Show(GetSceneTransitionFailureMessage(result));
+        string message = GetSceneTransitionFailureMessage(result);
+        if (!refunded)
+            message += " 연료 반환에 실패했습니다.";
+        UIFeedbackToast.Show(message);
     }
 
     private static string GetStartFailureMessage(LobbyBattleStartFailure failure)
@@ -139,6 +155,16 @@ public class LobbyBattlePanelView : MonoBehaviour
             SceneTransitionResult.InvalidScene => "전투 씬이 빌드 설정에 없습니다.",
             SceneTransitionResult.AlreadyLoading => "다른 화면으로 이동 중입니다.",
             _ => "전투 화면을 불러오지 못했습니다.",
+        };
+    }
+
+    private static string GetFuelFailureMessage(StageEntryFuelFailure failure, int fuelCost)
+    {
+        return failure switch
+        {
+            StageEntryFuelFailure.InsufficientFuel => $"스테이지 입장에는 연료 {fuelCost}이 필요합니다.",
+            StageEntryFuelFailure.SaveFailed => "연료 사용 정보를 저장하지 못했습니다.",
+            _ => "연료를 사용할 수 없습니다.",
         };
     }
 

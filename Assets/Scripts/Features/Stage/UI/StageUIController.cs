@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class StageUIController : MonoBehaviour
 {
@@ -106,14 +107,20 @@ public class StageUIController : MonoBehaviour
         unitDragActionUI?.SetDragMode(isDraggingUnit, canReroll, star);
     }
 
-    public void ShowStageClear()
+    public void ShowStageClear(
+        StageDataSO stage,
+        int clearedWaveCount,
+        IReadOnlyList<RewardData> rewards)
     {
-        resultUI?.ShowClear();
+        resultUI?.ShowClear(stage, clearedWaveCount, rewards);
     }
 
-    public void ShowStageFail()
+    public void ShowStageFail(
+        StageDataSO stage,
+        int clearedWaveCount,
+        IReadOnlyList<RewardData> rewards)
     {
-        resultUI?.ShowFail();
+        resultUI?.ShowFail(stage, clearedWaveCount, rewards);
     }
 
     public void HideAllResultPanels()

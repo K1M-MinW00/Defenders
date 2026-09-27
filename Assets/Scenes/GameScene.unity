@@ -13557,6 +13557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageRewardService
   economyManager: {fileID: 1947879229}
+  failureFuelReward: 5
 --- !u!1 &1993555687
 GameObject:
   m_ObjectHideFlags: 0
@@ -14615,6 +14616,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageResultUI
   stageClearPanel: {fileID: 465300743}
   stageFailPanel: {fileID: 1236393643}
+  clearStageText: {fileID: 2091283677}
+  clearWaveText: {fileID: 1350629330}
+  clearRewardViewport: {fileID: 1830550652}
+  rewardSlotPrefab: {fileID: 2878806649800900299, guid: f4f243ebd3038ec45bec9a1a5660291b, type: 3}
+  failStageText: {fileID: 1178893552}
+  failWaveText: {fileID: 15953883}
+  failFuelIcon: {fileID: 1502400876}
+  failFuelAmountText: {fileID: 266438054}
   lobbySceneName: LobbyScene
 --- !u!114 &2138733310
 MonoBehaviour:

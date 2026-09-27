@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using UnityEngine;
 
 public class StageRewardService : MonoBehaviour
 {
     [SerializeField] private EconomyManager economyManager;
+    [SerializeField, Min(1)] private int failureFuelReward = 5;
+
+    public int FailureFuelReward => failureFuelReward;
 
     public void GiveWaveReward(WaveData waveData)
     {
@@ -12,13 +17,26 @@ public class StageRewardService : MonoBehaviour
         economyManager.ApplyWaveReward(waveData.waveType);
     }
 
-    public void GiveStageClearReward(StageDataSO stageData)
+    public Task<StageOutcomeResult> GiveStageClearRewardAsync(StageDataSO stageData)
     {
-        if (stageData == null)
-            return;
-
-        // TODO : 유저 데이터 - 스테이지 클리어 보상
-        // UserProgressManager.Instance.MarkStageCleared(stageData.stageId);
+        return UserDataManager.Instance.CompleteStageAsync(stageData);
     }
-    // TODO : 유물 보상 추가
+
+    public Task<StageOutcomeResult> GiveStageFailRewardAsync(
+        StageDataSO stageData,
+        int clearedWaveCount)
+    {
+        return UserDataManager.Instance.FailStageAsync(
+            stageData,
+            clearedWaveCount,
+            CreateFailureRewards());
+    }
+
+    public IReadOnlyList<RewardData> CreateFailureRewards()
+    {
+        return new[]
+        {
+            new RewardData { Type = RewardType.Fuel, Amount = failureFuelReward },
+        };
+    }
 }

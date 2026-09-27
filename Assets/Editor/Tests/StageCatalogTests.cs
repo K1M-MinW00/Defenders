@@ -5,6 +5,7 @@ public sealed class StageCatalogTests
 {
     [TestCase(1, 1)]
     [TestCase(1, 2)]
+    [TestCase(1, 3)]
     public void StageResource_IsRegisteredAndValid(int sector, int stageNumber)
     {
         StageDataSO[] stages = Resources.LoadAll<StageDataSO>("GameData/Stages");

@@ -19,6 +19,8 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     private UnitFormationUseCase UnitFormationUseCase { get; set; }
     private ProfileUpdateUseCase ProfileUpdateUseCase { get; set; }
     private GemShopPurchaseUseCase GemShopPurchaseUseCase { get; set; }
+    private StageOutcomeUseCase StageOutcomeUseCase { get; set; }
+    private StageEntryFuelUseCase StageEntryFuelUseCase { get; set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -122,6 +124,8 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         int nicknameCost = GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500;
         ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData, nicknameCost);
         GemShopPurchaseUseCase = new GemShopPurchaseUseCase(repository, CurrentUserId, UserData);
+        StageOutcomeUseCase = new StageOutcomeUseCase(repository, CurrentUserId, UserData);
+        StageEntryFuelUseCase = new StageEntryFuelUseCase(repository, CurrentUserId, UserData);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>
