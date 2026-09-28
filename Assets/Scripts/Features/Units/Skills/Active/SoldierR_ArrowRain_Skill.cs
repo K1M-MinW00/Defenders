@@ -28,6 +28,11 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
 
+    public override bool CanApply(SkillExecutionContext context)
+    {
+        return context != null && context.IsValid;
+    }
+
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
         context = new SkillExecutionContext();

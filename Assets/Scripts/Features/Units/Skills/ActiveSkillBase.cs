@@ -17,6 +17,11 @@ public abstract class ActiveSkillBase : MonoBehaviour
 
     public abstract bool TryBuildContext(out SkillExecutionContext context);
 
+    public virtual bool CanApply(SkillExecutionContext context)
+    {
+        return SkillTargetPolicy.CanApply(TargetType, context);
+    }
+
     public virtual void OnSkillStart(SkillExecutionContext context) { }
     public abstract void OnSkillApply(SkillExecutionContext context);
     public virtual void OnSkillEnd(SkillExecutionContext context) { }

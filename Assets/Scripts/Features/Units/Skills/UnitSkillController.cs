@@ -146,6 +146,9 @@ public class UnitSkillController : MonoBehaviour
 
         owner.Energy.ConsumeAll();
 
+        if (!activeSkill.CanApply(context))
+            return;
+
         activeSkill.OnSkillApply(context);
         OnSkillApplied?.Invoke();
         NotifyActiveSkillApplied();
