@@ -22,7 +22,7 @@ MonoBehaviour:
     clip: {fileID: 0}
     volume: 1
   baseStats:
-    maxHp: 30
+    maxHp: 100
     moveSpeed: 2
     atkDamage: 10
     atkRange: 2

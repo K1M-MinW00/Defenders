@@ -28,7 +28,7 @@ MonoBehaviour:
   baseStats:
     Attack: 34
     MaxHp: 280
-    AttackPerSec: 1.05
+    AttackPerSec: 3
     DetectRange: 5
     CritChance: 0.1
     CritDamage: 1.25

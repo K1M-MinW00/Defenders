@@ -19,7 +19,7 @@ MonoBehaviour:
   - waveType: 0
     subWaves:
     - spawnEntries:
-      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
+      - data: {fileID: 11400000, guid: 3c3fbd2179dcd7b49a60604c771b1d48, type: 2}
         count: 5
         spawnPointIndex: 0
         interval: 0.2
