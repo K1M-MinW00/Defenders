@@ -7,6 +7,10 @@ public abstract class ActiveSkillBase : MonoBehaviour
     protected int Promotion => owner.UserUnit.Promotion;
     public abstract ActiveSkillTargetType TargetType { get; }
     public virtual SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
+    public virtual TargetResolutionPolicy ResolutionPolicy =>
+        TargetType == ActiveSkillTargetType.SelfArea
+            ? TargetResolutionPolicy.Self
+            : TargetResolutionPolicy.RetargetOnResolve;
     public virtual int TargetCount => 1;
 
     public virtual void Initialize(UnitController owner, UnitSkillController skillController)
@@ -19,7 +23,16 @@ public abstract class ActiveSkillBase : MonoBehaviour
 
     public virtual bool CanApply(SkillExecutionContext context)
     {
-        return SkillTargetPolicy.CanApply(TargetType, context);
+        return SkillTargetPolicy.CanApply(TargetType, ResolutionPolicy, context);
+    }
+
+    public virtual bool TryResolveContext(SkillExecutionContext context)
+    {
+        return SkillTargetPolicy.TryResolve(
+            TargetType,
+            ResolutionPolicy,
+            context,
+            owner);
     }
 
     public virtual void OnSkillStart(SkillExecutionContext context) { }

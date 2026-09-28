@@ -140,15 +140,23 @@ public class UnitSkillController : MonoBehaviour
 
     public void ApplySkill()
     {
+        if (lifecycle.Phase != SkillExecutionPhase.Running)
+            return;
+
         SkillExecutionContext context = lifecycle.Context;
-        if (context == null || !lifecycle.TryApply())
+        if (context == null)
+            return;
+
+        if (!activeSkill.TryResolveContext(context) || !activeSkill.CanApply(context))
+        {
+            CancelSkill();
+            return;
+        }
+
+        if (!lifecycle.TryApply())
             return;
 
         owner.Energy.ConsumeAll();
-
-        if (!activeSkill.CanApply(context))
-            return;
-
         activeSkill.OnSkillApply(context);
         OnSkillApplied?.Invoke();
         NotifyActiveSkillApplied();

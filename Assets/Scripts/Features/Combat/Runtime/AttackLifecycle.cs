@@ -30,6 +30,15 @@ public sealed class AttackLifecycle
         return true;
     }
 
+    public bool TryReplaceTarget(ICombatTarget target)
+    {
+        if (!IsActive || target == null)
+            return false;
+
+        Target = target;
+        return true;
+    }
+
     public bool Complete()
     {
         if (!IsActive)

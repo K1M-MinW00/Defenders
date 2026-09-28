@@ -19,6 +19,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
     protected readonly HashSet<ICombatHealth> damagedTargets = new();
     protected readonly AttackCooldown attackCooldown = new();
     protected readonly AttackLifecycle attackLifecycle = new();
+    private Vector2 lockedAttackDirection;
 
     protected float Damage => owner.Attack;
     protected float Cooldown => 1f / owner.AttackPerSec;
@@ -71,6 +72,8 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         if (!attackLifecycle.TryBegin(target))
             return false;
 
+        lockedAttackDirection = ((Vector2)target.TargetTransform.position - (Vector2)transform.position).normalized;
+
         attackCooldown.Start(Time.time, Cooldown);
 
         owner.SkillController.NotifyAttackStarted(target);
@@ -85,14 +88,23 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
     protected bool TryEnterHitPhase()
     {
-        if (!attackLifecycle.TryEnterHitPhase())
-            return false;
+        if (!CombatTargetSelector.IsValid(currentTarget) && CurrentTargetMode == TargetSelectionMode.Single)
+        {
+            if (!owner.Targeting.TryFindTargetInSensor())
+            {
+                CancelAttack();
+                return false;
+            }
 
-        if (CombatTargetSelector.IsValid(currentTarget))
-            return true;
+            ICombatTarget replacement = owner.Targeting.CurrentTarget;
+            if (!attackLifecycle.TryReplaceTarget(replacement))
+                return false;
 
-        CancelAttack();
-        return false;
+            lockedAttackDirection = ((Vector2)replacement.TargetTransform.position - (Vector2)transform.position).normalized;
+            owner.Animation.FaceTarget(replacement);
+        }
+
+        return attackLifecycle.TryEnterHitPhase();
     }
 
     public virtual void OnAttackFinished()
@@ -175,11 +187,8 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
     protected Vector2 GetAttackDirection()
     {
-        if (CombatTargetSelector.IsValid(currentTarget))
-        {
-            Vector2 dirToTarget = ((Vector2)currentTarget.TargetTransform.position - (Vector2)transform.position);
-            return dirToTarget.normalized;
-        }
+        if (lockedAttackDirection.sqrMagnitude > 0.0001f)
+            return lockedAttackDirection;
 
         return owner.Animation.GetFacingDirection();
     }

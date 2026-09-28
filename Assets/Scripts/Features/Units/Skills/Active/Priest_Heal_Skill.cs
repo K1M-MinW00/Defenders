@@ -13,6 +13,20 @@ public class Priest_Heal_Skill : ActiveSkillBase
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.LowestHpAlliesInRangeOrGlobal;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
 
+    public override bool TryResolveContext(SkillExecutionContext context)
+    {
+        if (context == null || owner.UnitRoster == null)
+            return false;
+
+        UnitController target = owner.UnitRoster.GetLowestHpAliveUnit();
+        if (target == null)
+            return false;
+
+        context.SetAllyTarget(target);
+        owner.Animation.FaceTo(owner.transform.position, target.transform.position);
+        return true;
+    }
+
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
         context = new SkillExecutionContext();

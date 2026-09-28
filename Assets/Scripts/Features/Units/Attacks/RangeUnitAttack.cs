@@ -61,14 +61,22 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 
     protected bool TryEnterHitPhase()
     {
-        if (!attackLifecycle.TryEnterHitPhase())
-            return false;
+        if (!CombatTargetSelector.IsValid(currentTarget))
+        {
+            if (!owner.Targeting.TryFindTargetInSensor())
+            {
+                CancelAttack();
+                return false;
+            }
 
-        if (CombatTargetSelector.IsValid(currentTarget))
-            return true;
+            ICombatTarget replacement = owner.Targeting.CurrentTarget;
+            if (!attackLifecycle.TryReplaceTarget(replacement))
+                return false;
 
-        CancelAttack();
-        return false;
+            owner.Animation.FaceTarget(replacement);
+        }
+
+        return attackLifecycle.TryEnterHitPhase();
     }
 
     public virtual void OnAttackFinished()

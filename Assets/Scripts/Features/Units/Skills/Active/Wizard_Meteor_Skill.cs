@@ -14,6 +14,7 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
+    public override TargetResolutionPolicy ResolutionPolicy => TargetResolutionPolicy.LockPosition;
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
@@ -25,6 +26,7 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
             return false;
 
         context.SetEnemyTarget(target);
+        context.SetCastPosition(target.TargetTransform.position);
 
         return true;
     }
@@ -37,10 +39,7 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        if (!CombatTargetSelector.IsValid(context.EnemyTarget))
-            return;
-
-        Vector2 targetPos = context.EnemyTarget.TargetTransform.position;
+        Vector2 targetPos = context.CastPosition;
         Vector2 spawnPos = targetPos + Vector2.up * spawnHeight;
         
         MeteorProjectile projectile = owner.PoolManager.Spawn(meteorPrefab, spawnPos, Quaternion.identity,PoolCategory.Projectile);

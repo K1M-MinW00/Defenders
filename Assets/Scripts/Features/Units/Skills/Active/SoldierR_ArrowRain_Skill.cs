@@ -27,6 +27,7 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
+    public override TargetResolutionPolicy ResolutionPolicy => TargetResolutionPolicy.LockPosition;
 
     public override bool CanApply(SkillExecutionContext context)
     {

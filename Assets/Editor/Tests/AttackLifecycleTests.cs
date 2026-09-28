@@ -58,4 +58,17 @@ public class AttackLifecycleTests
         Assert.That(lifecycle.TryEnterHitPhase(), Is.False);
         Assert.That(lifecycle.Complete(), Is.False);
     }
+
+    [Test]
+    public void ReplaceTarget_UpdatesActiveAttackOnly()
+    {
+        var lifecycle = new AttackLifecycle();
+        var first = new TestTarget();
+        var replacement = new TestTarget();
+
+        Assert.That(lifecycle.TryReplaceTarget(replacement), Is.False);
+        Assert.That(lifecycle.TryBegin(first), Is.True);
+        Assert.That(lifecycle.TryReplaceTarget(replacement), Is.True);
+        Assert.That(lifecycle.Target, Is.SameAs(replacement));
+    }
 }

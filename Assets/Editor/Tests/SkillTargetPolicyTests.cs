@@ -42,6 +42,53 @@ public sealed class SkillTargetPolicyTests
             Is.False);
     }
 
+    [Test]
+    public void LockedPosition_RemainsApplicableAfterOriginalTargetDies()
+    {
+        GameObject targetObject = new("Target");
+
+        try
+        {
+            SkillExecutionContext context = new();
+            context.SetEnemyTarget(new FakeTarget(targetObject.transform, true));
+            context.SetCastPosition(targetObject.transform.position);
+
+            Assert.That(
+                SkillTargetPolicy.CanApply(
+                    ActiveSkillTargetType.EnemyInRange,
+                    TargetResolutionPolicy.LockPosition,
+                    context),
+                Is.True);
+        }
+        finally
+        {
+            Object.DestroyImmediate(targetObject);
+        }
+    }
+
+    [Test]
+    public void LockedDirection_RequiresNonZeroDirection()
+    {
+        SkillExecutionContext context = new();
+        context.SetCastPosition(Vector3.zero);
+
+        Assert.That(
+            SkillTargetPolicy.CanApply(
+                ActiveSkillTargetType.EnemyInRange,
+                TargetResolutionPolicy.LockDirection,
+                context),
+            Is.False);
+
+        context.SetCastDirection(Vector2.right);
+
+        Assert.That(
+            SkillTargetPolicy.CanApply(
+                ActiveSkillTargetType.EnemyInRange,
+                TargetResolutionPolicy.LockDirection,
+                context),
+            Is.True);
+    }
+
     private sealed class FakeTarget : ICombatTarget
     {
         public Transform TargetTransform { get; }

@@ -9,12 +9,14 @@ public class SkillExecutionContext
     public readonly List<UnitController> AllyTargets = new();
 
     public Vector3 CastPosition { get; private set; }
+    public Vector2 CastDirection { get; private set; }
     public bool IsValid { get; private set; }
 
     public void Initialize(UnitController caster)
     {
         Caster = caster;
         CastPosition = caster.transform.position;
+        CastDirection = Vector2.zero;
         IsValid = false;
         EnemyTarget = null;
         EnemyTargets.Clear();
@@ -78,6 +80,12 @@ public class SkillExecutionContext
     {
         CastPosition = pos;
         IsValid = true;
+    }
+
+    public void SetCastDirection(Vector2 direction)
+    {
+        CastDirection = direction.normalized;
+        IsValid = CastDirection.sqrMagnitude > 0.0001f;
     }
 
     public void Invalidate()

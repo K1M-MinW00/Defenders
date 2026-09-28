@@ -13,6 +13,7 @@ public class Knight_Cleave_Skill : ActiveSkillBase
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
+    public override TargetResolutionPolicy ResolutionPolicy => TargetResolutionPolicy.LockDirection;
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
@@ -25,6 +26,8 @@ public class Knight_Cleave_Skill : ActiveSkillBase
             return false;
 
         context.SetEnemyTarget(target);
+        context.SetCastDirection(
+            (Vector2)target.TargetTransform.position - (Vector2)owner.transform.position);
 
         return true;
     }
@@ -37,8 +40,7 @@ public class Knight_Cleave_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        Vector2 dir = (Vector2)context.EnemyTarget.TargetTransform.position - (Vector2)owner.transform.position;
-        dir.Normalize();
+        Vector2 dir = context.CastDirection;
 
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
