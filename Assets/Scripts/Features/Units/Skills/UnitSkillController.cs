@@ -8,20 +8,20 @@ public class UnitSkillController : MonoBehaviour
     private ActiveSkillBase activeSkill;
     private PassiveSkillBase passiveSkill;
 
-    private SkillExecutionContext currentContext;
+    private readonly SkillExecutionLifecycle lifecycle = new();
     private bool isCombatPhase;
-    private bool isSkillRunning;
 
     public event Action OnSkillStarted;
     public event Action OnSkillApplied;
     public event Action OnSkillEnded;
+    public event Action OnSkillCancelled;
 
     private int promotion;
     public int Promotion => promotion;
 
     public ActiveSkillBase ActiveSkill => activeSkill;
     public PassiveSkillBase PassiveSkill => passiveSkill;
-    public bool IsSkillRunning => isSkillRunning;
+    public bool IsSkillRunning => lifecycle.IsRunning;
 
     public bool HasPassive => passiveSkill != null && IsSkillStageUnlocked(owner?.UnitData?.passiveSkill, 0);
     public bool HasActiveUpgrade2 => activeSkill != null && IsSkillStageUnlocked(owner?.UnitData?.activeSkill, 1);
@@ -54,7 +54,10 @@ public class UnitSkillController : MonoBehaviour
         if(active)
             NotifyBattleStart();
         else
+        {
+            CancelSkill();
             NotifyBattleEnd();
+        }
     }
 
     private void HandleEnergyFull()
@@ -70,7 +73,7 @@ public class UnitSkillController : MonoBehaviour
         if (!isCombatPhase)
             return false;
 
-        if (isSkillRunning)
+        if (lifecycle.IsActive)
             return false;
 
         if (activeSkill == null)
@@ -98,8 +101,8 @@ public class UnitSkillController : MonoBehaviour
         if (!CanStartSkill())
             return false;
 
-        if (activeSkill.TryBuildContext(out currentContext))
-                return true;
+        if (activeSkill.TryBuildContext(out SkillExecutionContext context))
+            return context != null && context.IsValid && lifecycle.TryPrepare(context);
 
         switch (activeSkill.TargetFailPolicy)
         {
@@ -107,67 +110,70 @@ public class UnitSkillController : MonoBehaviour
                 return false;
 
             case SkillTargetFailPolicy.CastWithoutTarget:
-                currentContext = new SkillExecutionContext();
-                currentContext.Initialize(owner);
-                currentContext.SetCastPosition(owner.transform.position);
-                return true;
+                context = new SkillExecutionContext();
+                context.Initialize(owner);
+                context.SetCastPosition(owner.transform.position);
+                return lifecycle.TryPrepare(context);
 
             case SkillTargetFailPolicy.CancelAndRefund:
             default:
-                currentContext = null;
                 return false;
         }
     }
 
     public void StartSkill()
     {
-        if (currentContext == null || !currentContext.IsValid)
+        SkillExecutionContext context = lifecycle.Context;
+        if (context == null || !context.IsValid || !lifecycle.TryStart())
             return;
 
-        isSkillRunning = true;
-
-        activeSkill.OnSkillStart(currentContext);
+        activeSkill.OnSkillStart(context);
         GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.activeSkill?.skillSound, GameAudioCue.UnitSkill, GameAudioPriority.High, 0.1f);
         OnSkillStarted?.Invoke();
         NotifyActiveSkillStarted();
 
         owner.Animation.PlaySkill();
 
-        if (currentContext.EnemyTarget != null)
-            owner.Animation.FaceTarget(currentContext.EnemyTarget);
+        if (context.EnemyTarget != null)
+            owner.Animation.FaceTarget(context.EnemyTarget);
     }
 
     public void ApplySkill()
     {
-        if (!isSkillRunning || currentContext == null)
+        SkillExecutionContext context = lifecycle.Context;
+        if (context == null || !lifecycle.TryApply())
             return;
 
         owner.Energy.ConsumeAll();
 
-        activeSkill.OnSkillApply(currentContext);
+        activeSkill.OnSkillApply(context);
         OnSkillApplied?.Invoke();
         NotifyActiveSkillApplied();
     }
 
     public void EndSkill()
     {
-        if (!isSkillRunning)
+        SkillExecutionContext context = lifecycle.Context;
+        if (!lifecycle.IsRunning || context == null)
             return;
 
-        activeSkill.OnSkillEnd(currentContext);
+        activeSkill.OnSkillEnd(context);
+        lifecycle.Complete();
         OnSkillEnded?.Invoke();
-
-        currentContext = null;
-        isSkillRunning = false;
-
         NotifyActiveSkillEnded();
     }
 
     public void CancelSkill()
     {
+        bool wasRunning = lifecycle.IsRunning;
+        if (!lifecycle.Cancel())
+            return;
+
         activeSkill?.CancelSkill();
-        currentContext = null;
-        isSkillRunning = false;
+        OnSkillCancelled?.Invoke();
+
+        if (wasRunning)
+            NotifyActiveSkillEnded();
     }
 
     public void NotifyBattleStart()
