@@ -34,9 +34,9 @@ public abstract class PassiveSkillBase : MonoBehaviour, IPassiveSkill
         ResetRuntimeState();
     }
 
-    public virtual void OnAttackStarted(MonsterController target) { }
+    public virtual void OnAttackStarted(ICombatTarget target) { }
 
-    public virtual void OnAttackHit(MonsterController target, ref float damage) { }
+    public virtual void OnAttackHit(ICombatTarget target, ref float damage) { }
 
     public virtual void OnBeforeTakeDamage(ref float damage) { }
 

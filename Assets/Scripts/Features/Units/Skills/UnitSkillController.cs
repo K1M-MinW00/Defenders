@@ -192,7 +192,7 @@ public class UnitSkillController : MonoBehaviour
         passiveSkill?.OnBattleEnd();
     }
 
-    public void NotifyAttackStarted(MonsterController target)
+    public void NotifyAttackStarted(ICombatTarget target)
     {
         if (!HasPassive)
             return;
@@ -200,7 +200,7 @@ public class UnitSkillController : MonoBehaviour
         passiveSkill?.OnAttackStarted(target);
     }
 
-    public void NotifyAttackHit(MonsterController target, ref float damage)
+    public void NotifyAttackHit(ICombatTarget target, ref float damage)
     {
         if (!HasPassive)
             return;

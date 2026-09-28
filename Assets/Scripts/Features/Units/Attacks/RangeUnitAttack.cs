@@ -3,7 +3,7 @@ using UnityEngine;
 public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 {
     protected UnitController owner;
-    protected MonsterController currentTarget => attackLifecycle.Target as MonsterController;
+    protected ICombatTarget currentTarget => attackLifecycle.Target;
     protected readonly AttackCooldown attackCooldown = new();
     protected readonly AttackLifecycle attackLifecycle = new();
     protected bool isAttacking => attackLifecycle.IsActive;
@@ -37,18 +37,18 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 
     public virtual bool TryAttack(ICombatTarget target)
     {
-        if (target is not MonsterController monster || monster.IsDead)
+        if (!CombatTargetSelector.IsValid(target))
             return false;
 
         if (!CanAttack())
             return false;
 
-        if (!attackLifecycle.TryBegin(monster))
+        if (!attackLifecycle.TryBegin(target))
             return false;
 
         attackCooldown.Start(Time.time, Cooldown);
 
-        owner.SkillController.NotifyAttackStarted(monster);
+        owner.SkillController.NotifyAttackStarted(target);
         
         owner.FaceTarget();
         owner.Animation.PlayAttack();

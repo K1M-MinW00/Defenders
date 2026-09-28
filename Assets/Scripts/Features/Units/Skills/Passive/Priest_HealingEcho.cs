@@ -14,7 +14,7 @@ public class Priest_HealingEcho : PassiveSkillBase
         hitCount = 0;
     }
 
-    public override void OnAttackHit(MonsterController target, ref float damage)
+    public override void OnAttackHit(ICombatTarget target, ref float damage)
     {
         if (!CanUsePassive())
             return;

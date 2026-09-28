@@ -16,7 +16,7 @@ public class ImplactProjectileUnitAttack : RangedUnitAttack
             return;
         }
 
-        Vector3 spawnPos = currentTarget.transform.position;
+        Vector3 spawnPos = currentTarget.TargetTransform.position;
 
         MagicImpact impact = owner.PoolManager.Spawn(magicPrefab,spawnPos, Quaternion.identity,PoolCategory.Projectile);
        

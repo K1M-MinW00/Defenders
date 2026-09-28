@@ -6,12 +6,12 @@ public class Werebear_BloodThirst : PassiveSkillBase
     [SerializeField] private float healRatio = 0.15f; // 입힌 피해의 15%
     [SerializeField] private float upgrade_healRatio = 0.3f;
 
-    public override void OnAttackHit(MonsterController target, ref float damage)
+    public override void OnAttackHit(ICombatTarget target, ref float damage)
     {
         if (!CanUsePassive())
             return;
 
-        if (target == null || target.Health.IsDead)
+        if (!CombatTargetSelector.IsValid(target))
             return;
 
         if (damage <= 0f)

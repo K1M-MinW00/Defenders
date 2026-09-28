@@ -72,9 +72,9 @@ public class ConeMeleeUnitAttack : MeleeUnitAttack
             if (!damagedTargets.Add(combatHealth))
                 continue;
 
-            MonsterController target = hit.GetComponent<MonsterController>();
+            ICombatTarget target = hit.GetComponent<ICombatTarget>();
 
-            if (target != null && target.Health.IsDead)
+            if (target != null && !CombatTargetSelector.IsValid(target))
                 continue;
 
             float damage = Damage;

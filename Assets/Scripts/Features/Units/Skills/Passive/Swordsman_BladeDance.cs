@@ -20,7 +20,7 @@ public class Swordsman_BladeDance : PassiveSkillBase
         lastAttackTime = -999f;
     }
 
-    public override void OnAttackStarted(MonsterController target)
+    public override void OnAttackStarted(ICombatTarget target)
     {
         if (!CanUsePassive())
             return;

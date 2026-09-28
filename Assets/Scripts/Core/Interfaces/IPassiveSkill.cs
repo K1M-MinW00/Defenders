@@ -5,8 +5,8 @@
     void OnBattleStart();
     void OnBattleEnd();
 
-    void OnAttackStarted(MonsterController target);
-    void OnAttackHit(MonsterController target, ref float damage);
+    void OnAttackStarted(ICombatTarget target);
+    void OnAttackHit(ICombatTarget target, ref float damage);
 
     void OnBeforeTakeDamage(ref float damage);
     void OnAfterTakeDamage(float finalDamage);

@@ -6,7 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(MonsterHealth))]
 [RequireComponent(typeof(MonsterTargetingController))]
-public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
+public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnockbackReceiver
 {
     [Header("References")]
     private ModelView view;

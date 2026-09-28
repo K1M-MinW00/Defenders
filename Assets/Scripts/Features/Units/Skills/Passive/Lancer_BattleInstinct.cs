@@ -18,7 +18,7 @@ public class Lancer_BattleInstinct:PassiveSkillBase
         maxStackReady = false;
     }
 
-    public override void OnAttackStarted(MonsterController target)
+    public override void OnAttackStarted(ICombatTarget target)
     {
         if (!CanUsePassive())
             return;
@@ -32,7 +32,7 @@ public class Lancer_BattleInstinct:PassiveSkillBase
             maxStackReady = true;
     }
 
-    public override void OnAttackHit(MonsterController target, ref float damage)
+    public override void OnAttackHit(ICombatTarget target, ref float damage)
     {
         if (owner == null || owner.IsDead)
             return;

@@ -20,7 +20,7 @@ public class ProjectileUnitAttack : RangedUnitAttack
         }
 
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
-        Vector3 targetPos = currentTarget.transform.position;
+        Vector3 targetPos = currentTarget.TargetTransform.position;
 
         Vector2 dir = (targetPos - spawnPos).normalized;
 

@@ -5,7 +5,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 {
     [Header("References")]
     protected UnitController owner;
-    protected MonsterController currentTarget => attackLifecycle.Target as MonsterController;
+    protected ICombatTarget currentTarget => attackLifecycle.Target;
 
     [Header("Combat")]
     [SerializeField] protected LayerMask targetLayer;
@@ -62,18 +62,18 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
     public virtual bool TryAttack(ICombatTarget target)
     {
-        if (target is not MonsterController monster || monster.IsDead)
+        if (!CombatTargetSelector.IsValid(target))
             return false;
 
         if (!CanAttack())
             return false;
 
-        if (!attackLifecycle.TryBegin(monster))
+        if (!attackLifecycle.TryBegin(target))
             return false;
 
         attackCooldown.Start(Time.time, Cooldown);
 
-        owner.SkillController.NotifyAttackStarted(monster);
+        owner.SkillController.NotifyAttackStarted(target);
         owner.FaceTarget();
         owner.Animation.PlayAttack();
         GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.attackSound, GameAudioCue.UnitAttack, GameAudioPriority.Normal, 0.08f);
@@ -101,14 +101,14 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         damagedTargets.Clear();
     }
 
-    protected virtual void ApplyDamage(MonsterController target)
+    protected virtual void ApplyDamage(ICombatTarget target)
     {
-        if (target == null || target.Health.IsDead)
+        if (!CombatTargetSelector.IsValid(target))
             return;
 
         float damage = Damage;
         owner.SkillController.NotifyAttackHit(target, ref damage);
-        target.Health.ApplyDamage(
+        target.CombatHealth.ApplyDamage(
             new DamageRequest(damage, owner, DamageOrigin.BasicAttack));
     }
 
@@ -132,7 +132,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
             if (!damagedTargets.Add(combatHealth))
                 continue;
 
-            MonsterController target = hit.GetComponent<MonsterController>();
+            ICombatTarget target = hit.GetComponent<ICombatTarget>();
 
             float damage = Damage;
             owner.SkillController.NotifyAttackHit(target, ref damage);
@@ -164,9 +164,9 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
     protected Vector2 GetAttackDirection()
     {
-        if (currentTarget != null && !currentTarget.Health.IsDead)
+        if (CombatTargetSelector.IsValid(currentTarget))
         {
-            Vector2 dirToTarget = ((Vector2)currentTarget.transform.position - (Vector2)transform.position);
+            Vector2 dirToTarget = ((Vector2)currentTarget.TargetTransform.position - (Vector2)transform.position);
             return dirToTarget.normalized;
         }
 

@@ -16,12 +16,12 @@ public class KnightTemplar_KnockbackStrike : PassiveSkillBase
         lastProcTime = -999f;
     }
 
-    public override void OnAttackHit(MonsterController target, ref float damage)
+    public override void OnAttackHit(ICombatTarget target, ref float damage)
     {
         if (!CanUsePassive())
             return;
 
-        if (target == null || target.Health.IsDead)
+        if (!CombatTargetSelector.IsValid(target) || target is not IKnockbackReceiver receiver)
             return;
 
         if (Time.time < lastProcTime + cooldown)
@@ -29,9 +29,9 @@ public class KnightTemplar_KnockbackStrike : PassiveSkillBase
 
         lastProcTime = Time.time;
 
-        Vector2 dir = ((Vector2)target.transform.position - (Vector2)owner.transform.position).normalized;
+        Vector2 dir = ((Vector2)target.TargetTransform.position - (Vector2)owner.transform.position).normalized;
         float distance = skillController.HasPassiveUpgrade2 ? upgrade_knockbackDistance : knockbackDistance;
 
-        target.ApplyKnockback(dir, distance, knockbackDuration);
+        receiver.ApplyKnockback(dir, distance, knockbackDuration);
     }
 }

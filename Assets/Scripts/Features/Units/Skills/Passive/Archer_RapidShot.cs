@@ -18,7 +18,7 @@ public class Archer_RapidShot : PassiveSkillBase
         shotCount = 0;
     }
 
-    public override void OnAttackStarted(MonsterController target)
+    public override void OnAttackStarted(ICombatTarget target)
     {
         if (!CanUsePassive())
             return;
