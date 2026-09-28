@@ -22,7 +22,7 @@ public class MoveState : IState
         if (owner.FSMController.TryChangeToSkill())
             return;
 
-        if (!owner.FSMController.TryEnsureTarget(includeGlobal: true))
+        if (!owner.FSMController.TryEnsureTarget())
         {
             owner.FSMController.ChangeToIdle();
             return;

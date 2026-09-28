@@ -22,7 +22,7 @@ public class IdleState : IState
         if (owner.FSMController.TryChangeToSkill())
             return;
 
-        if (!owner.FSMController.TryEnsureTarget(includeGlobal: false))
+        if (!owner.FSMController.TryEnsureTarget())
             return;
 
         owner.FSMController.ChangeToTargetState();

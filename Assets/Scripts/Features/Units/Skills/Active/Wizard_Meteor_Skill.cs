@@ -12,7 +12,7 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
     [SerializeField] private float projectileSpeed = 10f;
     [SerializeField] private LayerMask enemyLayer;
 
-    public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRangeOrGlobalClosest;
+    public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
 
     public override bool TryBuildContext(out SkillExecutionContext context)
@@ -22,13 +22,7 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 
         ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
         if (target == null)
-        {
-            bool find = owner.Targeting.FindGlobalAliveMonster();
-            if(!find)
-                return false;
-
-            target = owner.Targeting.CurrentTarget;
-        }
+            return false;
 
         context.SetEnemyTarget(target);
 

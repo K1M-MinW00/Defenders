@@ -38,7 +38,7 @@ public class UnitFSMController : MonoBehaviour
         return true;
     }
 
-    public bool TryEnsureTarget(bool includeGlobal)
+    public bool TryEnsureTarget()
     {
         if (owner.Targeting.HasValidTarget())
             return true;
@@ -46,7 +46,7 @@ public class UnitFSMController : MonoBehaviour
         if (owner.Targeting.TryFindTargetInSensor())
             return true;
 
-        return includeGlobal && owner.Targeting.FindGlobalAliveMonster();
+        return false;
     }
 
     public void ChangeToTargetState()

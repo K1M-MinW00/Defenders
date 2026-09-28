@@ -15,7 +15,7 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
 
     private LightBeam spawnedEffect;
 
-    public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRangeOrGlobalClosest;
+    public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
 
     public override bool TryBuildContext(out SkillExecutionContext context)
@@ -26,14 +26,7 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
         ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
 
         if (target == null)
-        {
-            bool enemyGlobal = owner.Targeting.FindGlobalAliveMonster();
-
-            if (!enemyGlobal)
-                return false;
-
-            target = owner.Targeting.CurrentTarget;
-        }
+            return false;
 
         context.SetEnemyTarget(target);
 

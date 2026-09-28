@@ -7,7 +7,6 @@ public class UnitSummoner : MonoBehaviour
     [SerializeField] private StagePoolManager poolManager;
     [SerializeField] private UnitRoster unitRoster;
     [SerializeField] private FusionService fusionService;
-    [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private Transform unitsRoot;
     
     [Header("Unit Pool (Inspector)")]
@@ -61,7 +60,7 @@ public class UnitSummoner : MonoBehaviour
         UserUnitData userData = FindUserUnitData(data);
         StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
 
-        unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
+        unit.BindCombatContext(unitRoster, poolManager);
         unit.Initialize(initData);
         unit.SetCombatPhase(false);
 

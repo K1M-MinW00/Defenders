@@ -11,7 +11,7 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
     [SerializeField] private float projectileLifeTime = 3f;
     [SerializeField] private LayerMask enemyLayer;
 
-    public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRangeOrGlobalClosest;
+    public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
 
     public override bool TryBuildContext(out SkillExecutionContext context)
@@ -20,15 +20,6 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
         context.Initialize(owner);
 
         ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-
-        if (target == null)
-        {
-            bool enemyGlobal = owner.Targeting.FindGlobalAliveMonster();
-            if (!enemyGlobal)
-                return false;
-        }
-
-        target = owner.Targeting.CurrentTarget;
 
         if (target == null)
             return false;
