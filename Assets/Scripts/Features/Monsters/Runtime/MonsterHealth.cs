@@ -76,4 +76,10 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
     {
         OnDead?.Invoke(this);
     }
+
+    public void ClearRuntimeListeners()
+    {
+        OnHpChanged = null;
+        OnDamaged = null;
+    }
 }

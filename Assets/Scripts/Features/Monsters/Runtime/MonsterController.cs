@@ -68,12 +68,19 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
     public void Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
     {
+        if (data == null)
+        {
+            Debug.LogError($"[{nameof(MonsterController)}] Initialize failed: data is null.", this);
+            return;
+        }
+
         Data = data;
         FinalStats = MonsterStatCalculator.Calculate(data);
         this.poolManager = poolManager;
         targeting.Initialize(unitRoster);
 
         ApplyStats();
+        ChangeToIdle();
     }
 
     private void Update()
@@ -86,15 +93,12 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
     public void OnSpawn()
     {
-        ApplyStats();
-        ChangeToIdle();
+        ResetRuntimeState(clearContext: false);
     }
 
     public void OnDespawn()
     {
-        fsm.Reset();
-        targeting.ClearTarget();
-        StopMovement();
+        ResetRuntimeState(clearContext: true);
     }
 
     private void ApplyStats()
@@ -111,7 +115,25 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     {
         OnDead?.Invoke(this);
 
-        poolable.ReturnToPool();
+        poolable?.ReturnToPool();
+    }
+
+    private void ResetRuntimeState(bool clearContext)
+    {
+        StopKnockback();
+        fsm.Reset();
+        attackBehavior?.CancelAttack();
+        targeting.ClearTarget();
+        StopMovement();
+
+        if (!clearContext)
+            return;
+
+        Health.ClearRuntimeListeners();
+        OnDead = null;
+        Data = null;
+        FinalStats = null;
+        poolManager = null;
     }
 
 
@@ -146,11 +168,17 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
     public void ResumeMovement()
     {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
         agent.enabled = true;
         agent.isStopped = false;
     }
     public void StopMovement()
     {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
         agent.isStopped = true;
         agent.velocity = Vector3.zero;
         agent.ResetPath();
@@ -196,15 +224,23 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
     public void ApplyKnockback(Vector2 direction, float distance, float duration)
     {
-        if (knockbackRoutine != null)
-            StopCoroutine(knockbackRoutine);
+        StopKnockback();
 
         knockbackRoutine = StartCoroutine(KnockbackRoutine(direction, distance, duration));
     }
 
+    private void StopKnockback()
+    {
+        if (knockbackRoutine == null)
+            return;
+
+        StopCoroutine(knockbackRoutine);
+        knockbackRoutine = null;
+    }
+
     private IEnumerator KnockbackRoutine(Vector2 direction, float distance, float duration)
     {
-        if (agent != null)
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
             agent.isStopped = true;
 
         Vector3 start = transform.position;
@@ -223,7 +259,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
         transform.position = end;
 
-        if (agent != null)
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
         {
             agent.Warp(transform.position);
             agent.ResetPath();
