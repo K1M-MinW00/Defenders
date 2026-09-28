@@ -8,9 +8,25 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
 
     [SerializeField] private float impactRadius = 1.2f;
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private int hitBufferSize = 32;
+
+    private Collider2D[] hitBuffer;
+    private ContactFilter2D hitFilter;
+    private readonly System.Collections.Generic.HashSet<ICombatHealth> damagedTargets = new();
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.SelfArea;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CastWithoutTarget;
+
+    private void Awake()
+    {
+        hitBuffer = new Collider2D[hitBufferSize];
+        hitFilter = new ContactFilter2D
+        {
+            useLayerMask = true,
+            useTriggers = true
+        };
+        hitFilter.SetLayerMask(enemyLayer);
+    }
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
@@ -38,20 +54,29 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
     {
         Vector3 center = context.CastPosition;
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(center, impactRadius, enemyLayer);
+        int hitCount = Physics2D.OverlapCircle(
+            center,
+            impactRadius,
+            hitFilter,
+            hitBuffer);
 
-        if (hits == null || hits.Length == 0)
+        if (hitCount <= 0)
             return;
 
         float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
         float damage = owner.Attack * multiplier;
 
-        foreach (Collider2D hit in hits)
+        damagedTargets.Clear();
+        for (int i = 0; i < hitCount; i++)
         {
-            if (hit.TryGetComponent<ICombatHealth>(out var combatHealth))
-            {
-                combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
-            }
+            if (!CombatHitResolver.TryResolve(
+                    hitBuffer[i],
+                    enemyLayer,
+                    damagedTargets,
+                    out ICombatHealth combatHealth))
+                continue;
+
+            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
         }
     }
 

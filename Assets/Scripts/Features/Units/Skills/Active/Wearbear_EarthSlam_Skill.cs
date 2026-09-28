@@ -101,10 +101,11 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
-                continue;
-
-            if (!damagedTargets.Add(combatHealth))
+            if (!CombatHitResolver.TryResolve(
+                    hit,
+                    enemyLayer,
+                    damagedTargets,
+                    out ICombatHealth combatHealth))
                 continue;
 
             combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));

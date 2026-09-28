@@ -15,6 +15,7 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
     private Poolable spawnedEffect;
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
+    private readonly System.Collections.Generic.HashSet<ICombatHealth> damagedTargets = new();
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.SelfArea;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CastWithoutTarget;
@@ -66,6 +67,8 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
         if (hitCount <= 0)
             return;
 
+        damagedTargets.Clear();
+
         for (int i = 0; i < hitCount; i++)
         {
             Collider2D hit = hitBuffer[i];
@@ -73,8 +76,14 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
             if (hit == null)
                 continue;
 
-            if (hit.TryGetComponent<ICombatHealth>(out var combatHealth))
-                combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
+            if (!CombatHitResolver.TryResolve(
+                    hit,
+                    enemyLayer,
+                    damagedTargets,
+                    out ICombatHealth combatHealth))
+                continue;
+
+            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
         }
     }
 

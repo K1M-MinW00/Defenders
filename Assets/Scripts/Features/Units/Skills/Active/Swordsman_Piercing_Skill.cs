@@ -131,10 +131,11 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
-                continue;
-
-            if (!damagedTargetsPerHit.Add(combatHealth))
+            if (!CombatHitResolver.TryResolve(
+                    hit,
+                    enemyLayer,
+                    damagedTargetsPerHit,
+                    out ICombatHealth combatHealth))
                 continue;
 
             combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
