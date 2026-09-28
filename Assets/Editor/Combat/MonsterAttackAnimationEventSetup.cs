@@ -107,27 +107,38 @@ public static class MonsterAttackAnimationEventSetup
 
     private static void ConfigureClip(AnimationClip clip)
     {
-        AnimationEvent[] retainedEvents = AnimationUtility.GetAnimationEvents(clip)
-            .Where(animationEvent =>
-                animationEvent.functionName != nameof(MonsterAnimationEvent.OnAttackHit) &&
-                animationEvent.functionName != nameof(MonsterAnimationEvent.OnAttackFinished))
-            .ToArray();
+        var events = new List<AnimationEvent>(AnimationUtility.GetAnimationEvents(clip));
+        bool changed = false;
 
-        var events = new List<AnimationEvent>(retainedEvents)
+        if (!HasEvent(events, nameof(MonsterAnimationEvent.OnAttackHit)))
         {
-            new AnimationEvent
+            events.Add(new AnimationEvent
             {
                 functionName = nameof(MonsterAnimationEvent.OnAttackHit),
                 time = clip.length * HitNormalizedTime
-            },
-            new AnimationEvent
+            });
+            changed = true;
+        }
+
+        if (!HasEvent(events, nameof(MonsterAnimationEvent.OnAttackFinished)))
+        {
+            events.Add(new AnimationEvent
             {
                 functionName = nameof(MonsterAnimationEvent.OnAttackFinished),
                 time = clip.length * FinishNormalizedTime
-            }
-        };
+            });
+            changed = true;
+        }
+
+        if (!changed)
+            return;
 
         AnimationUtility.SetAnimationEvents(clip, events.OrderBy(animationEvent => animationEvent.time).ToArray());
         EditorUtility.SetDirty(clip);
+    }
+
+    private static bool HasEvent(IEnumerable<AnimationEvent> events, string functionName)
+    {
+        return events.Any(animationEvent => animationEvent.functionName == functionName);
     }
 }
