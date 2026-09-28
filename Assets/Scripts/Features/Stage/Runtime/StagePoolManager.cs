@@ -18,6 +18,7 @@ public class StagePoolManager : MonoBehaviour
     [SerializeField] private Transform uiRoot;
 
     private readonly Dictionary<GameObject, GameObjectPool> pools = new();
+    private readonly Dictionary<PoolCategory, HashSet<GameObjectPool>> poolsByCategory = new();
 
     public void Prewarm(GameObject prefab, int count, PoolCategory category)
     {
@@ -67,6 +68,16 @@ public class StagePoolManager : MonoBehaviour
             pool.Clear();
 
         pools.Clear();
+        poolsByCategory.Clear();
+    }
+
+    public void DespawnAll(PoolCategory category)
+    {
+        if (!poolsByCategory.TryGetValue(category, out HashSet<GameObjectPool> categoryPools))
+            return;
+
+        foreach (GameObjectPool pool in categoryPools)
+            pool.DespawnAll();
     }
 
     private GameObjectPool GetOrCreatePool(GameObject prefab, PoolCategory category)
@@ -77,6 +88,14 @@ public class StagePoolManager : MonoBehaviour
         Transform root = GetRoot(category);
         pool = new GameObjectPool(prefab, root);
         pools.Add(prefab, pool);
+
+        if (!poolsByCategory.TryGetValue(category, out HashSet<GameObjectPool> categoryPools))
+        {
+            categoryPools = new HashSet<GameObjectPool>();
+            poolsByCategory.Add(category, categoryPools);
+        }
+
+        categoryPools.Add(pool);
 
         return pool;
     }

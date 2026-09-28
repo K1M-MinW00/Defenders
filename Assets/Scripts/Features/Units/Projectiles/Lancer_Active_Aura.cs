@@ -83,7 +83,7 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
         if (unitsInRange.Count == 0)
             return;
 
-        List<UnitController> invalidUnits = null;
+        invalidUnits.Clear();
 
         foreach (UnitController unit in unitsInRange)
         {
@@ -96,7 +96,7 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
             ApplyOrRefreshBuff(unit);
         }
 
-        if (invalidUnits == null)
+        if (invalidUnits.Count == 0)
             return;
 
         foreach (UnitController unit in invalidUnits)

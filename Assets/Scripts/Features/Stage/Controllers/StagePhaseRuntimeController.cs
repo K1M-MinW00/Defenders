@@ -9,6 +9,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
     [SerializeField] private StageTimeController stageTimeController;
+    [SerializeField] private StagePoolManager poolManager;
 
     public void BeginPreparation(WaveData wave, Action onFinished)
     {
@@ -35,6 +36,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     public void CompleteCombat()
     {
         stageTimeController.ExitCombatPhase();
+        ClearTransientCombatObjects();
     }
 
     public void StopCurrentPhase()
@@ -42,10 +44,23 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         prepareTimerController.StopPreparePhase();
         waveController.StopWave();
         preparationService.ExitPrepareMode();
+        ClearTransientCombatObjects();
     }
 
     public void ResumeTime()
     {
         stageTimeController.Resume();
+    }
+
+    private void ClearTransientCombatObjects()
+    {
+        if (poolManager == null)
+        {
+            Debug.LogError($"[{nameof(StagePhaseRuntimeController)}] StagePoolManager is not assigned.", this);
+            return;
+        }
+
+        poolManager.DespawnAll(PoolCategory.Projectile);
+        poolManager.DespawnAll(PoolCategory.Effect);
     }
 }

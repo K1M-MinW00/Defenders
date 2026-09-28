@@ -77,6 +77,19 @@ public class GameObjectPool
         }
     }
 
+    public void DespawnAll()
+    {
+        if (activeObjects.Count == 0)
+            return;
+
+        var snapshot = new List<Poolable>(activeObjects);
+        foreach (Poolable poolable in snapshot)
+        {
+            if (poolable != null)
+                Despawn(poolable);
+        }
+    }
+
     private Poolable CreateNew()
     {
         GameObject obj = Object.Instantiate(prefab, inactiveRoot);

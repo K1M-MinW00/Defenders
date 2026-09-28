@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 
-public class ArcProjectile : MonoBehaviour
+public class ArcProjectile : MonoBehaviour, IPoolable
 {
+    private Poolable poolable;
     private Vector3 startPos;
     private Vector3 endPos;
 
@@ -13,6 +14,14 @@ public class ArcProjectile : MonoBehaviour
     private LayerMask targetLayer;
 
     private float timer;
+    private bool isActive;
+
+    private void Awake()
+    {
+        poolable = GetComponent<Poolable>();
+        if (poolable == null)
+            poolable = gameObject.AddComponent<Poolable>();
+    }
 
     public void Initialize(Vector3 target, float damage, float flightTime, float arcHeight, float splashRadius, LayerMask targetLayer, ICombatTarget source)
     {
@@ -27,10 +36,14 @@ public class ArcProjectile : MonoBehaviour
         this.targetLayer = targetLayer;
 
         timer = 0f;
+        isActive = true;
     }
 
     private void Update()
     {
+        if (!isActive)
+            return;
+
         timer += Time.deltaTime;
         float u = Mathf.Clamp01(timer / flightTime);
 
@@ -46,8 +59,34 @@ public class ArcProjectile : MonoBehaviour
         if (u >= 1f)
         {
             Impact();
-            Destroy(gameObject); // 추후 Object Pool 반환
+            ReturnToPool();
         }
+    }
+
+    private void ReturnToPool()
+    {
+        if (!isActive)
+            return;
+
+        poolable.ReturnToPool();
+    }
+
+    public void OnSpawn()
+    {
+        isActive = false;
+    }
+
+    public void OnDespawn()
+    {
+        isActive = false;
+        startPos = Vector3.zero;
+        endPos = Vector3.zero;
+        damageRequest = default;
+        flightTime = 0f;
+        arcHeight = 0f;
+        splashRadius = 0f;
+        targetLayer = 0;
+        timer = 0f;
     }
 
     private void Impact()

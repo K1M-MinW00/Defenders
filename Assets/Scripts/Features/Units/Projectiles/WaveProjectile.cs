@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class WaveProjectile : MonoBehaviour
+public class WaveProjectile : MonoBehaviour, IPoolable
 {
     [Header("Runtime")]
     [SerializeField] private float lifetime = 2f;
@@ -17,8 +17,17 @@ public class WaveProjectile : MonoBehaviour
 
     private Vector2 startPosition;
     private int currentHitCount;
+    private Poolable poolable;
+    private bool isActive;
 
     private readonly HashSet<ICombatHealth> hitTargets = new();
+
+    private void Awake()
+    {
+        poolable = GetComponent<Poolable>();
+        if (poolable == null)
+            poolable = gameObject.AddComponent<Poolable>();
+    }
 
     public void Initialize(float damage,Vector2 direction,float speed,float maxDistance,LayerMask targetLayer,bool pierceTargets,int maxHitCount, ICombatTarget source)
     {
@@ -33,15 +42,20 @@ public class WaveProjectile : MonoBehaviour
         startPosition = transform.position;
         currentHitCount = 0;
         hitTargets.Clear();
+        isActive = true;
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-        Destroy(gameObject, lifetime);
+        CancelInvoke(nameof(ReturnToPool));
+        Invoke(nameof(ReturnToPool), lifetime);
     }
 
     private void Update()
     {
+        if (!isActive)
+            return;
+
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
 
         float traveled = Vector2.Distance(startPosition, transform.position);
@@ -53,6 +67,9 @@ public class WaveProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!isActive)
+            return;
+
         if (((1 << other.gameObject.layer) & targetLayer) == 0)
             return;
 
@@ -73,7 +90,37 @@ public class WaveProjectile : MonoBehaviour
 
     private void DisableSelf()
     {
-        CancelInvoke();
-        Destroy(gameObject);
+        ReturnToPool();
+    }
+
+    private void ReturnToPool()
+    {
+        if (!isActive)
+            return;
+
+        poolable.ReturnToPool();
+    }
+
+    public void OnSpawn()
+    {
+        isActive = false;
+        CancelInvoke(nameof(ReturnToPool));
+    }
+
+    public void OnDespawn()
+    {
+        isActive = false;
+        CancelInvoke(nameof(ReturnToPool));
+
+        damageRequest = default;
+        direction = Vector2.zero;
+        speed = 0f;
+        maxDistance = 0f;
+        targetLayer = 0;
+        pierceTargets = false;
+        maxHitCount = 0;
+        startPosition = Vector2.zero;
+        currentHitCount = 0;
+        hitTargets.Clear();
     }
 }

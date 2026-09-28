@@ -11531,6 +11531,7 @@ MonoBehaviour:
   monsterSpawner: {fileID: 1990264462}
   monsterPrewarmService: {fileID: 1353128549}
   stageTimeController: {fileID: 1947656518}
+  poolManager: {fileID: 579660465}
 --- !u!1 &1717726607
 GameObject:
   m_ObjectHideFlags: 0
