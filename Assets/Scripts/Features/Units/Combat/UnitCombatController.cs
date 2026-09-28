@@ -20,7 +20,7 @@ public class UnitCombatController : MonoBehaviour
     {
         var target = owner.Targeting.CurrentTarget;
 
-        if (target == null || target.Health.IsDead)
+        if (!CombatTargetSelector.IsValid(target))
             return;
 
         owner.Animation.FaceTarget(target);

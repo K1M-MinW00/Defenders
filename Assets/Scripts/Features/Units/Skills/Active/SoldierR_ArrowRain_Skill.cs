@@ -33,12 +33,12 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
         context = new SkillExecutionContext();
         context.Initialize(owner);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
         if (target == null)
             return false;
 
         context.SetEnemyTarget(target);
-        context.SetCastPosition(target.transform.position);
+        context.SetCastPosition(target.TargetTransform.position);
         return true;
     }
 

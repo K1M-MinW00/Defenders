@@ -46,7 +46,7 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
         context = new SkillExecutionContext();
         context.Initialize(owner);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
         if (target == null)
             return false;
 
@@ -64,8 +64,8 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
     {
         SpawnHitEffect();
 
-        origin = context.EnemyTarget.transform.position;
-        dir = (Vector2)context.EnemyTarget.transform.position - (Vector2)owner.transform.position;
+        origin = context.EnemyTarget.TargetTransform.position;
+        dir = (Vector2)context.EnemyTarget.TargetTransform.position - (Vector2)owner.transform.position;
         dir.Normalize();
 
         angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;

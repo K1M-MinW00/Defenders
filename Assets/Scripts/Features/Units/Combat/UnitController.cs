@@ -40,7 +40,7 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
     public UnitSkillController SkillController => skillController;
     public UnitStatService StatService => statService;
     public UnitBuffController BuffController => buffController;
-    public MonsterController Target => targeting.CurrentTarget;
+    public ICombatTarget Target => targeting.CurrentTarget;
     public string UnitId => runtime.UnitId;
     public int Star => runtime.Star;
      
@@ -195,7 +195,7 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
             return;
 
         anim.FaceDirection(movement.MoveDirection);
-        Movement.MoveTo(Target.transform.position);
+        Movement.MoveTo(Target.TargetTransform.position);
     }
    
     public void ShowRange()

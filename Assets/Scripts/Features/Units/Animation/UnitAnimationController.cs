@@ -24,12 +24,12 @@ public class UnitAnimationController : MonoBehaviour
         view?.PlayAttack(owner.AttackPerSec);
     }
 
-    public void FaceTarget(MonsterController target)
+    public void FaceTarget(ICombatTarget target)
     {
         if (target == null) 
             return;
 
-        view?.FaceTo(transform.position, target.transform.position);
+        view?.FaceTo(transform.position, target.TargetTransform.position);
     }
 
     public void SetFacing(bool faceRight)

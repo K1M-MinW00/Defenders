@@ -6,9 +6,9 @@ public class UnitTargetingController : MonoBehaviour
 
     private UnitController owner;
     private MonsterSpawner monsterSpawner;
-    private MonsterController currentTarget;
+    private ICombatTarget currentTarget;
 
-    public MonsterController CurrentTarget => currentTarget;
+    public ICombatTarget CurrentTarget => currentTarget;
 
     public void Initialize(UnitController owner)
     {
@@ -45,7 +45,7 @@ public class UnitTargetingController : MonoBehaviour
         return HasValidTarget();
     }
 
-    public MonsterController GetClosestEnemyInRange()
+    public ICombatTarget GetClosestEnemyInRange()
     {
         if (rangeSensor == null)
             return null;
@@ -64,7 +64,7 @@ public class UnitTargetingController : MonoBehaviour
 
     public void RefreshTargetIfCloserInRange()
     {
-        MonsterController closest = GetClosestEnemyInRange();
+        ICombatTarget closest = GetClosestEnemyInRange();
         if (closest == null || closest == currentTarget)
             return;
 

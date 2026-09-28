@@ -40,12 +40,12 @@ public class Unit_Editor : Editor
             return;
 
         Handles.color = Color.red;
-        Handles.DrawLine(unit.transform.position, unit.Target.transform.position);
+        Handles.DrawLine(unit.transform.position, unit.Target.TargetTransform.position);
 
         Handles.color = Color.yellow;
         Handles.SphereHandleCap(
             0,
-            unit.Target.transform.position,
+            unit.Target.TargetTransform.position,
             Quaternion.identity,
             0.2f,
             EventType.Repaint
@@ -105,7 +105,9 @@ public class Unit_Editor : Editor
         }
         catch { }
 
-        string targetName = unit.Target != null ? unit.Target.name : "None";
+        string targetName = unit.Target?.TargetTransform != null
+            ? unit.Target.TargetTransform.name
+            : "None";
 
         Handles.color = Color.white;
         Handles.Label(

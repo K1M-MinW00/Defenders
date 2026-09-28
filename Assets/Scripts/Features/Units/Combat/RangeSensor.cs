@@ -7,9 +7,9 @@ public class RangeSensor : MonoBehaviour
 {
     [SerializeField] private LayerMask enemyLayer;
 
-    private readonly HashSet<MonsterController> inRange = new HashSet<MonsterController>();
+    private readonly HashSet<ICombatTarget> inRange = new();
 
-    public IReadOnlyCollection<MonsterController> InRange => inRange;
+    public IReadOnlyCollection<ICombatTarget> InRange => inRange;
     private CircleCollider2D col;
 
     private void Awake()
@@ -26,7 +26,7 @@ public class RangeSensor : MonoBehaviour
         col.radius = radius;
     }
 
-    public MonsterController GetClosestAlive(Vector3 from)
+    public ICombatTarget GetClosestAlive(Vector3 from)
     {
         CleanupDeadOrNull();
         return CombatTargetSelector.FindClosest(inRange, from);
@@ -37,13 +37,13 @@ public class RangeSensor : MonoBehaviour
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        if (!other.TryGetComponent(out MonsterController monster))
+        if (!other.TryGetComponent(out ICombatTarget target))
             return;
 
-        if (!CombatTargetSelector.IsValid(monster))
+        if (!CombatTargetSelector.IsValid(target))
             return;
 
-        inRange.Add(monster);
+        inRange.Add(target);
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -51,15 +51,15 @@ public class RangeSensor : MonoBehaviour
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
             return;
 
-        if (!other.TryGetComponent(out MonsterController monster))
+        if (!other.TryGetComponent(out ICombatTarget target))
             return;
 
-        inRange.Remove(monster);
+        inRange.Remove(target);
     }
 
     // 몬스터가 Destroy 되거나, 죽어서 남아있을 수 있으니 정리용
     public void CleanupDeadOrNull()
     {
-        inRange.RemoveWhere(monster => !CombatTargetSelector.IsValid(monster));
+        inRange.RemoveWhere(target => !CombatTargetSelector.IsValid(target));
     }
 }

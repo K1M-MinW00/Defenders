@@ -23,7 +23,7 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
         context = new SkillExecutionContext();
         context.Initialize(owner);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
 
         if (target == null)
         {
@@ -67,7 +67,7 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
             return;
 
         Vector2 origin = owner.transform.position;
-        Vector2 targetPos = context.EnemyTarget.transform.position;
+        Vector2 targetPos = context.EnemyTarget.TargetTransform.position;
 
         Vector2 dir = (targetPos - origin).normalized;
 

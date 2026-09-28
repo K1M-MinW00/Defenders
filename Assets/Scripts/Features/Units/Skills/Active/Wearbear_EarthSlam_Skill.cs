@@ -35,7 +35,7 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
         context = new SkillExecutionContext();
         context.Initialize(owner);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
 
         if (target != null)
             context.SetEnemyTarget(target);

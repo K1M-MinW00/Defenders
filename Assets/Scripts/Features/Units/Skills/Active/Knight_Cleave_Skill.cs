@@ -19,7 +19,7 @@ public class Knight_Cleave_Skill : ActiveSkillBase
         context = new SkillExecutionContext();
         context.Initialize(owner);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
 
         if (target == null)
             return false;
@@ -37,7 +37,7 @@ public class Knight_Cleave_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        Vector2 dir = (Vector2)context.EnemyTarget.transform.position - (Vector2)owner.transform.position;
+        Vector2 dir = (Vector2)context.EnemyTarget.TargetTransform.position - (Vector2)owner.transform.position;
         dir.Normalize();
 
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;

@@ -20,7 +20,7 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
         context = new SkillExecutionContext();
         context.Initialize(owner);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
         if (target == null)
         {
             bool find = owner.Targeting.FindGlobalAliveMonster();
@@ -43,10 +43,10 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        if (context.EnemyTarget == null || context.EnemyTarget.Health.IsDead)
+        if (!CombatTargetSelector.IsValid(context.EnemyTarget))
             return;
 
-        Vector2 targetPos = context.EnemyTarget.transform.position;
+        Vector2 targetPos = context.EnemyTarget.TargetTransform.position;
         Vector2 spawnPos = targetPos + Vector2.up * spawnHeight;
         
         MeteorProjectile projectile = owner.PoolManager.Spawn(meteorPrefab, spawnPos, Quaternion.identity,PoolCategory.Projectile);

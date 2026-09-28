@@ -4,8 +4,8 @@ using UnityEngine;
 public class SkillExecutionContext
 {
     public UnitController Caster { get; private set; }
-    public MonsterController EnemyTarget { get; private set; }
-    public readonly List<MonsterController> EnemyTargets = new();
+    public ICombatTarget EnemyTarget { get; private set; }
+    public readonly List<ICombatTarget> EnemyTargets = new();
     public readonly List<UnitController> AllyTargets = new();
 
     public Vector3 CastPosition { get; private set; }
@@ -21,7 +21,7 @@ public class SkillExecutionContext
         AllyTargets.Clear();
     }
 
-    public void SetEnemyTarget(MonsterController target)
+    public void SetEnemyTarget(ICombatTarget target)
     {
         EnemyTarget = target;
         EnemyTargets.Clear();
@@ -29,12 +29,12 @@ public class SkillExecutionContext
         if (target != null)
         {
             EnemyTargets.Add(target);
-            CastPosition = target.transform.position;
+            CastPosition = target.TargetTransform.position;
             IsValid = true;
         }
     }
 
-    public void SetEnemyTargets(List<MonsterController> targets)
+    public void SetEnemyTargets(IEnumerable<ICombatTarget> targets)
     {
         EnemyTargets.Clear();
 
@@ -44,7 +44,7 @@ public class SkillExecutionContext
         EnemyTarget = EnemyTargets.Count > 0 ? EnemyTargets[0] : null;
         if (EnemyTarget != null)
         {
-            CastPosition = EnemyTarget.transform.position;
+            CastPosition = EnemyTarget.TargetTransform.position;
             IsValid = true;
         }
     }

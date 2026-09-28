@@ -19,7 +19,7 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
         context = new SkillExecutionContext();
         context.Initialize(owner);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
 
         if (target == null)
         {
@@ -46,7 +46,7 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
     public override void OnSkillApply(SkillExecutionContext context)
     {
         Vector3 spawnPos = owner.transform.position;
-        Vector2 dir = (Vector2)context.EnemyTarget.transform.position - (Vector2)spawnPos;
+        Vector2 dir = (Vector2)context.EnemyTarget.TargetTransform.position - (Vector2)spawnPos;
 
         dir.Normalize();
 

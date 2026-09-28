@@ -37,7 +37,7 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
         radius = owner.DetectRange;
         context.SetCastPosition(owner.transform.position);
 
-        MonsterController target = owner.Targeting.GetClosestEnemyInRange();
+        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
 
         if (target != null)
             context.SetEnemyTarget(target);
