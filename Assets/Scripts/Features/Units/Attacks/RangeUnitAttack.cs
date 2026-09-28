@@ -59,7 +59,17 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 
     public abstract void OnAttackHit();
 
-    protected bool TryEnterHitPhase() => attackLifecycle.TryEnterHitPhase();
+    protected bool TryEnterHitPhase()
+    {
+        if (!attackLifecycle.TryEnterHitPhase())
+            return false;
+
+        if (CombatTargetSelector.IsValid(currentTarget))
+            return true;
+
+        CancelAttack();
+        return false;
+    }
 
     public virtual void OnAttackFinished()
     {

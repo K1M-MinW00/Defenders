@@ -83,7 +83,17 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
     public abstract void OnAttackHit();
 
-    protected bool TryEnterHitPhase() => attackLifecycle.TryEnterHitPhase();
+    protected bool TryEnterHitPhase()
+    {
+        if (!attackLifecycle.TryEnterHitPhase())
+            return false;
+
+        if (CombatTargetSelector.IsValid(currentTarget))
+            return true;
+
+        CancelAttack();
+        return false;
+    }
 
     public virtual void OnAttackFinished()
     {
@@ -126,13 +136,14 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent<ICombatHealth>(out var combatHealth))
+            if (!hit.TryGetComponent(out ICombatTarget target) ||
+                !CombatTargetSelector.IsValid(target))
                 continue;
+
+            ICombatHealth combatHealth = target.CombatHealth;
 
             if (!damagedTargets.Add(combatHealth))
                 continue;
-
-            ICombatTarget target = hit.GetComponent<ICombatTarget>();
 
             float damage = Damage;
             owner.SkillController.NotifyAttackHit(target, ref damage);

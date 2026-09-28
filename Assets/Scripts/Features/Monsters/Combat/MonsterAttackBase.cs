@@ -54,8 +54,13 @@ public abstract class MonsterAttackBase : MonoBehaviour, IAnimationDrivenAttack
             return;
 
         ICombatTarget target = CurrentTarget;
-        if (IsValidTarget(target))
-            ApplyHit(target);
+        if (!IsValidTarget(target))
+        {
+            CancelAttack();
+            return;
+        }
+
+        ApplyHit(target);
     }
 
     public void OnAttackFinished()
@@ -72,7 +77,6 @@ public abstract class MonsterAttackBase : MonoBehaviour, IAnimationDrivenAttack
 
     private static bool IsValidTarget(ICombatTarget target)
     {
-        return target != null && target.TargetTransform != null &&
-               target.CombatHealth != null && !target.IsDead;
+        return CombatTargetSelector.IsValid(target);
     }
 }

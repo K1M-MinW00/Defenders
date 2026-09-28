@@ -66,15 +66,13 @@ public class ConeMeleeUnitAttack : MeleeUnitAttack
             if (dot < cosThreshold)
                 continue;
 
-            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
+            if (!hit.TryGetComponent(out ICombatTarget target) ||
+                !CombatTargetSelector.IsValid(target))
                 continue;
+
+            ICombatHealth combatHealth = target.CombatHealth;
 
             if (!damagedTargets.Add(combatHealth))
-                continue;
-
-            ICombatTarget target = hit.GetComponent<ICombatTarget>();
-
-            if (target != null && !CombatTargetSelector.IsValid(target))
                 continue;
 
             float damage = Damage;
