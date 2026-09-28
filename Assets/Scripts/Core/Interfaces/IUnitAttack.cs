@@ -1,10 +1,6 @@
-﻿public interface IUnitAttack
+public interface IUnitAttack : ICombatAttack
 {
     bool IsAttacking { get; }
-    bool CanAttack();
-
-    bool TryAttack(MonsterController target);
-    abstract void OnAttackHit();
+    void OnAttackHit();
     void OnAttackFinished();
-    void CancelAttack();
 }

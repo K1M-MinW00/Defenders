@@ -58,18 +58,18 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         return true;
     }
 
-    public virtual bool TryAttack(MonsterController target)
+    public virtual bool TryAttack(ICombatTarget target)
     {
-        if (target == null || target.Health.IsDead)
+        if (target is not MonsterController monster || monster.IsDead)
             return false;
 
         if (!CanAttack())
             return false;
 
-        currentTarget = target;
+        currentTarget = monster;
         isAttacking = true;
 
-        owner.SkillController.NotifyAttackStarted(target);
+        owner.SkillController.NotifyAttackStarted(monster);
         owner.FaceTarget();
         owner.Animation.PlayAttack();
         GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.attackSound, GameAudioCue.UnitAttack, GameAudioPriority.Normal, 0.08f);

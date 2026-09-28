@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MeleeMonsterAttack : MonoBehaviour, IMonsterAttack
+public class MeleeMonsterAttack : MonoBehaviour, ICombatAttack
 {
     protected MonsterController owner;
     
@@ -37,4 +37,6 @@ public class MeleeMonsterAttack : MonoBehaviour, IMonsterAttack
 
         return true;
     }
+
+    public void CancelAttack() { }
 }

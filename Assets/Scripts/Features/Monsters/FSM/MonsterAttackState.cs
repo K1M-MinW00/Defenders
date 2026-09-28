@@ -46,6 +46,6 @@ public class MonsterAttackState : IState
         _nextAttackTime = Time.time + owner.AttackCooldown;
     }
 
-    public void Exit() { }
+    public void Exit() => owner.CancelAttack();
 
 }

@@ -11,7 +11,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
     [Header("References")]
     private ModelView view;
     private NavMeshAgent agent;
-    private IMonsterAttack attackBehavior;
+    private ICombatAttack attackBehavior;
     private StagePoolManager poolManager;
     private MonsterTargetingController targeting;
 
@@ -47,7 +47,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
             view = GetComponentInChildren<ModelView>();
 
         if (attackBehavior == null)
-            attackBehavior = GetComponent<IMonsterAttack>();
+            attackBehavior = GetComponent<ICombatAttack>();
 
         poolable = GetComponent<Poolable>();
 
@@ -171,6 +171,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
         FaceTarget();
         attackBehavior?.TryAttack(Target);
+    }
+
+    public void CancelAttack()
+    {
+        attackBehavior?.CancelAttack();
     }
 
     public void FaceTarget()
