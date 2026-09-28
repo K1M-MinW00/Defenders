@@ -3,7 +3,7 @@
 public class MonsterAttackState : IState
 {
     private MonsterController owner;
-    private float _nextAttackTime;
+    private readonly AttackCooldown attackCooldown = new();
 
     public MonsterAttackState(MonsterController owner)
     {
@@ -15,7 +15,7 @@ public class MonsterAttackState : IState
         owner.StopMovement();
         owner.PlayIdle();
 
-        _nextAttackTime = Time.time;
+        attackCooldown.Reset();
     }
 
     public void Update()
@@ -38,12 +38,11 @@ public class MonsterAttackState : IState
             return;
         }
 
-        if (Time.time < _nextAttackTime)
+        if (!attackCooldown.IsReady(Time.time))
             return;
 
-        owner.TryAttackCurrentTarget();
-
-        _nextAttackTime = Time.time + owner.AttackCooldown;
+        if (owner.TryAttackCurrentTarget())
+            attackCooldown.Start(Time.time, owner.AttackCooldown);
     }
 
     public void Exit() => owner.CancelAttack();

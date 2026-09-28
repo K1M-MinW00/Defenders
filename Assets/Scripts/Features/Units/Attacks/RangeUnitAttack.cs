@@ -4,7 +4,7 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 {
     protected UnitController owner;
     protected MonsterController currentTarget;
-    protected float lastAttackTime = -999f;
+    protected readonly AttackCooldown attackCooldown = new();
     protected bool isAttacking;
 
     [SerializeField] protected LayerMask targetLayer;
@@ -27,7 +27,7 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
         if (isAttacking)
             return false;
 
-        if (Time.time < lastAttackTime + Cooldown)
+        if (!attackCooldown.IsReady(Time.time))
             return false;
 
         return true;
@@ -58,7 +58,7 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 
     public virtual void OnAttackFinished()
     {
-        lastAttackTime = Time.time;
+        attackCooldown.Start(Time.time, Cooldown);
         isAttacking = false;
         currentTarget = null;
     }

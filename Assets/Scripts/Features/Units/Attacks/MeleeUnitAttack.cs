@@ -17,11 +17,11 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
     protected Collider2D[] hitBuffer;
     protected ContactFilter2D hitFilter;
     protected readonly HashSet<ICombatHealth> damagedTargets = new();
+    protected readonly AttackCooldown attackCooldown = new();
 
     protected float Damage => owner.Attack;
     protected float Cooldown => 1f / owner.AttackPerSec;
 
-    protected float lastAttackTime = -999f;
     protected bool isAttacking;
 
     protected TargetSelectionMode CurrentTargetMode =>
@@ -52,7 +52,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         if (isAttacking)
             return false;
 
-        if (Time.time < lastAttackTime + Cooldown)
+        if (!attackCooldown.IsReady(Time.time))
             return false;
 
         return true;
@@ -82,7 +82,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
     public virtual void OnAttackFinished()
     {
         isAttacking = false;
-        lastAttackTime = Time.time;
+        attackCooldown.Start(Time.time, Cooldown);
         currentTarget = null;
         damagedTargets.Clear();
     }

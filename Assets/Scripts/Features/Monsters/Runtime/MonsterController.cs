@@ -164,13 +164,13 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
         return targeting.IsCurrentTargetInRange(transform.position, AttackRange);
     }
 
-    public void TryAttackCurrentTarget()
+    public bool TryAttackCurrentTarget()
     {
         if (!HasValidTarget())
-            return;
+            return false;
 
         FaceTarget();
-        attackBehavior?.TryAttack(Target);
+        return attackBehavior?.TryAttack(Target) ?? false;
     }
 
     public void CancelAttack()
