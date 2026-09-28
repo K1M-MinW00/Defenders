@@ -36,7 +36,7 @@
         if (limitBreak <= 0)
             return;
 
-        int effectCount = Mathf.Min(limitBreak, unitData.limitBreaks?.Count ?? 0);
+        int effectCount = UnityEngine.Mathf.Min(limitBreak, unitData.limitBreaks?.Count ?? 0);
         for (int i = 0; i < effectCount; i++)
         {
             LimitBreakData effect = unitData.limitBreaks[i];
