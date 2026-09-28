@@ -24,6 +24,8 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public float AttackRange => FinalStats.atkRange;
     public float AttackCooldown => 1f / Mathf.Max(0.01f, FinalStats.atkPerSec);
     public float AtkDamage => FinalStats.atkDamage;
+    public float IdleTargetAcquireInterval => Data?.IdleTargetAcquireInterval ?? 0.5f;
+    public float MoveTargetRefreshInterval => Data?.MoveTargetRefreshInterval ?? 0.25f;
     public Transform TargetTransform => transform;
     public ICombatHealth CombatHealth => Health;
     public bool IsDead => Health != null && Health.IsDead;

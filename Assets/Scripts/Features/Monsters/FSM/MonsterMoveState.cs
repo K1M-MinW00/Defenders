@@ -4,7 +4,6 @@ public sealed class MonsterMoveState : IState
 {
     private MonsterController owner;
     private float _nextRefreshTime;
-    private float interval = .25f;
 
     public MonsterMoveState(MonsterController owner)
     {
@@ -46,7 +45,7 @@ public sealed class MonsterMoveState : IState
 
         if (Time.time >= _nextRefreshTime)
         {
-            _nextRefreshTime = Time.time + interval;
+            _nextRefreshTime = Time.time + owner.MoveTargetRefreshInterval;
             owner.TryFindClosestAliveUnit();
             owner.MoveToTarget();
         }

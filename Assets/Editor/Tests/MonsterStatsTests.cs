@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEngine;
 
 public sealed class MonsterStatsTests
 {
@@ -46,5 +47,21 @@ public sealed class MonsterStatsTests
         Assert.That(result.atkRange, Is.Zero);
         Assert.That(result.atkPerSec, Is.GreaterThan(0f));
         Assert.That(source.maxHp, Is.EqualTo(-10f));
+    }
+
+    [Test]
+    public void MonsterData_UsesExistingBehaviorTimingAsDefaults()
+    {
+        MonsterDataSO data = ScriptableObject.CreateInstance<MonsterDataSO>();
+
+        try
+        {
+            Assert.That(data.IdleTargetAcquireInterval, Is.EqualTo(0.5f));
+            Assert.That(data.MoveTargetRefreshInterval, Is.EqualTo(0.25f));
+        }
+        finally
+        {
+            Object.DestroyImmediate(data);
+        }
     }
 }

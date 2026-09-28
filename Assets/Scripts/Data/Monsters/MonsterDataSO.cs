@@ -15,7 +15,14 @@ public class MonsterDataSO : ScriptableObject
     [Header("Base Stats")]
     [SerializeField] private MonsterStats baseStats = new();
 
+    [Header("Behavior")]
+    [SerializeField] private MonsterBehaviorSettings behavior = new();
+
     public float BaseMaxHp => baseStats?.maxHp ?? 0f;
+    public float IdleTargetAcquireInterval =>
+        Mathf.Max(0.02f, behavior?.idleTargetAcquireInterval ?? 0.5f);
+    public float MoveTargetRefreshInterval =>
+        Mathf.Max(0.02f, behavior?.moveTargetRefreshInterval ?? 0.25f);
 
     public MonsterStats CreateRuntimeStats()
     {
@@ -36,6 +43,10 @@ public class MonsterDataSO : ScriptableObject
             return Fail("Move speed, attack damage, and attack range cannot be negative.", out error);
         if (baseStats.atkPerSec <= 0f)
             return Fail("Attack per second must be positive.", out error);
+        if (behavior == null)
+            return Fail("Monster behavior settings are missing.", out error);
+        if (behavior.idleTargetAcquireInterval <= 0f || behavior.moveTargetRefreshInterval <= 0f)
+            return Fail("Monster target refresh intervals must be positive.", out error);
 
         error = string.Empty;
         return true;

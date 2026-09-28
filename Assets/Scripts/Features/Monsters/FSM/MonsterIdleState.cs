@@ -5,7 +5,6 @@ public class MonsterIdleState : IState
 {
     private MonsterController owner;
     private float _nextAcquireTime;
-    private float interval = .5f;
 
     public MonsterIdleState(MonsterController owner)
     {
@@ -26,7 +25,7 @@ public class MonsterIdleState : IState
         if (Time.time < _nextAcquireTime)
             return;
 
-        _nextAcquireTime = Time.time + interval;
+        _nextAcquireTime = Time.time + owner.IdleTargetAcquireInterval;
 
         if (owner.TryFindClosestAliveUnit())
             owner.ChangeToMove();
