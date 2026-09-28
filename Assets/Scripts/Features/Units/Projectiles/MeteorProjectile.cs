@@ -78,10 +78,11 @@ public class MeteorProjectile : MonoBehaviour, IPoolable
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent(out ICombatHealth combatHealth))
-                continue;
-
-            if (!damagedTargets.Add(combatHealth))
+            if (!ProjectileHitResolver.TryResolve(
+                    hit,
+                    enemyLayer,
+                    damagedTargets,
+                    out ICombatHealth combatHealth))
                 continue;
 
             combatHealth.ApplyDamage(damageRequest);

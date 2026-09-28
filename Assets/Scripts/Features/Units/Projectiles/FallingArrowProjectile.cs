@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
@@ -18,6 +17,7 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
     private Vector2 targetPoint;
     private DamageRequest damageRequest;
     private float hitRadius;
+    private LayerMask targetLayer;
     private bool isActive;
     private bool hasLanded;
 
@@ -40,6 +40,7 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
         this.targetPoint = targetPoint;
         damageRequest = new DamageRequest(damage, source, DamageOrigin.Skill);
         this.hitRadius = hitRadius;
+        targetLayer = enemyLayer;
 
         hitFilter.SetLayerMask(enemyLayer);
 
@@ -85,10 +86,11 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
             if (hit == null)
                 continue;
 
-            if (!hit.TryGetComponent<ICombatHealth>(out var combatHealth))
-                continue;
-
-            if (!damagedTargets.Add(combatHealth))
+            if (!ProjectileHitResolver.TryResolve(
+                    hit,
+                    targetLayer,
+                    damagedTargets,
+                    out ICombatHealth combatHealth))
                 continue;
 
             combatHealth.ApplyDamage(damageRequest);
@@ -122,6 +124,7 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
         targetPoint = Vector2.zero;
         damageRequest = default;
         hitRadius = 0f;
+        targetLayer = 0;
     }
 
 #if UNITY_EDITOR

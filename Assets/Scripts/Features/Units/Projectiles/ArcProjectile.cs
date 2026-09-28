@@ -2,7 +2,12 @@
 
 public class ArcProjectile : MonoBehaviour, IPoolable
 {
+    [SerializeField] private int hitBufferSize = 32;
+
     private Poolable poolable;
+    private Collider2D[] hitBuffer;
+    private ContactFilter2D hitFilter;
+    private readonly System.Collections.Generic.HashSet<ICombatHealth> damagedTargets = new();
     private Vector3 startPos;
     private Vector3 endPos;
 
@@ -21,6 +26,13 @@ public class ArcProjectile : MonoBehaviour, IPoolable
         poolable = GetComponent<Poolable>();
         if (poolable == null)
             poolable = gameObject.AddComponent<Poolable>();
+
+        hitBuffer = new Collider2D[hitBufferSize];
+        hitFilter = new ContactFilter2D
+        {
+            useLayerMask = true,
+            useTriggers = true
+        };
     }
 
     public void Initialize(Vector3 target, float damage, float flightTime, float arcHeight, float splashRadius, LayerMask targetLayer, ICombatTarget source)
@@ -34,8 +46,10 @@ public class ArcProjectile : MonoBehaviour, IPoolable
 
         this.splashRadius = splashRadius;
         this.targetLayer = targetLayer;
+        hitFilter.SetLayerMask(targetLayer);
 
         timer = 0f;
+        damagedTargets.Clear();
         isActive = true;
     }
 
@@ -87,18 +101,28 @@ public class ArcProjectile : MonoBehaviour, IPoolable
         splashRadius = 0f;
         targetLayer = 0;
         timer = 0f;
+        damagedTargets.Clear();
     }
 
     private void Impact()
     {
-        // 스플래시
-        Collider2D[] hits = Physics2D.OverlapCircleAll(endPos, splashRadius, targetLayer);
-        for (int i = 0; i < hits.Length; i++)
-        {
-            ICombatHealth combatHealth = hits[i].GetComponent<ICombatHealth>();
+        int hitCount = Physics2D.OverlapCircle(
+            endPos,
+            splashRadius,
+            hitFilter,
+            hitBuffer);
 
-            if (combatHealth == null)
+        damagedTargets.Clear();
+        for (int i = 0; i < hitCount; i++)
+        {
+            if (!ProjectileHitResolver.TryResolve(
+                    hitBuffer[i],
+                    targetLayer,
+                    damagedTargets,
+                    out ICombatHealth combatHealth))
+            {
                 continue;
+            }
 
             combatHealth.ApplyDamage(damageRequest);
         }

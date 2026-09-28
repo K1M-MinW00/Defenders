@@ -70,13 +70,11 @@ public class WaveProjectile : MonoBehaviour, IPoolable
         if (!isActive)
             return;
 
-        if (((1 << other.gameObject.layer) & targetLayer) == 0)
-            return;
-
-        if (!other.TryGetComponent<ICombatHealth>(out var combatHealth))
-            return;
-
-        if (!hitTargets.Add(combatHealth))
+        if (!ProjectileHitResolver.TryResolve(
+                other,
+                targetLayer,
+                hitTargets,
+                out ICombatHealth combatHealth))
             return;
 
         combatHealth.ApplyDamage(damageRequest);

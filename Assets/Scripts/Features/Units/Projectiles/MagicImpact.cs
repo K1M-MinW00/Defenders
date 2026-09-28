@@ -40,13 +40,11 @@ public class MagicImpact : MonoBehaviour, IPoolable
         if (!isActive)
             return;
 
-        if (((1 << collision.gameObject.layer) & targetLayer) == 0)
-            return;
-
-        if (!collision.TryGetComponent<ICombatHealth>(out ICombatHealth combatHealth))
-            return;
-
-        if (!hitTargets.Add(combatHealth))
+        if (!ProjectileHitResolver.TryResolve(
+                collision,
+                targetLayer,
+                hitTargets,
+                out ICombatHealth combatHealth))
             return;
 
         combatHealth.ApplyDamage(damageRequest);

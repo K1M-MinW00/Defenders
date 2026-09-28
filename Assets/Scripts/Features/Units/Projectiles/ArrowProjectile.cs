@@ -47,13 +47,14 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
         if(!isActive)
             return;
         
-        if (((1 << collision.gameObject.layer) & targetLayer) == 0)
+        if (!ProjectileHitResolver.TryResolve(
+                collision,
+                targetLayer,
+                damagedTargets: null,
+                out ICombatHealth combatHealth))
             return;
 
-        if (collision.TryGetComponent<ICombatHealth>(out ICombatHealth combatHealth))
-        {
-            combatHealth.ApplyDamage(damageRequest);
-        }
+        combatHealth.ApplyDamage(damageRequest);
 
         ReturnToPool();
     }

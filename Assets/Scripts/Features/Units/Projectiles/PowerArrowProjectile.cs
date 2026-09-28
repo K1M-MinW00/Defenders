@@ -52,13 +52,11 @@ public class PowerArrowProjectile : MonoBehaviour, IPoolable
         if (!isActive)
             return;
 
-        if (((1 << other.gameObject.layer) & enemyLayer) == 0)
-            return;
-
-        if (!other.TryGetComponent<ICombatHealth>(out var combatHealth))
-            return;
-
-        if (!hitTargets.Add(combatHealth))
+        if (!ProjectileHitResolver.TryResolve(
+                other,
+                enemyLayer,
+                hitTargets,
+                out ICombatHealth combatHealth))
             return;
 
         combatHealth.ApplyDamage(damageRequest);

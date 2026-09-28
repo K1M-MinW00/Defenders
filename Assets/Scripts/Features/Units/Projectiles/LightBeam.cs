@@ -55,13 +55,11 @@ public class LightBeam : MonoBehaviour, IPoolable
         if (!isActive)
             return;
 
-        if (((1 << other.gameObject.layer) & enemyLayer) == 0)
-            return;
-
-        if (!other.TryGetComponent(out ICombatHealth combatHealth))
-            return;
-
-        if (!damagedTargets.Add(combatHealth))
+        if (!ProjectileHitResolver.TryResolve(
+                other,
+                enemyLayer,
+                damagedTargets,
+                out ICombatHealth combatHealth))
             return;
 
         combatHealth.ApplyDamage(damageRequest);
