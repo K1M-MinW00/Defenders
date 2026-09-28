@@ -36,6 +36,10 @@ PrefabInstance:
       propertyPath: m_BaseOffset
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2462862775648873224, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2540078424007288543, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -128,6 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622fb6a17b7bf7a4bbee9b4fb3c662e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
+  useAnimationEvents: 0
 --- !u!1 &7390713530758400240 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}

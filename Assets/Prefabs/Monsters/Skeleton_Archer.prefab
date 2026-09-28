@@ -144,6 +144,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8570867544650832531}
+    - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1308976074281106860}
   m_SourcePrefab: {fileID: 100100000, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
 --- !u!1 &1580241142101997713 stripped
 GameObject:
@@ -172,6 +175,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1308976074281106860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1580241142101997713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa28e63f54b40139355edfdba6d26ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterAnimationEvent
 --- !u!4 &5234472820005977716 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 982547969679316628, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
@@ -194,6 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f79cd2200ab9e040ac2ef51c040fe62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangedAttack
+  useAnimationEvents: 1
   projectilePrefab: {fileID: 2110337582513762589, guid: 0a6ae7ef37f45004bab5ad11bfbfa3f5, type: 3}
   firePoint: {fileID: 8395760248757043664}
   speed: 6

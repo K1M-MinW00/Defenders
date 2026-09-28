@@ -2,6 +2,8 @@ using UnityEngine;
 
 public abstract class MonsterAttackBase : MonoBehaviour, IAnimationDrivenAttack
 {
+    [SerializeField] private bool useAnimationEvents;
+
     protected MonsterController owner;
     protected readonly AttackLifecycle attackLifecycle = new();
 
@@ -37,10 +39,12 @@ public abstract class MonsterAttackBase : MonoBehaviour, IAnimationDrivenAttack
             GameAudioPriority.Normal,
             0.08f);
 
-        // Monster clips do not have attack animation events yet.
-        // Preserve the current immediate-hit behavior until each clip is authored.
-        OnAttackHit();
-        OnAttackFinished();
+        if (!useAnimationEvents)
+        {
+            OnAttackHit();
+            OnAttackFinished();
+        }
+
         return true;
     }
 

@@ -106,6 +106,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8989561811555221002}
+    - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6872315444231728447}
   m_SourcePrefab: {fileID: 100100000, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
 --- !u!1 &1101139171250549184 stripped
 GameObject:
@@ -124,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622fb6a17b7bf7a4bbee9b4fb3c662e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
+  useAnimationEvents: 1
 --- !u!1 &7155899560796661104 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
@@ -151,3 +155,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6872315444231728447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7155899560796661104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa28e63f54b40139355edfdba6d26ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterAnimationEvent
