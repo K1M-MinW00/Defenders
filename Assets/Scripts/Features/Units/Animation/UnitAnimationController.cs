@@ -6,8 +6,6 @@ public class UnitAnimationController : MonoBehaviour
     [SerializeField] private ModelView view;
 
     private UnitController owner;
-    private static readonly int AttackSpeedMultiplierHash = Animator.StringToHash("AttackSpeedMultiplier");
-
     public void Initialize(UnitController owner)
     {
         this.owner = owner;
@@ -23,13 +21,7 @@ public class UnitAnimationController : MonoBehaviour
     
     public void PlayAttack()
     {
-        float attackAnimSpeed = owner.AttackPerSec;
-
-        if(attackAnimSpeed <= 1f)
-            attackAnimSpeed = 1f;
-
-        view.SetAnimSpeed(AttackSpeedMultiplierHash, attackAnimSpeed);
-        view?.PlayAttack();
+        view?.PlayAttack(owner.AttackPerSec);
     }
 
     public void FaceTarget(MonsterController target)

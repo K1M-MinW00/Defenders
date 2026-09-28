@@ -71,6 +71,8 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         if (!attackLifecycle.TryBegin(monster))
             return false;
 
+        attackCooldown.Start(Time.time, Cooldown);
+
         owner.SkillController.NotifyAttackStarted(monster);
         owner.FaceTarget();
         owner.Animation.PlayAttack();
@@ -88,7 +90,6 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         if (!attackLifecycle.Complete())
             return;
 
-        attackCooldown.Start(Time.time, Cooldown);
         damagedTargets.Clear();
     }
 

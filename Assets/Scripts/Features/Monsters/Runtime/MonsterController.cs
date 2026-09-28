@@ -188,7 +188,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget
 
     public void PlayIdle() => view?.PlayIdle();
     public void PlayMove() => view?.PlayMove();
-    public void PlayAttack() => view?.PlayAttack();
+    public void PlayAttack() => view?.PlayAttack(FinalStats?.atkPerSec ?? 1f);
 
     public void ChangeToIdle() => fsm.ChangeState(idleState);
     public void ChangeToMove() => fsm.ChangeState(moveState);

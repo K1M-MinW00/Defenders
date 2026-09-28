@@ -12,6 +12,7 @@ public class ModelView : MonoBehaviour
     private static readonly int AttackHash = Animator.StringToHash("Attack");
     private static readonly int DieHash = Animator.StringToHash("Die");
     private static readonly int SkillHash = Animator.StringToHash("Skill");
+    private static readonly int AttackSpeedMultiplierHash = Animator.StringToHash("AttackSpeedMultiplier");
 
     private void Awake()
     {
@@ -27,8 +28,11 @@ public class ModelView : MonoBehaviour
     {
         animator.Play(MoveHash);
     }
-    public void PlayAttack()
+    public void PlayAttack(float attacksPerSecond = 1f)
     {
+        animator.SetFloat(
+            AttackSpeedMultiplierHash,
+            AttackAnimationSpeed.FromAttacksPerSecond(attacksPerSecond));
         animator.Play(AttackHash);
     }
     public void PlayDie()
@@ -76,8 +80,4 @@ public class ModelView : MonoBehaviour
         return isFacingRight ? Vector2.right : Vector2.left;
     }
 
-    public void SetAnimSpeed(int stringHash, float speed)
-    {
-        animator.SetFloat(stringHash, speed);
-    }
 }

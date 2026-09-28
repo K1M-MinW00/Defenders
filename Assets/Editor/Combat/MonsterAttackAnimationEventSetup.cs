@@ -2,17 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public static class MonsterAttackAnimationEventSetup
 {
     private const string MonsterPrefabFolder = "Assets/Prefabs/Monsters";
+    private const string MonsterControllerPath = "Assets/Animations/Monster/Monster_Base.controller";
+    private const string AttackSpeedParameter = "AttackSpeedMultiplier";
     private const float HitNormalizedTime = 0.55f;
     private const float FinishNormalizedTime = 0.95f;
 
     [MenuItem("Tools/Defenders/Combat/Configure Monster Attack Events")]
     public static void Apply()
     {
+        ConfigureAttackSpeedParameter();
+
         var attackClips = new HashSet<AnimationClip>();
         string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { MonsterPrefabFolder });
         int configuredPrefabs = 0;
@@ -81,6 +86,40 @@ public static class MonsterAttackAnimationEventSetup
 
         AssetDatabase.SaveAssets();
         Debug.Log($"[MonsterAttackAnimationEventSetup] Configured {configuredPrefabs} prefabs and {attackClips.Count} attack clips.");
+    }
+
+    private static void ConfigureAttackSpeedParameter()
+    {
+        AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(MonsterControllerPath);
+        if (controller == null)
+        {
+            Debug.LogError($"[MonsterAttackAnimationEventSetup] Controller not found: {MonsterControllerPath}");
+            return;
+        }
+
+        if (!controller.parameters.Any(parameter => parameter.name == AttackSpeedParameter))
+            controller.AddParameter(AttackSpeedParameter, AnimatorControllerParameterType.Float);
+
+        foreach (AnimatorControllerLayer layer in controller.layers)
+            ConfigureAttackState(layer.stateMachine);
+
+        EditorUtility.SetDirty(controller);
+    }
+
+    private static void ConfigureAttackState(AnimatorStateMachine stateMachine)
+    {
+        foreach (ChildAnimatorState childState in stateMachine.states)
+        {
+            AnimatorState state = childState.state;
+            if (!state.name.Equals("Attack", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            state.speedParameterActive = true;
+            state.speedParameter = AttackSpeedParameter;
+        }
+
+        foreach (ChildAnimatorStateMachine childStateMachine in stateMachine.stateMachines)
+            ConfigureAttackState(childStateMachine.stateMachine);
     }
 
     private static bool ConfigureAttackComponents(
