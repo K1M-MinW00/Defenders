@@ -87,7 +87,7 @@ public class WaveController : MonoBehaviour
 
     public void StopWave()
     {
-        monsterSpawner.StopSpawning();
+        monsterSpawner.ClearWaveRuntime();
         monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
         monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
 

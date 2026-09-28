@@ -147,6 +147,26 @@ public class MonsterSpawner : MonoBehaviour
         spawnRoutine = null;
     }
 
+    public void ClearWaveRuntime()
+    {
+        StopSpawning();
+
+        var snapshot = new List<MonsterController>(aliveMonsters);
+        foreach (MonsterController monster in snapshot)
+        {
+            if (monster == null)
+                continue;
+
+            monster.Health.OnDamaged -= HandleMonsterDamaged;
+            monster.OnDead -= HandleMonsterDead;
+            waveHpTracker?.UnregisterMonster(monster);
+        }
+
+        aliveMonsters.Clear();
+        currentWave = null;
+        deadMonsterCount = 0;
+    }
+
     private MonsterController SpawnMonster(MonsterDataSO data, Vector3 spawnPos)
     {
         if (data == null || data.prefab == null)

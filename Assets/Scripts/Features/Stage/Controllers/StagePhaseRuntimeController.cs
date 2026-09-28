@@ -35,7 +35,9 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
 
     public void CompleteCombat()
     {
+        waveController.StopWave();
         stageTimeController.ExitCombatPhase();
+        preparationService.EndCurrentPhase();
         ClearTransientCombatObjects();
     }
 
@@ -43,7 +45,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     {
         prepareTimerController.StopPreparePhase();
         waveController.StopWave();
-        preparationService.ExitPrepareMode();
+        preparationService.EndCurrentPhase();
         ClearTransientCombatObjects();
     }
 
@@ -60,6 +62,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             return;
         }
 
+        poolManager.DespawnAll(PoolCategory.Monster);
         poolManager.DespawnAll(PoolCategory.Projectile);
         poolManager.DespawnAll(PoolCategory.Effect);
     }

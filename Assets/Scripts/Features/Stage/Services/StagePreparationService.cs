@@ -49,6 +49,21 @@ public class StagePreparationService : MonoBehaviour
         SetUnitsCombatPhase(true);
     }
 
+    public void EndCurrentPhase()
+    {
+        isPrepareMode = false;
+        placementController.EnablePlacement(false);
+
+        if (unitRoster == null)
+            return;
+
+        foreach (UnitController unit in unitRoster.Units)
+        {
+            if (unit != null)
+                unit.SuspendCombat();
+        }
+    }
+
     public bool TrySummonUnit()
     {
         if (!isPrepareMode)

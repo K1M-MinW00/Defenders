@@ -180,6 +180,15 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         skillController.SetCombatPhase(active);
     }
 
+    public void SuspendCombat()
+    {
+        SetCombatPhase(false);
+        combat.CancelAttack();
+        movement.Stop();
+        targeting.ClearTarget();
+        targeting.EnableSensor(false);
+    }
+
     public void FaceTarget()
     {
         if (!targeting.HasValidTarget())
