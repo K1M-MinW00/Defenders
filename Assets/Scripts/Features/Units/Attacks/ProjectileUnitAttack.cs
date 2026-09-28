@@ -10,7 +10,7 @@ public class ProjectileUnitAttack : RangedUnitAttack
 
     public override void OnAttackHit()
     {
-        if (!isAttacking)
+        if (!TryEnterHitPhase())
             return;
 
         if (currentTarget == null)

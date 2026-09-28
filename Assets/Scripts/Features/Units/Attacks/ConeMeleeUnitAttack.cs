@@ -14,7 +14,7 @@ public class ConeMeleeUnitAttack : MeleeUnitAttack
 
     public override void OnAttackHit()
     {
-        if (!isAttacking)
+        if (!TryEnterHitPhase())
             return;
 
         dir = GetAttackDirection();

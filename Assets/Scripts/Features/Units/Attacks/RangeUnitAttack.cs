@@ -3,9 +3,10 @@ using UnityEngine;
 public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 {
     protected UnitController owner;
-    protected MonsterController currentTarget;
+    protected MonsterController currentTarget => attackLifecycle.Target as MonsterController;
     protected readonly AttackCooldown attackCooldown = new();
-    protected bool isAttacking;
+    protected readonly AttackLifecycle attackLifecycle = new();
+    protected bool isAttacking => attackLifecycle.IsActive;
 
     [SerializeField] protected LayerMask targetLayer;
 
@@ -41,9 +42,8 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
         if (!CanAttack())
             return false;
 
-        currentTarget = monster;
-
-        isAttacking = true;
+        if (!attackLifecycle.TryBegin(monster))
+            return false;
 
         owner.SkillController.NotifyAttackStarted(monster);
         
@@ -56,19 +56,18 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
 
     public abstract void OnAttackHit();
 
+    protected bool TryEnterHitPhase() => attackLifecycle.TryEnterHitPhase();
+
     public virtual void OnAttackFinished()
     {
+        if (!attackLifecycle.Complete())
+            return;
+
         attackCooldown.Start(Time.time, Cooldown);
-        isAttacking = false;
-        currentTarget = null;
     }
 
     public void CancelAttack()
     {
-        if (!isAttacking)
-            return;
-
-        isAttacking = false;
-        currentTarget = null;
+        attackLifecycle.Cancel();
     }
 }

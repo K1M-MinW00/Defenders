@@ -7,7 +7,7 @@ public class ImplactProjectileUnitAttack : RangedUnitAttack
 
     public override void OnAttackHit()
     {
-        if (!IsAttacking)
+        if (!TryEnterHitPhase())
             return;
 
         if (currentTarget == null)

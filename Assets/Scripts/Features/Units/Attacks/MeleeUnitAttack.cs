@@ -5,7 +5,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 {
     [Header("References")]
     protected UnitController owner;
-    protected MonsterController currentTarget;
+    protected MonsterController currentTarget => attackLifecycle.Target as MonsterController;
 
     [Header("Combat")]
     [SerializeField] protected LayerMask targetLayer;
@@ -18,11 +18,12 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
     protected ContactFilter2D hitFilter;
     protected readonly HashSet<ICombatHealth> damagedTargets = new();
     protected readonly AttackCooldown attackCooldown = new();
+    protected readonly AttackLifecycle attackLifecycle = new();
 
     protected float Damage => owner.Attack;
     protected float Cooldown => 1f / owner.AttackPerSec;
 
-    protected bool isAttacking;
+    protected bool isAttacking => attackLifecycle.IsActive;
 
     protected TargetSelectionMode CurrentTargetMode =>
         owner != null && owner.Star >= multiTargetUnlockStar
@@ -66,8 +67,8 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         if (!CanAttack())
             return false;
 
-        currentTarget = monster;
-        isAttacking = true;
+        if (!attackLifecycle.TryBegin(monster))
+            return false;
 
         owner.SkillController.NotifyAttackStarted(monster);
         owner.FaceTarget();
@@ -79,21 +80,22 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
 
     public abstract void OnAttackHit();
 
+    protected bool TryEnterHitPhase() => attackLifecycle.TryEnterHitPhase();
+
     public virtual void OnAttackFinished()
     {
-        isAttacking = false;
+        if (!attackLifecycle.Complete())
+            return;
+
         attackCooldown.Start(Time.time, Cooldown);
-        currentTarget = null;
         damagedTargets.Clear();
     }
 
     public void CancelAttack()
     {
-        if (!isAttacking)
+        if (!attackLifecycle.Cancel())
             return;
 
-        isAttacking = false;
-        currentTarget = null;
         damagedTargets.Clear();
     }
 

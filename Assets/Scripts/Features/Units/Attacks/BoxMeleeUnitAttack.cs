@@ -11,7 +11,7 @@ public class BoxMeleeUnitAttack : MeleeUnitAttack
 
     public override void OnAttackHit()
     {
-        if (!isAttacking)
+        if (!TryEnterHitPhase())
             return;
 
         Vector2 dir = GetAttackDirection();
