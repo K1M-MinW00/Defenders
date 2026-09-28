@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class RangedMonsterAttack : MonoBehaviour, ICombatAttack
+public class RangedMonsterAttack : MonsterAttackBase
 {
-    protected MonsterController owner;
-
     [Header("Projectile")]
     [SerializeField] private ArrowProjectile projectilePrefab;
     [SerializeField] private Transform firePoint;
@@ -12,10 +10,9 @@ public class RangedMonsterAttack : MonoBehaviour, ICombatAttack
     [SerializeField] private float speed = 6f;
     [SerializeField] private LayerMask targetLayer;
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
-        if (owner == null)
-            owner = GetComponent<MonsterController>();
+        base.Awake();
 
         if (projectilePrefab == null)
         {
@@ -24,28 +21,8 @@ public class RangedMonsterAttack : MonoBehaviour, ICombatAttack
         }
     }
 
-    public bool CanAttack()
+    protected override void ApplyHit(ICombatTarget target)
     {
-        if (owner == null || owner.Health.IsDead)
-            return false;
-
-        if (!owner.IsTargetInAttackRange())
-            return false;
-
-        return true;
-    }
-
-    public bool TryAttack(ICombatTarget target)
-    {
-        if (target == null || target.TargetTransform == null || target.IsDead)
-            return false;
-
-        if (!CanAttack())
-            return false;
-
-        owner.PlayAttack();
-        GameAudioManager.Instance?.PlayCharacterSfx(owner.Data?.attackSound, GameAudioCue.MonsterAttack, GameAudioPriority.Normal, 0.08f);
-
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
         Vector3 targetPos = target.TargetTransform.position;
 
@@ -58,9 +35,5 @@ public class RangedMonsterAttack : MonoBehaviour, ICombatAttack
         
         if(arrow != null)
             arrow.Initialize(owner.AtkDamage, speed, dir, targetLayer, owner);
-
-        return true;
     }
-
-    public void CancelAttack() { }
 }

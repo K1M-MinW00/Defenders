@@ -13,6 +13,7 @@ public abstract class RangedUnitAttack : MonoBehaviour, IUnitAttack
     protected float Damage => owner.Attack;
     protected float Cooldown => 1f / owner.AttackPerSec;
     public bool IsAttacking => isAttacking;
+    public AttackPhase Phase => attackLifecycle.Phase;
 
     protected virtual void Awake()
     {

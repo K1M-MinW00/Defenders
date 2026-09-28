@@ -1,42 +1,8 @@
-using UnityEngine;
-
-public class MeleeMonsterAttack : MonoBehaviour, ICombatAttack
+public class MeleeMonsterAttack : MonsterAttackBase
 {
-    protected MonsterController owner;
-    
-    protected virtual void Awake()
+    protected override void ApplyHit(ICombatTarget target)
     {
-        if(owner == null)
-            owner = GetComponent<MonsterController>();
-    }
-
-    public bool CanAttack()
-    {
-        if (owner == null || owner.Health.IsDead)
-            return false;
-
-        if (!owner.IsTargetInAttackRange())
-            return false;
-
-        return true;
-    }
-
-    public bool TryAttack(ICombatTarget target)
-    {
-        if (target == null || target.CombatHealth == null || target.IsDead)
-            return false;
-
-        if (!CanAttack())
-            return false;
-
-        owner.PlayAttack();
-        GameAudioManager.Instance?.PlayCharacterSfx(owner.Data?.attackSound, GameAudioCue.MonsterAttack, GameAudioPriority.Normal, 0.08f);
-
         target.CombatHealth.ApplyDamage(
             new DamageRequest(owner.AtkDamage, owner, DamageOrigin.BasicAttack));
-
-        return true;
     }
-
-    public void CancelAttack() { }
 }

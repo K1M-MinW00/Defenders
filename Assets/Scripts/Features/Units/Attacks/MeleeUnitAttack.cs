@@ -31,6 +31,7 @@ public abstract class MeleeUnitAttack : MonoBehaviour, IUnitAttack
         : TargetSelectionMode.Single;
 
     public bool IsAttacking => isAttacking;
+    public AttackPhase Phase => attackLifecycle.Phase;
 
     protected virtual void Awake()
     {

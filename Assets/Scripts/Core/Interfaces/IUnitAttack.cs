@@ -1,6 +1,4 @@
-public interface IUnitAttack : ICombatAttack
+public interface IUnitAttack : IAnimationDrivenAttack
 {
     bool IsAttacking { get; }
-    void OnAttackHit();
-    void OnAttackFinished();
 }
