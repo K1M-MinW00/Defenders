@@ -10,7 +10,11 @@ public static class CombatTargetSelector
         if (target is Object unityObject && unityObject == null)
             return false;
 
-        return target.TargetTransform != null && target.CombatHealth != null && !target.IsDead;
+        Transform targetTransform = target.TargetTransform;
+        if (targetTransform == null || !targetTransform.gameObject.activeInHierarchy)
+            return false;
+
+        return target.CombatHealth != null && !target.IsDead;
     }
 
     public static bool IsWithinRange(ICombatTarget target, Vector3 origin, float range)

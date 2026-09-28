@@ -67,8 +67,13 @@ public class UnitTargetingController : MonoBehaviour
 
     public void EnableSensor(bool enable)
     {
-        if (rangeSensor != null)
-            rangeSensor.enabled = enable;
+        if (rangeSensor == null)
+            return;
+
+        if (!enable)
+            rangeSensor.ClearTrackedTargets();
+
+        rangeSensor.enabled = enable;
     }
 
     public void ApplyRange(float detectRange)

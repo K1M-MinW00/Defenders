@@ -94,6 +94,27 @@ public sealed class CombatTargetContractTests
         }
     }
 
+    [Test]
+    public void Selector_RejectsInactivePooledTarget()
+    {
+        GameObject targetObject = new("PooledTarget");
+        FakeTarget target = new(targetObject.transform, false);
+
+        try
+        {
+            targetObject.SetActive(false);
+
+            Assert.That(CombatTargetSelector.IsValid(target), Is.False);
+            Assert.That(
+                CombatTargetSelector.FindClosest(new[] { target }, Vector3.zero),
+                Is.Null);
+        }
+        finally
+        {
+            Object.DestroyImmediate(targetObject);
+        }
+    }
+
     private sealed class FakeTarget : ICombatTarget
     {
         public Transform TargetTransform { get; }

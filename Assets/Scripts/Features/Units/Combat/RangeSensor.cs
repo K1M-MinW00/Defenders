@@ -32,6 +32,16 @@ public class RangeSensor : MonoBehaviour
         return CombatTargetSelector.FindClosest(inRange, from);
     }
 
+    public void ClearTrackedTargets()
+    {
+        inRange.Clear();
+    }
+
+    private void OnDisable()
+    {
+        ClearTrackedTargets();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (((1 << other.gameObject.layer) & enemyLayer) == 0)
