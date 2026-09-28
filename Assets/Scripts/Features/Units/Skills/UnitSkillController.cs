@@ -168,11 +168,15 @@ public class UnitSkillController : MonoBehaviour
 
     public void CancelSkill()
     {
+        bool wasActive = lifecycle.IsActive;
         bool wasRunning = lifecycle.IsRunning;
-        if (!lifecycle.Cancel())
-            return;
+        lifecycle.Cancel();
 
         activeSkill?.CancelSkill();
+
+        if (!wasActive)
+            return;
+
         OnSkillCancelled?.Invoke();
 
         if (wasRunning)

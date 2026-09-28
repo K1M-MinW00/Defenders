@@ -16,9 +16,6 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
 
     [Header("Effect")]
     [SerializeField] private GameObject hitEffectPrefab;
-    
-    private Poolable spawnedEffect;
-    private Coroutine multiHitRoutine;
 
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
@@ -62,13 +59,12 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        SpawnHitEffect();
-
         origin = context.EnemyTarget.TargetTransform.position;
         dir = (Vector2)context.EnemyTarget.TargetTransform.position - (Vector2)owner.transform.position;
         dir.Normalize();
 
         angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        SpawnHitEffect();
 
         if (skillRoutine != null)
             owner.StopCoroutine(skillRoutine);
@@ -85,18 +81,22 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
             owner.StopCoroutine(skillRoutine);
             skillRoutine = null;
         }
+
+        damagedTargetsPerHit.Clear();
     }
 
     private IEnumerator CoPiercingThrust()
     {
+        int hitCount = Mathf.Max(1, multCnt);
         float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
-        float damagePerHit = owner.Attack * multiplier / multCnt;
+        float damagePerHit = owner.Attack * multiplier / hitCount;
 
-        for (int i = 0; i < multCnt; i++)
+        for (int i = 0; i < hitCount; i++)
         {
             ExecuteSingleThrust(damagePerHit);
 
-            yield return new WaitForSeconds(hitInterval);
+            if (i < hitCount - 1)
+                yield return new WaitForSeconds(hitInterval);
         }
 
         skillRoutine = null;
