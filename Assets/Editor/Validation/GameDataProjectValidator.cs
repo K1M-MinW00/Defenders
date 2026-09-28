@@ -116,6 +116,8 @@ public static class GameDataProjectValidator
             if (unit.maxLevel <= 0)
                 report.AddError(unit, "Max level must be positive.");
 
+            ValidateUnitSkillAnimation(unit, report);
+
             if (unit.promotionCost == null)
                 continue;
 
@@ -143,6 +145,73 @@ public static class GameDataProjectValidator
                     report.AddError(unit, $"Promotion item is not a material: {cost.MaterialId}");
             }
         }
+    }
+
+    public static void ValidateUnitSkillAnimation(UnitDataSO unit, GameDataValidationReport report)
+    {
+        if (unit == null || report == null || unit.activeSkill == null || unit.unitPrefab == null)
+            return;
+
+        ActiveSkillBase skill = unit.unitPrefab.GetComponent<ActiveSkillBase>();
+        if (skill == null)
+        {
+            report.AddError(unit, "Active skill data is assigned, but the unit prefab has no ActiveSkillBase component.");
+            return;
+        }
+
+        var skillClips = new HashSet<AnimationClip>();
+        Animator[] animators = unit.unitPrefab.GetComponentsInChildren<Animator>(true);
+
+        foreach (Animator animator in animators)
+        {
+            RuntimeAnimatorController controller = animator.runtimeAnimatorController;
+            if (controller == null)
+                continue;
+
+            AnimationClip[] clips = controller.animationClips;
+            bool ownsSkillClip = clips.Any(IsSkillClip);
+            if (!ownsSkillClip)
+                continue;
+
+            if (animator.GetComponent<UnitAnimationEvent>() == null)
+                report.AddError(unit, $"Animator '{animator.name}' has a skill clip but no UnitAnimationEvent relay.");
+
+            foreach (AnimationClip clip in clips)
+            {
+                if (IsSkillClip(clip))
+                    skillClips.Add(clip);
+            }
+        }
+
+        if (skillClips.Count == 0)
+        {
+            report.AddError(unit, "No skill animation clip is assigned to the unit prefab.");
+            return;
+        }
+
+        foreach (AnimationClip clip in skillClips)
+            ValidateSkillClip(unit, clip, report);
+    }
+
+    private static bool IsSkillClip(AnimationClip clip)
+    {
+        return clip != null && clip.name.Contains("Skill", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void ValidateSkillClip(UnitDataSO unit, AnimationClip clip, GameDataValidationReport report)
+    {
+        AnimationEvent[] events = AnimationUtility.GetAnimationEvents(clip);
+        AnimationEvent applyEvent = events.FirstOrDefault(animationEvent =>
+            animationEvent.functionName == nameof(UnitAnimationEvent.OnSkillApplyEvent));
+        AnimationEvent finishEvent = events.FirstOrDefault(animationEvent =>
+            animationEvent.functionName == nameof(UnitAnimationEvent.OnSkillFinishedEvent));
+
+        if (applyEvent == null)
+            report.AddError(unit, $"Skill clip '{clip.name}' is missing OnSkillApplyEvent.");
+        if (finishEvent == null)
+            report.AddError(unit, $"Skill clip '{clip.name}' is missing OnSkillFinishedEvent.");
+        if (applyEvent != null && finishEvent != null && applyEvent.time >= finishEvent.time)
+            report.AddError(unit, $"Skill clip '{clip.name}' must apply before it finishes.");
     }
 
     private static void ValidateItems(IEnumerable<ItemDataSO> items, GameDataValidationReport report)
