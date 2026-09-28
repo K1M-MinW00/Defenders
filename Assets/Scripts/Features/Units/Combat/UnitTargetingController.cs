@@ -5,7 +5,7 @@ public class UnitTargetingController : MonoBehaviour
     [SerializeField] private RangeSensor rangeSensor;
 
     private UnitController owner;
-    private MonsterSpawner monsterSpawner;
+    private ICombatTargetProvider targetProvider;
     private ICombatTarget currentTarget;
 
     public ICombatTarget CurrentTarget => currentTarget;
@@ -18,9 +18,9 @@ public class UnitTargetingController : MonoBehaviour
             rangeSensor = GetComponentInChildren<RangeSensor>();
     }
 
-    public void BindSpawner(MonsterSpawner spawner)
+    public void BindTargetProvider(ICombatTargetProvider provider)
     {
-        monsterSpawner = spawner;
+        targetProvider = provider;
     }
 
     public void ClearTarget()
@@ -55,10 +55,10 @@ public class UnitTargetingController : MonoBehaviour
 
     public bool FindGlobalAliveMonster()
     {
-        if (monsterSpawner == null)
+        if (targetProvider == null)
             return false;
 
-        currentTarget = monsterSpawner.FindClosestAlive(transform.position);
+        currentTarget = targetProvider.FindClosestAlive(transform.position);
         return HasValidTarget();
     }
 

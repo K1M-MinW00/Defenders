@@ -9,6 +9,30 @@ public sealed class CombatTargetContractTests
     {
         Assert.That(typeof(ICombatTarget).IsAssignableFrom(typeof(UnitController)), Is.True);
         Assert.That(typeof(ICombatTarget).IsAssignableFrom(typeof(MonsterController)), Is.True);
+        Assert.That(typeof(ICombatTargetProvider).IsAssignableFrom(typeof(MonsterSpawner)), Is.True);
+    }
+
+    [Test]
+    public void UnitTargeting_CanAcquireGlobalTargetThroughProviderContract()
+    {
+        GameObject targetingObject = new("UnitTargeting");
+        GameObject targetObject = new("Target");
+        FakeTarget target = new(targetObject.transform, false);
+
+        try
+        {
+            UnitTargetingController targeting = targetingObject.AddComponent<UnitTargetingController>();
+            targeting.Initialize(null);
+            targeting.BindTargetProvider(new FakeTargetProvider(target));
+
+            Assert.That(targeting.FindGlobalAliveMonster(), Is.True);
+            Assert.That(targeting.CurrentTarget, Is.SameAs(target));
+        }
+        finally
+        {
+            Object.DestroyImmediate(targetingObject);
+            Object.DestroyImmediate(targetObject);
+        }
     }
 
     [Test]
@@ -104,6 +128,21 @@ public sealed class CombatTargetContractTests
         {
             TargetTransform = targetTransform;
             CombatHealth = new FakeHealth(isDead);
+        }
+    }
+
+    private sealed class FakeTargetProvider : ICombatTargetProvider
+    {
+        private readonly ICombatTarget target;
+
+        public FakeTargetProvider(ICombatTarget target)
+        {
+            this.target = target;
+        }
+
+        public ICombatTarget FindClosestAlive(Vector3 origin)
+        {
+            return target;
         }
     }
 

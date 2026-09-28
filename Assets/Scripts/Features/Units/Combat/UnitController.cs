@@ -73,9 +73,9 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         fsmController.Tick();
     }
 
-    public void BindCombatContext(MonsterSpawner spawner, UnitRoster roster, StagePoolManager poolManager)
+    public void BindCombatContext(ICombatTargetProvider targetProvider, UnitRoster roster, StagePoolManager poolManager)
     {
-        targeting.BindSpawner(spawner);
+        targeting.BindTargetProvider(targetProvider);
         unitRoster = roster;
         this.poolManager = poolManager;
     }
