@@ -39,7 +39,7 @@ PrefabInstance:
     - target: {fileID: 2462862775648873224, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: animator
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1304105039238430504}
     - target: {fileID: 2540078424007288543, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -114,6 +114,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1304105039238430504}
+    - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2830089993841423888}
   m_SourcePrefab: {fileID: 100100000, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
 --- !u!1 &763292298812824640 stripped
 GameObject:
@@ -132,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 622fb6a17b7bf7a4bbee9b4fb3c662e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack
-  useAnimationEvents: 0
+  useAnimationEvents: 1
 --- !u!1 &7390713530758400240 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
@@ -148,7 +151,7 @@ Animator:
   m_GameObject: {fileID: 7390713530758400240}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1b9c7ae826ae51844b5053ed89e763bc, type: 2}
+  m_Controller: {fileID: 22100000, guid: 4ccec062bf4c6ad4e82c9f4cc818e1aa, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -160,3 +163,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2830089993841423888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7390713530758400240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa28e63f54b40139355edfdba6d26ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterAnimationEvent
