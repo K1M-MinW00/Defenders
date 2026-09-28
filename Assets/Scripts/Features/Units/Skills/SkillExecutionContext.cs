@@ -59,6 +59,16 @@ public class SkillExecutionContext
         IsValid = AllyTargets.Count > 0;
     }
 
+    public void SetAllyTarget(UnitController target)
+    {
+        AllyTargets.Clear();
+
+        if (target != null)
+            AllyTargets.Add(target);
+
+        IsValid = target != null;
+    }
+
     public void AddAllyTarget(UnitController target)
     {
         AllyTargets.Add(target);

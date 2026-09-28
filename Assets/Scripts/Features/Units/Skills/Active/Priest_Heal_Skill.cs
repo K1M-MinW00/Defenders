@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Priest_Heal_Skill : ActiveSkillBase
@@ -27,7 +26,7 @@ public class Priest_Heal_Skill : ActiveSkillBase
         if (target == null)
             return false;
 
-        context.SetAllyTargets(new List<UnitController> { target });
+        context.SetAllyTarget(target);
         return true;
     }
 

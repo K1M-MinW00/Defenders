@@ -49,4 +49,29 @@ public static class CombatTargetSelector
 
         return closest;
     }
+
+    public static T FindLowestHealth<T>(IEnumerable<T> candidates)
+        where T : class, ICombatTarget
+    {
+        if (candidates == null)
+            return null;
+
+        T lowest = null;
+        float lowestHealth = float.PositiveInfinity;
+
+        foreach (T candidate in candidates)
+        {
+            if (!IsValid(candidate))
+                continue;
+
+            float currentHealth = candidate.CombatHealth.CurrentHp;
+            if (currentHealth >= lowestHealth)
+                continue;
+
+            lowest = candidate;
+            lowestHealth = currentHealth;
+        }
+
+        return lowest;
+    }
 }

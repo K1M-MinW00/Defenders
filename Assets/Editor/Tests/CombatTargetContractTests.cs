@@ -115,16 +115,39 @@ public sealed class CombatTargetContractTests
         }
     }
 
+    [Test]
+    public void Selector_ReturnsLowestHealthLivingTarget()
+    {
+        GameObject firstObject = new("First");
+        GameObject lowestObject = new("Lowest");
+        FakeTarget first = new(firstObject.transform, false, 0.8f);
+        FakeTarget lowest = new(lowestObject.transform, false, 0.2f);
+        FakeTarget dead = new(firstObject.transform, true);
+
+        try
+        {
+            FakeTarget result = CombatTargetSelector.FindLowestHealth(
+                new[] { first, dead, lowest });
+
+            Assert.That(result, Is.SameAs(lowest));
+        }
+        finally
+        {
+            Object.DestroyImmediate(firstObject);
+            Object.DestroyImmediate(lowestObject);
+        }
+    }
+
     private sealed class FakeTarget : ICombatTarget
     {
         public Transform TargetTransform { get; }
         public ICombatHealth CombatHealth { get; }
         public bool IsDead => CombatHealth.IsDead;
 
-        public FakeTarget(Transform targetTransform, bool isDead)
+        public FakeTarget(Transform targetTransform, bool isDead, float currentHp = 1f)
         {
             TargetTransform = targetTransform;
-            CombatHealth = new FakeHealth(isDead);
+            CombatHealth = new FakeHealth(isDead, currentHp);
         }
     }
 
@@ -134,9 +157,9 @@ public sealed class CombatTargetContractTests
         public float MaxHp => 1f;
         public bool IsDead { get; private set; }
 
-        public FakeHealth(bool isDead)
+        public FakeHealth(bool isDead, float currentHp = 1f)
         {
-            CurrentHp = isDead ? 0f : 1f;
+            CurrentHp = isDead ? 0f : Mathf.Clamp01(currentHp);
             IsDead = isDead;
         }
 

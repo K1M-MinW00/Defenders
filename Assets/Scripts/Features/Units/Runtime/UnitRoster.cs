@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class UnitRoster : MonoBehaviour
@@ -136,18 +135,32 @@ public class UnitRoster : MonoBehaviour
 
     public UnitController GetLowestHpAliveUnit()
     {
-        return units
-            .Where(u => u != null && !u.IsDead)
-            .OrderBy(u => u.Health.CurrentHp)
-            .FirstOrDefault();
+        return CombatTargetSelector.FindLowestHealth(units);
     }
 
     public List<UnitController> GetLowestHpAliveUnits(int count)
     {
-        return units
-            .Where(u => u != null && !u.IsDead)
-            .OrderBy(u => u.Health.CurrentHp)
-            .Take(count)
-            .ToList();
+        var result = new List<UnitController>(Mathf.Max(0, count));
+        if (count <= 0)
+            return result;
+
+        foreach (UnitController unit in units)
+        {
+            if (!CombatTargetSelector.IsValid(unit))
+                continue;
+
+            int insertIndex = result.Count;
+            while (insertIndex > 0 &&
+                   result[insertIndex - 1].Health.CurrentHp > unit.Health.CurrentHp)
+            {
+                insertIndex--;
+            }
+
+            result.Insert(insertIndex, unit);
+            if (result.Count > count)
+                result.RemoveAt(result.Count - 1);
+        }
+
+        return result;
     }
 }
