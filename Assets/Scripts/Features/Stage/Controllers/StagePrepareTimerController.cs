@@ -2,39 +2,48 @@
 using System.Collections;
 using UnityEngine;
 
-public class StagePrepareTimerController : MonoBehaviour
+public sealed class StagePrepareTimerController : MonoBehaviour
 {
     [SerializeField] private float prepareDuration = 10f;
 
     private Coroutine prepareRoutine;
     private Action onPrepareFinished;
     private float timer;
+    private bool isPreparing;
 
     public float PrepareDuration => prepareDuration;
     public float CurrentTimer => timer;
-    public bool IsPreparing => prepareRoutine != null;
+    public bool IsPreparing => isPreparing;
 
     public event Action<float> OnPrepareTimerChanged;
 
-    public void StartPreparePhase(Action finishedCallback)
+    public bool TryStartPreparePhase(Action finishedCallback)
     {
         StopPreparePhase();
 
+        if (!isActiveAndEnabled || finishedCallback == null)
+            return false;
+
         onPrepareFinished = finishedCallback;
-        timer = prepareDuration;
+        timer = Mathf.Max(0f, prepareDuration);
+        isPreparing = true;
 
         OnPrepareTimerChanged?.Invoke(timer);
         prepareRoutine = StartCoroutine(CoPrepare());
+        return true;
     }
 
-    public void ForceFinishPrepare()
+    public bool ForceFinishPrepare()
     {
-        if (prepareRoutine == null)
-            return;
+        if (!isPreparing)
+            return false;
 
         Action callback = onPrepareFinished;
         StopPreparePhase();
+        timer = 0f;
+        OnPrepareTimerChanged?.Invoke(timer);
         callback?.Invoke();
+        return true;
     }
 
     public void StopPreparePhase()
@@ -46,6 +55,7 @@ public class StagePrepareTimerController : MonoBehaviour
         }
 
         onPrepareFinished = null;
+        isPreparing = false;
     }
 
     private IEnumerator CoPrepare()
@@ -65,6 +75,19 @@ public class StagePrepareTimerController : MonoBehaviour
         prepareRoutine = null;
         Action callback = onPrepareFinished;
         onPrepareFinished = null;
+        isPreparing = false;
         callback?.Invoke();
     }
+
+    private void OnDisable()
+    {
+        StopPreparePhase();
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        prepareDuration = Mathf.Max(0f, prepareDuration);
+    }
+#endif
 }

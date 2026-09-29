@@ -27,14 +27,24 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         if (currentPhase != RuntimePhase.None)
             EndCurrentPhase();
 
-        monsterPrewarmService.PrewarmForWave(wave);
-        monsterSpawner.PrepareWavePreview(wave);
-        monsterSpawner.WaveHpTracker.PrepareWave(wave);
-        if (!preparationService.EnterPrepareMode())
-            throw new InvalidOperationException("Failed to enter stage preparation mode.");
-        stageTimeController.ExitCombatPhase();
-        prepareTimerController.StartPreparePhase(onFinished);
         currentPhase = RuntimePhase.Preparation;
+        try
+        {
+            monsterPrewarmService.PrewarmForWave(wave);
+            monsterSpawner.PrepareWavePreview(wave);
+            monsterSpawner.WaveHpTracker.PrepareWave(wave);
+            if (!preparationService.EnterPrepareMode())
+                throw new InvalidOperationException("Failed to enter stage preparation mode.");
+
+            stageTimeController.ExitCombatPhase();
+            if (!prepareTimerController.TryStartPreparePhase(onFinished))
+                throw new InvalidOperationException("Failed to start the preparation timer.");
+        }
+        catch
+        {
+            EndCurrentPhase();
+            throw;
+        }
     }
 
     public void BeginCombat(WaveData wave, Action onWin, Action onLose)
@@ -59,12 +69,10 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         if (currentPhase == RuntimePhase.None)
             return;
 
-        RuntimePhase endingPhase = currentPhase;
         currentPhase = RuntimePhase.None;
 
         prepareTimerController.StopPreparePhase();
-        if (endingPhase == RuntimePhase.Combat)
-            waveController.StopWave();
+        waveController.StopWave();
 
         stageTimeController.ResetToNormalTime();
         preparationService.EndCurrentPhase();
