@@ -232,7 +232,6 @@ public class StageSessionController : MonoBehaviour
 
     public void RequestStageFail()
     {
-        phaseRuntimeController.ResumeTime();
         _ = HandleWaveLoseAsync(allowPreparingFailure: true);
     }
 

@@ -183,7 +183,6 @@ public class StageResultUI : MonoBehaviour
             return;
         }
 
-        Time.timeScale = 1f;
         SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
         if (result != SceneTransitionResult.Succeeded && this != null)
         {

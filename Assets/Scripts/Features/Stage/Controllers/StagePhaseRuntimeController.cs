@@ -64,14 +64,9 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         if (endingPhase == RuntimePhase.Combat)
             waveController.StopWave();
 
-        stageTimeController.ExitCombatPhase();
+        stageTimeController.ResetToNormalTime();
         preparationService.EndCurrentPhase();
         ClearTransientCombatObjects();
-    }
-
-    public void ResumeTime()
-    {
-        stageTimeController.Resume();
     }
 
     private void ClearTransientCombatObjects()

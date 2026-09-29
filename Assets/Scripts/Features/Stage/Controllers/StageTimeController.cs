@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
 
-public class StageTimeController : MonoBehaviour
+public sealed class StageTimeController : MonoBehaviour
 {
     private const string SavedSpeedKey = "Stage_CombatSpeed";
+    private const float DefaultGlobalTimeScale = 1f;
 
     [Header("Speed")]
     [SerializeField] private float normalSpeed = 1f;
@@ -12,6 +13,7 @@ public class StageTimeController : MonoBehaviour
     private float selectedCombatSpeed = 1f;
     private bool isCombatPhase;
     private bool isPaused;
+    private bool isInitialized;
 
     public float SelectedCombatSpeed => selectedCombatSpeed;
     public bool IsCombatPhase => isCombatPhase;
@@ -22,12 +24,16 @@ public class StageTimeController : MonoBehaviour
 
     public void Initialize()
     {
-        selectedCombatSpeed = PlayerPrefs.GetFloat(SavedSpeedKey,normalSpeed);
+        ValidateSpeedSettings();
+        selectedCombatSpeed = PlayerPrefs.GetFloat(SavedSpeedKey, normalSpeed);
 
         if (!Mathf.Approximately(selectedCombatSpeed, fastSpeed))
             selectedCombatSpeed = normalSpeed;
 
-        Time.timeScale = 1f;
+        isCombatPhase = false;
+        isPaused = false;
+        isInitialized = true;
+        ApplyTimeScale();
 
         OnSpeedChanged?.Invoke(selectedCombatSpeed);
         OnPauseChanged?.Invoke(false);
@@ -35,7 +41,7 @@ public class StageTimeController : MonoBehaviour
 
     private void OnDestroy()
     {
-        Time.timeScale = 1f;
+        Time.timeScale = DefaultGlobalTimeScale;
     }
 
     public void ToggleSpeed()
@@ -45,9 +51,7 @@ public class StageTimeController : MonoBehaviour
         PlayerPrefs.SetFloat(SavedSpeedKey, selectedCombatSpeed);
         PlayerPrefs.Save();
 
-        // 전투 중일 때만 실제 배속 적용
-        if (isCombatPhase && !isPaused)
-            Time.timeScale = selectedCombatSpeed;
+        ApplyTimeScale();
 
         OnSpeedChanged?.Invoke(selectedCombatSpeed);
     }
@@ -55,17 +59,13 @@ public class StageTimeController : MonoBehaviour
     public void EnterCombatPhase()
     {
         isCombatPhase = true;
-
-        if (!isPaused)
-            Time.timeScale = selectedCombatSpeed;
+        ApplyTimeScale();
     }
 
     public void ExitCombatPhase()
     {
         isCombatPhase = false;
-
-        if (!isPaused)
-            Time.timeScale = normalSpeed;
+        ApplyTimeScale();
     }
 
     public void Pause()
@@ -74,8 +74,7 @@ public class StageTimeController : MonoBehaviour
             return;
 
         isPaused = true;
-        Time.timeScale = 0f;
-
+        ApplyTimeScale();
         OnPauseChanged?.Invoke(true);
     }
 
@@ -85,9 +84,7 @@ public class StageTimeController : MonoBehaviour
             return;
 
         isPaused = false;
-
-        Time.timeScale = isCombatPhase ? selectedCombatSpeed : normalSpeed;
-
+        ApplyTimeScale();
         OnPauseChanged?.Invoke(false);
     }
 
@@ -98,4 +95,38 @@ public class StageTimeController : MonoBehaviour
         else
             Pause();
     }
+
+    public void ResetToNormalTime()
+    {
+        bool wasPaused = isPaused;
+        isCombatPhase = false;
+        isPaused = false;
+        ApplyTimeScale();
+
+        if (wasPaused)
+            OnPauseChanged?.Invoke(false);
+    }
+
+    private void ApplyTimeScale()
+    {
+        if (!isInitialized)
+            return;
+
+        Time.timeScale = isPaused
+            ? 0f
+            : isCombatPhase ? selectedCombatSpeed : normalSpeed;
+    }
+
+    private void ValidateSpeedSettings()
+    {
+        normalSpeed = Mathf.Max(0.01f, normalSpeed);
+        fastSpeed = Mathf.Max(normalSpeed + 0.01f, fastSpeed);
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateSpeedSettings();
+    }
+#endif
 }

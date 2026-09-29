@@ -27,6 +27,12 @@ public class StagePauseUI : MonoBehaviour
         StageTimeController timeController,
         StageSessionController session)
     {
+        if (timeController == null || session == null || panelRoot == null)
+        {
+            Debug.LogError($"[{nameof(StagePauseUI)}] Required references are missing.", this);
+            return;
+        }
+
         this.timeController = timeController;
         this.session = session;
 
@@ -105,7 +111,6 @@ public class StagePauseUI : MonoBehaviour
 
     private void HandleExitClicked()
     {
-        timeController?.Resume();
         session.RequestStageFail();
     }
 
