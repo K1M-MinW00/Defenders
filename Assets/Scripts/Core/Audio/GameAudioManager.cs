@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,6 +8,33 @@ using UnityEngine.UI;
 [DefaultExecutionOrder(-1000)]
 public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
 {
+    private readonly struct CharacterSfxKey : IEquatable<CharacterSfxKey>
+    {
+        private readonly GameAudioCue cue;
+        private readonly int emitterId;
+
+        public CharacterSfxKey(GameAudioCue cue, int emitterId)
+        {
+            this.cue = cue;
+            this.emitterId = emitterId;
+        }
+
+        public bool Equals(CharacterSfxKey other)
+        {
+            return cue == other.cue && emitterId == other.emitterId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CharacterSfxKey other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)cue, emitterId);
+        }
+    }
+
     private sealed class SfxVoice
     {
         public AudioSource Source { get; }
@@ -49,6 +77,7 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
     private Button pressedButton;
     private readonly List<RaycastResult> raycastResults = new();
     private readonly Dictionary<GameAudioCue, float> lastSfxPlayedAt = new();
+    private readonly Dictionary<CharacterSfxKey, float> lastCharacterSfxPlayedAt = new();
     private readonly List<SfxVoice> sfxVoices = new();
     private bool bgmPausedBySetting;
 
@@ -126,15 +155,49 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
         AudioClipSettings audio,
         GameAudioCue fallbackCue,
         GameAudioPriority priority,
-        float minInterval)
+        float minInterval,
+        UnityEngine.Object emitter)
     {
-        if (audio != null && audio.IsValid)
+        if (!IsSoundEnabled())
+            return;
+
+        AudioClipSettings selectedAudio = audio;
+        GameAudioPriority selectedPriority = priority;
+        float selectedMinInterval = minInterval;
+
+        if (selectedAudio == null || !selectedAudio.IsValid)
         {
-            PlaySfx(audio, priority, fallbackCue, minInterval);
+            if (config == null ||
+                !config.TryGetSfx(
+                    fallbackCue,
+                    out selectedAudio,
+                    out selectedMinInterval,
+                    out selectedPriority))
+            {
+                return;
+            }
+        }
+
+        if (emitter == null)
+        {
+            PlaySfx(selectedAudio, selectedPriority, fallbackCue, selectedMinInterval);
             return;
         }
 
-        PlaySfx(fallbackCue);
+        float now = Time.unscaledTime;
+        var key = new CharacterSfxKey(fallbackCue, emitter.GetInstanceID());
+        if (lastCharacterSfxPlayedAt.TryGetValue(key, out float lastPlayedAt) &&
+            now < lastPlayedAt + selectedMinInterval)
+        {
+            return;
+        }
+
+        SfxVoice voice = AcquireSfxVoice(selectedPriority);
+        if (voice == null)
+            return;
+
+        lastCharacterSfxPlayedAt[key] = now;
+        voice.Play(selectedAudio.Clip, selectedAudio.Volume, selectedPriority, now);
     }
 
     public void PlayBgm(AudioClipSettings track)
@@ -231,6 +294,8 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        lastSfxPlayedAt.Clear();
+        lastCharacterSfxPlayedAt.Clear();
         BindSettings();
         PlaySceneBgm(scene.name);
         pressedButton = null;
@@ -277,6 +342,8 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
             }
 
             StopAllSfx();
+            lastSfxPlayedAt.Clear();
+            lastCharacterSfxPlayedAt.Clear();
             return;
         }
 

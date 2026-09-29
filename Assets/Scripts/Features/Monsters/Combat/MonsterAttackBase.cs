@@ -33,11 +33,6 @@ public abstract class MonsterAttackBase : MonoBehaviour, IAnimationDrivenAttack
             return false;
 
         owner.PlayAttack();
-        GameAudioManager.Instance?.PlayCharacterSfx(
-            owner.Data?.attackSound,
-            GameAudioCue.MonsterAttack,
-            GameAudioPriority.Normal,
-            0.08f);
 
         if (!useAnimationEvents)
         {
@@ -60,6 +55,12 @@ public abstract class MonsterAttackBase : MonoBehaviour, IAnimationDrivenAttack
             return;
         }
 
+        GameAudioManager.Instance?.PlayCharacterSfx(
+            owner.Data?.attackSound,
+            GameAudioCue.MonsterAttack,
+            GameAudioPriority.Normal,
+            0.08f,
+            owner);
         ApplyHit(target);
     }
 

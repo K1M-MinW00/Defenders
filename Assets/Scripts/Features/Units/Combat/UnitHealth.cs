@@ -56,7 +56,12 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
         float appliedDamage = state.TakeDamage(resolution.AppliedAmount);
 
-        GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.hitSound, GameAudioCue.UnitHit, GameAudioPriority.Low, 0.05f);
+        GameAudioManager.Instance?.PlayCharacterSfx(
+            owner.UnitData?.hitSound,
+            GameAudioCue.UnitHit,
+            GameAudioPriority.Low,
+            0.05f,
+            owner);
         
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
 

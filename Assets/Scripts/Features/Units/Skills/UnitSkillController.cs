@@ -160,7 +160,6 @@ public class UnitSkillController : MonoBehaviour
 
         skillStartedAt = Time.time;
         activeSkill.OnSkillStart(context);
-        GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.activeSkill?.skillSound, GameAudioCue.UnitSkill, GameAudioPriority.High, 0.1f);
         OnSkillStarted?.Invoke();
         NotifyActiveSkillStarted();
 
@@ -189,6 +188,12 @@ public class UnitSkillController : MonoBehaviour
             return;
 
         owner.Energy.ConsumeAll();
+        GameAudioManager.Instance?.PlayCharacterSfx(
+            owner.UnitData?.activeSkill?.skillSound,
+            GameAudioCue.UnitSkill,
+            GameAudioPriority.High,
+            0.1f,
+            owner);
         activeSkill.OnSkillApply(context);
         OnSkillApplied?.Invoke();
         NotifyActiveSkillApplied();
