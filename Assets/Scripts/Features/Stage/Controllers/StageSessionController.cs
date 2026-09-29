@@ -35,6 +35,9 @@ public class StageSessionController : MonoBehaviour
 
     private void Start()
     {
+        if (!HasRequiredSceneReferences())
+            return;
+
         if (!TransitionTo(StageState.Loading))
             return;
 
@@ -58,6 +61,12 @@ public class StageSessionController : MonoBehaviour
             return;
         }
 
+        if (!stageData.TryValidate(out string validationError))
+        {
+            Debug.LogError($"Stage data validation failed ({stageData.StageKey}): {validationError}");
+            return;
+        }
+
         StartStage(stageData,enterData);
     }
 
@@ -69,12 +78,27 @@ public class StageSessionController : MonoBehaviour
         pendingOutcomeIsClear = false;
         outcomeSaveTask = null;
 
-        bootstrapper.InitializeStage(stageData,enterData);
+        if (!bootstrapper.TryInitializeStage(stageData, enterData, out _, out string bootstrapError))
+        {
+            Debug.LogError($"Stage bootstrap failed ({stageData.StageKey}): {bootstrapError}");
+            return;
+        }
 
         stageUI.Initialize();
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         EnterPreparePhase();
+    }
+
+    private bool HasRequiredSceneReferences()
+    {
+        bool valid = phaseRuntimeController != null && rewardService != null &&
+                     bootstrapper != null && stageUI != null && progressService != null;
+
+        if (!valid)
+            Debug.LogError($"[{nameof(StageSessionController)}] Required scene references are missing.", this);
+
+        return valid;
     }
     public void EnterPreparePhase()
     {

@@ -10,17 +10,37 @@ public class StageBootstrapper : MonoBehaviour
     [SerializeField] private MonsterSpawner monsterSpawner;
 
 
-    public StageMapContext InitializeStage(StageDataSO stageData, StageEnterData enterData)
+    public bool TryInitializeStage(
+        StageDataSO stageData,
+        StageEnterData enterData,
+        out StageMapContext mapContext,
+        out string error)
     {
-        if(stageData == null)
+        mapContext = null;
+
+        if (stageData == null || enterData == null)
         {
-            Debug.LogError("StageBootstrapper. InitializeStage Failed");
-            return null;
+            error = "Stage data or entry data is missing.";
+            return false;
         }
 
-        economyManager.Init(stageData.economyConfig);
-        StageMapContext mapContext = CreateMap(stageData);
+        if (placementController == null || economyManager == null ||
+            gameCameraController == null || unitSummoner == null || monsterSpawner == null)
+        {
+            error = "One or more required scene references are missing.";
+            return false;
+        }
 
+        if (enterData.SelectedUnitIds == null || enterData.SelectedUnitIds.Count == 0)
+        {
+            error = "Selected combat units are missing.";
+            return false;
+        }
+
+        if (!TryCreateMap(stageData, out mapContext, out error))
+            return false;
+
+        economyManager.Init(stageData.economyConfig);
         placementController.Initialize(mapContext.PlacementArea);
 
         unitSummoner.SetMapContext(mapContext.UnitSpawnPoint, mapContext.PlacementArea);
@@ -29,19 +49,34 @@ public class StageBootstrapper : MonoBehaviour
         monsterSpawner.SetSpawnPoints(mapContext.MonsterSpawnPoints);
         gameCameraController.Initialize(mapContext.MinBound, mapContext.MaxBound);
 
-        return mapContext;
+        error = string.Empty;
+        return true;
     }
 
-    private StageMapContext CreateMap(StageDataSO stageData)
+    private static bool TryCreateMap(
+        StageDataSO stageData,
+        out StageMapContext context,
+        out string error)
     {
-        GameObject mapPrefab = stageData.mapPrefab;
-        GameObject mapInstance = Instantiate(mapPrefab);
+        context = null;
 
-        StageMapContext context = mapInstance.GetComponent<StageMapContext>();
+        if (stageData.mapPrefab == null)
+        {
+            error = "Map prefab is missing.";
+            return false;
+        }
 
-        if (context == null)
-            throw new System.Exception("StageMapContext is missing on map prefab.");
+        GameObject mapInstance = Instantiate(stageData.mapPrefab);
+        context = mapInstance.GetComponent<StageMapContext>();
 
-        return context;
+        if (context != null)
+        {
+            error = string.Empty;
+            return true;
+        }
+
+        Destroy(mapInstance);
+        error = "StageMapContext is missing on the map prefab root.";
+        return false;
     }
 }
