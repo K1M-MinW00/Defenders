@@ -6,12 +6,41 @@ public class UnitBuffController : MonoBehaviour
     private UnitController owner;
     private readonly List<RuntimeBuff> activeBuffs = new();
 
+#if UNITY_EDITOR
+    [System.Serializable]
+    private sealed class BuffDebugEntry
+    {
+        public string buffId;
+        public StatType statType;
+        public BuffModifyType modifyType;
+        public float value;
+        public BuffDurationType durationType;
+        public float remainingTime;
+        public int remainingWaves;
+
+        public void CopyFrom(RuntimeBuff buff)
+        {
+            buffId = buff.BuffId;
+            statType = buff.StatType;
+            modifyType = buff.ModifyType;
+            value = buff.Value;
+            durationType = buff.DurationType;
+            remainingTime = buff.RemainingTime;
+            remainingWaves = buff.RemainingWaves;
+        }
+    }
+
+    [SerializeField, HideInInspector] private int debugActiveBuffCount;
+    [SerializeField, HideInInspector] private List<BuffDebugEntry> debugActiveBuffs = new();
+#endif
+
     public IReadOnlyList<RuntimeBuff> ActiveBuffs => activeBuffs;
 
     public void Initialize(UnitController owner)
     {
         this.owner = owner;
         activeBuffs.Clear();
+        SyncDebugSnapshot();
     }
 
     private void Update()
@@ -39,6 +68,8 @@ public class UnitBuffController : MonoBehaviour
 
         if (changed)
             owner.StatService.Recalculate(StatRefreshPolicy.KeepRatio);
+
+        SyncDebugSnapshot();
     }
 
     public void ApplyOrRefreshBuff(
@@ -50,6 +81,8 @@ public class UnitBuffController : MonoBehaviour
 
         if (ApplyOrRefreshWithoutRecalculate(application))
             owner.StatService.Recalculate(refreshPolicy);
+
+        SyncDebugSnapshot();
     }
 
     public void ApplyOrRefreshBuffs(
@@ -62,6 +95,8 @@ public class UnitBuffController : MonoBehaviour
 
         if (statChanged)
             owner.StatService.Recalculate(refreshPolicy);
+
+        SyncDebugSnapshot();
     }
 
     public void RemoveBuff(string buffId, StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
@@ -69,6 +104,8 @@ public class UnitBuffController : MonoBehaviour
         int removed = RemoveBuffWithoutRefresh(buffId);
         if (removed > 0)
             owner.StatService.Recalculate(refreshPolicy);
+
+        SyncDebugSnapshot();
     }
 
     public void RemoveBuffs(
@@ -81,6 +118,8 @@ public class UnitBuffController : MonoBehaviour
 
         if (removed > 0)
             owner.StatService.Recalculate(refreshPolicy);
+
+        SyncDebugSnapshot();
     }
 
     private int RemoveBuffWithoutRefresh(string buffId)
@@ -126,6 +165,8 @@ public class UnitBuffController : MonoBehaviour
 
         if (changed)
             owner.StatService.Recalculate(StatRefreshPolicy.KeepRatio);
+
+        SyncDebugSnapshot();
     }
 
     public void ClearAllBuffs()
@@ -135,6 +176,7 @@ public class UnitBuffController : MonoBehaviour
 
         activeBuffs.Clear();
         owner.StatService.Recalculate(StatRefreshPolicy.KeepRatio);
+        SyncDebugSnapshot();
     }
 
     public float GetAdditive(StatType statType)
@@ -171,5 +213,26 @@ public class UnitBuffController : MonoBehaviour
         }
 
         return total;
+    }
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    private void SyncDebugSnapshot()
+    {
+#if UNITY_EDITOR
+        debugActiveBuffCount = activeBuffs.Count;
+
+        while (debugActiveBuffs.Count < activeBuffs.Count)
+            debugActiveBuffs.Add(new BuffDebugEntry());
+
+        if (debugActiveBuffs.Count > activeBuffs.Count)
+        {
+            debugActiveBuffs.RemoveRange(
+                activeBuffs.Count,
+                debugActiveBuffs.Count - activeBuffs.Count);
+        }
+
+        for (int i = 0; i < activeBuffs.Count; i++)
+            debugActiveBuffs[i].CopyFrom(activeBuffs[i]);
+#endif
     }
 }
