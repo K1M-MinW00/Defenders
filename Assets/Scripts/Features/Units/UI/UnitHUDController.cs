@@ -1,4 +1,3 @@
-using System.Collections.Specialized;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,10 +24,14 @@ public class UnitHUDController : MonoBehaviour
         if (unit == null)
             return;
 
+        unit.OnInitialized += HandleInitialized;
         unit.OnStatsChanged += HandleStarChanged;
         unit.Health.OnDead += HandleDead;
         unit.Health.OnHpChanged += HandleHpChanged;
         unit.Energy.OnEnergyChanged += HandleEnergyChanged;
+
+        if (unit.Runtime != null)
+            RefreshAll();
     }
 
     private void OnDisable()
@@ -36,11 +39,14 @@ public class UnitHUDController : MonoBehaviour
         if (unit == null)
             return;
 
+        unit.OnInitialized -= HandleInitialized;
         unit.OnStatsChanged -= HandleStarChanged;
         unit.Health.OnDead -= HandleDead;
         unit.Health.OnHpChanged -= HandleHpChanged;
         unit.Energy.OnEnergyChanged -= HandleEnergyChanged;
     }
+
+    private void HandleInitialized(UnitController instance) => RefreshAll();
 
     private void HandleStarChanged(UnitController instance) => RefreshAll();
 

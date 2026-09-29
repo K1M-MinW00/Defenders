@@ -33,10 +33,8 @@ public class UnitMovementController : MonoBehaviour
 
     public void MoveTo(Vector3 destination)
     {
-        if (agent == null) return;
-
-        if (!agent.enabled)
-            agent.enabled = true;
+        if (!TryActivateOnNavMesh())
+            return;
 
         agent.isStopped = false;
         agent.SetDestination(destination);
@@ -47,25 +45,37 @@ public class UnitMovementController : MonoBehaviour
         if (agent == null || !agent.enabled)
             return;
 
-        agent.isStopped = true;
-        agent.ResetPath();
+        if (agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
         agent.enabled = false;
     }
 
     public void Resume()
     {
-        if (agent == null)
+        if (!TryActivateOnNavMesh())
             return;
-
-        if (!agent.enabled)
-            agent.enabled = true;
 
         agent.isStopped = false;
     }
 
     public void EnableMovement(bool active)
     {
-        if(agent.enabled != active)
+        if (agent != null && agent.enabled != active)
             agent.enabled = active;
+    }
+
+    private bool TryActivateOnNavMesh()
+    {
+        if (agent == null)
+            return false;
+
+        if (!agent.enabled)
+            agent.enabled = true;
+
+        return agent.isOnNavMesh;
     }
 }
