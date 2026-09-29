@@ -10,6 +10,19 @@ public class StagePreparationService : MonoBehaviour
     [SerializeField] private PlacementController placementController;
 
     private bool isPrepareMode;
+    private StageUnitTransactionService unitTransactions;
+
+    private void Awake()
+    {
+        unitTransactions = new StageUnitTransactionService(
+            unitSummoner,
+            unitRoster,
+            populationManager,
+            economyManager);
+
+        if (!unitTransactions.IsConfigured)
+            Debug.LogError($"[{nameof(StagePreparationService)}] Unit transaction dependencies are missing.", this);
+    }
 
     private void OnEnable()
     {
@@ -65,36 +78,16 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySummonUnit()
     {
-        if (!isPrepareMode)
-            return false;
+        bool succeeded = isPrepareMode && unitTransactions != null && unitTransactions.TrySummonUnit();
+        if (succeeded)
+            GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
 
-        if (!populationManager.CanSummon())
-            return false;
-
-        if (!economyManager.TrySummonUnit())
-            return false;
-
-        if (!unitSummoner.TryCreateRandomUnit(out UnitController unit))
-        {
-            economyManager.RefundGold(economyManager.GetSummonCost());
-            return false;
-        }
-
-        unitSummoner.CommitSummonedUnit(unit);
-
-        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
-        return true;
+        return succeeded;
     }
 
     public bool TryIncreasePopulation()
     {
-        if (!isPrepareMode)
-            return false;
-
-        if (!populationManager.TryIncreaseMax())
-            return false;
-
-        return true;
+        return isPrepareMode && unitTransactions != null && unitTransactions.TryIncreasePopulation();
     }
 
     private void HandleSellRequested(UnitController unit)
@@ -109,50 +102,16 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySellUnit(UnitController unit)
     {
-        if (!isPrepareMode || unit == null)
-            return false;
-
-        if (!unit.TryBeginRemoval(UnitRemovalReason.Sold))
-            return false;
-
-        int star = unit.Star;
-        unitRoster.Unregister(unit);
-        economyManager.SellUnit(star);
-        unit.ReturnToPool();
-
-        return true;
+        return isPrepareMode && unitTransactions != null && unitTransactions.TrySellUnit(unit);
     }
 
     public bool TryRerollUnit(UnitController unit)
     {
-        if (!isPrepareMode)
-            return false;
+        bool succeeded = isPrepareMode && unitTransactions != null && unitTransactions.TryRerollUnit(unit);
+        if (succeeded)
+            GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
 
-        if (unit == null || unit.Star != 1)
-            return false;
-
-        if (!economyManager.TryReroll())
-            return false;
-
-        if (!unitSummoner.TryCreateRandomUnit(out UnitController replacement))
-        {
-            economyManager.RefundGold(economyManager.GetRerollCost());
-            return false;
-        }
-
-        if (!unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
-        {
-            unitSummoner.DiscardCreatedUnit(replacement);
-            economyManager.RefundGold(economyManager.GetRerollCost());
-            return false;
-        }
-
-        unitRoster.Unregister(unit);
-        unit.ReturnToPool();
-        unitSummoner.CommitSummonedUnit(replacement);
-
-        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
-        return true;
+        return succeeded;
     }
 
     private void BeginUnitsCombat()
