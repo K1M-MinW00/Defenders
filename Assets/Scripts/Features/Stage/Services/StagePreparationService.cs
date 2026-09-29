@@ -74,10 +74,13 @@ public class StagePreparationService : MonoBehaviour
         if (!economyManager.TrySummonUnit())
             return false;
 
-        bool success = unitSummoner.SummonRandomUnit();
-
-        if (!success)
+        if (!unitSummoner.TryCreateRandomUnit(out UnitController unit))
+        {
+            economyManager.RefundGold(economyManager.GetSummonCost());
             return false;
+        }
+
+        unitSummoner.CommitSummonedUnit(unit);
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
         return true;
@@ -131,16 +134,22 @@ public class StagePreparationService : MonoBehaviour
         if (!economyManager.TryReroll())
             return false;
 
-        if (!unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
+        if (!unitSummoner.TryCreateRandomUnit(out UnitController replacement))
+        {
+            economyManager.RefundGold(economyManager.GetRerollCost());
             return false;
+        }
+
+        if (!unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
+        {
+            unitSummoner.DiscardCreatedUnit(replacement);
+            economyManager.RefundGold(economyManager.GetRerollCost());
+            return false;
+        }
 
         unitRoster.Unregister(unit);
         unit.ReturnToPool();
-
-
-        bool success = unitSummoner.SummonRandomUnit();
-        if (!success)
-            return false;
+        unitSummoner.CommitSummonedUnit(replacement);
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
         return true;

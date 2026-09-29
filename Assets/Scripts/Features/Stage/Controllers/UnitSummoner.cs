@@ -42,6 +42,17 @@ public class UnitSummoner : MonoBehaviour
 
     public bool SummonRandomUnit()
     {
+        if (!TryCreateRandomUnit(out UnitController unit))
+            return false;
+
+        CommitSummonedUnit(unit);
+        return true;
+    }
+
+    public bool TryCreateRandomUnit(out UnitController unit)
+    {
+        unit = null;
+
         if (unitPool == null || unitPool.Length == 0)
         {
             Debug.LogWarning("Summon blocked: unitPool is empty.");
@@ -61,7 +72,7 @@ public class UnitSummoner : MonoBehaviour
             PoolCategory.Unit,
             unitsRoot);
 
-        if (spawned == null || !spawned.TryGetComponent(out UnitController unit))
+        if (spawned == null || !spawned.TryGetComponent(out unit))
         {
             Debug.LogError($"Unit spawn failed: UnitController is missing on {data.unitPrefab.name}.");
 
@@ -85,16 +96,29 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
+        return true;
+    }
+
+    public void CommitSummonedUnit(UnitController unit)
+    {
+        if (unit == null)
+            return;
+
         unitRoster?.Register(unit);
         fusionService?.TryAutoFuse(unit);
+    }
 
-        return true;
+    public void DiscardCreatedUnit(UnitController unit)
+    {
+        if (unit == null)
+            return;
+
+        if (unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
+            unit.ReturnToPool();
     }
 
     private UserUnitData FindUserUnitData(UnitDataSO data)
     {
-        UserDataRoot userDataRoot = UserDataManager.Instance.UserData;
-
         return UserDataManager.Instance.RosterService.GetUnit(data.unitId);
     }
 

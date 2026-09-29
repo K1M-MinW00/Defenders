@@ -46,6 +46,11 @@ public class EconomyManager : MonoBehaviour
         NotifyGoldChanged();
     }
 
+    public void RefundGold(int amount)
+    {
+        AddGold(amount);
+    }
+
     public bool TrySpendGold(int cost)
     {
         if (cost <= 0)
