@@ -6,3 +6,8 @@ public interface ICombatTarget
     ICombatHealth CombatHealth { get; }
     bool IsDead { get; }
 }
+
+public interface ICombatTargetProvider
+{
+    ICombatTarget FindClosestAlive(Vector3 origin);
+}

@@ -5,6 +5,7 @@ public class UnitTargetingController : MonoBehaviour
     [SerializeField] private RangeSensor rangeSensor;
 
     private UnitController owner;
+    private ICombatTargetProvider targetProvider;
     private ICombatTarget currentTarget;
 
     public ICombatTarget CurrentTarget => currentTarget;
@@ -20,6 +21,11 @@ public class UnitTargetingController : MonoBehaviour
     public void ClearTarget()
     {
         currentTarget = null;
+    }
+
+    public void BindTargetProvider(ICombatTargetProvider provider)
+    {
+        targetProvider = provider;
     }
 
     public bool HasValidTarget()
@@ -45,6 +51,15 @@ public class UnitTargetingController : MonoBehaviour
             return null;
 
         return rangeSensor.GetClosestAlive(transform.position);
+    }
+
+    public bool TryFindGlobalClosestTarget()
+    {
+        if (targetProvider == null)
+            return false;
+
+        currentTarget = targetProvider.FindClosestAlive(transform.position);
+        return HasValidTarget();
     }
 
     public void RefreshTargetIfCloserInRange()

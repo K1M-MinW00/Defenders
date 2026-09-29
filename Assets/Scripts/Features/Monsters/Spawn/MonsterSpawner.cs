@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class MonsterSpawner : MonoBehaviour
+public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 {
     [Header("Reference")]
     [SerializeField] private StagePoolManager poolManager;
@@ -223,5 +223,10 @@ public class MonsterSpawner : MonoBehaviour
     public MonsterController FindClosestAlive(Vector3 from)
     {
         return CombatTargetSelector.FindClosest(aliveMonsters, from);
+    }
+
+    ICombatTarget ICombatTargetProvider.FindClosestAlive(Vector3 origin)
+    {
+        return FindClosestAlive(origin);
     }
 }

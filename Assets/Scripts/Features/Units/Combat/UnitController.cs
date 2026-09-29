@@ -76,8 +76,12 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
             fsmController.Tick();
     }
 
-    public void BindCombatContext(UnitRoster roster, StagePoolManager poolManager)
+    public void BindCombatContext(
+        ICombatTargetProvider targetProvider,
+        UnitRoster roster,
+        StagePoolManager poolManager)
     {
+        targeting.BindTargetProvider(targetProvider);
         unitRoster = roster;
         this.poolManager = poolManager;
     }
@@ -153,7 +157,7 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         if (!fsmController.IsIdleState)
             return;
 
-        bool found = Targeting.TryFindTargetInSensor();
+        bool found = Targeting.TryFindGlobalClosestTarget();
         if (!found)
             return;
 

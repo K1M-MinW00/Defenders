@@ -33,7 +33,7 @@ public class ModelView : MonoBehaviour
         animator.SetFloat(
             AttackSpeedMultiplierHash,
             AttackAnimationSpeed.FromAttacksPerSecond(attacksPerSecond));
-        animator.Play(AttackHash);
+        animator.Play(AttackHash, 0, 0f);
     }
     public void PlayDie()
     {
@@ -41,7 +41,7 @@ public class ModelView : MonoBehaviour
     }
     public void PlaySkill()
     {
-        animator.Play(SkillHash);
+        animator.Play(SkillHash, 0, 0f);
     }
 
     public void FaceTo(Vector3 from, Vector3 targetPos)
