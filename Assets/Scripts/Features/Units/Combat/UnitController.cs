@@ -179,14 +179,23 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 
     public void SetCombatPhase(bool active)
     {
-        IsCombatPhase = active && !IsDead;
+        bool nextCombatPhase = active && !IsDead;
+        if (IsCombatPhase == nextCombatPhase)
+            return;
+
+        IsCombatPhase = nextCombatPhase;
         energy.SetCombatPhase(IsCombatPhase);
         skillController.SetCombatPhase(IsCombatPhase);
     }
 
     public void SuspendCombat()
     {
+        bool wasCombatPhase = IsCombatPhase;
         SetCombatPhase(false);
+
+        if (wasCombatPhase)
+            buffController.CompleteWave();
+
         combat.CancelAttack();
         movement.Stop();
         targeting.ClearTarget();

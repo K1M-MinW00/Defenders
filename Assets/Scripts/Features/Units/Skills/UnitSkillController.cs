@@ -49,6 +49,9 @@ public class UnitSkillController : MonoBehaviour
 
     public void SetCombatPhase(bool active)
     {
+        if (isCombatPhase == active)
+            return;
+
         isCombatPhase = active;
 
         if(active)

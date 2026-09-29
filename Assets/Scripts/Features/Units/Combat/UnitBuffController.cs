@@ -57,28 +57,21 @@ public class UnitBuffController : MonoBehaviour
             owner.StatService.Recalculate(refreshPolicy);
     }
 
-    public void ClearWaveBuffs()
-    {
-        int removed = activeBuffs.RemoveAll(x => x.DurationType == BuffDurationType.UntilWaveEnd);
-        if (removed > 0)
-            owner.StatService.Recalculate(StatRefreshPolicy.KeepRatio);
-    }
-
-    public void AdvanceWaveBuffs()
+    public void CompleteWave()
     {
         bool changed = false;
 
-        foreach (RuntimeBuff buff in activeBuffs)
+        for (int i = activeBuffs.Count - 1; i >= 0; i--)
         {
-            if (buff.DurationType != BuffDurationType.WaveCount)
+            RuntimeBuff buff = activeBuffs[i];
+            if (!buff.CompleteWave())
                 continue;
 
-            buff.AdvanceWave();
+            activeBuffs.RemoveAt(i);
             changed = true;
         }
 
-        int removed = activeBuffs.RemoveAll(x => x.IsExpired());
-        if (changed || removed > 0)
+        if (changed)
             owner.StatService.Recalculate(StatRefreshPolicy.KeepRatio);
     }
 
@@ -126,4 +119,4 @@ public class UnitBuffController : MonoBehaviour
 
         return total;
     }
-} 
+}

@@ -80,4 +80,22 @@ public sealed class RuntimeBuff
             _ => false,
         };
     }
+
+    public bool CompleteWave()
+    {
+        switch (DurationType)
+        {
+            case BuffDurationType.WaveCount:
+                AdvanceWave();
+                return IsExpired();
+
+            case BuffDurationType.UntilStageEnd:
+                return false;
+
+            case BuffDurationType.Timed:
+            case BuffDurationType.UntilWaveEnd:
+            default:
+                return true;
+        }
+    }
 }
