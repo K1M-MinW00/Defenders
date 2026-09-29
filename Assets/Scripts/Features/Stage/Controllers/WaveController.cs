@@ -18,7 +18,14 @@ public class WaveController : MonoBehaviour
         if (waveData == null || monsterSpawner == null || unitRoster == null)
             return false;
 
-        StopWave();
+        if (IsRunning)
+            StopWave();
+        else
+        {
+            UnsubscribeRuntimeEvents();
+            allMonstersSpawned = false;
+            ClearCallbacks();
+        }
 
         waveEnded = false;
         allMonstersSpawned = false;

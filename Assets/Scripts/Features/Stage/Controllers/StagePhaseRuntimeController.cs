@@ -28,6 +28,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             EndCurrentPhase();
 
         monsterPrewarmService.PrewarmForWave(wave);
+        monsterSpawner.PrepareWavePreview(wave);
         monsterSpawner.WaveHpTracker.PrepareWave(wave);
         if (!preparationService.EnterPrepareMode())
             throw new InvalidOperationException("Failed to enter stage preparation mode.");
