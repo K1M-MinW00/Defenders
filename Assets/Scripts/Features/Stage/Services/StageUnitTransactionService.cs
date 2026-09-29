@@ -45,12 +45,17 @@ public sealed class StageUnitTransactionService
 
     public bool TrySellUnit(UnitController unit)
     {
-        if (!IsConfigured || unit == null || !unit.TryBeginRemoval(UnitRemovalReason.Sold))
+        if (!IsConfigured || unit == null)
             return false;
 
         int star = unit.Star;
+        if (economyManager.GetSellCost(star) < 0 ||
+            !unit.TryBeginRemoval(UnitRemovalReason.Sold))
+            return false;
+
         unitRoster.Unregister(unit);
-        economyManager.SellUnit(star);
+        if (!economyManager.SellUnit(star))
+            UnityEngine.Debug.LogError("Failed to grant unit sell gold after removal.");
         unit.ReturnToPool();
         return true;
     }

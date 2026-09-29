@@ -46,7 +46,14 @@ public class StageBootstrapper : MonoBehaviour
         if (!TryCreateMap(stageData, out mapContext, out error))
             return false;
 
-        economyManager.Init(stageData.economyConfig);
+        if (!economyManager.Init(stageData.economyConfig))
+        {
+            Destroy(mapContext.gameObject);
+            mapContext = null;
+            error = "Stage economy initialization failed.";
+            return false;
+        }
+
         placementController.Initialize(mapContext.PlacementArea);
 
         unitSummoner.SetMapContext(mapContext.UnitSpawnPoint, mapContext.PlacementArea);
