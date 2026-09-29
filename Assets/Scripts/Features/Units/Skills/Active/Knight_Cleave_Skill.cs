@@ -17,8 +17,7 @@ public class Knight_Cleave_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = new SkillExecutionContext();
-        context.Initialize(owner);
+        context = PrepareReusableContext();
 
         ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
 

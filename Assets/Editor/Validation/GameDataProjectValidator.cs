@@ -45,7 +45,7 @@ public sealed class GameDataValidationReport
     public string Format()
     {
         StringBuilder builder = new();
-        builder.Append($"Game data validation: {ErrorCount} error(s), {WarningCount} warning(s)");
+        builder.Append($"Project validation: {ErrorCount} error(s), {WarningCount} warning(s)");
         foreach (GameDataValidationIssue issue in issues)
         {
             builder.AppendLine();
@@ -83,6 +83,7 @@ public static class GameDataProjectValidator
         ValidateItems(itemAssets, report);
         ValidateGachaBanners(units, items, report);
         ValidateStages(stageAssets, stages, report);
+        GameSceneProjectValidator.Validate(report);
         return report;
     }
 
@@ -240,6 +241,12 @@ public static class GameDataProjectValidator
 
             if (catalog != null && catalog.Get(stage.sector, stage.stage) != stage)
                 report.AddError(stage, $"Stage is outside the canonical catalog: {stage.StageKey}");
+
+            StageMapContext mapContext = stage.mapPrefab.GetComponent<StageMapContext>();
+            if (mapContext == null)
+                report.AddError(stage, $"Map prefab has no {nameof(StageMapContext)} on its root.");
+            else if (!mapContext.TryValidate(out string mapError))
+                report.AddError(stage, $"Map prefab is invalid: {mapError}");
         }
     }
 
@@ -317,7 +324,7 @@ public static class GameDataProjectValidator
 
 public static class GameDataValidationMenu
 {
-    [MenuItem("Tools/Validation/Validate Game Data")]
+    [MenuItem("Tools/Validation/Validate Project")]
     public static void ValidateFromMenu()
     {
         GameDataValidationReport report = GameDataProjectValidator.Validate();

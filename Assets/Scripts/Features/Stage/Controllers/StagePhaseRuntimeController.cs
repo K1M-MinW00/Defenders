@@ -3,6 +3,13 @@ using UnityEngine;
 
 public sealed class StagePhaseRuntimeController : MonoBehaviour
 {
+    private enum RuntimePhase
+    {
+        None,
+        Preparation,
+        Combat,
+    }
+
     [SerializeField] private StagePrepareTimerController prepareTimerController;
     [SerializeField] private WaveController waveController;
     [SerializeField] private StagePreparationService preparationService;
@@ -10,17 +17,34 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
     [SerializeField] private StageTimeController stageTimeController;
     [SerializeField] private StagePoolManager poolManager;
+    private RuntimePhase currentPhase;
 
     public void BeginPreparation(WaveData wave, Action onFinished)
     {
         if (wave == null)
             throw new ArgumentNullException(nameof(wave));
 
-        monsterPrewarmService.PrewarmForWave(wave);
-        monsterSpawner.WaveHpTracker.PrepareWave(wave);
-        preparationService.EnterPrepareMode();
-        stageTimeController.ExitCombatPhase();
-        prepareTimerController.StartPreparePhase(onFinished);
+        if (currentPhase != RuntimePhase.None)
+            EndCurrentPhase();
+
+        currentPhase = RuntimePhase.Preparation;
+        try
+        {
+            monsterPrewarmService.PrewarmForWave(wave);
+            monsterSpawner.PrepareWavePreview(wave);
+            monsterSpawner.WaveHpTracker.PrepareWave(wave);
+            if (!preparationService.EnterPrepareMode())
+                throw new InvalidOperationException("Failed to enter stage preparation mode.");
+
+            stageTimeController.ExitCombatPhase();
+            if (!prepareTimerController.TryStartPreparePhase(onFinished))
+                throw new InvalidOperationException("Failed to start the preparation timer.");
+        }
+        catch
+        {
+            EndCurrentPhase();
+            throw;
+        }
     }
 
     public void BeginCombat(WaveData wave, Action onWin, Action onLose)
@@ -28,30 +52,41 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         if (wave == null)
             throw new ArgumentNullException(nameof(wave));
 
+        if (currentPhase != RuntimePhase.Preparation)
+            throw new InvalidOperationException($"Cannot begin combat from runtime phase {currentPhase}.");
+
+        prepareTimerController.StopPreparePhase();
         preparationService.ExitPrepareMode();
         stageTimeController.EnterCombatPhase();
-        waveController.StartWave(wave, onWin, onLose);
+        currentPhase = RuntimePhase.Combat;
+
+        if (!waveController.TryStartWave(wave, onWin, onLose))
+            onLose?.Invoke();
     }
 
-    public void CompleteCombat()
+    public void EndCurrentPhase()
     {
-        waveController.StopWave();
-        stageTimeController.ExitCombatPhase();
-        preparationService.EndCurrentPhase();
+        if (currentPhase == RuntimePhase.None)
+            return;
+
+        currentPhase = RuntimePhase.None;
+        CleanupRuntime();
+    }
+
+    public void Shutdown()
+    {
+        currentPhase = RuntimePhase.None;
+        CleanupRuntime();
+    }
+
+    private void CleanupRuntime()
+    {
+        prepareTimerController?.StopPreparePhase();
+        waveController?.StopWave();
+
+        stageTimeController?.ResetToNormalTime();
+        preparationService?.EndCurrentPhase();
         ClearTransientCombatObjects();
-    }
-
-    public void StopCurrentPhase()
-    {
-        prepareTimerController.StopPreparePhase();
-        waveController.StopWave();
-        preparationService.EndCurrentPhase();
-        ClearTransientCombatObjects();
-    }
-
-    public void ResumeTime()
-    {
-        stageTimeController.Resume();
     }
 
     private void ClearTransientCombatObjects()
@@ -62,8 +97,11 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             return;
         }
 
-        poolManager.DespawnAll(PoolCategory.Monster);
-        poolManager.DespawnAll(PoolCategory.Projectile);
-        poolManager.DespawnAll(PoolCategory.Effect);
+        poolManager.DespawnWaveObjects();
+    }
+
+    private void OnDisable()
+    {
+        Shutdown();
     }
 }

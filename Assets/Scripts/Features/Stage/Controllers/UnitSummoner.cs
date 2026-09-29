@@ -12,6 +12,7 @@ public class UnitSummoner : MonoBehaviour
     
     [Header("Unit Pool (Inspector)")]
     [SerializeField] private UnitDataSO[] unitPool;
+    private StageUnitInitData[] runtimeUnitPool;
 
     [Header("Spawn Settings")]
     [SerializeField] private Transform spawnPoint;
@@ -25,30 +26,60 @@ public class UnitSummoner : MonoBehaviour
         this.placementArea = placementArea;
     }
 
-    public void SetUnitPool(IReadOnlyList<string> selectedUnitIds)
+    public void ClearStageContext()
     {
-        List<UnitDataSO> result = new();
+        spawnPoint = null;
+        placementArea = null;
+        unitPool = System.Array.Empty<UnitDataSO>();
+        runtimeUnitPool = System.Array.Empty<StageUnitInitData>();
+    }
 
-        foreach (string unitId in selectedUnitIds)
+    public bool SetUnitPool(IReadOnlyList<StageUnitInitData> definitions)
+    {
+        if (definitions == null || definitions.Count == 0)
         {
-            UnitDataSO data = GameConfig.Units.Get(unitId);
-
-            if (data != null)
-                result.Add(data);
+            unitPool = System.Array.Empty<UnitDataSO>();
+            runtimeUnitPool = System.Array.Empty<StageUnitInitData>();
+            return false;
         }
 
-        unitPool = result.ToArray();
+        List<UnitDataSO> dataList = new(definitions.Count);
+        List<StageUnitInitData> runtimeList = new(definitions.Count);
+        foreach (StageUnitInitData definition in definitions)
+        {
+            if (definition?.UnitData == null || definition.UserData == null)
+                continue;
+
+            dataList.Add(definition.UnitData);
+            runtimeList.Add(definition);
+        }
+
+        unitPool = dataList.ToArray();
+        runtimeUnitPool = runtimeList.ToArray();
+        return runtimeUnitPool.Length > 0;
     }
 
     public bool SummonRandomUnit()
     {
-        if (unitPool == null || unitPool.Length == 0)
+        if (!TryCreateRandomUnit(out UnitController unit))
+            return false;
+
+        CommitSummonedUnit(unit);
+        return true;
+    }
+
+    public bool TryCreateRandomUnit(out UnitController unit)
+    {
+        unit = null;
+
+        if (runtimeUnitPool == null || runtimeUnitPool.Length == 0)
         {
             Debug.LogWarning("Summon blocked: unitPool is empty.");
             return false;
         }
 
-        UnitDataSO data = unitPool[Random.Range(0, unitPool.Length)];
+        StageUnitInitData definition = runtimeUnitPool[Random.Range(0, runtimeUnitPool.Length)];
+        UnitDataSO data = definition.UnitData;
 
         if (data == null || data.unitPrefab == null)
             return false;
@@ -61,7 +92,7 @@ public class UnitSummoner : MonoBehaviour
             PoolCategory.Unit,
             unitsRoot);
 
-        if (spawned == null || !spawned.TryGetComponent(out UnitController unit))
+        if (spawned == null || !spawned.TryGetComponent(out unit))
         {
             Debug.LogError($"Unit spawn failed: UnitController is missing on {data.unitPrefab.name}.");
 
@@ -71,8 +102,7 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
-        UserUnitData userData = FindUserUnitData(data);
-        StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
+        StageUnitInitData initData = new StageUnitInitData(data, definition.UserData, 1);
 
         unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
         if (!unit.Initialize(initData))
@@ -85,17 +115,27 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
-        unitRoster?.Register(unit);
-        fusionService?.TryAutoFuse(unit);
-
         return true;
     }
 
-    private UserUnitData FindUserUnitData(UnitDataSO data)
+    public FusionResult CommitSummonedUnit(UnitController unit)
     {
-        UserDataRoot userDataRoot = UserDataManager.Instance.UserData;
+        if (unit == null)
+            return FusionResult.None;
 
-        return UserDataManager.Instance.RosterService.GetUnit(data.unitId);
+        unitRoster?.Register(unit);
+        return fusionService != null
+            ? fusionService.TryAutoFuse(unit)
+            : FusionResult.WithoutFusion(unit);
+    }
+
+    public void DiscardCreatedUnit(UnitController unit)
+    {
+        if (unit == null)
+            return;
+
+        if (unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
+            unit.ReturnToPool();
     }
 
     private Vector3 ResolveSpawnPosition()

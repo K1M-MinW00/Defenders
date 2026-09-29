@@ -47,6 +47,20 @@ public class StagePhaseMachineTests
     }
 
     [Test]
+    public void InitializationFailure_IsSeparateFromGameplayFailure()
+    {
+        var loadingFailure = new StagePhaseMachine();
+        Assert.That(loadingFailure.TryTransition(StageState.Loading), Is.True);
+        Assert.That(loadingFailure.TryTransition(StageState.InitializationFailed), Is.True);
+        Assert.That(loadingFailure.TryTransition(StageState.StageFail), Is.False);
+
+        var preparationFailure = new StagePhaseMachine();
+        Assert.That(preparationFailure.TryTransition(StageState.Loading), Is.True);
+        Assert.That(preparationFailure.TryTransition(StageState.Preparing), Is.True);
+        Assert.That(preparationFailure.TryTransition(StageState.InitializationFailed), Is.True);
+    }
+
+    [Test]
     public void ChangedEvent_ReportsPreviousAndCurrentPhase()
     {
         var machine = new StagePhaseMachine();

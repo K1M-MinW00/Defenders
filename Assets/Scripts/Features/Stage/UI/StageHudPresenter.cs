@@ -28,6 +28,8 @@ public class StageHudPresenter : MonoBehaviour
         StagePrepareTimerController flowController,
         MonsterSpawner monsterSpawner)
     {
+        Dispose();
+
         this.economy = economy;
         this.population = population;
         this.flowController = flowController;
@@ -45,6 +47,11 @@ public class StageHudPresenter : MonoBehaviour
     public void Dispose()
     {
         Unbind();
+        economy = null;
+        population = null;
+        flowController = null;
+        monsterSpawner = null;
+        cachedState = StageState.None;
     }
 
     public void SetPhase(StageState state)
@@ -64,7 +71,7 @@ public class StageHudPresenter : MonoBehaviour
             flowController.OnPrepareTimerChanged += UpdatePrepareTimer;
 
         if (monsterSpawner != null)
-            monsterSpawner.OnAliveCountChanged += UpdateMonsterCount;
+            monsterSpawner.OnRemainingCountChanged += UpdateMonsterCount;
     }
 
     private void Unbind()
@@ -79,7 +86,7 @@ public class StageHudPresenter : MonoBehaviour
             flowController.OnPrepareTimerChanged -= UpdatePrepareTimer;
 
         if (monsterSpawner != null)
-            monsterSpawner.OnAliveCountChanged -= UpdateMonsterCount;
+            monsterSpawner.OnRemainingCountChanged -= UpdateMonsterCount;
     }
 
     private void RefreshInitialValues()

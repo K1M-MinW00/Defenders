@@ -20,6 +20,7 @@ public class StagePauseUI : MonoBehaviour
 
     private StageTimeController timeController;
     private StageSessionController session;
+    private GameSettingsManager settingsManager;
 
     private bool suppressToggleEvent;
 
@@ -27,23 +28,32 @@ public class StagePauseUI : MonoBehaviour
         StageTimeController timeController,
         StageSessionController session)
     {
+        Dispose();
+
+        if (timeController == null || session == null || panelRoot == null)
+        {
+            Debug.LogError($"[{nameof(StagePauseUI)}] Required references are missing.", this);
+            return;
+        }
+
         this.timeController = timeController;
         this.session = session;
 
         panelRoot.SetActive(false);
 
-        blockerButton.onClick.AddListener(HandleResumeClicked);
-        resumeButton.onClick.AddListener(HandleResumeClicked);
-        exitButton.onClick.AddListener(HandleExitClicked);
+        blockerButton?.onClick.AddListener(HandleResumeClicked);
+        resumeButton?.onClick.AddListener(HandleResumeClicked);
+        exitButton?.onClick.AddListener(HandleExitClicked);
 
-        soundToggle.onValueChanged.AddListener(HandleSoundChanged);
-        vibrationToggle.onValueChanged.AddListener(HandleVibrationChanged);
-        pushToggle.onValueChanged.AddListener(HandlePushChanged);
+        soundToggle?.onValueChanged.AddListener(HandleSoundChanged);
+        vibrationToggle?.onValueChanged.AddListener(HandleVibrationChanged);
+        pushToggle?.onValueChanged.AddListener(HandlePushChanged);
 
         timeController.OnPauseChanged += HandlePauseChanged;
 
-        if (GameSettingsManager.Instance != null)
-            GameSettingsManager.Instance.OnSoundChanged += HandleExternalSoundChanged;
+        settingsManager = GameSettingsManager.Instance;
+        if (settingsManager != null)
+            settingsManager.OnSoundChanged += HandleExternalSoundChanged;
 
         RefreshToggleStates();
     }
@@ -71,8 +81,12 @@ public class StagePauseUI : MonoBehaviour
         if (timeController != null)
             timeController.OnPauseChanged -= HandlePauseChanged;
 
-        if (GameSettingsManager.Instance != null)
-            GameSettingsManager.Instance.OnSoundChanged -= HandleExternalSoundChanged;
+        if (settingsManager != null)
+            settingsManager.OnSoundChanged -= HandleExternalSoundChanged;
+
+        timeController = null;
+        session = null;
+        settingsManager = null;
     }
 
     private void HandlePauseChanged(bool isPaused)
@@ -87,12 +101,12 @@ public class StagePauseUI : MonoBehaviour
     {
         suppressToggleEvent = true;
 
-        GameSettingsManager settings = GameSettingsManager.Instance;
+        GameSettingsManager settings = settingsManager;
         if (settings != null)
         {
-            soundToggle.SetIsOnWithoutNotify(settings.SoundEnabled);
-            vibrationToggle.SetIsOnWithoutNotify(settings.VibrationEnabled);
-            pushToggle.SetIsOnWithoutNotify(settings.PushEnabled);
+            soundToggle?.SetIsOnWithoutNotify(settings.SoundEnabled);
+            vibrationToggle?.SetIsOnWithoutNotify(settings.VibrationEnabled);
+            pushToggle?.SetIsOnWithoutNotify(settings.PushEnabled);
         }
 
         suppressToggleEvent = false;
@@ -105,7 +119,6 @@ public class StagePauseUI : MonoBehaviour
 
     private void HandleExitClicked()
     {
-        timeController?.Resume();
         session.RequestStageFail();
     }
 
@@ -114,7 +127,7 @@ public class StagePauseUI : MonoBehaviour
         if (suppressToggleEvent)
             return;
 
-        GameSettingsManager.Instance?.SetSound(isOn);
+        settingsManager?.SetSound(isOn);
     }
 
     private void HandleExternalSoundChanged(bool isOn)
@@ -127,7 +140,7 @@ public class StagePauseUI : MonoBehaviour
         if (suppressToggleEvent)
             return;
 
-        GameSettingsManager.Instance.SetVibration(isOn);
+        settingsManager?.SetVibration(isOn);
     }
 
     private void HandlePushChanged(bool isOn)
@@ -135,6 +148,6 @@ public class StagePauseUI : MonoBehaviour
         if (suppressToggleEvent)
             return;
 
-        GameSettingsManager.Instance.SetPush(isOn);
+        settingsManager?.SetPush(isOn);
     }
 }

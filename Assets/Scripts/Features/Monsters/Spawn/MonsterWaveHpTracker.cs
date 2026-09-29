@@ -16,6 +16,7 @@ public class MonsterWaveHpTracker : MonoBehaviour
 
     public void PrepareWave(WaveData waveData)
     {
+        UnsubscribeAll();
         totalMaxHp = CalculateWaveTotalMaxHp(waveData);
         totalCurrentHp = totalMaxHp;
         lastKnownHp.Clear();
@@ -46,6 +47,17 @@ public class MonsterWaveHpTracker : MonoBehaviour
         monster.OnDead -= HandleMonsterDead;
         monster.Health.OnHpChanged -= HandleMonsterHpChanged;
         lastKnownHp.Remove(monster.Health);
+    }
+
+    public void ClearWave(bool notify = true)
+    {
+        UnsubscribeAll();
+        lastKnownHp.Clear();
+        totalCurrentHp = 0f;
+        totalMaxHp = 0f;
+
+        if (notify)
+            OnWaveHpChanged?.Invoke(totalCurrentHp, totalMaxHp);
     }
 
     public float GetHpRatio()
@@ -101,5 +113,25 @@ public class MonsterWaveHpTracker : MonoBehaviour
         }
 
         return total;
+    }
+
+    private void UnsubscribeAll()
+    {
+        foreach (MonsterHealth health in lastKnownHp.Keys)
+        {
+            if (health == null)
+                continue;
+
+            MonsterController monster = health.GetComponent<MonsterController>();
+            if (monster != null)
+                monster.OnDead -= HandleMonsterDead;
+
+            health.OnHpChanged -= HandleMonsterHpChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        ClearWave(notify: false);
     }
 }

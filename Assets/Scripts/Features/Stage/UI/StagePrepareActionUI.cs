@@ -10,8 +10,10 @@ public class StagePrepareActionUI : MonoBehaviour
     private StagePreparationService preparationService;
     private StagePrepareTimerController flowController;
 
-    public void Initialize(StagePreparationService preparationService,StagePrepareTimerController flowController)
+    public void Initialize(StagePreparationService preparationService, StagePrepareTimerController flowController)
     {
+        Dispose();
+
         this.preparationService = preparationService;
         this.flowController = flowController;
 
@@ -21,6 +23,8 @@ public class StagePrepareActionUI : MonoBehaviour
     public void Dispose()
     {
         Unbind();
+        preparationService = null;
+        flowController = null;
     }
 
     private void Bind()

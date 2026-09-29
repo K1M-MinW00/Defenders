@@ -15,10 +15,18 @@ public class StageTopControlUI : MonoBehaviour
 
     public void Initialize(StageTimeController timeController)
     {
+        Dispose();
+
+        if (timeController == null)
+        {
+            Debug.LogError($"[{nameof(StageTopControlUI)}] StageTimeController is missing.", this);
+            return;
+        }
+
         this.timeController = timeController;
 
-        pauseButton.onClick.AddListener(HandlePauseClicked);
-        speedButton.onClick.AddListener(HandleSpeedClicked);
+        pauseButton?.onClick.AddListener(HandlePauseClicked);
+        speedButton?.onClick.AddListener(HandleSpeedClicked);
 
         timeController.OnSpeedChanged += HandleSpeedChanged;
         HandleSpeedChanged(timeController.SelectedCombatSpeed);
@@ -34,6 +42,8 @@ public class StageTopControlUI : MonoBehaviour
 
         if (timeController != null)
             timeController.OnSpeedChanged -= HandleSpeedChanged;
+
+        timeController = null;
     }
 
     private void HandlePauseClicked()

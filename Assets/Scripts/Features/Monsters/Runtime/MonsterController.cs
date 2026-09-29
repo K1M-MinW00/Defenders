@@ -96,6 +96,9 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         this.poolManager = poolManager;
         targeting.Initialize(unitRoster);
 
+        Health.OnDead -= HandleDead;
+        Health.OnDead += HandleDead;
+
         ApplyStats();
         IsRuntimeInitialized = true;
         ChangeToIdle();

@@ -11,7 +11,8 @@ public class StageRewardService : MonoBehaviour
         if (waveData == null)
             return;
 
-        economyManager.ApplyWaveReward(waveData.waveType);
+        if (!economyManager.ApplyWaveReward(waveData.waveType))
+            Debug.LogError("Failed to apply wave gold reward.", this);
     }
 
     public Task<StageOutcomeResult> GiveStageClearRewardAsync(StageDataSO stageData)

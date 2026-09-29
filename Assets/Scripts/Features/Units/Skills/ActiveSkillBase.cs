@@ -2,6 +2,8 @@
 
 public abstract class ActiveSkillBase : MonoBehaviour
 {
+    private readonly SkillExecutionContext reusableContext = new();
+
     protected UnitController owner;
     protected UnitSkillController skillController;
     protected int Promotion => owner.UserUnit.Promotion;
@@ -20,6 +22,12 @@ public abstract class ActiveSkillBase : MonoBehaviour
     }
 
     public abstract bool TryBuildContext(out SkillExecutionContext context);
+
+    protected SkillExecutionContext PrepareReusableContext()
+    {
+        reusableContext.Initialize(owner);
+        return reusableContext;
+    }
 
     public virtual bool CanApply(SkillExecutionContext context)
     {

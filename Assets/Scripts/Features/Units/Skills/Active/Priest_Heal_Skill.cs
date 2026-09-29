@@ -29,8 +29,7 @@ public class Priest_Heal_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = new SkillExecutionContext();
-        context.Initialize(owner);
+        context = PrepareReusableContext();
 
         if (owner.UnitRoster == null)
             return false;

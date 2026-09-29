@@ -8,47 +8,71 @@ public class EconomyManager : MonoBehaviour
     public int CurrentGold { get; private set; }
 
     public event Action<int> OnGoldChanged;
-    public bool IsInitialized => config != null;
+    public bool IsInitialized { get; private set; }
 
-    public void Init(EconomyConfig config)
+    public bool Init(EconomyConfig config)
     {
-        if (config == null)
+        IsInitialized = false;
+
+        if (!IsValidConfig(config, out string error))
         {
-            Debug.LogError("EconomyConfig is null");
-            return;
+            Debug.LogError($"Economy initialization failed: {error}");
+            return false;
         }
 
         this.config = config;
         CurrentGold = config.initialGold;
+        IsInitialized = true;
 
         NotifyGoldChanged();
+        return true;
     }
 
-    public void ApplyWaveReward(WaveType waveType)
+    public void ResetRuntime()
     {
-        if (config == null)
-            return;
+        config = null;
+        CurrentGold = 0;
+        IsInitialized = false;
+    }
+
+    public bool ApplyWaveReward(WaveType waveType)
+    {
+        if (!IsInitialized)
+            return false;
 
         int before = CurrentGold;
         int bonus = config.CalculateBonus(before);
         int waveReward = config.GetWaveReward(waveType);
 
-        AddGold(bonus);
-        AddGold(waveReward);
+        return TryAddGold(bonus + waveReward);
     }
 
-    private void AddGold(int amount)
+    public bool TryAddGold(int amount)
     {
-        if (amount <= 0)
-            return;
+        if (!IsInitialized || amount < 0)
+            return false;
+        if (amount == 0)
+            return true;
 
-        CurrentGold += amount;
+        long nextGold = (long)CurrentGold + amount;
+        if (nextGold > int.MaxValue)
+            return false;
+
+        CurrentGold = (int)nextGold;
         NotifyGoldChanged();
+        return true;
+    }
+
+    public bool RefundGold(int amount)
+    {
+        return TryAddGold(amount);
     }
 
     public bool TrySpendGold(int cost)
     {
-        if (cost <= 0)
+        if (!IsInitialized || cost < 0)
+            return false;
+        if (cost == 0)
             return true;
 
         if (CurrentGold < cost)
@@ -60,22 +84,59 @@ public class EconomyManager : MonoBehaviour
         return true;
     }
 
-    public bool TrySummonUnit() => TrySpendGold(config.summonUnit);
-    public bool TryReroll() => TrySpendGold(config.reRollUnit);
+    public bool TrySummonUnit() => IsInitialized && TrySpendGold(config.summonUnit);
+    public bool TryReroll() => IsInitialized && TrySpendGold(config.reRollUnit);
     
 
-    public int GetSummonCost() => config.summonUnit;
-    public int GetRerollCost() => config.reRollUnit;
-    public int GetSellCost(int star) => config.CalculateSellUnit(star);
+    public int GetSummonCost() => IsInitialized ? config.summonUnit : -1;
+    public int GetRerollCost() => IsInitialized ? config.reRollUnit : -1;
+    public int GetSellCost(int star) =>
+        IsInitialized && star >= 1 && star <= 4 ? config.CalculateSellUnit(star) : -1;
 
-    public void SellUnit(int star)
+    public bool SellUnit(int star)
     {
         int price = GetSellCost(star);
-        AddGold(price);
+        return price >= 0 && TryAddGold(price);
     }
 
     private void NotifyGoldChanged()
     {
         OnGoldChanged?.Invoke(CurrentGold);
+    }
+
+    private static bool IsValidConfig(EconomyConfig value, out string error)
+    {
+        if (value == null)
+        {
+            error = "Config is null.";
+            return false;
+        }
+
+        if (value.initialGold < 0 || value.normalReward < 0 ||
+            value.eliteReward < 0 || value.bossReward < 0 ||
+            value.bonusPer10 < 0 || value.bonusCap < 0 ||
+            value.summonUnit < 0 || value.reRollUnit < 0)
+        {
+            error = "Gold, rewards, bonuses, and costs cannot be negative.";
+            return false;
+        }
+
+        if (value.sellUnit == null || value.sellUnit.Length < 4)
+        {
+            error = "Sell costs for stars 1 through 4 are required.";
+            return false;
+        }
+
+        for (int i = 0; i < value.sellUnit.Length; i++)
+        {
+            if (value.sellUnit[i] < 0)
+            {
+                error = $"Sell cost at index {i} cannot be negative.";
+                return false;
+            }
+        }
+
+        error = string.Empty;
+        return true;
     }
 }

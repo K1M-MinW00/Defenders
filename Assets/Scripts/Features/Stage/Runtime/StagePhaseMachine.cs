@@ -11,8 +11,11 @@ public sealed class StagePhaseMachine
         return Current switch
         {
             StageState.None => next == StageState.Loading,
-            StageState.Loading => next == StageState.Preparing || next == StageState.StageFail,
-            StageState.Preparing => next == StageState.Combat || next == StageState.StageFail,
+            StageState.Loading => next == StageState.Preparing ||
+                                  next == StageState.InitializationFailed,
+            StageState.Preparing => next == StageState.Combat ||
+                                    next == StageState.StageFail ||
+                                    next == StageState.InitializationFailed,
             StageState.Combat => next == StageState.WaveCleared || next == StageState.StageFail,
             StageState.WaveCleared => next == StageState.Preparing ||
                                       next == StageState.StageClear ||

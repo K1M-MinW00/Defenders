@@ -44,7 +44,12 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
 
         float appliedDamage = state.TakeDamage(resolution.AppliedAmount);
 
-        GameAudioManager.Instance?.PlayCharacterSfx(owner?.Data?.hitSound, GameAudioCue.MonsterHit, GameAudioPriority.Low, 0.05f);
+        GameAudioManager.Instance?.PlayCharacterSfx(
+            owner?.Data?.hitSound,
+            GameAudioCue.MonsterHit,
+            GameAudioPriority.Low,
+            0.05f,
+            owner);
 
         OnHpChanged?.Invoke(this, appliedDamage);
 

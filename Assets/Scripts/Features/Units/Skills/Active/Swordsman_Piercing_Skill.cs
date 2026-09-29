@@ -25,6 +25,7 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
     private Vector2 dir;
     private float angle;
     private Coroutine skillRoutine;
+    private WaitForSeconds hitDelay;
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
@@ -36,12 +37,12 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
         hitFilter.useLayerMask = true;
         hitFilter.SetLayerMask(enemyLayer);
         hitFilter.useTriggers = true;
+        hitDelay = new WaitForSeconds(Mathf.Max(0f, hitInterval));
     }
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = new SkillExecutionContext();
-        context.Initialize(owner);
+        context = PrepareReusableContext();
 
         ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
         if (target == null)
@@ -96,7 +97,7 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
             ExecuteSingleThrust(damagePerHit);
 
             if (i < hitCount - 1)
-                yield return new WaitForSeconds(hitInterval);
+                yield return hitDelay;
         }
 
         skillRoutine = null;

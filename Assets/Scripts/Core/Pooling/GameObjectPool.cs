@@ -28,7 +28,7 @@ public class GameObjectPool
 
     public Poolable Spawn(Vector3 position, Quaternion rotation, Transform parent = null)
     {
-        Poolable poolable = inactiveObjects.Count > 0 ? inactiveObjects.Dequeue() : CreateNew();
+        Poolable poolable = TakeInactiveOrCreate();
 
         Transform targetParent = parent != null ? parent : inactiveRoot;
 
@@ -42,13 +42,19 @@ public class GameObjectPool
         return poolable;
     }
 
-    public void Despawn(Poolable poolable)
+    public bool Despawn(Poolable poolable)
     {
         if (poolable == null)
-            return;
+            return false;
+
+        if (!poolable.IsOwnedBy(this))
+        {
+            Debug.LogError($"[{nameof(GameObjectPool)}] An object was returned to a pool that does not own it: {poolable.name}");
+            return false;
+        }
 
         if (!activeObjects.Remove(poolable))
-            return;
+            return false;
 
         poolable.MarkDespawned();
 
@@ -56,6 +62,7 @@ public class GameObjectPool
         poolable.gameObject.SetActive(false);
 
         inactiveObjects.Enqueue(poolable);
+        return true;
     }
 
     public void Clear()
@@ -100,5 +107,17 @@ public class GameObjectPool
 
         poolable.SetOwner(this);
         return poolable;
+    }
+
+    private Poolable TakeInactiveOrCreate()
+    {
+        while (inactiveObjects.Count > 0)
+        {
+            Poolable poolable = inactiveObjects.Dequeue();
+            if (poolable != null)
+                return poolable;
+        }
+
+        return CreateNew();
     }
 }

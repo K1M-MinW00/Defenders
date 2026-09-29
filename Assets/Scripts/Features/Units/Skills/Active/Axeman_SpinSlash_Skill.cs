@@ -32,8 +32,7 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = new SkillExecutionContext();
-        context.Initialize(owner);
+        context = PrepareReusableContext();
 
         radius = owner.DetectRange;
         context.SetCastPosition(owner.transform.position);

@@ -11,6 +11,7 @@ public class UnitRosterHpTracker : MonoBehaviour
     private readonly Dictionary<UnitController, HpSnapshot> hpSnapshots = new();
     private float totalCurrentHp;
     private float totalMaxHp;
+    private bool isBound;
 
     public float CurrentHp => totalCurrentHp;
     public float MaxHp => totalMaxHp;
@@ -27,7 +28,7 @@ public class UnitRosterHpTracker : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if(unitRoster == null)
         {
@@ -35,7 +36,12 @@ public class UnitRosterHpTracker : MonoBehaviour
             return;
         }
 
-        unitRoster.OnRosterChanged += Rebuild;
+        if (!isBound)
+        {
+            unitRoster.OnRosterChanged += Rebuild;
+            isBound = true;
+        }
+
         Rebuild();
     }
 
@@ -49,8 +55,11 @@ public class UnitRosterHpTracker : MonoBehaviour
         if (unitRoster != null)
             unitRoster.OnRosterChanged -= Rebuild;
 
+        isBound = false;
         UnsubscribeAll();
-        unitRoster = null;
+        hpSnapshots.Clear();
+        totalCurrentHp = 0f;
+        totalMaxHp = 0f;
     }
 
     public float GetHpRatio()
@@ -68,6 +77,9 @@ public class UnitRosterHpTracker : MonoBehaviour
         hpSnapshots.Clear();
         totalCurrentHp = 0f;
         totalMaxHp = 0f;
+
+        if (unitRoster == null)
+            return;
 
         foreach (UnitController unit in unitRoster.Units)
         {

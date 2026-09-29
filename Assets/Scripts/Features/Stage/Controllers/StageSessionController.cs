@@ -11,15 +11,18 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageUIController stageUI;
     [SerializeField] private StageProgressService progressService;
 
+    [Header("Scene Flow")]
+    [SerializeField] private string lobbySceneName = "LobbyScene";
+
     [Header("Runtime")]
     [SerializeField] private StageDataSO currentStageData;
     private StageEnterData enterData;
     private StageDataProvider stageDataProvider;
     private StageWaveSequence waveSequence;
     private readonly StagePhaseMachine phaseMachine = new();
-    private bool outcomeSavePending;
-    private bool outcomeSaveInProgress;
-    private bool pendingOutcomeIsClear;
+    private StageOutcomeCoordinator outcomeCoordinator;
+    private bool isHandlingInitializationFailure;
+    private bool isDisposed;
 
     public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
@@ -35,49 +38,149 @@ public class StageSessionController : MonoBehaviour
 
     private void Start()
     {
+        _ = InitializeStageAsync();
+    }
+
+    private async Task InitializeStageAsync()
+    {
+        if (isDisposed)
+            return;
+
         if (!TransitionTo(StageState.Loading))
             return;
 
-        if (!GameConfig.IsInitialized)
-            GameConfig.Initialize();
-
-        stageDataProvider = new StageDataProvider(GameConfig.Stages);
         enterData = StageEnterHolder.Consume();
 
-        if(enterData == null)
+        try
         {
-            Debug.LogError("StageEnterData is missing.");
-            return;
+            if (!TryValidateSceneReferences(out string referenceError))
+            {
+                await HandleInitializationFailureAsync(referenceError);
+                return;
+            }
+
+            if (enterData == null)
+            {
+                await HandleInitializationFailureAsync("Stage entry data is missing.");
+                return;
+            }
+
+            if (!GameConfig.IsInitialized)
+                GameConfig.Initialize();
+
+            stageDataProvider = new StageDataProvider(GameConfig.Stages);
+            StageDataSO stageData = stageDataProvider.Load(enterData.Sector, enterData.Stage);
+
+            if (stageData == null)
+            {
+                await HandleInitializationFailureAsync($"Stage data is missing: {enterData.StageKey}");
+                return;
+            }
+
+            if (!stageData.TryValidate(out string validationError))
+            {
+                await HandleInitializationFailureAsync(
+                    $"Stage data validation failed ({stageData.StageKey}): {validationError}");
+                return;
+            }
+
+            if (!TryStartStage(stageData, enterData, out string startError))
+                await HandleInitializationFailureAsync(startError);
         }
-
-        StageDataSO stageData = stageDataProvider.Load(enterData.Sector, enterData.Stage);
-
-        if(stageData == null)
+        catch (Exception exception)
         {
-            Debug.LogError("StageData is missing");
-            return;
+            await HandleInitializationFailureAsync(
+                $"Unexpected stage initialization error: {exception.Message}",
+                exception);
         }
-
-        StartStage(stageData,enterData);
     }
 
-    private void StartStage(StageDataSO stageData, StageEnterData enterData)
+    private bool TryStartStage(StageDataSO stageData, StageEnterData enterData, out string error)
     {
         currentStageData = stageData;
         waveSequence = new StageWaveSequence(stageData.waves);
-        outcomeSavePending = false;
-        outcomeSaveInProgress = false;
-        pendingOutcomeIsClear = false;
+        outcomeCoordinator = new StageOutcomeCoordinator(rewardService);
 
-        bootstrapper.InitializeStage(stageData,enterData);
+        if (!bootstrapper.TryInitializeStage(stageData, enterData, out _, out string bootstrapError))
+        {
+            error = $"Stage bootstrap failed ({stageData.StageKey}): {bootstrapError}";
+            return false;
+        }
 
         stageUI.Initialize();
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         EnterPreparePhase();
+        error = string.Empty;
+        return CurrentState == StageState.Preparing;
+    }
+
+    private bool TryValidateSceneReferences(out string error)
+    {
+        bool valid = phaseRuntimeController != null && rewardService != null &&
+                     bootstrapper != null && stageUI != null && progressService != null;
+
+        error = valid ? string.Empty : "Required StageSessionController scene references are missing.";
+        return valid;
+    }
+
+    private async Task HandleInitializationFailureAsync(string reason, Exception exception = null)
+    {
+        if (isDisposed || isHandlingInitializationFailure)
+            return;
+
+        isHandlingInitializationFailure = true;
+
+        if (exception == null)
+            Debug.LogError($"[{nameof(StageSessionController)}] {reason}", this);
+        else
+            Debug.LogException(exception, this);
+
+        if (phaseMachine.CanTransitionTo(StageState.InitializationFailed))
+            TransitionTo(StageState.InitializationFailed);
+
+        int refundAmount = enterData?.EntryFuelCost ?? 0;
+        bool refundSucceeded = refundAmount <= 0;
+        if (refundAmount > 0)
+        {
+            UserDataManager manager = UserDataManager.Instance;
+            refundSucceeded = manager != null &&
+                              await manager.RefundStageEntryFuelAsync(refundAmount);
+            if (!refundSucceeded)
+                Debug.LogError($"[{nameof(StageSessionController)}] Failed to refund {refundAmount} entry fuel.", this);
+        }
+
+        if (isDisposed)
+            return;
+
+        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
+        if (isDisposed)
+            return;
+
+        if (result == SceneTransitionResult.Succeeded)
+        {
+            string message = refundAmount > 0
+                ? refundSucceeded
+                    ? "스테이지를 불러오지 못해 사용한 연료를 반환했습니다."
+                    : "스테이지를 불러오지 못했으며 연료 반환에도 실패했습니다."
+                : "스테이지를 불러오지 못해 로비로 돌아왔습니다.";
+            UIFeedbackToast.Show(message);
+            return;
+        }
+
+        if (result != SceneTransitionResult.Succeeded && result != SceneTransitionResult.AlreadyLoading && this != null)
+        {
+            isHandlingInitializationFailure = false;
+            Debug.LogError(
+                $"[{nameof(StageSessionController)}] Failed to return to lobby after initialization failure: {result}",
+                this);
+        }
     }
     public void EnterPreparePhase()
     {
+        if (isDisposed)
+            return;
+
         if (!TransitionTo(StageState.Preparing))
             return;
 
@@ -88,11 +191,17 @@ public class StageSessionController : MonoBehaviour
 
     private void OnPrepareFinished()
     {
+        if (isDisposed)
+            return;
+
         EnterCombatPhase();
     }
 
     public void EnterCombatPhase()
     {
+        if (isDisposed)
+            return;
+
         if (!TransitionTo(StageState.Combat))
             return;
 
@@ -103,12 +212,15 @@ public class StageSessionController : MonoBehaviour
 
     private void OnWaveWin()
     {
+        if (isDisposed)
+            return;
+
         _ = HandleWaveWinAsync();
     }
 
     private async Task HandleWaveWinAsync()
     {
-        if (CurrentState != StageState.Combat)
+        if (isDisposed || CurrentState != StageState.Combat)
             return;
 
         if (!TransitionTo(StageState.WaveCleared))
@@ -116,7 +228,7 @@ public class StageSessionController : MonoBehaviour
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
         rewardService.GiveWaveReward(CurrentWave);
-        phaseRuntimeController.CompleteCombat();
+        phaseRuntimeController.EndCurrentPhase();
 
         int clearedWaveCount = waveSequence.ClearedWaveCount;
 
@@ -127,6 +239,9 @@ public class StageSessionController : MonoBehaviour
         }
 
         bool saved = await progressService.RecordWaveClearAsync(currentStageData, clearedWaveCount);
+        if (isDisposed)
+            return;
+
         if (!saved)
             Debug.LogWarning($"Wave progress save failed: {currentStageData.StageKey}, cleared waves: {clearedWaveCount}");
 
@@ -141,22 +256,25 @@ public class StageSessionController : MonoBehaviour
 
     private void OnWaveLose()
     {
-        _ = HandleWaveLoseAsync(stopCurrentPhase: false);
+        if (isDisposed)
+            return;
+
+        _ = HandleWaveLoseAsync(allowPreparingFailure: false);
     }
 
-    private async Task HandleWaveLoseAsync(bool stopCurrentPhase)
+    private async Task HandleWaveLoseAsync(bool allowPreparingFailure)
     {
+        if (isDisposed)
+            return;
+
         bool canFail = CurrentState == StageState.Combat ||
-                       (stopCurrentPhase && CurrentState == StageState.Preparing);
+                       (allowPreparingFailure && CurrentState == StageState.Preparing);
 
         if (!canFail)
             return;
 
-        if (stopCurrentPhase)
-            StopCurrentPhase();
-
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
-        phaseRuntimeController.CompleteCombat();
+        phaseRuntimeController.EndCurrentPhase();
         if (!TransitionTo(StageState.StageFail))
             return;
 
@@ -169,6 +287,9 @@ public class StageSessionController : MonoBehaviour
 
     private async Task HandleStageClear()
     {
+        if (isDisposed)
+            return;
+
         stageUI.ShowStageClear(
             currentStageData,
             waveSequence.ClearedWaveCount,
@@ -178,39 +299,43 @@ public class StageSessionController : MonoBehaviour
 
     private async Task<bool> TrySaveStageOutcomeAsync(bool isClear)
     {
-        if (outcomeSaveInProgress)
+        if (isDisposed)
             return false;
 
-        outcomeSaveInProgress = true;
-        outcomeSavePending = true;
-        pendingOutcomeIsClear = isClear;
-        try
-        {
-            StageOutcomeResult result = isClear
-                ? await rewardService.GiveStageClearRewardAsync(currentStageData)
-                : await rewardService.GiveStageFailRewardAsync(currentStageData, CurrentWaveIndex);
+        StageOutcomeResult result = await outcomeCoordinator.SaveAsync(
+            currentStageData,
+            isClear,
+            CurrentWaveIndex);
 
-            if (!result.Succeeded)
-            {
-                Debug.LogWarning(
-                    $"Stage outcome save failed ({result.Failure}). " +
-                    $"Lobby exit is blocked until retry succeeds: {currentStageData?.StageKey}");
-                return false;
-            }
+        if (isDisposed)
+            return false;
 
-            outcomeSavePending = false;
-            return !isClear || CurrentState == StageState.StageClear || TransitionTo(StageState.StageClear);
-        }
-        finally
+        if (!result.Succeeded)
         {
-            outcomeSaveInProgress = false;
+            Debug.LogWarning(
+                $"Stage outcome save failed ({result.Failure}). " +
+                $"Lobby exit is blocked until retry succeeds: {currentStageData?.StageKey}");
+            return false;
         }
+
+        return !isClear || CurrentState == StageState.StageClear || TransitionTo(StageState.StageClear);
     }
 
     public async Task<bool> TryPrepareExitAsync()
     {
-        if (outcomeSavePending && !await TrySaveStageOutcomeAsync(pendingOutcomeIsClear))
+        if (isDisposed)
             return false;
+
+        if (outcomeCoordinator?.HasPendingOutcome == true)
+        {
+            bool isClear = outcomeCoordinator.PendingIsClear;
+            StageOutcomeResult result = await outcomeCoordinator.RetryPendingAsync();
+            if (isDisposed || !result.Succeeded)
+                return false;
+
+            if (isClear && CurrentState != StageState.StageClear && !TransitionTo(StageState.StageClear))
+                return false;
+        }
 
         if (CurrentState != StageState.StageClear && CurrentState != StageState.StageFail)
             return false;
@@ -218,15 +343,12 @@ public class StageSessionController : MonoBehaviour
         return true;
     }
 
-    private void StopCurrentPhase()
-    {
-        phaseRuntimeController.StopCurrentPhase();
-    }
-
     public void RequestStageFail()
     {
-        phaseRuntimeController.ResumeTime();
-        _ = HandleWaveLoseAsync(stopCurrentPhase: true);
+        if (isDisposed)
+            return;
+
+        _ = HandleWaveLoseAsync(allowPreparingFailure: true);
     }
 
     private bool TransitionTo(StageState next)
@@ -236,5 +358,15 @@ public class StageSessionController : MonoBehaviour
 
         Debug.LogError($"Invalid stage phase transition: {CurrentState} -> {next}");
         return false;
+    }
+
+    private void OnDestroy()
+    {
+        if (isDisposed)
+            return;
+
+        isDisposed = true;
+        phaseRuntimeController?.Shutdown();
+        stageUI?.Dispose();
     }
 }

@@ -26,9 +26,12 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private UnitRosterHpTracker unitHpTracker;
     [SerializeField] private MonsterWaveHpTracker monsterHpTracker;
     [SerializeField] private StagePreparationService preparationService;
+    private bool isInitialized;
 
     public void Initialize()
     {
+        Dispose();
+
         if (session == null || flowController == null)
         {
             Debug.LogError("StageUIController Initialize failed.");
@@ -59,19 +62,30 @@ public class StageUIController : MonoBehaviour
         topControlUI?.Initialize(timeController);
         pausePanelUI?.Initialize(timeController, session);
 
+        isInitialized = true;
         SetPhase(session.CurrentState);
     }
 
     private void OnDestroy()
     {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
+        if (!isInitialized)
+            return;
+
         if (session != null)
             session.PhaseChanged -= HandlePhaseChanged;
 
         hudPresenter?.Dispose();
         prepareActionUI?.Dispose();
+        hpSummaryUI?.Dispose();
 
         topControlUI?.Dispose();
         pausePanelUI?.Dispose();
+        isInitialized = false;
     }
 
     public void SetPhase(StageState state)

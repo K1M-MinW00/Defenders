@@ -8,6 +8,20 @@ public class UnitRoster : MonoBehaviour
     private readonly Dictionary<UnitController, float> lastKnownHp = new();
 
     public IReadOnlyList<UnitController> Units => units;
+    public int RegisteredCount
+    {
+        get
+        {
+            int count = 0;
+            for (int i = 0; i < units.Count; i++)
+            {
+                if (units[i] != null)
+                    count++;
+            }
+
+            return count;
+        }
+    }
 
     public event Action OnRosterChanged;
     public event Action OnAliveCountChanged;
@@ -61,7 +75,7 @@ public class UnitRoster : MonoBehaviour
 
     private void HandleUnitHpChanged(UnitController unit, float currentHp, float maxHp)
     {
-        if (unit == null || unit.IsDead)
+        if (unit == null)
             return;
 
         if (!lastKnownHp.TryGetValue(unit, out float prevHp))
@@ -138,29 +152,20 @@ public class UnitRoster : MonoBehaviour
         return CombatTargetSelector.FindLowestHealth(units);
     }
 
-    public List<UnitController> GetLowestHpAliveUnits(int count)
+    private void OnDestroy()
     {
-        var result = new List<UnitController>(Mathf.Max(0, count));
-        if (count <= 0)
-            return result;
-
-        foreach (UnitController unit in units)
+        for (int i = units.Count - 1; i >= 0; i--)
         {
-            if (!CombatTargetSelector.IsValid(unit))
+            UnitController unit = units[i];
+            if (unit == null || unit.Health == null)
                 continue;
 
-            int insertIndex = result.Count;
-            while (insertIndex > 0 &&
-                   result[insertIndex - 1].Health.CurrentHp > unit.Health.CurrentHp)
-            {
-                insertIndex--;
-            }
-
-            result.Insert(insertIndex, unit);
-            if (result.Count > count)
-                result.RemoveAt(result.Count - 1);
+            unit.Health.OnDead -= HandleUnitDead;
+            unit.Health.OnHpChanged -= HandleUnitHpChanged;
+            unit.Health.OnDamaged -= HandleUnitDamaged;
         }
 
-        return result;
+        units.Clear();
+        lastKnownHp.Clear();
     }
 }

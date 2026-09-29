@@ -10,6 +10,21 @@ public class StagePreparationService : MonoBehaviour
     [SerializeField] private PlacementController placementController;
 
     private bool isPrepareMode;
+    private StageUnitTransactionService unitTransactions;
+
+    public bool IsPrepareMode => isPrepareMode;
+
+    private void Awake()
+    {
+        unitTransactions = new StageUnitTransactionService(
+            unitSummoner,
+            unitRoster,
+            populationManager,
+            economyManager);
+
+        if (!unitTransactions.IsConfigured)
+            Debug.LogError($"[{nameof(StagePreparationService)}] Unit transaction dependencies are missing.", this);
+    }
 
     private void OnEnable()
     {
@@ -22,6 +37,8 @@ public class StagePreparationService : MonoBehaviour
 
     private void OnDisable()
     {
+        ClosePreparationInput();
+
         if(placementController != null)
         {
             placementController.OnSellRequested -= HandleSellRequested;
@@ -29,29 +46,38 @@ public class StagePreparationService : MonoBehaviour
         }
     }
 
-    public void EnterPrepareMode()
+    public bool EnterPrepareMode()
     {
+        if (isPrepareMode)
+            return true;
+
+        if (placementController == null || unitResetService == null || unitRoster == null)
+        {
+            Debug.LogError($"[{nameof(StagePreparationService)}] Preparation dependencies are missing.", this);
+            return false;
+        }
+
+        if (!placementController.SetInputEnabled(true))
+            return false;
+
         isPrepareMode = true;
-
-        placementController.EnablePlacement(true);
-
         unitResetService.RestoreAll(unitRoster);
+        return true;
     }
 
     public void ExitPrepareMode()
     {
-        isPrepareMode = false;
+        if (!isPrepareMode)
+            return;
 
-        placementController.EnablePlacement(false);
-
+        ClosePreparationInput();
         unitResetService.CapturePreWavePositions(unitRoster);
         BeginUnitsCombat();
     }
 
     public void EndCurrentPhase()
     {
-        isPrepareMode = false;
-        placementController.EnablePlacement(false);
+        ClosePreparationInput();
 
         if (unitRoster == null)
             return;
@@ -65,33 +91,16 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySummonUnit()
     {
-        if (!isPrepareMode)
-            return false;
+        bool succeeded = isPrepareMode && unitTransactions != null && unitTransactions.TrySummonUnit();
+        if (succeeded)
+            GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
 
-        if (!populationManager.CanSummon())
-            return false;
-
-        if (!economyManager.TrySummonUnit())
-            return false;
-
-        bool success = unitSummoner.SummonRandomUnit();
-
-        if (!success)
-            return false;
-
-        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
-        return true;
+        return succeeded;
     }
 
     public bool TryIncreasePopulation()
     {
-        if (!isPrepareMode)
-            return false;
-
-        if (!populationManager.TryIncreaseMax())
-            return false;
-
-        return true;
+        return isPrepareMode && unitTransactions != null && unitTransactions.TryIncreasePopulation();
     }
 
     private void HandleSellRequested(UnitController unit)
@@ -106,44 +115,16 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySellUnit(UnitController unit)
     {
-        if (!isPrepareMode || unit == null)
-            return false;
-
-        if (!unit.TryBeginRemoval(UnitRemovalReason.Sold))
-            return false;
-
-        int star = unit.Star;
-        unitRoster.Unregister(unit);
-        economyManager.SellUnit(star);
-        unit.ReturnToPool();
-
-        return true;
+        return isPrepareMode && unitTransactions != null && unitTransactions.TrySellUnit(unit);
     }
 
     public bool TryRerollUnit(UnitController unit)
     {
-        if (!isPrepareMode)
-            return false;
+        bool succeeded = isPrepareMode && unitTransactions != null && unitTransactions.TryRerollUnit(unit);
+        if (succeeded)
+            GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
 
-        if (unit == null || unit.Star != 1)
-            return false;
-
-        if (!economyManager.TryReroll())
-            return false;
-
-        if (!unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
-            return false;
-
-        unitRoster.Unregister(unit);
-        unit.ReturnToPool();
-
-
-        bool success = unitSummoner.SummonRandomUnit();
-        if (!success)
-            return false;
-
-        GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
-        return true;
+        return succeeded;
     }
 
     private void BeginUnitsCombat()
@@ -158,5 +139,11 @@ public class StagePreparationService : MonoBehaviour
 
             unit.BeginCombat();
         }
+    }
+
+    private void ClosePreparationInput()
+    {
+        isPrepareMode = false;
+        placementController?.SetInputEnabled(false);
     }
 }

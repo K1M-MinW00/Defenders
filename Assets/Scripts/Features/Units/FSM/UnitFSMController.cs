@@ -2,8 +2,12 @@
 
 public class UnitFSMController : MonoBehaviour
 {
+    [Header("Target Search")]
+    [SerializeField, Min(0.02f)] private float idleTargetSearchInterval = 0.1f;
+
     private UnitController owner;
     private StateMachine fsm;
+    private float nextIdleTargetSearchTime;
 
     public bool IsIdleState => fsm != null && fsm.CurrentState == idleState;
     private IdleState idleState;
@@ -22,6 +26,7 @@ public class UnitFSMController : MonoBehaviour
         attackState = new AttackState(owner);
         skillState = new SkillState(owner);
         deadState = new DeadState(owner);
+        nextIdleTargetSearchTime = float.NegativeInfinity;
     }
 
     public void Tick()
@@ -47,13 +52,27 @@ public class UnitFSMController : MonoBehaviour
         return true;
     }
 
-    public bool TryEnsureTarget()
+    public void BeginCombat()
+    {
+        if (owner == null)
+            return;
+
+        nextIdleTargetSearchTime = Time.time +
+            StaggeredUpdateSchedule.GetInitialDelay(owner.GetInstanceID(), idleTargetSearchInterval);
+    }
+
+    public bool TryEnsureTarget(bool forceSearch = false)
     {
         if (!CanEnterCombatState())
             return false;
 
         if (owner.Targeting.HasValidTarget())
             return true;
+
+        if (!forceSearch && Time.time < nextIdleTargetSearchTime)
+            return false;
+
+        nextIdleTargetSearchTime = Time.time + idleTargetSearchInterval;
 
         if (owner.Targeting.TryFindTargetInSensor())
             return true;
@@ -107,4 +126,11 @@ public class UnitFSMController : MonoBehaviour
     {
         return owner != null && owner.IsCombatPhase && !owner.IsDead;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        idleTargetSearchInterval = Mathf.Max(0.02f, idleTargetSearchInterval);
+    }
+#endif
 }

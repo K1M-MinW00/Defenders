@@ -19,6 +19,7 @@ public class StagePoolManager : MonoBehaviour
     [SerializeField] private Transform uiRoot;
 
     private readonly Dictionary<GameObject, GameObjectPool> pools = new();
+    private readonly Dictionary<GameObject, PoolCategory> poolCategories = new();
     private readonly Dictionary<PoolCategory, HashSet<GameObjectPool>> poolsByCategory = new();
 
     public void Prewarm(GameObject prefab, int count, PoolCategory category)
@@ -26,8 +27,8 @@ public class StagePoolManager : MonoBehaviour
         if (prefab == null || count <= 0)
             return;
 
-        GameObjectPool pool = GetOrCreatePool(prefab, category);
-        pool.Prewarm(count);
+        if (TryGetOrCreatePool(prefab, category, out GameObjectPool pool))
+            pool.Prewarm(count);
     }
 
     public T Spawn<T>(T prefab,Vector3 position,Quaternion rotation,PoolCategory category,Transform parent = null) where T : Component
@@ -51,8 +52,9 @@ public class StagePoolManager : MonoBehaviour
             return null;
         }
 
-        GameObjectPool pool = GetOrCreatePool(prefab, category);
-        return pool.Spawn(position, rotation, parent);
+        return TryGetOrCreatePool(prefab, category, out GameObjectPool pool)
+            ? pool.Spawn(position, rotation, parent)
+            : null;
     }
 
     public void Despawn(Poolable poolable)
@@ -69,6 +71,7 @@ public class StagePoolManager : MonoBehaviour
             pool.Clear();
 
         pools.Clear();
+        poolCategories.Clear();
         poolsByCategory.Clear();
     }
 
@@ -81,14 +84,41 @@ public class StagePoolManager : MonoBehaviour
             pool.DespawnAll();
     }
 
-    private GameObjectPool GetOrCreatePool(GameObject prefab, PoolCategory category)
+    public void DespawnWaveObjects()
     {
-        if (pools.TryGetValue(prefab, out GameObjectPool pool))
-            return pool;
+        DespawnAll(PoolCategory.Monster);
+        DespawnAll(PoolCategory.Projectile);
+        DespawnAll(PoolCategory.Effect);
+    }
+
+    private bool TryGetOrCreatePool(GameObject prefab, PoolCategory category, out GameObjectPool pool)
+    {
+        if (pools.TryGetValue(prefab, out pool))
+        {
+            PoolCategory registeredCategory = poolCategories[prefab];
+            if (registeredCategory == category)
+                return true;
+
+            Debug.LogError(
+                $"[{nameof(StagePoolManager)}] Prefab '{prefab.name}' is already registered as " +
+                $"{registeredCategory} and cannot also be used as {category}.",
+                this);
+            pool = null;
+            return false;
+        }
 
         Transform root = GetRoot(category);
+        if (root == null)
+        {
+            Debug.LogWarning(
+                $"[{nameof(StagePoolManager)}] Root for {category} is not assigned. Using StagePoolManager as fallback.",
+                this);
+            root = transform;
+        }
+
         pool = new GameObjectPool(prefab, root);
         pools.Add(prefab, pool);
+        poolCategories.Add(prefab, category);
 
         if (!poolsByCategory.TryGetValue(category, out HashSet<GameObjectPool> categoryPools))
         {
@@ -98,7 +128,7 @@ public class StagePoolManager : MonoBehaviour
 
         categoryPools.Add(pool);
 
-        return pool;
+        return true;
     }
 
     private Transform GetRoot(PoolCategory category)

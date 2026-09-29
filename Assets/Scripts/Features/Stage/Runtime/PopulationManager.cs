@@ -15,13 +15,17 @@ public class PopulationManager : MonoBehaviour
     [SerializeField] private int[] increaseCosts = { 5, 10, 15, 20, 25 };
 
     public int MaxPopulation { get; private set; }
-    public int CurrentPopulation => unitRoster.Units.Count;
+    public int CurrentPopulation => unitRoster?.RegisteredCount ?? 0;
+    public bool IsInitialized { get; private set; }
 
     public event Action<int, int> OnPopulationChanged;
 
     private void Awake()
     {
+        initialMax = Mathf.Max(1, initialMax);
+        hardMax = Mathf.Max(initialMax, hardMax);
         MaxPopulation = initialMax;
+        IsInitialized = unitRoster != null && economyManager != null;
     }
     private void OnEnable()
     {
@@ -49,12 +53,12 @@ public class PopulationManager : MonoBehaviour
 
     public bool CanSummon()
     {
-        return CurrentPopulation < MaxPopulation;
+        return IsInitialized && CurrentPopulation < MaxPopulation;
     }
 
     public bool CanIncreaseMax()
     {
-        return MaxPopulation < hardMax;
+        return IsInitialized && MaxPopulation < hardMax;
     }
 
     public int GetNextIncreaseCost()
@@ -66,14 +70,15 @@ public class PopulationManager : MonoBehaviour
             return -1;
 
         int index = MaxPopulation - initialMax;
-        index = Mathf.Clamp(index, 0, increaseCosts.Length - 1);
-        
+        if (index < 0 || index >= increaseCosts.Length || increaseCosts[index] < 0)
+            return -1;
+
         return increaseCosts[index];
     }
 
     public bool TryIncreaseMax()
     {
-        if (!CanIncreaseMax())
+        if (!CanIncreaseMax() || !economyManager.IsInitialized)
             return false;
 
         int cost = GetNextIncreaseCost();

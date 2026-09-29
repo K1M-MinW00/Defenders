@@ -38,7 +38,7 @@ MonoBehaviour:
     priority: 1
   - cue: 2
     audio:
-      clip: {fileID: 0}
+      clip: {fileID: 8300000, guid: 9d4c7d6cd717b05458448e232ec1adb0, type: 3}
       volume: 1
     minInterval: 0.05
     priority: 0
@@ -62,7 +62,7 @@ MonoBehaviour:
     priority: 1
   - cue: 6
     audio:
-      clip: {fileID: 0}
+      clip: {fileID: 8300000, guid: 9d4c7d6cd717b05458448e232ec1adb0, type: 3}
       volume: 1
     minInterval: 0.05
     priority: 0
