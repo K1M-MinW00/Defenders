@@ -30,8 +30,9 @@ public class UnitBuffController : MonoBehaviour
         }
     }
 
-    [SerializeField, HideInInspector] private int debugActiveBuffCount;
-    [SerializeField, HideInInspector] private List<BuffDebugEntry> debugActiveBuffs = new();
+    [Header("Editor Runtime Debug")]
+    [SerializeField] private int debugActiveBuffCount;
+    [SerializeField] private List<BuffDebugEntry> debugActiveBuffs = new();
 #endif
 
     public IReadOnlyList<RuntimeBuff> ActiveBuffs => activeBuffs;
