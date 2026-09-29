@@ -7,6 +7,7 @@ public class GameCameraController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera cam;
     [SerializeField] private StageSessionController stageSession;
+    [SerializeField] private PlacementController placementController;
 
     [Header("Zoom")]
     [SerializeField] private float zoomSpeedMouse = 5f;
@@ -36,6 +37,8 @@ public class GameCameraController : MonoBehaviour
     {
         if (cam == null)
             cam = GetComponent<Camera>();
+        if (placementController == null)
+            placementController = FindFirstObjectByType<PlacementController>();
 
         hasValidBounds = minBound != null && maxBound != null;
 
@@ -94,6 +97,9 @@ public class GameCameraController : MonoBehaviour
 
     private void HandleZoom()
     {
+        if (!CanReceiveWorldInput())
+            return;
+
 #if UNITY_EDITOR || UNITY_STANDALONE
         HandleMouseZoom();
 #else
@@ -112,6 +118,9 @@ public class GameCameraController : MonoBehaviour
 
     private void HandleMouseZoom()
     {
+        if (IsPointerOverUI())
+            return;
+
         float scroll = Input.mouseScrollDelta.y;
         if (Mathf.Abs(scroll) < 0.01f)
             return;
@@ -128,6 +137,8 @@ public class GameCameraController : MonoBehaviour
 
         Touch touch0 = Input.GetTouch(0);
         Touch touch1 = Input.GetTouch(1);
+        if (IsPointerOverUI(touch0.fingerId) || IsPointerOverUI(touch1.fingerId))
+            return;
 
         Vector2 prevPos0 = touch0.position - touch0.deltaPosition;
         Vector2 prevPos1 = touch1.position - touch1.deltaPosition;
@@ -300,6 +311,9 @@ public class GameCameraController : MonoBehaviour
 
     private bool CanPanNow()
     {
+        if (!CanReceiveWorldInput())
+            return false;
+
         if (allowPanInCombat)
             return true;
 
@@ -307,6 +321,14 @@ public class GameCameraController : MonoBehaviour
             return true;
 
         return stageSession.CurrentState == StageState.Preparing;
+    }
+
+    private bool CanReceiveWorldInput()
+    {
+        if (Mathf.Approximately(Time.timeScale, 0f))
+            return false;
+
+        return placementController == null || placementController.DraggingUnit == null;
     }
 
 #if UNITY_EDITOR

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlacementController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class PlacementController : MonoBehaviour
     public bool IsInputEnabled => placementEnabled;
     public UnitController DraggingUnit { get; private set; }
     private Vector3 originalPos;
+    private int activeFingerId = -1;
 
     public event Action<UnitController> OnSellRequested;
     public event Action<UnitController> OnRerollRequested;
@@ -79,19 +81,69 @@ public class PlacementController : MonoBehaviour
         if (!placementEnabled)
             return;
 
+#if UNITY_EDITOR || UNITY_STANDALONE
+        HandleMouseInput();
+#else
+        HandleTouchInput();
+#endif
+    }
+
+    private void HandleMouseInput()
+    {
         if (Input.GetMouseButtonDown(0))
-            TryBeginDrag();
+            TryBeginDrag(Input.mousePosition, IsPointerOverUI());
 
         if (DraggingUnit != null && Input.GetMouseButton(0))
-            Dragging();
+            Dragging(Input.mousePosition);
 
         if (DraggingUnit != null && Input.GetMouseButtonUp(0))
             EndDrag(Input.mousePosition);
     }
 
-    private void TryBeginDrag()
+    private void HandleTouchInput()
     {
-        Vector2 world = GetMouseWorld2D();
+        if (Input.touchCount != 1)
+        {
+            if (DraggingUnit != null)
+                CancelDrag();
+            return;
+        }
+
+        Touch touch = Input.GetTouch(0);
+        switch (touch.phase)
+        {
+            case TouchPhase.Began:
+                TryBeginDrag(touch.position, IsPointerOverUI(touch.fingerId));
+                if (DraggingUnit != null)
+                    activeFingerId = touch.fingerId;
+                break;
+
+            case TouchPhase.Moved:
+            case TouchPhase.Stationary:
+                if (DraggingUnit != null && activeFingerId == touch.fingerId)
+                    Dragging(touch.position);
+                break;
+
+            case TouchPhase.Ended:
+                if (DraggingUnit != null && activeFingerId == touch.fingerId)
+                    EndDrag(touch.position);
+                activeFingerId = -1;
+                break;
+
+            case TouchPhase.Canceled:
+                if (DraggingUnit != null && activeFingerId == touch.fingerId)
+                    CancelDrag();
+                activeFingerId = -1;
+                break;
+        }
+    }
+
+    private void TryBeginDrag(Vector2 screenPosition, bool isPointerOverUI)
+    {
+        if (isPointerOverUI || mainCam == null)
+            return;
+
+        Vector2 world = GetWorldPosition(screenPosition);
 
         // 유닛만 Raycast로 선택
         var hit = Physics2D.OverlapPoint(world, unitLayer);
@@ -114,9 +166,12 @@ public class PlacementController : MonoBehaviour
         stageUIController.SetUnitDragMode(true, canReroll,star);
     }
 
-    private void Dragging()
+    private void Dragging(Vector2 screenPosition)
     {
-        Vector2 world = GetMouseWorld2D();
+        if (mainCam == null)
+            return;
+
+        Vector2 world = GetWorldPosition(screenPosition);
         DraggingUnit.transform.position = new Vector3(world.x, world.y, DraggingUnit.transform.position.z);
     }
 
@@ -167,6 +222,7 @@ public class PlacementController : MonoBehaviour
     {
         UnitController finishedUnit = DraggingUnit;
         DraggingUnit = null;
+        activeFingerId = -1;
 
         if (finishedUnit != null &&
             finishedUnit.gameObject.activeInHierarchy &&
@@ -179,9 +235,19 @@ public class PlacementController : MonoBehaviour
         stageUIController?.SetUnitDragMode(false);
     }
 
-    private Vector2 GetMouseWorld2D()
+    private Vector2 GetWorldPosition(Vector2 screenPosition)
     {
-        Vector3 w = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 w = mainCam.ScreenToWorldPoint(screenPosition);
         return new Vector2(w.x, w.y);
+    }
+
+    private static bool IsPointerOverUI()
+    {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+    }
+
+    private static bool IsPointerOverUI(int fingerId)
+    {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(fingerId);
     }
 }
