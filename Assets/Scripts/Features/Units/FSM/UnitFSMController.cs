@@ -58,7 +58,7 @@ public class UnitFSMController : MonoBehaviour
         if (owner.Targeting.TryFindTargetInSensor())
             return true;
 
-        return false;
+        return owner.IsCombatAlerted && owner.Targeting.TryFindGlobalClosestTarget();
     }
 
     public void ChangeToTargetState()

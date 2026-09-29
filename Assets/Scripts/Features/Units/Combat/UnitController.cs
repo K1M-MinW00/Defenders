@@ -48,6 +48,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
     [Header("Runtime State")]
     [SerializeField] private UnitRuntimeState runtimeState = UnitRuntimeState.Despawned;
     [SerializeField] private UnitRemovalReason removalReason;
+    [SerializeField] private bool isCombatAlerted;
     #region Property
     public UnitDataSO UnitData => unitData;
     public UserUnitData UserUnit => userData;
@@ -76,6 +77,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
     public bool IsDead => Health.IsDead;
     public bool IsCombatPhase { get; private set; }
+    public bool IsCombatAlerted => isCombatAlerted;
     public UnitRuntimeState RuntimeState => runtimeState;
     public UnitRemovalReason RemovalReason => removalReason;
     public Transform TargetTransform => transform;
@@ -167,6 +169,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
             return;
 
         SetCombatActive(false);
+        isCombatAlerted = false;
         health.RestoreFull();
         energy.ConsumeAll();
 
@@ -191,11 +194,9 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         if (IsDead || !IsCombatPhase)
             return;
 
-        if (!fsmController.IsIdleState)
-            return;
+        isCombatAlerted = true;
 
-        bool found = Targeting.TryFindGlobalClosestTarget();
-        if (!found)
+        if (!fsmController.IsIdleState || !Targeting.TryFindGlobalClosestTarget())
             return;
 
         if (Targeting.IsTargetInRange())
@@ -232,6 +233,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
     {
         bool wasCombatPhase = RuntimeState == UnitRuntimeState.Combat;
         SetCombatActive(false);
+        isCombatAlerted = false;
 
         if (wasCombatPhase)
             buffController.CompleteWave();
@@ -255,6 +257,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
             return false;
 
         SetCombatActive(false);
+        isCombatAlerted = false;
         combat.CancelAttack();
         skillController.CancelSkill();
         movement.Stop();
@@ -287,11 +290,13 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
         runtimeState = UnitRuntimeState.AwaitingInitialization;
         removalReason = UnitRemovalReason.None;
+        isCombatAlerted = false;
     }
 
     public void OnDespawn()
     {
         SetCombatActive(false);
+        isCombatAlerted = false;
         combat.CancelAttack();
         skillController.Shutdown();
         movement.Stop();
