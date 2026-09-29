@@ -37,6 +37,12 @@ public class StageBootstrapper : MonoBehaviour
             return false;
         }
 
+        if (!TryBuildUnitPool(
+                enterData.SelectedUnitIds,
+                out System.Collections.Generic.List<StageUnitInitData> unitPool,
+                out error))
+            return false;
+
         if (!TryCreateMap(stageData, out mapContext, out error))
             return false;
 
@@ -44,13 +50,49 @@ public class StageBootstrapper : MonoBehaviour
         placementController.Initialize(mapContext.PlacementArea);
 
         unitSummoner.SetMapContext(mapContext.UnitSpawnPoint, mapContext.PlacementArea);
-        unitSummoner.SetUnitPool(enterData.SelectedUnitIds);
+        if (!unitSummoner.SetUnitPool(unitPool))
+        {
+            Destroy(mapContext.gameObject);
+            mapContext = null;
+            error = "Runtime unit pool is empty.";
+            return false;
+        }
 
         monsterSpawner.SetSpawnPoints(mapContext.MonsterSpawnPoints);
         gameCameraController.Initialize(mapContext.MinBound, mapContext.MaxBound);
 
         error = string.Empty;
         return true;
+    }
+
+    private static bool TryBuildUnitPool(
+        System.Collections.Generic.IReadOnlyList<string> selectedUnitIds,
+        out System.Collections.Generic.List<StageUnitInitData> definitions,
+        out string error)
+    {
+        definitions = new System.Collections.Generic.List<StageUnitInitData>(selectedUnitIds.Count);
+        RosterService rosterService = UserDataManager.Instance?.RosterService;
+        if (rosterService == null)
+        {
+            error = "User roster service is not ready.";
+            return false;
+        }
+
+        foreach (string unitId in selectedUnitIds)
+        {
+            UnitDataSO data = GameConfig.Units.Get(unitId);
+            UserUnitData userData = rosterService.GetUnit(unitId);
+            if (data == null || userData == null || data.unitPrefab == null)
+            {
+                error = $"Selected unit data is invalid: {unitId}";
+                return false;
+            }
+
+            definitions.Add(new StageUnitInitData(data, userData));
+        }
+
+        error = string.Empty;
+        return definitions.Count > 0;
     }
 
     private static bool TryCreateMap(

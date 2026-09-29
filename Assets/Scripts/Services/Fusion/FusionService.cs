@@ -1,59 +1,65 @@
 using UnityEngine;
 
+public readonly struct FusionResult
+{
+    public static FusionResult None => new(null, 0);
+
+    public UnitController FinalUnit { get; }
+    public int FusionCount { get; }
+    public bool Fused => FusionCount > 0;
+
+    private FusionResult(UnitController finalUnit, int fusionCount)
+    {
+        FinalUnit = finalUnit;
+        FusionCount = fusionCount;
+    }
+
+    public static FusionResult WithoutFusion(UnitController unit) => new(unit, 0);
+    public static FusionResult Completed(UnitController unit, int count) => new(unit, count);
+}
+
 public class FusionService : MonoBehaviour
 {
     [SerializeField] private UnitRoster roster;
-    [SerializeField] private StageSessionController stageSession;
-    private const int maxStar = 4;
+    private const int MaxStar = 4;
 
-    public void TryAutoFuse(UnitController changedUnit)
+    public FusionResult TryAutoFuse(UnitController changedUnit)
     {
-        if (changedUnit == null || changedUnit.UnitData == null)
-            return;
+        if (roster == null || changedUnit == null || changedUnit.UnitData == null)
+            return FusionResult.None;
 
-        // 준비 단계에서만 합성되도록 게이트
-        if (stageSession == null || stageSession.CurrentState != StageState.Preparing)
-            return;
-
-        // 연쇄 합성 처리
-        // 정책: "기존 유닛을 남기고", changedUnit은 소모될 수 있음
         UnitController seed = changedUnit;
+        int fusionCount = 0;
 
         while (seed != null && seed.UnitData != null)
         {
             int star = seed.Star;
 
-            if (star >= maxStar)
+            if (star >= MaxStar)
                 break;
 
             string unitId = seed.UnitId;
 
-            // 같은 (unitId, star)인 "다른 유닛" 찾기
             UnitController other = roster.FindAny(unitId, star, exclude: seed);
 
             if (other == null)
                 break;
 
-            // 남길 유닛 결정:
-            // - 연출 고려: 기존(other)을 남기고 seed(새로 뽑은 유닛)를 소모
             UnitController keep = other;
             UnitController consume = seed;
-
-            // 만약 seed가 기존이고 other가 새로 뽑힌 쪽이 되도록 바꾸고 싶으면 정책 변경 가능
-            // (현재는 seed=새 유닛으로 들어온다는 가정)
 
             if (!consume.TryBeginRemoval(UnitRemovalReason.Fused))
                 break;
 
-            // 승급
             keep.ApplyStarUp();
-
-            // 소모 유닛 제거
             roster.Unregister(consume);
             consume.ReturnToPool();
-
-            // 다음 연쇄 합성의 seed는 "승급된 keep"
             seed = keep;
+            fusionCount++;
         }
+
+        return fusionCount > 0
+            ? FusionResult.Completed(seed, fusionCount)
+            : FusionResult.WithoutFusion(seed);
     }
 }

@@ -12,6 +12,7 @@ public class UnitSummoner : MonoBehaviour
     
     [Header("Unit Pool (Inspector)")]
     [SerializeField] private UnitDataSO[] unitPool;
+    private StageUnitInitData[] runtimeUnitPool;
 
     [Header("Spawn Settings")]
     [SerializeField] private Transform spawnPoint;
@@ -25,19 +26,29 @@ public class UnitSummoner : MonoBehaviour
         this.placementArea = placementArea;
     }
 
-    public void SetUnitPool(IReadOnlyList<string> selectedUnitIds)
+    public bool SetUnitPool(IReadOnlyList<StageUnitInitData> definitions)
     {
-        List<UnitDataSO> result = new();
-
-        foreach (string unitId in selectedUnitIds)
+        if (definitions == null || definitions.Count == 0)
         {
-            UnitDataSO data = GameConfig.Units.Get(unitId);
-
-            if (data != null)
-                result.Add(data);
+            unitPool = System.Array.Empty<UnitDataSO>();
+            runtimeUnitPool = System.Array.Empty<StageUnitInitData>();
+            return false;
         }
 
-        unitPool = result.ToArray();
+        List<UnitDataSO> dataList = new(definitions.Count);
+        List<StageUnitInitData> runtimeList = new(definitions.Count);
+        foreach (StageUnitInitData definition in definitions)
+        {
+            if (definition?.UnitData == null || definition.UserData == null)
+                continue;
+
+            dataList.Add(definition.UnitData);
+            runtimeList.Add(definition);
+        }
+
+        unitPool = dataList.ToArray();
+        runtimeUnitPool = runtimeList.ToArray();
+        return runtimeUnitPool.Length > 0;
     }
 
     public bool SummonRandomUnit()
@@ -53,13 +64,14 @@ public class UnitSummoner : MonoBehaviour
     {
         unit = null;
 
-        if (unitPool == null || unitPool.Length == 0)
+        if (runtimeUnitPool == null || runtimeUnitPool.Length == 0)
         {
             Debug.LogWarning("Summon blocked: unitPool is empty.");
             return false;
         }
 
-        UnitDataSO data = unitPool[Random.Range(0, unitPool.Length)];
+        StageUnitInitData definition = runtimeUnitPool[Random.Range(0, runtimeUnitPool.Length)];
+        UnitDataSO data = definition.UnitData;
 
         if (data == null || data.unitPrefab == null)
             return false;
@@ -82,8 +94,7 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
-        UserUnitData userData = FindUserUnitData(data);
-        StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
+        StageUnitInitData initData = new StageUnitInitData(data, definition.UserData, 1);
 
         unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
         if (!unit.Initialize(initData))
@@ -99,13 +110,15 @@ public class UnitSummoner : MonoBehaviour
         return true;
     }
 
-    public void CommitSummonedUnit(UnitController unit)
+    public FusionResult CommitSummonedUnit(UnitController unit)
     {
         if (unit == null)
-            return;
+            return FusionResult.None;
 
         unitRoster?.Register(unit);
-        fusionService?.TryAutoFuse(unit);
+        return fusionService != null
+            ? fusionService.TryAutoFuse(unit)
+            : FusionResult.WithoutFusion(unit);
     }
 
     public void DiscardCreatedUnit(UnitController unit)
@@ -115,11 +128,6 @@ public class UnitSummoner : MonoBehaviour
 
         if (unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
             unit.ReturnToPool();
-    }
-
-    private UserUnitData FindUserUnitData(UnitDataSO data)
-    {
-        return UserDataManager.Instance.RosterService.GetUnit(data.unitId);
     }
 
     private Vector3 ResolveSpawnPosition()
