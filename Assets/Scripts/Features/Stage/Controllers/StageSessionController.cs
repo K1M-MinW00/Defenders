@@ -136,7 +136,7 @@ public class StageSessionController : MonoBehaviour
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
         rewardService.GiveWaveReward(CurrentWave);
-        phaseRuntimeController.CompleteCombat();
+        phaseRuntimeController.EndCurrentPhase();
 
         int clearedWaveCount = waveSequence.ClearedWaveCount;
 
@@ -161,22 +161,19 @@ public class StageSessionController : MonoBehaviour
 
     private void OnWaveLose()
     {
-        _ = HandleWaveLoseAsync(stopCurrentPhase: false);
+        _ = HandleWaveLoseAsync(allowPreparingFailure: false);
     }
 
-    private async Task HandleWaveLoseAsync(bool stopCurrentPhase)
+    private async Task HandleWaveLoseAsync(bool allowPreparingFailure)
     {
         bool canFail = CurrentState == StageState.Combat ||
-                       (stopCurrentPhase && CurrentState == StageState.Preparing);
+                       (allowPreparingFailure && CurrentState == StageState.Preparing);
 
         if (!canFail)
             return;
 
-        if (stopCurrentPhase)
-            StopCurrentPhase();
-
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
-        phaseRuntimeController.CompleteCombat();
+        phaseRuntimeController.EndCurrentPhase();
         if (!TransitionTo(StageState.StageFail))
             return;
 
@@ -233,15 +230,10 @@ public class StageSessionController : MonoBehaviour
         return true;
     }
 
-    private void StopCurrentPhase()
-    {
-        phaseRuntimeController.StopCurrentPhase();
-    }
-
     public void RequestStageFail()
     {
         phaseRuntimeController.ResumeTime();
-        _ = HandleWaveLoseAsync(stopCurrentPhase: true);
+        _ = HandleWaveLoseAsync(allowPreparingFailure: true);
     }
 
     private bool TransitionTo(StageState next)

@@ -29,8 +29,12 @@ public class StagePrepareTimerController : MonoBehaviour
 
     public void ForceFinishPrepare()
     {
+        if (prepareRoutine == null)
+            return;
+
+        Action callback = onPrepareFinished;
         StopPreparePhase();
-        onPrepareFinished?.Invoke();
+        callback?.Invoke();
     }
 
     public void StopPreparePhase()
@@ -40,6 +44,8 @@ public class StagePrepareTimerController : MonoBehaviour
             StopCoroutine(prepareRoutine);
             prepareRoutine = null;
         }
+
+        onPrepareFinished = null;
     }
 
     private IEnumerator CoPrepare()
@@ -57,6 +63,8 @@ public class StagePrepareTimerController : MonoBehaviour
         }
 
         prepareRoutine = null;
-        onPrepareFinished?.Invoke();
+        Action callback = onPrepareFinished;
+        onPrepareFinished = null;
+        callback?.Invoke();
     }
 }
