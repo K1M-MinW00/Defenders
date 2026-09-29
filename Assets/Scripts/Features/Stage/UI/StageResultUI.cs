@@ -25,10 +25,12 @@ public class StageResultUI : MonoBehaviour
 
     private StageSessionController session;
     private RectTransform clearRewardContent;
+    private bool isReturningToLobby;
 
     public void Initialize(StageSessionController stageSession)
     {
         session = stageSession;
+        isReturningToLobby = false;
         HideAll();
     }
 
@@ -169,8 +171,14 @@ public class StageResultUI : MonoBehaviour
 
     public async void OnClickReturnToLobby()
     {
+        if (isReturningToLobby)
+            return;
+
+        isReturningToLobby = true;
+
         if (session == null || !await session.TryPrepareExitAsync())
         {
+            isReturningToLobby = false;
             Debug.LogWarning("[StageResultUI] Progress and rewards are not saved yet. Lobby transition was blocked; press again to retry.");
             return;
         }
@@ -178,6 +186,9 @@ public class StageResultUI : MonoBehaviour
         Time.timeScale = 1f;
         SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
         if (result != SceneTransitionResult.Succeeded && this != null)
+        {
+            isReturningToLobby = false;
             Debug.LogError($"[StageResultUI] Failed to return to lobby: {result}");
+        }
     }
 }
