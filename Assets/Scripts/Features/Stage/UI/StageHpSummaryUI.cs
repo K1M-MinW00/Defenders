@@ -17,6 +17,8 @@ public class StageHpSummaryUI : MonoBehaviour
 
     public void Initialize(MonsterWaveHpTracker monsterHpTracker, UnitRosterHpTracker unitHpTracker)
     {
+        Dispose();
+
         this.monsterHpTracker = monsterHpTracker;
         this.unitHpTracker = unitHpTracker;
 
@@ -26,7 +28,14 @@ public class StageHpSummaryUI : MonoBehaviour
 
     private void OnDestroy()
     {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
         Unbind();
+        monsterHpTracker = null;
+        unitHpTracker = null;
     }
 
     private void Bind()
