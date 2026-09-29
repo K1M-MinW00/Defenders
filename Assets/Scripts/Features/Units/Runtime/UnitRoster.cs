@@ -152,32 +152,6 @@ public class UnitRoster : MonoBehaviour
         return CombatTargetSelector.FindLowestHealth(units);
     }
 
-    public List<UnitController> GetLowestHpAliveUnits(int count)
-    {
-        var result = new List<UnitController>(Mathf.Max(0, count));
-        if (count <= 0)
-            return result;
-
-        foreach (UnitController unit in units)
-        {
-            if (!CombatTargetSelector.IsValid(unit))
-                continue;
-
-            int insertIndex = result.Count;
-            while (insertIndex > 0 &&
-                   result[insertIndex - 1].Health.CurrentHp > unit.Health.CurrentHp)
-            {
-                insertIndex--;
-            }
-
-            result.Insert(insertIndex, unit);
-            if (result.Count > count)
-                result.RemoveAt(result.Count - 1);
-        }
-
-        return result;
-    }
-
     private void OnDestroy()
     {
         for (int i = units.Count - 1; i >= 0; i--)

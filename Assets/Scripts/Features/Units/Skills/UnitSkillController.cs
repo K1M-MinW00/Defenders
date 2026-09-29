@@ -14,6 +14,7 @@ public class UnitSkillController : MonoBehaviour
     private PassiveSkillBase passiveSkill;
 
     private readonly SkillExecutionLifecycle lifecycle = new();
+    private readonly SkillExecutionContext fallbackContext = new();
     private bool isCombatPhase;
     private float skillStartedAt = float.NegativeInfinity;
 
@@ -141,7 +142,7 @@ public class UnitSkillController : MonoBehaviour
                 return false;
 
             case SkillTargetFailPolicy.CastWithoutTarget:
-                context = new SkillExecutionContext();
+                context = fallbackContext;
                 context.Initialize(owner);
                 context.SetCastPosition(owner.transform.position);
                 return lifecycle.TryPrepare(context);
