@@ -8,6 +8,11 @@ public class Poolable : MonoBehaviour
 
     public bool IsSpawned => isSpawned;
 
+    internal bool IsOwnedBy(GameObjectPool pool)
+    {
+        return ownerPool == pool;
+    }
+
     public void SetOwner(GameObjectPool ownerPool)
     {
         this.ownerPool = ownerPool;
@@ -39,6 +44,9 @@ public class Poolable : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        if (!isSpawned)
+            return;
 
         ownerPool.Despawn(this);
     }

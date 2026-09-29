@@ -82,8 +82,6 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             return;
         }
 
-        poolManager.DespawnAll(PoolCategory.Monster);
-        poolManager.DespawnAll(PoolCategory.Projectile);
-        poolManager.DespawnAll(PoolCategory.Effect);
+        poolManager.DespawnWaveObjects();
     }
 }
