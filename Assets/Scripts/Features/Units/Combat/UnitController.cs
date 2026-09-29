@@ -51,6 +51,7 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
     public float CriticalDamageMultiplier => runtime?.FinalStats.CritDamage ?? 1f;
 
     public bool IsDead => Health.IsDead;
+    public bool IsCombatPhase { get; private set; }
     public Transform TargetTransform => transform;
     public ICombatHealth CombatHealth => health;
   
@@ -70,7 +71,9 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
             return;
 
         energy.Tick(Time.deltaTime);
-        fsmController.Tick();
+
+        if (IsCombatPhase)
+            fsmController.Tick();
     }
 
     public void BindCombatContext(UnitRoster roster, StagePoolManager poolManager)
@@ -144,7 +147,7 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 
     public void ReceiveCombatAlert()
     {
-        if (IsDead)
+        if (IsDead || !IsCombatPhase)
             return;
 
         if (!fsmController.IsIdleState)
@@ -176,8 +179,9 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 
     public void SetCombatPhase(bool active)
     {
-        energy.SetCombatPhase(active);
-        skillController.SetCombatPhase(active);
+        IsCombatPhase = active && !IsDead;
+        energy.SetCombatPhase(IsCombatPhase);
+        skillController.SetCombatPhase(IsCombatPhase);
     }
 
     public void SuspendCombat()
@@ -187,6 +191,9 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         movement.Stop();
         targeting.ClearTarget();
         targeting.EnableSensor(false);
+
+        if (!IsDead)
+            fsmController.ChangeToIdle();
     }
 
     public void FaceTarget()

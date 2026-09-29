@@ -31,6 +31,9 @@ public class UnitFSMController : MonoBehaviour
 
     public bool TryChangeToSkill()
     {
+        if (!CanEnterCombatState())
+            return false;
+
         if (!owner.SkillController.CanStartSkill())
             return false;
 
@@ -40,6 +43,9 @@ public class UnitFSMController : MonoBehaviour
 
     public bool TryEnsureTarget()
     {
+        if (!CanEnterCombatState())
+            return false;
+
         if (owner.Targeting.HasValidTarget())
             return true;
 
@@ -63,9 +69,36 @@ public class UnitFSMController : MonoBehaviour
             ChangeToMove();
     }
 
-    public void ChangeToIdle() => fsm.ChangeState(idleState);
-    public void ChangeToMove() => fsm.ChangeState(moveState);
-    public void ChangeToAttack() => fsm.ChangeState(attackState);
-    public void ChangeToSkill() => fsm.ChangeState(skillState);
+    public void ChangeToIdle()
+    {
+        if (owner == null || owner.IsDead)
+            return;
+
+        fsm.ChangeState(idleState);
+    }
+
+    public void ChangeToMove()
+    {
+        if (CanEnterCombatState())
+            fsm.ChangeState(moveState);
+    }
+
+    public void ChangeToAttack()
+    {
+        if (CanEnterCombatState())
+            fsm.ChangeState(attackState);
+    }
+
+    public void ChangeToSkill()
+    {
+        if (CanEnterCombatState())
+            fsm.ChangeState(skillState);
+    }
+
     public void ChangeToDead() => fsm.ChangeState(deadState);
+
+    private bool CanEnterCombatState()
+    {
+        return owner != null && owner.IsCombatPhase && !owner.IsDead;
+    }
 }

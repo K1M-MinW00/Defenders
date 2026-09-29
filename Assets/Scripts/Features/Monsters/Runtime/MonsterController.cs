@@ -226,9 +226,31 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public void PlayMove() => view?.PlayMove();
     public void PlayAttack() => view?.PlayAttack(FinalStats?.atkPerSec ?? 1f);
 
-    public void ChangeToIdle() => fsm.ChangeState(idleState);
-    public void ChangeToMove() => fsm.ChangeState(moveState);
-    public void ChangeToAttack() => fsm.ChangeState(attackState);
+    public void ChangeToIdle()
+    {
+        if (CanRunBehavior())
+            fsm.ChangeState(idleState);
+    }
+
+    public void ChangeToMove()
+    {
+        if (CanRunBehavior())
+            fsm.ChangeState(moveState);
+    }
+
+    public void ChangeToAttack()
+    {
+        if (CanRunBehavior())
+            fsm.ChangeState(attackState);
+    }
+
+    private bool CanRunBehavior()
+    {
+        return Data != null &&
+               !IsDead &&
+               !IsControlLocked &&
+               gameObject.activeInHierarchy;
+    }
 
     public void ApplyKnockback(Vector2 direction, float distance, float duration)
     {
