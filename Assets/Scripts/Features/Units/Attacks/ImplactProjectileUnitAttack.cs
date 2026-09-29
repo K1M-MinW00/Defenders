@@ -22,7 +22,5 @@ public class ImplactProjectileUnitAttack : RangedUnitAttack
        
         if(impact != null)
             impact.Initialize(Damage, targetLayer, owner);
-
-        OnAttackFinished();
     }
 }

@@ -31,7 +31,5 @@ public class ProjectileUnitAttack : RangedUnitAttack
 
         if (arrow != null)
             arrow.Initialize(Damage, projectileSpeed, dir, targetLayer, owner);
-        
-        OnAttackFinished();
     }
 }
