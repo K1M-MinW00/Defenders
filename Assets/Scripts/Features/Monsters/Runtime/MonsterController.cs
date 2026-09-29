@@ -30,6 +30,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public ICombatHealth CombatHealth => Health;
     public bool IsDead => Health != null && Health.IsDead;
     public bool IsControlLocked { get; private set; }
+    public bool IsRuntimeInitialized { get; private set; }
 
     public float GetInitialUpdateDelay(float interval)
     {
@@ -74,12 +75,20 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         idleState = new MonsterIdleState(this);
     }
 
-    public void Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
+    public bool Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
     {
         if (data == null)
         {
             Debug.LogError($"[{nameof(MonsterController)}] Initialize failed: data is null.", this);
-            return;
+            return false;
+        }
+
+        if (unitRoster == null || poolManager == null)
+        {
+            Debug.LogError(
+                $"[{nameof(MonsterController)}] Initialize failed: combat context is incomplete.",
+                this);
+            return false;
         }
 
         Data = data;
@@ -88,12 +97,14 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         targeting.Initialize(unitRoster);
 
         ApplyStats();
+        IsRuntimeInitialized = true;
         ChangeToIdle();
+        return true;
     }
 
     private void Update()
     {
-        if (Health.IsDead || IsControlLocked)
+        if (!IsRuntimeInitialized || Health.IsDead || IsControlLocked)
             return;
 
         fsm.Tick();
@@ -101,12 +112,12 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     public void OnSpawn()
     {
-        ResetRuntimeState(clearContext: false);
+        ResetRuntimeState();
     }
 
     public void OnDespawn()
     {
-        ResetRuntimeState(clearContext: true);
+        ResetRuntimeState();
     }
 
     private void ApplyStats()
@@ -126,16 +137,15 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         poolable?.ReturnToPool();
     }
 
-    private void ResetRuntimeState(bool clearContext)
+    private void ResetRuntimeState()
     {
         StopKnockback();
+        IsControlLocked = false;
+        IsRuntimeInitialized = false;
         fsm.Reset();
         attackBehavior?.CancelAttack();
         targeting.ClearTarget();
         StopMovement();
-
-        if (!clearContext)
-            return;
 
         Health.ClearRuntimeListeners();
         OnDead = null;
@@ -246,7 +256,8 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     private bool CanRunBehavior()
     {
-        return Data != null &&
+        return IsRuntimeInitialized &&
+               Data != null &&
                !IsDead &&
                !IsControlLocked &&
                gameObject.activeInHierarchy;

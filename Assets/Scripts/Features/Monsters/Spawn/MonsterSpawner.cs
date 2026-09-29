@@ -191,7 +191,14 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
             return null;
         }
 
-        monster.Initialize(unitRoster, data, poolManager);
+        if (!monster.Initialize(unitRoster, data, poolManager))
+        {
+            if (monster.TryGetComponent(out Poolable failedSpawn))
+                poolManager.Despawn(failedSpawn);
+
+            return null;
+        }
+
         monster.Health.OnDamaged += HandleMonsterDamaged;
         monster.OnDead += HandleMonsterDead;
 
