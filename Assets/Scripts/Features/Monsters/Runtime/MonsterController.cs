@@ -30,6 +30,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public ICombatHealth CombatHealth => Health;
     public bool IsDead => Health != null && Health.IsDead;
 
+    public float GetInitialUpdateDelay(float interval)
+    {
+        return StaggeredUpdateSchedule.GetInitialDelay(GetInstanceID(), interval);
+    }
+
     private Poolable poolable;
 
     private StateMachine fsm;

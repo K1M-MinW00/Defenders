@@ -15,7 +15,8 @@ public sealed class MonsterMoveState : IState
         owner.PlayMove();
         owner.ResumeMovement();
 
-        _nextRefreshTime = Time.time;
+        _nextRefreshTime = Time.time +
+            owner.GetInitialUpdateDelay(owner.MoveTargetRefreshInterval);
 
         owner.MoveToTarget();
     }

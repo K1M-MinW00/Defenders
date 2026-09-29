@@ -17,7 +17,8 @@ public class MonsterIdleState : IState
         owner.ClearTarget();
         owner.PlayIdle();
 
-        _nextAcquireTime = Time.time;
+        _nextAcquireTime = Time.time +
+            owner.GetInitialUpdateDelay(owner.IdleTargetAcquireInterval);
     }
 
     public void Update()
