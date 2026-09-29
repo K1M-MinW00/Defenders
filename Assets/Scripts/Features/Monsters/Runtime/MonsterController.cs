@@ -29,6 +29,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public Transform TargetTransform => transform;
     public ICombatHealth CombatHealth => Health;
     public bool IsDead => Health != null && Health.IsDead;
+    public bool IsControlLocked { get; private set; }
 
     public float GetInitialUpdateDelay(float interval)
     {
@@ -92,7 +93,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     private void Update()
     {
-        if (Health.IsDead)
+        if (Health.IsDead || IsControlLocked)
             return;
 
         fsm.Tick();
@@ -231,9 +232,20 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     public void ApplyKnockback(Vector2 direction, float distance, float duration)
     {
+        if (IsDead || direction.sqrMagnitude <= 0.0001f || distance <= 0f)
+            return;
+
         StopKnockback();
 
-        knockbackRoutine = StartCoroutine(KnockbackRoutine(direction, distance, duration));
+        IsControlLocked = true;
+        fsm.Reset();
+        CancelAttack();
+        StopMovement();
+
+        knockbackRoutine = StartCoroutine(KnockbackRoutine(
+            direction,
+            distance,
+            Mathf.Max(0.01f, duration)));
     }
 
     private void StopKnockback()
@@ -243,13 +255,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
         StopCoroutine(knockbackRoutine);
         knockbackRoutine = null;
+        IsControlLocked = false;
     }
 
     private IEnumerator KnockbackRoutine(Vector2 direction, float distance, float duration)
     {
-        if (agent != null && agent.enabled && agent.isOnNavMesh)
-            agent.isStopped = true;
-
         Vector3 start = transform.position;
         Vector3 end = start + (Vector3)(direction.normalized * distance);
 
@@ -274,5 +284,24 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         }
 
         knockbackRoutine = null;
+        IsControlLocked = false;
+        ResumeBehaviorAfterControlEffect();
+    }
+
+    private void ResumeBehaviorAfterControlEffect()
+    {
+        if (IsDead || !gameObject.activeInHierarchy)
+            return;
+
+        if (!HasValidTarget() && !TryFindClosestAliveUnit())
+        {
+            ChangeToIdle();
+            return;
+        }
+
+        if (IsTargetInAttackRange())
+            ChangeToAttack();
+        else
+            ChangeToMove();
     }
 }
