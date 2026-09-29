@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4272875544788305778}
   - component: {fileID: 5461154521402167910}
   m_Layer: 0
-  m_Name: Test
+  m_Name: Undead_Paletts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
