@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class UnitSkillController : MonoBehaviour
 {
+    private const float MinimumExecutionTimeout = 0.5f;
+
+    [SerializeField, Min(MinimumExecutionTimeout)]
+    private float executionTimeout = 2f;
+
     private UnitController owner;
 
     private ActiveSkillBase activeSkill;
@@ -10,6 +15,7 @@ public class UnitSkillController : MonoBehaviour
 
     private readonly SkillExecutionLifecycle lifecycle = new();
     private bool isCombatPhase;
+    private float skillStartedAt = float.NegativeInfinity;
 
     public event Action OnSkillStarted;
     public event Action OnSkillApplied;
@@ -51,6 +57,7 @@ public class UnitSkillController : MonoBehaviour
             owner.Energy.OnEnergyFull -= HandleEnergyFull;
 
         isCombatPhase = false;
+        skillStartedAt = float.NegativeInfinity;
         lifecycle.Cancel();
         activeSkill?.CancelSkill();
         activeSkill = null;
@@ -151,6 +158,7 @@ public class UnitSkillController : MonoBehaviour
         if (context == null || !context.IsValid || !lifecycle.TryStart())
             return;
 
+        skillStartedAt = Time.time;
         activeSkill.OnSkillStart(context);
         GameAudioManager.Instance?.PlayCharacterSfx(owner.UnitData?.activeSkill?.skillSound, GameAudioCue.UnitSkill, GameAudioPriority.High, 0.1f);
         OnSkillStarted?.Invoke();
@@ -194,6 +202,7 @@ public class UnitSkillController : MonoBehaviour
 
         activeSkill.OnSkillEnd(context);
         lifecycle.Complete();
+        skillStartedAt = float.NegativeInfinity;
         OnSkillEnded?.Invoke();
         NotifyActiveSkillEnded();
     }
@@ -203,6 +212,7 @@ public class UnitSkillController : MonoBehaviour
         bool wasActive = lifecycle.IsActive;
         bool wasRunning = lifecycle.IsRunning;
         lifecycle.Cancel();
+        skillStartedAt = float.NegativeInfinity;
 
         activeSkill?.CancelSkill();
 
@@ -213,6 +223,22 @@ public class UnitSkillController : MonoBehaviour
 
         if (wasRunning)
             NotifyActiveSkillEnded();
+    }
+
+    public void RecoverInterruptedSkill()
+    {
+        if (!lifecycle.IsRunning)
+            return;
+
+        float timeout = Mathf.Max(MinimumExecutionTimeout, executionTimeout);
+        if (Time.time < skillStartedAt + timeout)
+            return;
+
+        if (lifecycle.Phase == SkillExecutionPhase.Running)
+            ApplySkill();
+
+        if (lifecycle.IsRunning)
+            EndSkill();
     }
 
     public void NotifyBattleStart()

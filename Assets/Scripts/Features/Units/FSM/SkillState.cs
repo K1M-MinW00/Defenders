@@ -38,6 +38,8 @@ public class SkillState : IState
         if (owner.IsDead)
             return;
 
+        owner.SkillController.RecoverInterruptedSkill();
+
         if (owner.SkillController.IsSkillRunning)
             return;
 
