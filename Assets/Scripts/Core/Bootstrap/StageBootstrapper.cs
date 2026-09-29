@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class StageBootstrapper : MonoBehaviour
+public sealed class StageBootstrapper : MonoBehaviour
 {
     [Header("Scene References")]
     [SerializeField] private PlacementController placementController;
@@ -9,6 +9,7 @@ public class StageBootstrapper : MonoBehaviour
     [SerializeField] private UnitSummoner unitSummoner;
     [SerializeField] private MonsterSpawner monsterSpawner;
 
+    public bool IsInitialized { get; private set; }
 
     public bool TryInitializeStage(
         StageDataSO stageData,
@@ -17,6 +18,12 @@ public class StageBootstrapper : MonoBehaviour
         out string error)
     {
         mapContext = null;
+
+        if (IsInitialized)
+        {
+            error = "Stage bootstrapper is already initialized.";
+            return false;
+        }
 
         if (stageData == null || enterData == null)
         {
@@ -48,8 +55,7 @@ public class StageBootstrapper : MonoBehaviour
 
         if (!economyManager.Init(stageData.economyConfig))
         {
-            Destroy(mapContext.gameObject);
-            mapContext = null;
+            RollbackInitialization(ref mapContext);
             error = "Stage economy initialization failed.";
             return false;
         }
@@ -59,8 +65,7 @@ public class StageBootstrapper : MonoBehaviour
         unitSummoner.SetMapContext(mapContext.UnitSpawnPoint, mapContext.PlacementArea);
         if (!unitSummoner.SetUnitPool(unitPool))
         {
-            Destroy(mapContext.gameObject);
-            mapContext = null;
+            RollbackInitialization(ref mapContext);
             error = "Runtime unit pool is empty.";
             return false;
         }
@@ -68,8 +73,24 @@ public class StageBootstrapper : MonoBehaviour
         monsterSpawner.SetSpawnPoints(mapContext.MonsterSpawnPoints);
         gameCameraController.Initialize(mapContext.MinBound, mapContext.MaxBound);
 
+        IsInitialized = true;
         error = string.Empty;
         return true;
+    }
+
+    private void RollbackInitialization(ref StageMapContext mapContext)
+    {
+        gameCameraController.ClearStageContext();
+        monsterSpawner.ClearStageContext();
+        unitSummoner.ClearStageContext();
+        placementController.ClearStageContext();
+        economyManager.ResetRuntime();
+
+        if (mapContext != null)
+            Destroy(mapContext.gameObject);
+
+        mapContext = null;
+        IsInitialized = false;
     }
 
     private static bool TryBuildUnitPool(
@@ -117,15 +138,21 @@ public class StageBootstrapper : MonoBehaviour
 
         GameObject mapInstance = Instantiate(stageData.mapPrefab);
         context = mapInstance.GetComponent<StageMapContext>();
+        string validationError = string.Empty;
 
-        if (context != null)
+        if (context != null && context.TryValidate(out validationError))
         {
             error = string.Empty;
             return true;
         }
 
         Destroy(mapInstance);
-        error = "StageMapContext is missing on the map prefab root.";
+        if (context == null)
+            error = "StageMapContext is missing on the map prefab root.";
+        else
+            error = $"StageMapContext is invalid: {validationError}";
+
+        context = null;
         return false;
     }
 }

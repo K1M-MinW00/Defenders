@@ -35,6 +35,12 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         this.spawnPoints = spawnPoints;
     }
 
+    public void ClearStageContext()
+    {
+        ClearWaveRuntime();
+        spawnPoints = System.Array.Empty<Transform>();
+    }
+
     public bool TryStartWave(WaveData waveData)
     {
         if (waveData == null)

@@ -26,6 +26,14 @@ public class UnitSummoner : MonoBehaviour
         this.placementArea = placementArea;
     }
 
+    public void ClearStageContext()
+    {
+        spawnPoint = null;
+        placementArea = null;
+        unitPool = System.Array.Empty<UnitDataSO>();
+        runtimeUnitPool = System.Array.Empty<StageUnitInitData>();
+    }
+
     public bool SetUnitPool(IReadOnlyList<StageUnitInitData> definitions)
     {
         if (definitions == null || definitions.Count == 0)

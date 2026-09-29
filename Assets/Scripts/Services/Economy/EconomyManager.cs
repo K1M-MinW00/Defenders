@@ -28,6 +28,13 @@ public class EconomyManager : MonoBehaviour
         return true;
     }
 
+    public void ResetRuntime()
+    {
+        config = null;
+        CurrentGold = 0;
+        IsInitialized = false;
+    }
+
     public bool ApplyWaveReward(WaveType waveType)
     {
         if (!IsInitialized)

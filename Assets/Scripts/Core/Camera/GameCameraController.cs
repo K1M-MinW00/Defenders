@@ -69,6 +69,15 @@ public class GameCameraController : MonoBehaviour
         ResetCameraToDefaultImmediate();
     }
 
+    public void ClearStageContext()
+    {
+        minBound = null;
+        maxBound = null;
+        hasValidBounds = false;
+        isDragging = false;
+        activeFingerId = -1;
+    }
+
     public void ResetCameraToDefaultImmediate()
     {
         transform.position = defaultPosition;

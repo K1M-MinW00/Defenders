@@ -33,6 +33,19 @@ public class PlacementController : MonoBehaviour
             this.placementArea.SetVisible(false);
     }
 
+    public void ClearStageContext()
+    {
+        placementEnabled = false;
+
+        if (DraggingUnit != null)
+            CancelDrag();
+
+        if (placementArea != null)
+            placementArea.SetVisible(false);
+
+        placementArea = null;
+    }
+
 
     public void EnablePlacement(bool enable)
     {
@@ -45,7 +58,7 @@ public class PlacementController : MonoBehaviour
         placementEnabled = enable;
         placementArea.SetVisible(enable);
 
-        // ÀüÅõ ½ÃÀÛ ½Ã µå·¡±× ÁßÀÌ´ø °Ô ÀÖÀ¸¸é Á¤¸®
+        // ì „íˆ¬ ì‹œì‘ ì‹œ ë“œë˜ê·¸ ì¤‘ì´ë˜ ê²Œ ìˆìœ¼ë©´ ì •ë¦¬
         if (!placementEnabled && DraggingUnit != null)
         {
             CancelDrag();
@@ -71,7 +84,7 @@ public class PlacementController : MonoBehaviour
     {
         Vector2 world = GetMouseWorld2D();
 
-        // À¯´Ö¸¸ Raycast·Î ¼±ÅÃ
+        // ìœ ë‹›ë§Œ Raycastë¡œ ì„ íƒ
         var hit = Physics2D.OverlapPoint(world, unitLayer);
         if (hit == null)
             return;
