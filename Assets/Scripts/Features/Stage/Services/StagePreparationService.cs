@@ -12,6 +12,8 @@ public class StagePreparationService : MonoBehaviour
     private bool isPrepareMode;
     private StageUnitTransactionService unitTransactions;
 
+    public bool IsPrepareMode => isPrepareMode;
+
     private void Awake()
     {
         unitTransactions = new StageUnitTransactionService(
@@ -35,6 +37,8 @@ public class StagePreparationService : MonoBehaviour
 
     private void OnDisable()
     {
+        ClosePreparationInput();
+
         if(placementController != null)
         {
             placementController.OnSellRequested -= HandleSellRequested;
@@ -42,29 +46,38 @@ public class StagePreparationService : MonoBehaviour
         }
     }
 
-    public void EnterPrepareMode()
+    public bool EnterPrepareMode()
     {
+        if (isPrepareMode)
+            return true;
+
+        if (placementController == null || unitResetService == null || unitRoster == null)
+        {
+            Debug.LogError($"[{nameof(StagePreparationService)}] Preparation dependencies are missing.", this);
+            return false;
+        }
+
+        if (!placementController.SetInputEnabled(true))
+            return false;
+
         isPrepareMode = true;
-
-        placementController.EnablePlacement(true);
-
         unitResetService.RestoreAll(unitRoster);
+        return true;
     }
 
     public void ExitPrepareMode()
     {
-        isPrepareMode = false;
+        if (!isPrepareMode)
+            return;
 
-        placementController.EnablePlacement(false);
-
+        ClosePreparationInput();
         unitResetService.CapturePreWavePositions(unitRoster);
         BeginUnitsCombat();
     }
 
     public void EndCurrentPhase()
     {
-        isPrepareMode = false;
-        placementController.EnablePlacement(false);
+        ClosePreparationInput();
 
         if (unitRoster == null)
             return;
@@ -126,5 +139,11 @@ public class StagePreparationService : MonoBehaviour
 
             unit.BeginCombat();
         }
+    }
+
+    private void ClosePreparationInput()
+    {
+        isPrepareMode = false;
+        placementController?.SetInputEnabled(false);
     }
 }

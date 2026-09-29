@@ -13,6 +13,7 @@ public class PlacementController : MonoBehaviour
     [SerializeField] private LayerMask unitLayer;
 
     private bool placementEnabled;
+    public bool IsInputEnabled => placementEnabled;
     public UnitController DraggingUnit { get; private set; }
     private Vector3 originalPos;
 
@@ -27,6 +28,7 @@ public class PlacementController : MonoBehaviour
 
     public void Initialize(TilemapPlacementArea placementArea)
     {
+        ClearStageContext();
         this.placementArea = placementArea;
 
         if (this.placementArea != null)
@@ -47,22 +49,29 @@ public class PlacementController : MonoBehaviour
     }
 
 
-    public void EnablePlacement(bool enable)
+    public bool SetInputEnabled(bool enable)
     {
-        if (placementArea == null)
+        if (enable && placementArea == null)
         {
             Debug.LogError($"{nameof(PlacementController)} is not initialized.");
-            return;
+            return false;
         }
 
         placementEnabled = enable;
-        placementArea.SetVisible(enable);
+        placementArea?.SetVisible(enable);
 
         // 전투 시작 시 드래그 중이던 게 있으면 정리
         if (!placementEnabled && DraggingUnit != null)
         {
             CancelDrag();
         }
+
+        return true;
+    }
+
+    private void OnDisable()
+    {
+        SetInputEnabled(false);
     }
 
     private void Update()
@@ -90,7 +99,7 @@ public class PlacementController : MonoBehaviour
             return;
 
         var unit = hit.GetComponent<UnitController>();
-        if (unit == null)
+        if (unit == null || unit.IsDead || unit.RuntimeState != UnitRuntimeState.Preparing)
             return;
 
         DraggingUnit = unit;
@@ -131,7 +140,7 @@ public class PlacementController : MonoBehaviour
 
     private void HandleDropAction(UnitDropAction action)
     {
-        if (DraggingUnit == null)
+        if (!placementEnabled || DraggingUnit == null)
             return;
 
         switch (action)
@@ -156,14 +165,18 @@ public class PlacementController : MonoBehaviour
 
     private void FinishDrag()
     {
-        if (DraggingUnit != null)
+        UnitController finishedUnit = DraggingUnit;
+        DraggingUnit = null;
+
+        if (finishedUnit != null &&
+            finishedUnit.gameObject.activeInHierarchy &&
+            finishedUnit.RuntimeState != UnitRuntimeState.Removing)
         {
-            DraggingUnit.Movement.Resume();
-            DraggingUnit.HideRange();
-            DraggingUnit = null;
+            finishedUnit.Movement.Resume();
+            finishedUnit.HideRange();
         }
 
-        stageUIController.SetUnitDragMode(false);
+        stageUIController?.SetUnitDragMode(false);
     }
 
     private Vector2 GetMouseWorld2D()
