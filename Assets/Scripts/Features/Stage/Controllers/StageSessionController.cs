@@ -17,9 +17,7 @@ public class StageSessionController : MonoBehaviour
     private StageDataProvider stageDataProvider;
     private StageWaveSequence waveSequence;
     private readonly StagePhaseMachine phaseMachine = new();
-    private bool outcomeSavePending;
-    private bool pendingOutcomeIsClear;
-    private Task<bool> outcomeSaveTask;
+    private StageOutcomeCoordinator outcomeCoordinator;
 
     public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
@@ -74,9 +72,7 @@ public class StageSessionController : MonoBehaviour
     {
         currentStageData = stageData;
         waveSequence = new StageWaveSequence(stageData.waves);
-        outcomeSavePending = false;
-        pendingOutcomeIsClear = false;
-        outcomeSaveTask = null;
+        outcomeCoordinator = new StageOutcomeCoordinator(rewardService);
 
         if (!bootstrapper.TryInitializeStage(stageData, enterData, out _, out string bootstrapError))
         {
@@ -202,28 +198,10 @@ public class StageSessionController : MonoBehaviour
 
     private async Task<bool> TrySaveStageOutcomeAsync(bool isClear)
     {
-        if (outcomeSaveTask != null)
-            return await outcomeSaveTask;
-
-        outcomeSavePending = true;
-        pendingOutcomeIsClear = isClear;
-        outcomeSaveTask = SaveStageOutcomeCoreAsync(isClear);
-
-        try
-        {
-            return await outcomeSaveTask;
-        }
-        finally
-        {
-            outcomeSaveTask = null;
-        }
-    }
-
-    private async Task<bool> SaveStageOutcomeCoreAsync(bool isClear)
-    {
-        StageOutcomeResult result = isClear
-            ? await rewardService.GiveStageClearRewardAsync(currentStageData)
-            : await rewardService.GiveStageFailRewardAsync(currentStageData, CurrentWaveIndex);
+        StageOutcomeResult result = await outcomeCoordinator.SaveAsync(
+            currentStageData,
+            isClear,
+            CurrentWaveIndex);
 
         if (!result.Succeeded)
         {
@@ -233,14 +211,21 @@ public class StageSessionController : MonoBehaviour
             return false;
         }
 
-        outcomeSavePending = false;
         return !isClear || CurrentState == StageState.StageClear || TransitionTo(StageState.StageClear);
     }
 
     public async Task<bool> TryPrepareExitAsync()
     {
-        if (outcomeSavePending && !await TrySaveStageOutcomeAsync(pendingOutcomeIsClear))
-            return false;
+        if (outcomeCoordinator?.HasPendingOutcome == true)
+        {
+            bool isClear = outcomeCoordinator.PendingIsClear;
+            StageOutcomeResult result = await outcomeCoordinator.RetryPendingAsync();
+            if (!result.Succeeded)
+                return false;
+
+            if (isClear && CurrentState != StageState.StageClear && !TransitionTo(StageState.StageClear))
+                return false;
+        }
 
         if (CurrentState != StageState.StageClear && CurrentState != StageState.StageFail)
             return false;
