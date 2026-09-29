@@ -60,10 +60,9 @@ public class Axeman_BerserkerInstinct : PassiveSkillBase
             durationSeconds: duration
         );
 
-        owner.BuffController.RemoveBuff(attackBuffId, StatRefreshPolicy.KeepRatio);
-        owner.BuffController.RemoveBuff(attackSpeedBuffId, StatRefreshPolicy.KeepRatio);
-
-        owner.BuffController.AddBuff(attackBuff, StatRefreshPolicy.KeepRatio);
-        owner.BuffController.AddBuff(attackSpeedBuff, StatRefreshPolicy.KeepRatio);
+        owner.BuffController.UpsertBuffs(
+            attackBuff,
+            attackSpeedBuff,
+            StatRefreshPolicy.KeepRatio);
     }
 }

@@ -50,11 +50,61 @@ public class UnitBuffController : MonoBehaviour
         owner.StatService.Recalculate(refreshPolicy);
     }
 
+    public void UpsertBuff(RuntimeBuff buff, StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
+    {
+        if (buff == null)
+            return;
+
+        RemoveBuffWithoutRefresh(buff.BuffId);
+        activeBuffs.Add(buff);
+        owner.StatService.Recalculate(refreshPolicy);
+    }
+
+    public void UpsertBuffs(
+        RuntimeBuff first,
+        RuntimeBuff second,
+        StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
+    {
+        if (first == null && second == null)
+            return;
+
+        if (first != null)
+        {
+            RemoveBuffWithoutRefresh(first.BuffId);
+            activeBuffs.Add(first);
+        }
+
+        if (second != null)
+        {
+            RemoveBuffWithoutRefresh(second.BuffId);
+            activeBuffs.Add(second);
+        }
+
+        owner.StatService.Recalculate(refreshPolicy);
+    }
+
     public void RemoveBuff(string buffId, StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
     {
-        int removed = activeBuffs.RemoveAll(x => x.BuffId == buffId);
+        int removed = RemoveBuffWithoutRefresh(buffId);
         if (removed > 0)
             owner.StatService.Recalculate(refreshPolicy);
+    }
+
+    public void RemoveBuffs(
+        string firstBuffId,
+        string secondBuffId,
+        StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
+    {
+        int removed = RemoveBuffWithoutRefresh(firstBuffId);
+        removed += RemoveBuffWithoutRefresh(secondBuffId);
+
+        if (removed > 0)
+            owner.StatService.Recalculate(refreshPolicy);
+    }
+
+    private int RemoveBuffWithoutRefresh(string buffId)
+    {
+        return activeBuffs.RemoveAll(x => x.BuffId == buffId);
     }
 
     public void CompleteWave()

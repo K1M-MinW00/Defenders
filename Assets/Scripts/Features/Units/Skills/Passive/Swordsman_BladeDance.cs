@@ -50,7 +50,6 @@ public class Swordsman_BladeDance : PassiveSkillBase
             durationSeconds: stackDuration
         );
 
-        owner.BuffController.RemoveBuff(buffId, StatRefreshPolicy.KeepRatio);
-        owner.BuffController.AddBuff(buff, StatRefreshPolicy.KeepRatio);
+        owner.BuffController.UpsertBuff(buff, StatRefreshPolicy.KeepRatio);
     }
 }

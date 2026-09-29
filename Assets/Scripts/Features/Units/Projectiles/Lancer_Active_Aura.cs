@@ -123,11 +123,10 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
             durationSeconds: buffDuration
         );
 
-        unit.BuffController.RemoveBuff(attackBuffId, StatRefreshPolicy.KeepRatio);
-        unit.BuffController.RemoveBuff(attackSpeedBuffId, StatRefreshPolicy.KeepRatio);
-
-        unit.BuffController.AddBuff(attackBuff, StatRefreshPolicy.KeepRatio);
-        unit.BuffController.AddBuff(attackSpeedBuff, StatRefreshPolicy.KeepRatio);
+        unit.BuffController.UpsertBuffs(
+            attackBuff,
+            attackSpeedBuff,
+            StatRefreshPolicy.KeepRatio);
     }
 
     private void RemoveBuff(UnitController unit)
@@ -135,8 +134,10 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
         if (unit == null)
             return;
 
-        unit.BuffController.RemoveBuff(attackBuffId, StatRefreshPolicy.KeepRatio);
-        unit.BuffController.RemoveBuff(attackSpeedBuffId, StatRefreshPolicy.KeepRatio);
+        unit.BuffController.RemoveBuffs(
+            attackBuffId,
+            attackSpeedBuffId,
+            StatRefreshPolicy.KeepRatio);
     }
 
     private void CleanupAllBuffs()
