@@ -4,8 +4,15 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitMovementController : MonoBehaviour
 {
+    [Header("Path Refresh")]
+    [SerializeField, Min(0.02f)] private float pathRefreshInterval = 0.15f;
+    [SerializeField, Min(0f)] private float destinationChangeThreshold = 0.1f;
+
     private UnitController owner;
     private NavMeshAgent agent;
+    private Vector3 lastDestination;
+    private float nextPathRefreshTime;
+    private bool hasDestination;
 
     public NavMeshAgent Agent => agent;
 
@@ -29,6 +36,7 @@ public class UnitMovementController : MonoBehaviour
 
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+        ResetPathRefresh();
     }
 
     public void MoveTo(Vector3 destination)
@@ -37,7 +45,21 @@ public class UnitMovementController : MonoBehaviour
             return;
 
         agent.isStopped = false;
-        agent.SetDestination(destination);
+
+        if (hasDestination && Time.time < nextPathRefreshTime)
+            return;
+
+        nextPathRefreshTime = Time.time + pathRefreshInterval;
+
+        float thresholdSqr = destinationChangeThreshold * destinationChangeThreshold;
+        if (hasDestination && (destination - lastDestination).sqrMagnitude <= thresholdSqr)
+            return;
+
+        if (!agent.SetDestination(destination))
+            return;
+
+        lastDestination = destination;
+        hasDestination = true;
     }
 
     public void Stop()
@@ -51,6 +73,7 @@ public class UnitMovementController : MonoBehaviour
             agent.ResetPath();
         }
 
+        ResetPathRefresh();
         agent.enabled = false;
     }
 
@@ -78,4 +101,19 @@ public class UnitMovementController : MonoBehaviour
 
         return agent.isOnNavMesh;
     }
+
+    private void ResetPathRefresh()
+    {
+        hasDestination = false;
+        lastDestination = Vector3.zero;
+        nextPathRefreshTime = float.NegativeInfinity;
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        pathRefreshInterval = Mathf.Max(0.02f, pathRefreshInterval);
+        destinationChangeThreshold = Mathf.Max(0f, destinationChangeThreshold);
+    }
+#endif
 }
