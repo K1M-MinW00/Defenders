@@ -7,4 +7,5 @@ public enum StageState
     WaveCleared,
     StageClear,
     StageFail,
+    InitializationFailed,
 }

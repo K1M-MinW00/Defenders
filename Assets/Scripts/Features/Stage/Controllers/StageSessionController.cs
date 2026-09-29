@@ -11,6 +11,9 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageUIController stageUI;
     [SerializeField] private StageProgressService progressService;
 
+    [Header("Scene Flow")]
+    [SerializeField] private string lobbySceneName = "LobbyScene";
+
     [Header("Runtime")]
     [SerializeField] private StageDataSO currentStageData;
     private StageEnterData enterData;
@@ -18,6 +21,7 @@ public class StageSessionController : MonoBehaviour
     private StageWaveSequence waveSequence;
     private readonly StagePhaseMachine phaseMachine = new();
     private StageOutcomeCoordinator outcomeCoordinator;
+    private bool isHandlingInitializationFailure;
 
     public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
@@ -33,42 +37,61 @@ public class StageSessionController : MonoBehaviour
 
     private void Start()
     {
-        if (!HasRequiredSceneReferences())
-            return;
+        _ = InitializeStageAsync();
+    }
 
+    private async Task InitializeStageAsync()
+    {
         if (!TransitionTo(StageState.Loading))
             return;
 
-        if (!GameConfig.IsInitialized)
-            GameConfig.Initialize();
-
-        stageDataProvider = new StageDataProvider(GameConfig.Stages);
         enterData = StageEnterHolder.Consume();
 
-        if(enterData == null)
+        try
         {
-            Debug.LogError("StageEnterData is missing.");
-            return;
+            if (!TryValidateSceneReferences(out string referenceError))
+            {
+                await HandleInitializationFailureAsync(referenceError);
+                return;
+            }
+
+            if (enterData == null)
+            {
+                await HandleInitializationFailureAsync("Stage entry data is missing.");
+                return;
+            }
+
+            if (!GameConfig.IsInitialized)
+                GameConfig.Initialize();
+
+            stageDataProvider = new StageDataProvider(GameConfig.Stages);
+            StageDataSO stageData = stageDataProvider.Load(enterData.Sector, enterData.Stage);
+
+            if (stageData == null)
+            {
+                await HandleInitializationFailureAsync($"Stage data is missing: {enterData.StageKey}");
+                return;
+            }
+
+            if (!stageData.TryValidate(out string validationError))
+            {
+                await HandleInitializationFailureAsync(
+                    $"Stage data validation failed ({stageData.StageKey}): {validationError}");
+                return;
+            }
+
+            if (!TryStartStage(stageData, enterData, out string startError))
+                await HandleInitializationFailureAsync(startError);
         }
-
-        StageDataSO stageData = stageDataProvider.Load(enterData.Sector, enterData.Stage);
-
-        if(stageData == null)
+        catch (Exception exception)
         {
-            Debug.LogError("StageData is missing");
-            return;
+            await HandleInitializationFailureAsync(
+                $"Unexpected stage initialization error: {exception.Message}",
+                exception);
         }
-
-        if (!stageData.TryValidate(out string validationError))
-        {
-            Debug.LogError($"Stage data validation failed ({stageData.StageKey}): {validationError}");
-            return;
-        }
-
-        StartStage(stageData,enterData);
     }
 
-    private void StartStage(StageDataSO stageData, StageEnterData enterData)
+    private bool TryStartStage(StageDataSO stageData, StageEnterData enterData, out string error)
     {
         currentStageData = stageData;
         waveSequence = new StageWaveSequence(stageData.waves);
@@ -76,25 +99,72 @@ public class StageSessionController : MonoBehaviour
 
         if (!bootstrapper.TryInitializeStage(stageData, enterData, out _, out string bootstrapError))
         {
-            Debug.LogError($"Stage bootstrap failed ({stageData.StageKey}): {bootstrapError}");
-            return;
+            error = $"Stage bootstrap failed ({stageData.StageKey}): {bootstrapError}";
+            return false;
         }
 
         stageUI.Initialize();
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         EnterPreparePhase();
+        error = string.Empty;
+        return CurrentState == StageState.Preparing;
     }
 
-    private bool HasRequiredSceneReferences()
+    private bool TryValidateSceneReferences(out string error)
     {
         bool valid = phaseRuntimeController != null && rewardService != null &&
                      bootstrapper != null && stageUI != null && progressService != null;
 
-        if (!valid)
-            Debug.LogError($"[{nameof(StageSessionController)}] Required scene references are missing.", this);
-
+        error = valid ? string.Empty : "Required StageSessionController scene references are missing.";
         return valid;
+    }
+
+    private async Task HandleInitializationFailureAsync(string reason, Exception exception = null)
+    {
+        if (isHandlingInitializationFailure)
+            return;
+
+        isHandlingInitializationFailure = true;
+
+        if (exception == null)
+            Debug.LogError($"[{nameof(StageSessionController)}] {reason}", this);
+        else
+            Debug.LogException(exception, this);
+
+        if (phaseMachine.CanTransitionTo(StageState.InitializationFailed))
+            TransitionTo(StageState.InitializationFailed);
+
+        int refundAmount = enterData?.EntryFuelCost ?? 0;
+        bool refundSucceeded = refundAmount <= 0;
+        if (refundAmount > 0)
+        {
+            UserDataManager manager = UserDataManager.Instance;
+            refundSucceeded = manager != null &&
+                              await manager.RefundStageEntryFuelAsync(refundAmount);
+            if (!refundSucceeded)
+                Debug.LogError($"[{nameof(StageSessionController)}] Failed to refund {refundAmount} entry fuel.", this);
+        }
+
+        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
+        if (result == SceneTransitionResult.Succeeded)
+        {
+            string message = refundAmount > 0
+                ? refundSucceeded
+                    ? "스테이지를 불러오지 못해 사용한 연료를 반환했습니다."
+                    : "스테이지를 불러오지 못했으며 연료 반환에도 실패했습니다."
+                : "스테이지를 불러오지 못해 로비로 돌아왔습니다.";
+            UIFeedbackToast.Show(message);
+            return;
+        }
+
+        if (result != SceneTransitionResult.Succeeded && result != SceneTransitionResult.AlreadyLoading && this != null)
+        {
+            isHandlingInitializationFailure = false;
+            Debug.LogError(
+                $"[{nameof(StageSessionController)}] Failed to return to lobby after initialization failure: {result}",
+                this);
+        }
     }
     public void EnterPreparePhase()
     {

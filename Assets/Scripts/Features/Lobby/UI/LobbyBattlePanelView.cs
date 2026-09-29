@@ -121,7 +121,7 @@ public class LobbyBattlePanelView : MonoBehaviour
             return;
         }
 
-        StageEnterHolder.Set(enterData);
+        StageEnterHolder.Set(enterData.WithEntryFuelCost(stageFuelCost));
 
         SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(gameSceneName);
         if (result == SceneTransitionResult.Succeeded || this == null)
