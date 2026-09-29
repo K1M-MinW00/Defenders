@@ -217,6 +217,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         currentWave = null;
         deadMonsterCount = 0;
         spawnFailed = false;
+        waveHpTracker?.ClearWave(notifyCountChanged);
         if (notifyCountChanged)
             NotifyMonsterCounts();
     }

@@ -295,6 +295,9 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
     public void OnDespawn()
     {
+        UnitRoster registeredRoster = unitRoster;
+        registeredRoster?.Unregister(this);
+
         SetCombatActive(false);
         isCombatAlerted = false;
         combat.CancelAttack();

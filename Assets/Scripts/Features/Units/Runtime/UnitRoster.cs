@@ -8,6 +8,20 @@ public class UnitRoster : MonoBehaviour
     private readonly Dictionary<UnitController, float> lastKnownHp = new();
 
     public IReadOnlyList<UnitController> Units => units;
+    public int RegisteredCount
+    {
+        get
+        {
+            int count = 0;
+            for (int i = 0; i < units.Count; i++)
+            {
+                if (units[i] != null)
+                    count++;
+            }
+
+            return count;
+        }
+    }
 
     public event Action OnRosterChanged;
     public event Action OnAliveCountChanged;
@@ -61,7 +75,7 @@ public class UnitRoster : MonoBehaviour
 
     private void HandleUnitHpChanged(UnitController unit, float currentHp, float maxHp)
     {
-        if (unit == null || unit.IsDead)
+        if (unit == null)
             return;
 
         if (!lastKnownHp.TryGetValue(unit, out float prevHp))
@@ -162,5 +176,22 @@ public class UnitRoster : MonoBehaviour
         }
 
         return result;
+    }
+
+    private void OnDestroy()
+    {
+        for (int i = units.Count - 1; i >= 0; i--)
+        {
+            UnitController unit = units[i];
+            if (unit == null || unit.Health == null)
+                continue;
+
+            unit.Health.OnDead -= HandleUnitDead;
+            unit.Health.OnHpChanged -= HandleUnitHpChanged;
+            unit.Health.OnDamaged -= HandleUnitDamaged;
+        }
+
+        units.Clear();
+        lastKnownHp.Clear();
     }
 }

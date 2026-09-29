@@ -15,7 +15,7 @@ public class PopulationManager : MonoBehaviour
     [SerializeField] private int[] increaseCosts = { 5, 10, 15, 20, 25 };
 
     public int MaxPopulation { get; private set; }
-    public int CurrentPopulation => unitRoster?.Units.Count ?? 0;
+    public int CurrentPopulation => unitRoster?.RegisteredCount ?? 0;
     public bool IsInitialized { get; private set; }
 
     public event Action<int, int> OnPopulationChanged;
