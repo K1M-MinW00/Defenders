@@ -70,12 +70,22 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             return;
 
         currentPhase = RuntimePhase.None;
+        CleanupRuntime();
+    }
 
-        prepareTimerController.StopPreparePhase();
-        waveController.StopWave();
+    public void Shutdown()
+    {
+        currentPhase = RuntimePhase.None;
+        CleanupRuntime();
+    }
 
-        stageTimeController.ResetToNormalTime();
-        preparationService.EndCurrentPhase();
+    private void CleanupRuntime()
+    {
+        prepareTimerController?.StopPreparePhase();
+        waveController?.StopWave();
+
+        stageTimeController?.ResetToNormalTime();
+        preparationService?.EndCurrentPhase();
         ClearTransientCombatObjects();
     }
 
@@ -88,5 +98,10 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         }
 
         poolManager.DespawnWaveObjects();
+    }
+
+    private void OnDisable()
+    {
+        Shutdown();
     }
 }

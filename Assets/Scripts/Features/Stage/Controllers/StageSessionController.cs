@@ -22,6 +22,7 @@ public class StageSessionController : MonoBehaviour
     private readonly StagePhaseMachine phaseMachine = new();
     private StageOutcomeCoordinator outcomeCoordinator;
     private bool isHandlingInitializationFailure;
+    private bool isDisposed;
 
     public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
@@ -42,6 +43,9 @@ public class StageSessionController : MonoBehaviour
 
     private async Task InitializeStageAsync()
     {
+        if (isDisposed)
+            return;
+
         if (!TransitionTo(StageState.Loading))
             return;
 
@@ -122,7 +126,7 @@ public class StageSessionController : MonoBehaviour
 
     private async Task HandleInitializationFailureAsync(string reason, Exception exception = null)
     {
-        if (isHandlingInitializationFailure)
+        if (isDisposed || isHandlingInitializationFailure)
             return;
 
         isHandlingInitializationFailure = true;
@@ -146,7 +150,13 @@ public class StageSessionController : MonoBehaviour
                 Debug.LogError($"[{nameof(StageSessionController)}] Failed to refund {refundAmount} entry fuel.", this);
         }
 
+        if (isDisposed)
+            return;
+
         SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
+        if (isDisposed)
+            return;
+
         if (result == SceneTransitionResult.Succeeded)
         {
             string message = refundAmount > 0
@@ -168,6 +178,9 @@ public class StageSessionController : MonoBehaviour
     }
     public void EnterPreparePhase()
     {
+        if (isDisposed)
+            return;
+
         if (!TransitionTo(StageState.Preparing))
             return;
 
@@ -178,11 +191,17 @@ public class StageSessionController : MonoBehaviour
 
     private void OnPrepareFinished()
     {
+        if (isDisposed)
+            return;
+
         EnterCombatPhase();
     }
 
     public void EnterCombatPhase()
     {
+        if (isDisposed)
+            return;
+
         if (!TransitionTo(StageState.Combat))
             return;
 
@@ -193,12 +212,15 @@ public class StageSessionController : MonoBehaviour
 
     private void OnWaveWin()
     {
+        if (isDisposed)
+            return;
+
         _ = HandleWaveWinAsync();
     }
 
     private async Task HandleWaveWinAsync()
     {
-        if (CurrentState != StageState.Combat)
+        if (isDisposed || CurrentState != StageState.Combat)
             return;
 
         if (!TransitionTo(StageState.WaveCleared))
@@ -217,6 +239,9 @@ public class StageSessionController : MonoBehaviour
         }
 
         bool saved = await progressService.RecordWaveClearAsync(currentStageData, clearedWaveCount);
+        if (isDisposed)
+            return;
+
         if (!saved)
             Debug.LogWarning($"Wave progress save failed: {currentStageData.StageKey}, cleared waves: {clearedWaveCount}");
 
@@ -231,11 +256,17 @@ public class StageSessionController : MonoBehaviour
 
     private void OnWaveLose()
     {
+        if (isDisposed)
+            return;
+
         _ = HandleWaveLoseAsync(allowPreparingFailure: false);
     }
 
     private async Task HandleWaveLoseAsync(bool allowPreparingFailure)
     {
+        if (isDisposed)
+            return;
+
         bool canFail = CurrentState == StageState.Combat ||
                        (allowPreparingFailure && CurrentState == StageState.Preparing);
 
@@ -256,6 +287,9 @@ public class StageSessionController : MonoBehaviour
 
     private async Task HandleStageClear()
     {
+        if (isDisposed)
+            return;
+
         stageUI.ShowStageClear(
             currentStageData,
             waveSequence.ClearedWaveCount,
@@ -265,10 +299,16 @@ public class StageSessionController : MonoBehaviour
 
     private async Task<bool> TrySaveStageOutcomeAsync(bool isClear)
     {
+        if (isDisposed)
+            return false;
+
         StageOutcomeResult result = await outcomeCoordinator.SaveAsync(
             currentStageData,
             isClear,
             CurrentWaveIndex);
+
+        if (isDisposed)
+            return false;
 
         if (!result.Succeeded)
         {
@@ -283,11 +323,14 @@ public class StageSessionController : MonoBehaviour
 
     public async Task<bool> TryPrepareExitAsync()
     {
+        if (isDisposed)
+            return false;
+
         if (outcomeCoordinator?.HasPendingOutcome == true)
         {
             bool isClear = outcomeCoordinator.PendingIsClear;
             StageOutcomeResult result = await outcomeCoordinator.RetryPendingAsync();
-            if (!result.Succeeded)
+            if (isDisposed || !result.Succeeded)
                 return false;
 
             if (isClear && CurrentState != StageState.StageClear && !TransitionTo(StageState.StageClear))
@@ -302,6 +345,9 @@ public class StageSessionController : MonoBehaviour
 
     public void RequestStageFail()
     {
+        if (isDisposed)
+            return;
+
         _ = HandleWaveLoseAsync(allowPreparingFailure: true);
     }
 
@@ -312,5 +358,15 @@ public class StageSessionController : MonoBehaviour
 
         Debug.LogError($"Invalid stage phase transition: {CurrentState} -> {next}");
         return false;
+    }
+
+    private void OnDestroy()
+    {
+        if (isDisposed)
+            return;
+
+        isDisposed = true;
+        phaseRuntimeController?.Shutdown();
+        stageUI?.Dispose();
     }
 }
