@@ -29,6 +29,12 @@ public class UnitFSMController : MonoBehaviour
         fsm?.Tick();
     }
 
+    public void ResetRuntime()
+    {
+        fsm?.Reset();
+        owner = null;
+    }
+
     public bool TryChangeToSkill()
     {
         if (!CanEnterCombatState())

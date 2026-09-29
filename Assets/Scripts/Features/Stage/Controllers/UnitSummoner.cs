@@ -54,16 +54,36 @@ public class UnitSummoner : MonoBehaviour
             return false;
 
         Vector3 pos = ResolveSpawnPosition();
-        GameObject go = Instantiate(data.unitPrefab, pos, Quaternion.identity, unitsRoot);
+        Poolable spawned = poolManager.Spawn(
+            data.unitPrefab,
+            pos,
+            Quaternion.identity,
+            PoolCategory.Unit,
+            unitsRoot);
 
-        UnitController unit = go.GetComponent<UnitController>();
+        if (spawned == null || !spawned.TryGetComponent(out UnitController unit))
+        {
+            Debug.LogError($"Unit spawn failed: UnitController is missing on {data.unitPrefab.name}.");
+
+            if (spawned != null)
+                poolManager.Despawn(spawned);
+
+            return false;
+        }
 
         UserUnitData userData = FindUserUnitData(data);
         StageUnitInitData initData = new StageUnitInitData(data, userData, 1);
 
         unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
-        unit.Initialize(initData);
-        unit.SetCombatPhase(false);
+        if (!unit.Initialize(initData))
+        {
+            if (unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
+                unit.ReturnToPool();
+            else
+                poolManager.Despawn(spawned);
+
+            return false;
+        }
 
         unitRoster?.Register(unit);
         fusionService?.TryAutoFuse(unit);

@@ -11,12 +11,12 @@ public class FusionService : MonoBehaviour
         if (changedUnit == null || changedUnit.UnitData == null)
             return;
 
-        // ÁØºñ ´Ü°è¿¡¼­¸¸ ÇÕ¼ºµÇµµ·Ï °ÔÀÌÆ®
+        // ì¤€ë¹„ ë‹¨ê³„ì—ì„œë§Œ í•©ì„±ë˜ë„ë¡ ê²Œì´íŠ¸
         if (stageSession == null || stageSession.CurrentState != StageState.Preparing)
             return;
 
-        // ¿¬¼â ÇÕ¼º Ã³¸®
-        // Á¤Ã¥: "±âÁ¸ À¯´ÖÀ» ³²±â°í", changedUnitÀº ¼Ò¸ğµÉ ¼ö ÀÖÀ½
+        // ì—°ì‡„ í•©ì„± ì²˜ë¦¬
+        // ì •ì±…: "ê¸°ì¡´ ìœ ë‹›ì„ ë‚¨ê¸°ê³ ", changedUnitì€ ì†Œëª¨ë  ìˆ˜ ìˆìŒ
         UnitController seed = changedUnit;
 
         while (seed != null && seed.UnitData != null)
@@ -28,28 +28,31 @@ public class FusionService : MonoBehaviour
 
             string unitId = seed.UnitId;
 
-            // °°Àº (unitId, star)ÀÎ "´Ù¸¥ À¯´Ö" Ã£±â
+            // ê°™ì€ (unitId, star)ì¸ "ë‹¤ë¥¸ ìœ ë‹›" ì°¾ê¸°
             UnitController other = roster.FindAny(unitId, star, exclude: seed);
 
             if (other == null)
                 break;
 
-            // ³²±æ À¯´Ö °áÁ¤:
-            // - ¿¬Ãâ °í·Á: ±âÁ¸(other)À» ³²±â°í seed(»õ·Î »ÌÀº À¯´Ö)¸¦ ¼Ò¸ğ
+            // ë‚¨ê¸¸ ìœ ë‹› ê²°ì •:
+            // - ì—°ì¶œ ê³ ë ¤: ê¸°ì¡´(other)ì„ ë‚¨ê¸°ê³  seed(ìƒˆë¡œ ë½‘ì€ ìœ ë‹›)ë¥¼ ì†Œëª¨
             UnitController keep = other;
             UnitController consume = seed;
 
-            // ¸¸¾à seed°¡ ±âÁ¸ÀÌ°í other°¡ »õ·Î »ÌÈù ÂÊÀÌ µÇµµ·Ï ¹Ù²Ù°í ½ÍÀ¸¸é Á¤Ã¥ º¯°æ °¡´É
-            // (ÇöÀç´Â seed=»õ À¯´ÖÀ¸·Î µé¾î¿Â´Ù´Â °¡Á¤)
+            // ë§Œì•½ seedê°€ ê¸°ì¡´ì´ê³  otherê°€ ìƒˆë¡œ ë½‘íŒ ìª½ì´ ë˜ë„ë¡ ë°”ê¾¸ê³  ì‹¶ìœ¼ë©´ ì •ì±… ë³€ê²½ ê°€ëŠ¥
+            // (í˜„ì¬ëŠ” seed=ìƒˆ ìœ ë‹›ìœ¼ë¡œ ë“¤ì–´ì˜¨ë‹¤ëŠ” ê°€ì •)
 
-            // ½Â±Ş
+            if (!consume.TryBeginRemoval(UnitRemovalReason.Fused))
+                break;
+
+            // ìŠ¹ê¸‰
             keep.ApplyStarUp();
 
-            // ¼Ò¸ğ À¯´Ö Á¦°Å
+            // ì†Œëª¨ ìœ ë‹› ì œê±°
             roster.Unregister(consume);
-            Destroy(consume.gameObject);
+            consume.ReturnToPool();
 
-            // ´ÙÀ½ ¿¬¼â ÇÕ¼ºÀÇ seed´Â "½Â±ŞµÈ keep"
+            // ë‹¤ìŒ ì—°ì‡„ í•©ì„±ì˜ seedëŠ” "ìŠ¹ê¸‰ëœ keep"
             seed = keep;
         }
     }

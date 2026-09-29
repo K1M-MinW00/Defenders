@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum PoolCategory
 {
+    Unit,
     Monster,
     Projectile,
     Effect,
@@ -104,6 +105,7 @@ public class StagePoolManager : MonoBehaviour
     {
         return category switch
         {
+            PoolCategory.Unit => transform,
             PoolCategory.Monster => monsterRoot,
             PoolCategory.Projectile => projectileRoot,
             PoolCategory.Effect => effectRoot,

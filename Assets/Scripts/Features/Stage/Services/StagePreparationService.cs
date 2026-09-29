@@ -36,7 +36,6 @@ public class StagePreparationService : MonoBehaviour
         placementController.EnablePlacement(true);
 
         unitResetService.RestoreAll(unitRoster);
-        SetUnitsCombatPhase(false);
     }
 
     public void ExitPrepareMode()
@@ -46,7 +45,7 @@ public class StagePreparationService : MonoBehaviour
         placementController.EnablePlacement(false);
 
         unitResetService.CapturePreWavePositions(unitRoster);
-        SetUnitsCombatPhase(true);
+        BeginUnitsCombat();
     }
 
     public void EndCurrentPhase()
@@ -60,7 +59,7 @@ public class StagePreparationService : MonoBehaviour
         foreach (UnitController unit in unitRoster.Units)
         {
             if (unit != null)
-                unit.SuspendCombat();
+                unit.CompleteWave();
         }
     }
 
@@ -110,11 +109,13 @@ public class StagePreparationService : MonoBehaviour
         if (!isPrepareMode || unit == null)
             return false;
 
+        if (!unit.TryBeginRemoval(UnitRemovalReason.Sold))
+            return false;
+
+        int star = unit.Star;
         unitRoster.Unregister(unit);
-
-        economyManager.SellUnit(unit.Star);
-
-        Destroy(unit.gameObject);
+        economyManager.SellUnit(star);
+        unit.ReturnToPool();
 
         return true;
     }
@@ -130,8 +131,11 @@ public class StagePreparationService : MonoBehaviour
         if (!economyManager.TryReroll())
             return false;
 
+        if (!unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
+            return false;
+
         unitRoster.Unregister(unit);
-        Destroy(unit.gameObject);
+        unit.ReturnToPool();
 
 
         bool success = unitSummoner.SummonRandomUnit();
@@ -142,7 +146,7 @@ public class StagePreparationService : MonoBehaviour
         return true;
     }
 
-    private void SetUnitsCombatPhase(bool isCombat)
+    private void BeginUnitsCombat()
     {
         if (unitRoster == null)
             return;
@@ -152,7 +156,7 @@ public class StagePreparationService : MonoBehaviour
             if (unit == null)
                 continue;
 
-            unit.SetCombatPhase(isCombat);
+            unit.BeginCombat();
         }
     }
 }

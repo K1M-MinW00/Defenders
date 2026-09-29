@@ -58,4 +58,13 @@ public class UnitEnergy : MonoBehaviour
         currentEnergy = 0f;
         OnEnergyChanged?.Invoke(currentEnergy, maxEnergy);
     }
+
+    public void ClearRuntimeListeners()
+    {
+        isCombatPhase = false;
+        currentEnergy = 0f;
+        OnEnergyChanged = null;
+        OnEnergyFull = null;
+        owner = null;
+    }
 }

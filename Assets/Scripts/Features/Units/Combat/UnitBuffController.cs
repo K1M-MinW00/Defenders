@@ -180,6 +180,13 @@ public class UnitBuffController : MonoBehaviour
         SyncDebugSnapshot();
     }
 
+    public void ResetRuntime()
+    {
+        activeBuffs.Clear();
+        owner = null;
+        SyncDebugSnapshot();
+    }
+
     public float GetAdditive(StatType statType)
     {
         float total = 0f;

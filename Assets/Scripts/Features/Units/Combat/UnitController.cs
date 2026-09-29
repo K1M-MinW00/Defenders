@@ -2,8 +2,27 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[System.Serializable]
+public enum UnitRuntimeState
+{
+    Despawned,
+    AwaitingInitialization,
+    Preparing,
+    Combat,
+    WaveEnded,
+    Removing
+}
+
+public enum UnitRemovalReason
+{
+    None,
+    Sold,
+    Rerolled,
+    Fused
+}
+
 [RequireComponent(typeof(NavMeshAgent))]
-public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
+public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDamageSource
 {
     [Header("Data")]
     [SerializeField] private UnitDataSO unitData;
@@ -24,6 +43,11 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
     [SerializeField] private UnitBuffController buffController;
     private UnitRoster unitRoster;
     private StagePoolManager poolManager;
+    private Poolable poolable;
+
+    [Header("Runtime State")]
+    [SerializeField] private UnitRuntimeState runtimeState = UnitRuntimeState.Despawned;
+    [SerializeField] private UnitRemovalReason removalReason;
     #region Property
     public UnitDataSO UnitData => unitData;
     public UserUnitData UserUnit => userData;
@@ -52,6 +76,8 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 
     public bool IsDead => Health.IsDead;
     public bool IsCombatPhase { get; private set; }
+    public UnitRuntimeState RuntimeState => runtimeState;
+    public UnitRemovalReason RemovalReason => removalReason;
     public Transform TargetTransform => transform;
     public ICombatHealth CombatHealth => health;
   
@@ -67,7 +93,7 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 
     private void Update()
     {
-        if (runtime == null || IsDead)
+        if (runtime == null || RuntimeState == UnitRuntimeState.Removing || IsDead)
             return;
 
         energy.Tick(Time.deltaTime);
@@ -86,8 +112,16 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         this.poolManager = poolManager;
     }
 
-    public void Initialize(StageUnitInitData initData)
+    public bool Initialize(StageUnitInitData initData)
     {
+        CacheComponents();
+
+        if (initData == null || initData.UnitData == null || initData.UserData == null)
+        {
+            Debug.LogError($"[{nameof(UnitController)}] Initialize failed: unit data is incomplete.", this);
+            return false;
+        }
+
         unitData = initData.UnitData;
         userData = initData.UserData;
 
@@ -105,13 +139,10 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         buffController.Initialize(this);
 
         statService.BuildInitialStats(initData);
-        RestoreForPrepare();
+        EnterPreparation();
 
         OnInitialized?.Invoke(this);
-
-        fsmController.ChangeToIdle();
-
-        anim.SetFacing(true);
+        return true;
     }
 
     private void CacheComponents()
@@ -127,10 +158,15 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         if (rangeIndicator == null) rangeIndicator = GetComponent<UnitRangeIndicator>();
         if (skillController == null) skillController = GetComponent<UnitSkillController>();
         if (buffController == null) buffController = GetComponent<UnitBuffController>();
+        if (poolable == null) poolable = GetComponent<Poolable>();
     }
 
-    public void RestoreForPrepare()
+    public void EnterPreparation()
     {
+        if (runtime == null || RuntimeState == UnitRuntimeState.Removing)
+            return;
+
+        SetCombatActive(false);
         health.RestoreFull();
         energy.ConsumeAll();
 
@@ -147,6 +183,7 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 
         anim.SetFacing(true);
         fsmController.ChangeToIdle();
+        runtimeState = UnitRuntimeState.Preparing;
     }
 
     public void ReceiveCombatAlert()
@@ -181,21 +218,20 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
         OnStatsChanged?.Invoke(this);
     }
 
-    public void SetCombatPhase(bool active)
+    public bool BeginCombat()
     {
-        bool nextCombatPhase = active && !IsDead;
-        if (IsCombatPhase == nextCombatPhase)
-            return;
+        if (RuntimeState != UnitRuntimeState.Preparing || IsDead)
+            return false;
 
-        IsCombatPhase = nextCombatPhase;
-        energy.SetCombatPhase(IsCombatPhase);
-        skillController.SetCombatPhase(IsCombatPhase);
+        runtimeState = UnitRuntimeState.Combat;
+        SetCombatActive(true);
+        return true;
     }
 
-    public void SuspendCombat()
+    public void CompleteWave()
     {
-        bool wasCombatPhase = IsCombatPhase;
-        SetCombatPhase(false);
+        bool wasCombatPhase = RuntimeState == UnitRuntimeState.Combat;
+        SetCombatActive(false);
 
         if (wasCombatPhase)
             buffController.CompleteWave();
@@ -207,6 +243,81 @@ public class UnitController : MonoBehaviour, ICombatTarget, ICombatDamageSource
 
         if (!IsDead)
             fsmController.ChangeToIdle();
+
+        runtimeState = UnitRuntimeState.WaveEnded;
+    }
+
+    public bool TryBeginRemoval(UnitRemovalReason reason)
+    {
+        if (reason == UnitRemovalReason.None ||
+            RuntimeState == UnitRuntimeState.Removing ||
+            RuntimeState == UnitRuntimeState.Despawned)
+            return false;
+
+        SetCombatActive(false);
+        combat.CancelAttack();
+        skillController.CancelSkill();
+        movement.Stop();
+        targeting.ClearTarget();
+        targeting.EnableSensor(false);
+
+        removalReason = reason;
+        runtimeState = UnitRuntimeState.Removing;
+        return true;
+    }
+
+    public void ReturnToPool()
+    {
+        if (RuntimeState != UnitRuntimeState.Removing)
+            return;
+
+        if (poolManager != null && poolable != null)
+        {
+            poolManager.Despawn(poolable);
+            return;
+        }
+
+        Destroy(gameObject);
+    }
+
+    public void OnSpawn()
+    {
+        if (poolable == null)
+            poolable = GetComponent<Poolable>();
+
+        runtimeState = UnitRuntimeState.AwaitingInitialization;
+        removalReason = UnitRemovalReason.None;
+    }
+
+    public void OnDespawn()
+    {
+        SetCombatActive(false);
+        combat.CancelAttack();
+        skillController.Shutdown();
+        movement.Stop();
+        targeting.ClearTarget();
+        targeting.EnableSensor(false);
+        buffController.ResetRuntime();
+        fsmController.ResetRuntime();
+        rangeIndicator.Hide();
+        health.ClearRuntimeListeners();
+        energy.ClearRuntimeListeners();
+
+        runtime = null;
+        unitData = null;
+        userData = null;
+        unitRoster = null;
+        poolManager = null;
+        OnInitialized = null;
+        OnStatsChanged = null;
+        runtimeState = UnitRuntimeState.Despawned;
+    }
+
+    private void SetCombatActive(bool active)
+    {
+        IsCombatPhase = active && !IsDead;
+        energy.SetCombatPhase(IsCombatPhase);
+        skillController.SetCombatPhase(IsCombatPhase);
     }
 
     public void FaceTarget()

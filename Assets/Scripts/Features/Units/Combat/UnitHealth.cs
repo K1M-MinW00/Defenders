@@ -102,4 +102,12 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
         OnDead?.Invoke(owner);
     }
+
+    public void ClearRuntimeListeners()
+    {
+        OnHpChanged = null;
+        OnDamaged = null;
+        OnDead = null;
+        owner = null;
+    }
 }

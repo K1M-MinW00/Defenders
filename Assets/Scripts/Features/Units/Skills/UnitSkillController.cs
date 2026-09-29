@@ -29,6 +29,9 @@ public class UnitSkillController : MonoBehaviour
 
     public void Initialize(UnitController owner)
     {
+        if (this.owner != null)
+            this.owner.Energy.OnEnergyFull -= HandleEnergyFull;
+
         this.owner = owner;
 
         promotion = owner.UserUnit.Promotion;
@@ -40,6 +43,24 @@ public class UnitSkillController : MonoBehaviour
         passiveSkill?.Initialize(owner, this);
 
         owner.Energy.OnEnergyFull += HandleEnergyFull;
+    }
+
+    public void Shutdown()
+    {
+        if (owner != null)
+            owner.Energy.OnEnergyFull -= HandleEnergyFull;
+
+        isCombatPhase = false;
+        lifecycle.Cancel();
+        activeSkill?.CancelSkill();
+        activeSkill = null;
+        passiveSkill = null;
+        owner = null;
+        promotion = 0;
+        OnSkillStarted = null;
+        OnSkillApplied = null;
+        OnSkillEnded = null;
+        OnSkillCancelled = null;
     }
 
     private bool IsSkillStageUnlocked(SkillDataSO skillData, int stageIndex)
