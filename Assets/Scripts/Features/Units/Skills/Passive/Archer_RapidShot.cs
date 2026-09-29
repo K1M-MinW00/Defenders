@@ -36,8 +36,14 @@ public class Archer_RapidShot : PassiveSkillBase
     private void ApplyArcherBuff()
     {
         float bonus = skillController.HasPassiveUpgrade2 ? upgrade_bonusPercent : bonusPercent;
-        RuntimeBuff buff = new RuntimeBuff(buffId, StatType.AttackPerSec, BuffModifyType.Percent, bonus, BuffDurationType.Timed, buff_duration);
+        BuffApplication buff = new(
+            buffId,
+            StatType.AttackPerSec,
+            BuffModifyType.Percent,
+            bonus,
+            BuffDurationType.Timed,
+            buff_duration);
 
-        owner.BuffController.UpsertBuff(buff, StatRefreshPolicy.KeepRatio);
+        owner.BuffController.ApplyOrRefreshBuff(buff, StatRefreshPolicy.KeepRatio);
     }
 }

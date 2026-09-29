@@ -41,7 +41,7 @@ public class Swordsman_BladeDance : PassiveSkillBase
             effectiveMaxStacks,
             maximumBonus);
 
-        RuntimeBuff buff = new RuntimeBuff(
+        BuffApplication buff = new(
             buffId: buffId,
             statType: StatType.AttackPerSec,
             modifyType: BuffModifyType.Percent,
@@ -50,6 +50,6 @@ public class Swordsman_BladeDance : PassiveSkillBase
             durationSeconds: stackDuration
         );
 
-        owner.BuffController.UpsertBuff(buff, StatRefreshPolicy.KeepRatio);
+        owner.BuffController.ApplyOrRefreshBuff(buff, StatRefreshPolicy.KeepRatio);
     }
 }

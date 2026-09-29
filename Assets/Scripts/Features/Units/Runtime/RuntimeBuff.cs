@@ -26,6 +26,49 @@ public enum BuffDurationType
     UntilStageEnd,
 }
 
+public readonly struct BuffApplication
+{
+    public string BuffId { get; }
+    public StatType StatType { get; }
+    public BuffModifyType ModifyType { get; }
+    public float Value { get; }
+    public BuffDurationType DurationType { get; }
+    public float DurationSeconds { get; }
+    public int RemainingWaves { get; }
+
+    public BuffApplication(
+        string buffId,
+        StatType statType,
+        BuffModifyType modifyType,
+        float value,
+        BuffDurationType durationType,
+        float durationSeconds = 0f,
+        int remainingWaves = 0)
+    {
+        BuffId = buffId;
+        StatType = statType;
+        ModifyType = modifyType;
+        Value = value;
+        DurationType = durationType;
+        DurationSeconds = durationSeconds;
+        RemainingWaves = remainingWaves;
+    }
+
+    public bool IsValid => !string.IsNullOrWhiteSpace(BuffId);
+
+    public RuntimeBuff CreateRuntimeBuff()
+    {
+        return new RuntimeBuff(
+            BuffId,
+            StatType,
+            ModifyType,
+            Value,
+            DurationType,
+            DurationSeconds,
+            RemainingWaves);
+    }
+}
+
 public sealed class RuntimeBuff
 {
     public string BuffId { get; private set; }
@@ -97,5 +140,25 @@ public sealed class RuntimeBuff
             default:
                 return true;
         }
+    }
+
+    public bool CanRefreshFrom(BuffApplication application)
+    {
+        return BuffId == application.BuffId &&
+               StatType == application.StatType &&
+               ModifyType == application.ModifyType &&
+               DurationType == application.DurationType;
+    }
+
+    public bool RefreshFrom(BuffApplication application)
+    {
+        if (!CanRefreshFrom(application))
+            return false;
+
+        bool statChanged = Value != application.Value;
+        Value = application.Value;
+        RemainingTime = application.DurationSeconds;
+        RemainingWaves = application.RemainingWaves;
+        return statChanged;
     }
 }

@@ -41,46 +41,27 @@ public class UnitBuffController : MonoBehaviour
             owner.StatService.Recalculate(StatRefreshPolicy.KeepRatio);
     }
 
-    public void AddBuff(RuntimeBuff buff, StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
-    {
-        if (buff == null)
-            return;
-
-        activeBuffs.Add(buff);
-        owner.StatService.Recalculate(refreshPolicy);
-    }
-
-    public void UpsertBuff(RuntimeBuff buff, StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
-    {
-        if (buff == null)
-            return;
-
-        RemoveBuffWithoutRefresh(buff.BuffId);
-        activeBuffs.Add(buff);
-        owner.StatService.Recalculate(refreshPolicy);
-    }
-
-    public void UpsertBuffs(
-        RuntimeBuff first,
-        RuntimeBuff second,
+    public void ApplyOrRefreshBuff(
+        BuffApplication application,
         StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
     {
-        if (first == null && second == null)
+        if (!application.IsValid)
             return;
 
-        if (first != null)
-        {
-            RemoveBuffWithoutRefresh(first.BuffId);
-            activeBuffs.Add(first);
-        }
+        if (ApplyOrRefreshWithoutRecalculate(application))
+            owner.StatService.Recalculate(refreshPolicy);
+    }
 
-        if (second != null)
-        {
-            RemoveBuffWithoutRefresh(second.BuffId);
-            activeBuffs.Add(second);
-        }
+    public void ApplyOrRefreshBuffs(
+        BuffApplication first,
+        BuffApplication second,
+        StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
+    {
+        bool statChanged = ApplyOrRefreshWithoutRecalculate(first);
+        statChanged |= ApplyOrRefreshWithoutRecalculate(second);
 
-        owner.StatService.Recalculate(refreshPolicy);
+        if (statChanged)
+            owner.StatService.Recalculate(refreshPolicy);
     }
 
     public void RemoveBuff(string buffId, StatRefreshPolicy refreshPolicy = StatRefreshPolicy.KeepRatio)
@@ -105,6 +86,28 @@ public class UnitBuffController : MonoBehaviour
     private int RemoveBuffWithoutRefresh(string buffId)
     {
         return activeBuffs.RemoveAll(x => x.BuffId == buffId);
+    }
+
+    private bool ApplyOrRefreshWithoutRecalculate(BuffApplication application)
+    {
+        if (!application.IsValid)
+            return false;
+
+        for (int i = 0; i < activeBuffs.Count; i++)
+        {
+            RuntimeBuff current = activeBuffs[i];
+            if (current.BuffId != application.BuffId)
+                continue;
+
+            if (current.CanRefreshFrom(application))
+                return current.RefreshFrom(application);
+
+            activeBuffs[i] = application.CreateRuntimeBuff();
+            return true;
+        }
+
+        activeBuffs.Add(application.CreateRuntimeBuff());
+        return true;
     }
 
     public void CompleteWave()

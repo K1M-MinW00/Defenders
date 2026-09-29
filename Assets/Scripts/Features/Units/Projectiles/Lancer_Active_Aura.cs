@@ -105,7 +105,7 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
 
     private void ApplyOrRefreshBuff(UnitController unit)
     {
-        RuntimeBuff attackBuff = new RuntimeBuff(
+        BuffApplication attackBuff = new(
             buffId: attackBuffId,
             statType: StatType.Attack,
             modifyType: BuffModifyType.Percent,
@@ -114,7 +114,7 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
             durationSeconds: buffDuration
         );
 
-        RuntimeBuff attackSpeedBuff = new RuntimeBuff(
+        BuffApplication attackSpeedBuff = new(
             buffId: attackSpeedBuffId,
             statType: StatType.AttackPerSec,
             modifyType: BuffModifyType.Percent,
@@ -123,7 +123,7 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
             durationSeconds: buffDuration
         );
 
-        unit.BuffController.UpsertBuffs(
+        unit.BuffController.ApplyOrRefreshBuffs(
             attackBuff,
             attackSpeedBuff,
             StatRefreshPolicy.KeepRatio);
