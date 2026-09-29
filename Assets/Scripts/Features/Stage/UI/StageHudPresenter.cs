@@ -71,7 +71,7 @@ public class StageHudPresenter : MonoBehaviour
             flowController.OnPrepareTimerChanged += UpdatePrepareTimer;
 
         if (monsterSpawner != null)
-            monsterSpawner.OnAliveCountChanged += UpdateMonsterCount;
+            monsterSpawner.OnRemainingCountChanged += UpdateMonsterCount;
     }
 
     private void Unbind()
@@ -86,7 +86,7 @@ public class StageHudPresenter : MonoBehaviour
             flowController.OnPrepareTimerChanged -= UpdatePrepareTimer;
 
         if (monsterSpawner != null)
-            monsterSpawner.OnAliveCountChanged -= UpdateMonsterCount;
+            monsterSpawner.OnRemainingCountChanged -= UpdateMonsterCount;
     }
 
     private void RefreshInitialValues()

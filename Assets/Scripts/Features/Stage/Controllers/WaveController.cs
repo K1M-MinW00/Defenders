@@ -6,10 +6,12 @@ public class WaveController : MonoBehaviour
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private UnitRoster unitRoster;
 
-    private bool waveEnded;
+    private bool waveEnded = true;
     private bool allMonstersSpawned;
     private Action onWaveWin;
     private Action onWaveLose;
+
+    public bool IsRunning => !waveEnded;
 
     public bool TryStartWave(WaveData waveData, Action onWin, Action onLose)
     {
@@ -33,6 +35,7 @@ public class WaveController : MonoBehaviour
 
         UnsubscribeRuntimeEvents();
         waveEnded = true;
+        ClearCallbacks();
         return false;
     }
 
@@ -85,24 +88,23 @@ public class WaveController : MonoBehaviour
         waveEnded = true;
 
         UnsubscribeRuntimeEvents();
-
-        if (isWin)
-        {
-            onWaveWin?.Invoke();
-        }
-        else
-        {
-            onWaveLose?.Invoke();
-        }
+        Action callback = isWin ? onWaveWin : onWaveLose;
+        ClearCallbacks();
+        callback?.Invoke();
     }
 
     public void StopWave()
     {
-        monsterSpawner?.ClearWaveRuntime();
         UnsubscribeRuntimeEvents();
+        monsterSpawner?.ClearWaveRuntime();
 
         waveEnded = true;
         allMonstersSpawned = false;
+        ClearCallbacks();
+    }
+
+    private void ClearCallbacks()
+    {
         onWaveWin = null;
         onWaveLose = null;
     }
@@ -118,5 +120,10 @@ public class WaveController : MonoBehaviour
 
         if (unitRoster != null)
             unitRoster.OnAliveCountChanged -= HandleUnitAliveChanged;
+    }
+
+    private void OnDisable()
+    {
+        StopWave();
     }
 }

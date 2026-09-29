@@ -24,11 +24,13 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     public int AliveCount => aliveMonsters.Count;
 
     private int plannedMonsterCount => currentWave != null ? currentWave.TotalMonsterCount : 0;
+    private bool IsWaveAborted => spawnFailed || currentWave == null;
     public int RemainingCount => Mathf.Max(0, plannedMonsterCount - deadMonsterCount);
 
     public event Action OnAllMonstersSpawned;
     public event Action OnSpawnFailed;
     public event Action<int> OnAliveCountChanged;
+    public event Action<int> OnRemainingCountChanged;
 
     public void SetSpawnPoints(Transform[] spawnPoints)
     {
@@ -58,12 +60,18 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
         StopSpawning();
 
+        if (currentWave != null || aliveMonsters.Count > 0)
+        {
+            Debug.LogError("StartWave failed. Previous wave runtime has not been cleared.");
+            return false;
+        }
+
         currentWave = waveData;
         deadMonsterCount = 0;
         spawnFailed = false;
 
         aliveMonsters.Clear();
-        OnAliveCountChanged?.Invoke(RemainingCount);
+        NotifyMonsterCounts();
 
         spawnRoutine = StartCoroutine(SpawnWaveRoutine(waveData));
         return true;
@@ -75,11 +83,20 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         {
             yield return StartCoroutine(SpawnSubWave(subWave));
 
-            if (spawnFailed)
+            if (IsWaveAborted)
+            {
+                spawnRoutine = null;
                 yield break;
+            }
 
             if (subWave.delayAfterSubWave > 0f)
                 yield return new WaitForSeconds(subWave.delayAfterSubWave);
+
+            if (IsWaveAborted)
+            {
+                spawnRoutine = null;
+                yield break;
+            }
         }
 
         spawnRoutine = null;
@@ -98,7 +115,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         {
             yield return SpawnEntryRoutine(entry);
 
-            if (spawnFailed)
+            if (IsWaveAborted)
                 yield break;
 
             if (entry.delayAfterGroup > 0f)
@@ -134,6 +151,9 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
         for (int i = 0; i < count; i++)
         {
+            if (IsWaveAborted)
+                yield break;
+
             if (SpawnMonster(entry.data, spawnPoint.position) == null)
             {
                 ReportSpawnFailure($"Failed to spawn monster: {entry.data.name}");
@@ -178,7 +198,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         spawnRoutine = null;
     }
 
-    public void ClearWaveRuntime()
+    public void ClearWaveRuntime(bool notifyCountChanged = true)
     {
         StopSpawning();
 
@@ -197,6 +217,8 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         currentWave = null;
         deadMonsterCount = 0;
         spawnFailed = false;
+        if (notifyCountChanged)
+            NotifyMonsterCounts();
     }
 
     private void ReportSpawnFailure(string reason)
@@ -246,6 +268,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
         waveHpTracker?.RegisterSpawnedMonster(monster);
         aliveMonsters.Add(monster);
+        OnAliveCountChanged?.Invoke(AliveCount);
 
         return monster;
     }
@@ -260,7 +283,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
         deadMonsterCount++;
 
-        OnAliveCountChanged?.Invoke(RemainingCount);
+        NotifyMonsterCounts();
     }
 
     private void HandleMonsterDamaged(MonsterHealth health, DamageResult result)
@@ -277,5 +300,16 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     ICombatTarget ICombatTargetProvider.FindClosestAlive(Vector3 origin)
     {
         return FindClosestAlive(origin);
+    }
+
+    private void NotifyMonsterCounts()
+    {
+        OnAliveCountChanged?.Invoke(AliveCount);
+        OnRemainingCountChanged?.Invoke(RemainingCount);
+    }
+
+    private void OnDisable()
+    {
+        ClearWaveRuntime(notifyCountChanged: false);
     }
 }
