@@ -226,6 +226,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
         runtimeState = UnitRuntimeState.Combat;
         SetCombatActive(true);
+        fsmController.BeginCombat();
         return true;
     }
 
