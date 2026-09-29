@@ -18,6 +18,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
     private int deadMonsterCount;
     private Coroutine spawnRoutine;
+    private bool spawnFailed;
 
     public MonsterWaveHpTracker WaveHpTracker => waveHpTracker;
     public int AliveCount => aliveMonsters.Count;
@@ -26,6 +27,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     public int RemainingCount => Mathf.Max(0, plannedMonsterCount - deadMonsterCount);
 
     public event Action OnAllMonstersSpawned;
+    public event Action OnSpawnFailed;
     public event Action<int> OnAliveCountChanged;
 
     public void SetSpawnPoints(Transform[] spawnPoints)
@@ -33,29 +35,32 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         this.spawnPoints = spawnPoints;
     }
 
-    public void StartWave(WaveData waveData)
+    public bool TryStartWave(WaveData waveData)
     {
         if (waveData == null)
         {
             Debug.LogError("StartWave failed. WaveData is null.");
-            return;
+            return false;
         }
 
-        if (spawnPoints == null || spawnPoints.Length == 0)
+        if (poolManager == null || unitRoster == null ||
+            spawnPoints == null || spawnPoints.Length == 0)
         {
-            Debug.LogError("StartWave failed. SpawnPoints are not set.");
-            return;
+            Debug.LogError("StartWave failed. Spawner dependencies or spawn points are not set.");
+            return false;
         }
 
         StopSpawning();
 
         currentWave = waveData;
         deadMonsterCount = 0;
+        spawnFailed = false;
 
         aliveMonsters.Clear();
         OnAliveCountChanged?.Invoke(RemainingCount);
 
         spawnRoutine = StartCoroutine(SpawnWaveRoutine(waveData));
+        return true;
     }
 
     private IEnumerator SpawnWaveRoutine(WaveData waveData)
@@ -63,6 +68,9 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         foreach (var subWave in waveData.subWaves)
         {
             yield return StartCoroutine(SpawnSubWave(subWave));
+
+            if (spawnFailed)
+                yield break;
 
             if (subWave.delayAfterSubWave > 0f)
                 yield return new WaitForSeconds(subWave.delayAfterSubWave);
@@ -75,11 +83,17 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     private IEnumerator SpawnSubWave(SubWaveData subWave)
     {
         if (subWave == null || subWave.spawnEntries == null)
+        {
+            ReportSpawnFailure("Sub-wave data is missing.");
             yield break;
+        }
 
         foreach (MonsterSpawnEntry entry in subWave.spawnEntries)
         {
             yield return SpawnEntryRoutine(entry);
+
+            if (spawnFailed)
+                yield break;
 
             if (entry.delayAfterGroup > 0f)
                 yield return new WaitForSeconds(entry.delayAfterGroup);
@@ -89,25 +103,36 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     private IEnumerator SpawnEntryRoutine(MonsterSpawnEntry entry)
     {
         if (entry == null)
+        {
+            ReportSpawnFailure("Monster spawn entry is null.");
             yield break;
+        }
 
         if (entry.data == null)
         {
             Debug.LogWarning("MonsterSpawnEntry skipped. MonsterDataSO is null.");
+            ReportSpawnFailure("Monster data is missing.");
             yield break;
         }
 
         Transform spawnPoint = GetSpawnPoint(entry.spawnPointIndex);
 
         if (spawnPoint == null)
+        {
+            ReportSpawnFailure("Monster spawn point is invalid.");
             yield break;
+        }
 
         int count = Mathf.Max(0, entry.count);
         float interval = Mathf.Max(0f, entry.interval);
 
         for (int i = 0; i < count; i++)
         {
-            SpawnMonster(entry.data, spawnPoint.position);
+            if (SpawnMonster(entry.data, spawnPoint.position) == null)
+            {
+                ReportSpawnFailure($"Failed to spawn monster: {entry.data.name}");
+                yield break;
+            }
 
             if (interval > 0f && i < count - 1)
                 yield return new WaitForSeconds(interval);
@@ -165,6 +190,17 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         aliveMonsters.Clear();
         currentWave = null;
         deadMonsterCount = 0;
+        spawnFailed = false;
+    }
+
+    private void ReportSpawnFailure(string reason)
+    {
+        if (spawnFailed)
+            return;
+
+        spawnFailed = true;
+        Debug.LogError($"[{nameof(MonsterSpawner)}] {reason}", this);
+        OnSpawnFailed?.Invoke();
     }
 
     private MonsterController SpawnMonster(MonsterDataSO data, Vector3 spawnPos)

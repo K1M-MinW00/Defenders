@@ -46,8 +46,10 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         prepareTimerController.StopPreparePhase();
         preparationService.ExitPrepareMode();
         stageTimeController.EnterCombatPhase();
-        waveController.StartWave(wave, onWin, onLose);
         currentPhase = RuntimePhase.Combat;
+
+        if (!waveController.TryStartWave(wave, onWin, onLose))
+            onLose?.Invoke();
     }
 
     public void EndCurrentPhase()

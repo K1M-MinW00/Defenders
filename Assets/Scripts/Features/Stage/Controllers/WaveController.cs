@@ -11,10 +11,12 @@ public class WaveController : MonoBehaviour
     private Action onWaveWin;
     private Action onWaveLose;
 
-    public void StartWave(WaveData waveData, Action onWin, Action onLose)
+    public bool TryStartWave(WaveData waveData, Action onWin, Action onLose)
     {
-        if (waveData == null)
-            return;
+        if (waveData == null || monsterSpawner == null || unitRoster == null)
+            return false;
+
+        StopWave();
 
         waveEnded = false;
         allMonstersSpawned = false;
@@ -23,9 +25,15 @@ public class WaveController : MonoBehaviour
 
         monsterSpawner.OnAliveCountChanged += HandleMonsterAliveChanged;
         monsterSpawner.OnAllMonstersSpawned += HandleAllMonstersSpawned;
+        monsterSpawner.OnSpawnFailed += HandleSpawnFailed;
         unitRoster.OnAliveCountChanged += HandleUnitAliveChanged;
-        
-        monsterSpawner.StartWave(waveData);
+
+        if (monsterSpawner.TryStartWave(waveData))
+            return true;
+
+        UnsubscribeRuntimeEvents();
+        waveEnded = true;
+        return false;
     }
 
     private void HandleMonsterAliveChanged(int aliveCount)
@@ -42,6 +50,11 @@ public class WaveController : MonoBehaviour
     private void HandleUnitAliveChanged()
     {
         EvaluateWaveResult();
+    }
+
+    private void HandleSpawnFailed()
+    {
+        FinishWave(false);
     }
 
     private void EvaluateWaveResult()
@@ -71,9 +84,7 @@ public class WaveController : MonoBehaviour
 
         waveEnded = true;
 
-        monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
-        monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
-        unitRoster.OnAliveCountChanged -= HandleUnitAliveChanged;
+        UnsubscribeRuntimeEvents();
 
         if (isWin)
         {
@@ -87,15 +98,25 @@ public class WaveController : MonoBehaviour
 
     public void StopWave()
     {
-        monsterSpawner.ClearWaveRuntime();
-        monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
-        monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
-
-        unitRoster.OnAliveCountChanged -= HandleUnitAliveChanged;
+        monsterSpawner?.ClearWaveRuntime();
+        UnsubscribeRuntimeEvents();
 
         waveEnded = true;
         allMonstersSpawned = false;
         onWaveWin = null;
         onWaveLose = null;
+    }
+
+    private void UnsubscribeRuntimeEvents()
+    {
+        if (monsterSpawner != null)
+        {
+            monsterSpawner.OnAliveCountChanged -= HandleMonsterAliveChanged;
+            monsterSpawner.OnAllMonstersSpawned -= HandleAllMonstersSpawned;
+            monsterSpawner.OnSpawnFailed -= HandleSpawnFailed;
+        }
+
+        if (unitRoster != null)
+            unitRoster.OnAliveCountChanged -= HandleUnitAliveChanged;
     }
 }
