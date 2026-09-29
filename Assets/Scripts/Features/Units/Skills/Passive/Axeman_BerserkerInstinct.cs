@@ -28,9 +28,11 @@ public class Axeman_BerserkerInstinct : PassiveSkillBase
         if (finalDamage <= 0f)
             return;
 
-        cooldown = skillController.HasPassiveUpgrade2 ? upgrade_cooldown : cooldown;
+        float effectiveCooldown = skillController.HasPassiveUpgrade2
+            ? upgrade_cooldown
+            : cooldown;
 
-        if (Time.time < lastProcTime + cooldown)
+        if (Time.time < lastProcTime + effectiveCooldown)
             return;
 
         lastProcTime = Time.time;

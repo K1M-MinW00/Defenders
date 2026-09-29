@@ -29,9 +29,11 @@ public class Swordsman_BladeDance : PassiveSkillBase
             currentStacks = 0;
 
         lastAttackTime = Time.time;
-        maxStacks = skillController.HasPassiveUpgrade2 ? upgrade_maxStacks : maxStacks;
+        int effectiveMaxStacks = skillController.HasPassiveUpgrade2
+            ? upgrade_maxStacks
+            : maxStacks;
 
-        currentStacks = Mathf.Min(currentStacks + 1, maxStacks);
+        currentStacks = Mathf.Min(currentStacks + 1, effectiveMaxStacks);
 
         float totalBonus = currentStacks * attackSpeedBonusPerStack;
 
