@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StageWaveTrackUI : MonoBehaviour
+public sealed class StageWaveTrackUI : MonoBehaviour
 {
+    private const int MaxVisibleNodes = 4;
+    private const int MaxVisibleConnectors = MaxVisibleNodes - 1;
+
     [SerializeField] private Transform waveTrackContainer;
     [SerializeField] private WaveNodeUI waveNodePrefab;
     [SerializeField] private GameObject connectorPrefab;
@@ -16,118 +20,132 @@ public class StageWaveTrackUI : MonoBehaviour
 
     [Header("Connector Colors")]
     [SerializeField] private Color clearedConnectorColor = Color.green;
-    [SerializeField] private Color upcomingConnectorColor = Color.gray;
 
-    private StageDataSO stageData;
+    private readonly List<WaveNodeUI> nodeSlots = new(MaxVisibleNodes);
+    private readonly List<ConnectorSlot> connectorSlots = new(MaxVisibleConnectors);
+    private bool slotsCreated;
 
     public void Initialize(StageDataSO stageData)
     {
-        this.stageData = stageData;
+        EnsureSlots();
     }
 
     public void Refresh(List<WaveData> waves, int currentIndex)
     {
-        if (waveTrackContainer == null || waveNodePrefab == null || waves == null || waves.Count == 0)
-            return;
-
-        Clear();
-
-        List<int> visibleIndices = BuildVisibleWaveIndices(waves.Count, currentIndex);
-        bool showEllipsis = ShouldShowEllipsis(visibleIndices);
-
-        for (int i = 0; i < visibleIndices.Count; i++)
+        if (waves == null || waves.Count == 0 || !EnsureSlots())
         {
-            int waveIndex = visibleIndices[i];
+            SetAllSlotsActive(false);
+            return;
+        }
 
-            WaveNodeUI node = Instantiate(waveNodePrefab, waveTrackContainer);
-            node.Setup(GetWaveSprite(waves[waveIndex].waveType), waveIndex + 1);
+        currentIndex = Mathf.Clamp(currentIndex, 0, waves.Count - 1);
+        List<int> visibleIndices = BuildVisibleWaveIndices(waves.Count, currentIndex);
 
-            if (waveIndex == currentIndex)
-                node.SetAsCurrent();
-            else
-                node.SetAsUpcoming();
-
-            bool needConnector = i < visibleIndices.Count - 1;
-            if (!needConnector)
+        for (int slotIndex = 0; slotIndex < nodeSlots.Count; slotIndex++)
+        {
+            bool isVisible = slotIndex < visibleIndices.Count;
+            WaveNodeUI node = nodeSlots[slotIndex];
+            node.gameObject.SetActive(isVisible);
+            if (!isVisible)
                 continue;
 
-            bool insertEllipsisHere = showEllipsis && i == 2 && visibleIndices.Count == 4;
+            int waveIndex = visibleIndices[slotIndex];
+            node.Setup(GetWaveSprite(waves[waveIndex].waveType), waveIndex + 1);
+            if (waveIndex == currentIndex)
+                node.SetAsCurrent();
+        }
 
-            if (insertEllipsisHere)
+        for (int slotIndex = 0; slotIndex < connectorSlots.Count; slotIndex++)
+        {
+            bool isVisible = slotIndex < visibleIndices.Count - 1;
+            if (!isVisible)
             {
-                if (ellipsisPrefab != null)
-                    Instantiate(ellipsisPrefab, waveTrackContainer);
+                connectorSlots[slotIndex].Hide();
+                continue;
             }
-            else
-            {
-                CreateConnector(visibleIndices[i], visibleIndices[i + 1], currentIndex);
-            }
+
+            int leftWaveIndex = visibleIndices[slotIndex];
+            int rightWaveIndex = visibleIndices[slotIndex + 1];
+            bool isEllipsis = rightWaveIndex - leftWaveIndex > 1;
+            bool isCleared = currentIndex >= rightWaveIndex;
+            connectorSlots[slotIndex].Show(
+                isEllipsis,
+                isCleared ? clearedConnectorColor : Color.white);
         }
     }
 
-    private void CreateConnector(int leftWaveIndex, int rightWaveIndex, int currentIndex)
+    public static List<int> BuildVisibleWaveIndices(int totalCount, int currentIndex)
     {
-        if (connectorPrefab == null)
-            return;
-
-        GameObject connectorObj = Instantiate(connectorPrefab, waveTrackContainer);
-        Image connectorImage = connectorObj.GetComponent<Image>();
-
-        if (connectorImage == null)
-            return;
-
-        bool isClearedConnector = currentIndex >= rightWaveIndex;
-        connectorImage.color = isClearedConnector ? clearedConnectorColor : upcomingConnectorColor;
-    }
-
-    private void Clear()
-    {
-        for (int i = waveTrackContainer.childCount - 1; i >= 0; i--)
-            Destroy(waveTrackContainer.GetChild(i).gameObject);
-    }
-
-    private bool ShouldShowEllipsis(List<int> visibleIndices)
-    {
-        if (visibleIndices == null || visibleIndices.Count < 4)
-            return false;
-
-        int third = visibleIndices[2];
-        int fourth = visibleIndices[3];
-        return fourth - third > 1;
-    }
-
-    private List<int> BuildVisibleWaveIndices(int totalCount, int currentIndex)
-    {
-        List<int> result = new();
-
+        List<int> result = new(MaxVisibleNodes);
         if (totalCount <= 0)
             return result;
 
         currentIndex = Mathf.Clamp(currentIndex, 0, totalCount - 1);
-
-        if (totalCount <= 4)
+        if (totalCount <= MaxVisibleNodes)
         {
-            for (int i = 0; i < totalCount; i++)
-                result.Add(i);
+            for (int index = 0; index < totalCount; index++)
+                result.Add(index);
             return result;
         }
 
-        int lastWindowStart = totalCount - 4;
+        int finalWaveIndex = totalCount - 1;
+        int blockStart = currentIndex / 3 * 3;
+        bool isFinalBlock = blockStart + 3 >= finalWaveIndex;
 
-        if (currentIndex >= lastWindowStart)
+        if (isFinalBlock)
         {
-            for (int i = lastWindowStart; i < totalCount; i++)
-                result.Add(i);
+            int finalWindowStart = totalCount - MaxVisibleNodes;
+            for (int index = finalWindowStart; index < totalCount; index++)
+                result.Add(index);
             return result;
         }
 
-        int blockStart = (currentIndex / 3) * 3;
         result.Add(blockStart);
         result.Add(blockStart + 1);
         result.Add(blockStart + 2);
-        result.Add(totalCount - 1);
-
+        result.Add(finalWaveIndex);
         return result;
+    }
+
+    private bool EnsureSlots()
+    {
+        if (slotsCreated)
+            return true;
+
+        if (waveTrackContainer == null || waveNodePrefab == null ||
+            connectorPrefab == null || ellipsisPrefab == null)
+        {
+            Debug.LogError($"[{nameof(StageWaveTrackUI)}] Wave track references are missing.", this);
+            return false;
+        }
+
+        for (int slotIndex = 0; slotIndex < MaxVisibleNodes; slotIndex++)
+        {
+            WaveNodeUI node = Instantiate(waveNodePrefab, waveTrackContainer);
+            node.name = $"WaveNode_{slotIndex + 1}";
+            nodeSlots.Add(node);
+
+            if (slotIndex >= MaxVisibleConnectors)
+                continue;
+
+            GameObject line = Instantiate(connectorPrefab, waveTrackContainer);
+            line.name = $"WaveConnector_{slotIndex + 1}";
+            GameObject ellipsis = Instantiate(ellipsisPrefab, waveTrackContainer);
+            ellipsis.name = $"WaveEllipsis_{slotIndex + 1}";
+            connectorSlots.Add(new ConnectorSlot(line, ellipsis));
+        }
+
+        slotsCreated = true;
+        SetAllSlotsActive(false);
+        return true;
+    }
+
+    private void SetAllSlotsActive(bool active)
+    {
+        foreach (WaveNodeUI node in nodeSlots)
+            node.gameObject.SetActive(active);
+        foreach (ConnectorSlot connector in connectorSlots)
+            connector.Hide();
     }
 
     private Sprite GetWaveSprite(WaveType type)
@@ -137,7 +155,40 @@ public class StageWaveTrackUI : MonoBehaviour
             WaveType.Normal => normalWaveSprite,
             WaveType.Elite => eliteWaveSprite,
             WaveType.Boss => bossWaveSprite,
-            _ => normalWaveSprite
+            _ => normalWaveSprite,
         };
+    }
+
+    private sealed class ConnectorSlot
+    {
+        private readonly GameObject lineObject;
+        private readonly Image lineImage;
+        private readonly GameObject ellipsisObject;
+        private readonly TMP_Text ellipsisText;
+
+        public ConnectorSlot(GameObject line, GameObject ellipsis)
+        {
+            lineObject = line;
+            lineImage = line != null ? line.GetComponent<Image>() : null;
+            ellipsisObject = ellipsis;
+            ellipsisText = ellipsis != null ? ellipsis.GetComponent<TMP_Text>() : null;
+        }
+
+        public void Show(bool useEllipsis, Color color)
+        {
+            lineObject.SetActive(!useEllipsis);
+            ellipsisObject.SetActive(useEllipsis);
+
+            if (lineImage != null)
+                lineImage.color = color;
+            if (ellipsisText != null)
+                ellipsisText.color = color;
+        }
+
+        public void Hide()
+        {
+            lineObject.SetActive(false);
+            ellipsisObject.SetActive(false);
+        }
     }
 }

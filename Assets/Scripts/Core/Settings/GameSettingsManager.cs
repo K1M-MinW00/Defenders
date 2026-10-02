@@ -5,8 +5,6 @@ public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManage
 {
     private const string SoundKey = "Setting_Sound";
     private const string LanguageKey = "Setting_Language";
-    
-    private const string VibrationKey = "Setting_Vibration";
     private const string PushKey = "Setting_Push";
 
 
@@ -17,7 +15,6 @@ public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManage
     public event Action<string> OnLanguageChanged;
     public event Action OnSettingsChanged;
 
-    public bool VibrationEnabled { get; private set; }
     public bool PushEnabled { get; private set; }
 
 
@@ -33,8 +30,6 @@ public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManage
         string savedLanguage = PlayerPrefs.GetString(LanguageKey, "ko");
         LanguageCode = savedLanguage == "en" ? "en" : "ko";
 
-        // 
-        VibrationEnabled = PlayerPrefs.GetInt(VibrationKey, 1) == 1;
         PushEnabled = PlayerPrefs.GetInt(PushKey, 1) == 1;
     }
 
@@ -67,15 +62,6 @@ public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManage
         ApplyLanguage();
 
         OnLanguageChanged?.Invoke(languageCode);
-    }
-
-    public void SetVibration(bool enabled)
-    {
-        VibrationEnabled = enabled;
-        PlayerPrefs.SetInt(VibrationKey, enabled ? 1 : 0);
-        PlayerPrefs.Save();
-
-        OnSettingsChanged?.Invoke();
     }
 
     public void SetPush(bool enabled)

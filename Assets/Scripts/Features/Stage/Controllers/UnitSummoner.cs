@@ -68,7 +68,7 @@ public class UnitSummoner : MonoBehaviour
         return true;
     }
 
-    public bool TryCreateRandomUnit(out UnitController unit)
+    public bool TryCreateRandomUnit(out UnitController unit, int initialStar = 1)
     {
         unit = null;
 
@@ -102,7 +102,7 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
-        StageUnitInitData initData = new StageUnitInitData(data, definition.UserData, 1);
+        StageUnitInitData initData = new StageUnitInitData(data, definition.UserData, initialStar);
 
         unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
         if (!unit.Initialize(initData))

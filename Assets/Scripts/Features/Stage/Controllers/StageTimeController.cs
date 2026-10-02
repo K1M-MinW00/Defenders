@@ -16,6 +16,7 @@ public sealed class StageTimeController : MonoBehaviour
     private bool isInitialized;
 
     public float SelectedCombatSpeed => selectedCombatSpeed;
+    public float FastSpeed => fastSpeed;
     public bool IsCombatPhase => isCombatPhase;
     public bool IsPaused => isPaused;
 

@@ -41,11 +41,11 @@ public sealed class UIFeedbackToast : MonoBehaviour
         root.transform.SetAsLastSibling();
 
         RectTransform rootRect = root.GetComponent<RectTransform>();
-        rootRect.anchorMin = new Vector2(0.5f, 0f);
-        rootRect.anchorMax = new Vector2(0.5f, 0f);
-        rootRect.pivot = new Vector2(0.5f, 0f);
-        rootRect.anchoredPosition = new Vector2(0f, 110f);
-        rootRect.sizeDelta = new Vector2(700f, 80f);
+        rootRect.anchorMin = new Vector2(0f, 0.65f);
+        rootRect.anchorMax = new Vector2(1f, 0.65f);
+        rootRect.pivot = new Vector2(0.5f, 0.5f);
+        rootRect.anchoredPosition = Vector2.zero;
+        rootRect.sizeDelta = new Vector2(0f, 80f);
 
         Image background = root.GetComponent<Image>();
         background.color = new Color(0.08f, 0.08f, 0.1f, 0.92f);

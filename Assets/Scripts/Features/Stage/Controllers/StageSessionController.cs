@@ -10,6 +10,7 @@ public class StageSessionController : MonoBehaviour
     [SerializeField] private StageBootstrapper bootstrapper;
     [SerializeField] private StageUIController stageUI;
     [SerializeField] private StageProgressService progressService;
+    [SerializeField] private StageRelicService relicService;
 
     [Header("Scene Flow")]
     [SerializeField] private string lobbySceneName = "LobbyScene";
@@ -108,6 +109,10 @@ public class StageSessionController : MonoBehaviour
         }
 
         stageUI.Initialize();
+        relicService.Initialize(
+            phaseRuntimeController.PreparationService,
+            phaseRuntimeController.MonsterSpawner,
+            stageUI.RelicUI);
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         EnterPreparePhase();
@@ -118,7 +123,8 @@ public class StageSessionController : MonoBehaviour
     private bool TryValidateSceneReferences(out string error)
     {
         bool valid = phaseRuntimeController != null && rewardService != null &&
-                     bootstrapper != null && stageUI != null && progressService != null;
+                     bootstrapper != null && stageUI != null && progressService != null &&
+                     relicService != null;
 
         error = valid ? string.Empty : "Required StageSessionController scene references are missing.";
         return valid;
@@ -186,7 +192,10 @@ public class StageSessionController : MonoBehaviour
 
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
-        phaseRuntimeController.BeginPreparation(CurrentWave, OnPrepareFinished);
+        phaseRuntimeController.BeginPreparation(
+            CurrentWave,
+            waitForFirstUnit: CurrentWaveIndex == 0,
+            onFinished: OnPrepareFinished);
     }
 
     private void OnPrepareFinished()
@@ -229,6 +238,12 @@ public class StageSessionController : MonoBehaviour
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
         rewardService.GiveWaveReward(CurrentWave);
         phaseRuntimeController.EndCurrentPhase();
+
+        if (CurrentWave.waveType == WaveType.Elite && relicService != null)
+            await relicService.PresentChoiceAsync();
+
+        if (isDisposed)
+            return;
 
         int clearedWaveCount = waveSequence.ClearedWaveCount;
 

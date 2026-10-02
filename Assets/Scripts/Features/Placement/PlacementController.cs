@@ -13,11 +13,17 @@ public class PlacementController : MonoBehaviour
     [Header("Section")]
     [SerializeField] private LayerMask unitLayer;
 
+    [Header("Long Press")]
+    [SerializeField, Min(0.1f)] private float longPressDuration = 0.45f;
+
     private bool placementEnabled;
     public bool IsInputEnabled => placementEnabled;
     public UnitController DraggingUnit { get; private set; }
     private Vector3 originalPos;
     private int activeFingerId = -1;
+    private UnitController pressedUnit;
+    private float pressStartedAt;
+    private bool isInfoPanelVisible;
 
     public event Action<UnitController> OnSellRequested;
     public event Action<UnitController> OnRerollRequested;
@@ -41,8 +47,8 @@ public class PlacementController : MonoBehaviour
     {
         placementEnabled = false;
 
-        if (DraggingUnit != null)
-            CancelDrag();
+        if (pressedUnit != null)
+            CancelInteraction();
 
         if (placementArea != null)
             placementArea.SetVisible(false);
@@ -63,24 +69,22 @@ public class PlacementController : MonoBehaviour
         placementArea?.SetVisible(enable);
 
         // 전투 시작 시 드래그 중이던 게 있으면 정리
-        if (!placementEnabled && DraggingUnit != null)
-        {
-            CancelDrag();
-        }
+        if (!placementEnabled && pressedUnit != null)
+            CancelInteraction();
 
         return true;
     }
 
     private void OnDisable()
     {
+        if (pressedUnit != null)
+            CancelInteraction();
+
         SetInputEnabled(false);
     }
 
     private void Update()
     {
-        if (!placementEnabled)
-            return;
-
 #if UNITY_EDITOR || UNITY_STANDALONE
         HandleMouseInput();
 #else
@@ -91,21 +95,21 @@ public class PlacementController : MonoBehaviour
     private void HandleMouseInput()
     {
         if (Input.GetMouseButtonDown(0))
-            TryBeginDrag(Input.mousePosition, IsPointerOverUI());
+            TryBeginInteraction(Input.mousePosition, IsPointerOverUI());
 
-        if (DraggingUnit != null && Input.GetMouseButton(0))
-            Dragging(Input.mousePosition);
+        if (pressedUnit != null && Input.GetMouseButton(0))
+            ContinueInteraction(Input.mousePosition);
 
-        if (DraggingUnit != null && Input.GetMouseButtonUp(0))
-            EndDrag(Input.mousePosition);
+        if (pressedUnit != null && Input.GetMouseButtonUp(0))
+            EndInteraction(Input.mousePosition);
     }
 
     private void HandleTouchInput()
     {
         if (Input.touchCount != 1)
         {
-            if (DraggingUnit != null)
-                CancelDrag();
+            if (pressedUnit != null)
+                CancelInteraction();
             return;
         }
 
@@ -113,32 +117,32 @@ public class PlacementController : MonoBehaviour
         switch (touch.phase)
         {
             case TouchPhase.Began:
-                TryBeginDrag(touch.position, IsPointerOverUI(touch.fingerId));
-                if (DraggingUnit != null)
+                TryBeginInteraction(touch.position, IsPointerOverUI(touch.fingerId));
+                if (pressedUnit != null)
                     activeFingerId = touch.fingerId;
                 break;
 
             case TouchPhase.Moved:
             case TouchPhase.Stationary:
-                if (DraggingUnit != null && activeFingerId == touch.fingerId)
-                    Dragging(touch.position);
+                if (pressedUnit != null && activeFingerId == touch.fingerId)
+                    ContinueInteraction(touch.position);
                 break;
 
             case TouchPhase.Ended:
-                if (DraggingUnit != null && activeFingerId == touch.fingerId)
-                    EndDrag(touch.position);
+                if (pressedUnit != null && activeFingerId == touch.fingerId)
+                    EndInteraction(touch.position);
                 activeFingerId = -1;
                 break;
 
             case TouchPhase.Canceled:
-                if (DraggingUnit != null && activeFingerId == touch.fingerId)
-                    CancelDrag();
+                if (pressedUnit != null && activeFingerId == touch.fingerId)
+                    CancelInteraction();
                 activeFingerId = -1;
                 break;
         }
     }
 
-    private void TryBeginDrag(Vector2 screenPosition, bool isPointerOverUI)
+    private void TryBeginInteraction(Vector2 screenPosition, bool isPointerOverUI)
     {
         if (isPointerOverUI || mainCam == null)
             return;
@@ -151,7 +155,19 @@ public class PlacementController : MonoBehaviour
             return;
 
         var unit = hit.GetComponent<UnitController>();
-        if (unit == null || unit.IsDead || unit.RuntimeState != UnitRuntimeState.Preparing)
+        if (unit == null || unit.IsDead)
+            return;
+
+        bool canInspect = unit.RuntimeState == UnitRuntimeState.Combat ||
+                          (placementEnabled && unit.RuntimeState == UnitRuntimeState.Preparing);
+        if (!canInspect)
+            return;
+
+        pressedUnit = unit;
+        pressStartedAt = Time.unscaledTime;
+        isInfoPanelVisible = false;
+
+        if (!placementEnabled || unit.RuntimeState != UnitRuntimeState.Preparing)
             return;
 
         DraggingUnit = unit;
@@ -164,6 +180,31 @@ public class PlacementController : MonoBehaviour
         bool canReroll = (star == 1);
 
         stageUIController.SetUnitDragMode(true, canReroll,star);
+    }
+
+    private void ContinueInteraction(Vector2 screenPosition)
+    {
+        if (pressedUnit == null)
+            return;
+
+        if (DraggingUnit != null)
+            Dragging(screenPosition);
+
+        if (!isInfoPanelVisible && Time.unscaledTime - pressStartedAt >= longPressDuration)
+        {
+            isInfoPanelVisible = true;
+            stageUIController?.ShowUnitInfo(pressedUnit);
+        }
+    }
+
+    private void EndInteraction(Vector2 screenPosition)
+    {
+        CloseInfoPanel();
+
+        if (DraggingUnit != null)
+            EndDrag(screenPosition);
+        else
+            ClearPressedUnit();
     }
 
     private void Dragging(Vector2 screenPosition)
@@ -218,6 +259,22 @@ public class PlacementController : MonoBehaviour
         FinishDrag();
     }
 
+    private void CancelInteraction()
+    {
+        CloseInfoPanel();
+
+        if (DraggingUnit != null)
+            CancelDrag();
+        else
+            ClearPressedUnit();
+    }
+
+    public void RestoreDraggingUnitPosition()
+    {
+        if (DraggingUnit != null)
+            DraggingUnit.transform.position = originalPos;
+    }
+
     private void FinishDrag()
     {
         UnitController finishedUnit = DraggingUnit;
@@ -233,6 +290,23 @@ public class PlacementController : MonoBehaviour
         }
 
         stageUIController?.SetUnitDragMode(false);
+        ClearPressedUnit();
+    }
+
+    private void CloseInfoPanel()
+    {
+        if (!isInfoPanelVisible)
+            return;
+
+        isInfoPanelVisible = false;
+        stageUIController?.HideUnitInfo();
+    }
+
+    private void ClearPressedUnit()
+    {
+        pressedUnit = null;
+        pressStartedAt = 0f;
+        activeFingerId = -1;
     }
 
     private Vector2 GetWorldPosition(Vector2 screenPosition)

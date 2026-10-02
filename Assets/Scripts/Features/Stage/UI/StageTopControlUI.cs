@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +7,10 @@ public class StageTopControlUI : MonoBehaviour
     [SerializeField] private Button pauseButton;
     [SerializeField] private Button speedButton;
 
-    [Header("Optional Text")]
-    [SerializeField] private TextMeshProUGUI speedText;
+    [Header("Speed Visual")]
+    [SerializeField] private Image speedIcon;
+    [SerializeField] private Sprite normalSpeedSprite;
+    [SerializeField] private Sprite fastSpeedSprite;
 
     private StageTimeController timeController;
 
@@ -58,7 +59,10 @@ public class StageTopControlUI : MonoBehaviour
 
     private void HandleSpeedChanged(float speed)
     {
-        if (speedText != null)
-            speedText.SetText("{0:0.##}x", speed);
+        if (speedIcon == null || timeController == null)
+            return;
+
+        bool isFast = Mathf.Approximately(speed, timeController.FastSpeed);
+        speedIcon.sprite = isFast ? fastSpeedSprite : normalSpeedSprite;
     }
 }

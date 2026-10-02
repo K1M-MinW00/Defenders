@@ -17,9 +17,15 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     [SerializeField] private MonsterPrewarmService monsterPrewarmService;
     [SerializeField] private StageTimeController stageTimeController;
     [SerializeField] private StagePoolManager poolManager;
+    [SerializeField] private MonsterPathPreview pathPreview;
     private RuntimePhase currentPhase;
+    private Action pendingPrepareFinished;
+    private bool isShutdown;
 
-    public void BeginPreparation(WaveData wave, Action onFinished)
+    public StagePreparationService PreparationService => preparationService;
+    public MonsterSpawner MonsterSpawner => monsterSpawner;
+
+    public void BeginPreparation(WaveData wave, bool waitForFirstUnit, Action onFinished)
     {
         if (wave == null)
             throw new ArgumentNullException(nameof(wave));
@@ -27,6 +33,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         if (currentPhase != RuntimePhase.None)
             EndCurrentPhase();
 
+        isShutdown = false;
         currentPhase = RuntimePhase.Preparation;
         try
         {
@@ -37,8 +44,15 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
                 throw new InvalidOperationException("Failed to enter stage preparation mode.");
 
             stageTimeController.ExitCombatPhase();
-            if (!prepareTimerController.TryStartPreparePhase(onFinished))
-                throw new InvalidOperationException("Failed to start the preparation timer.");
+            if (pathPreview == null)
+                throw new InvalidOperationException("MonsterPathPreview is not assigned.");
+
+            pathPreview.Show(wave, monsterSpawner.SpawnPoints, preparationService.UnitRoster);
+            pendingPrepareFinished = onFinished;
+            if (waitForFirstUnit && !preparationService.HasAnyUnit)
+                preparationService.OnUnitRosterChanged += HandleUnitRosterChanged;
+            else
+                StartPrepareTimer();
         }
         catch
         {
@@ -56,6 +70,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             throw new InvalidOperationException($"Cannot begin combat from runtime phase {currentPhase}.");
 
         prepareTimerController.StopPreparePhase();
+        pathPreview?.Hide();
         preparationService.ExitPrepareMode();
         stageTimeController.EnterCombatPhase();
         currentPhase = RuntimePhase.Combat;
@@ -75,12 +90,21 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
 
     public void Shutdown()
     {
+        if (isShutdown)
+            return;
+
+        isShutdown = true;
         currentPhase = RuntimePhase.None;
         CleanupRuntime();
     }
 
     private void CleanupRuntime()
     {
+        if (preparationService != null)
+            preparationService.OnUnitRosterChanged -= HandleUnitRosterChanged;
+
+        pendingPrepareFinished = null;
+        pathPreview?.Hide();
         prepareTimerController?.StopPreparePhase();
         waveController?.StopWave();
 
@@ -89,15 +113,28 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         ClearTransientCombatObjects();
     }
 
+    private void HandleUnitRosterChanged()
+    {
+        if (currentPhase != RuntimePhase.Preparation || !preparationService.HasAnyUnit)
+            return;
+
+        preparationService.OnUnitRosterChanged -= HandleUnitRosterChanged;
+        StartPrepareTimer();
+    }
+
+    private void StartPrepareTimer()
+    {
+        Action onFinished = pendingPrepareFinished;
+        pendingPrepareFinished = null;
+
+        if (!prepareTimerController.TryStartPreparePhase(onFinished))
+            throw new InvalidOperationException("Failed to start the preparation timer.");
+    }
+
     private void ClearTransientCombatObjects()
     {
-        if (poolManager == null)
-        {
-            Debug.LogError($"[{nameof(StagePhaseRuntimeController)}] StagePoolManager is not assigned.", this);
-            return;
-        }
-
-        poolManager.DespawnWaveObjects();
+        if (poolManager != null)
+            poolManager.DespawnWaveObjects();
     }
 
     private void OnDisable()

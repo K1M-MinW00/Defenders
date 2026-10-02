@@ -1,4 +1,3 @@
-using System.IO;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Game/Economy/GameModeEconomyConfig")]
@@ -13,12 +12,12 @@ public class EconomyConfig : ScriptableObject
     public int bossReward = 42;
 
     [Header("Bonus")]
-    public int bonusPer10 = 1;        // 10 당 1
-    public int bonusCap = 5;          // 최대 5
+    [Min(0)] public int bonusPer10 = 1;
+    [Min(0)] public int bonusCap = 5;
 
     [Header("Shop")]
     public int summonUnit = 5;
-    public int[] sellUnit = { 3, 6, 12, 24 }; // 1성 ~ 4성
+    public int[] sellUnit = { 3, 6, 12, 24 };
     public int reRollUnit = 2;
 
     public int GetWaveReward(WaveType type)
@@ -32,17 +31,19 @@ public class EconomyConfig : ScriptableObject
         };
     }
 
-    public int CalculateBonus(int currentGoldBeforeReward)
+    public int CalculateInterestBonus(int currentGoldBeforeReward)
     {
-        if (currentGoldBeforeReward < 10) return 0;
+        if (currentGoldBeforeReward < 10 || bonusPer10 <= 0 || bonusCap <= 0)
+            return 0;
+
         int bonus = (currentGoldBeforeReward / 10) * bonusPer10;
         return Mathf.Min(bonus, bonusCap);
     }
 
     public int CalculateSellUnit(int star)
     {
-        int idx = star-1;
-        if (idx >= sellUnit.Length)
+        int idx = star - 1;
+        if (sellUnit == null || idx < 0 || idx >= sellUnit.Length)
         {
             Debug.LogWarning("Unit star is over the 4th.");
             return -1;

@@ -20,9 +20,11 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     private int plannedMonsterCount;
     private Coroutine spawnRoutine;
     private bool spawnFailed;
+    private float stageMoveSpeedMultiplier = 1f;
 
     public MonsterWaveHpTracker WaveHpTracker => waveHpTracker;
     public int AliveCount => aliveMonsters.Count;
+    public Transform[] SpawnPoints => spawnPoints;
 
     private bool IsWaveAborted => spawnFailed || currentWave == null;
     public int RemainingCount => Mathf.Max(0, plannedMonsterCount - deadMonsterCount);
@@ -35,6 +37,14 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     public void SetSpawnPoints(Transform[] spawnPoints)
     {
         this.spawnPoints = spawnPoints;
+    }
+
+    public void SetStageMoveSpeedMultiplier(float multiplier)
+    {
+        stageMoveSpeedMultiplier = Mathf.Max(0f, multiplier);
+
+        foreach (MonsterController monster in aliveMonsters)
+            monster?.ApplyStageMoveSpeedMultiplier(stageMoveSpeedMultiplier);
     }
 
     public void PrepareWavePreview(WaveData waveData)
@@ -275,6 +285,8 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
             return null;
         }
+
+        monster.ApplyStageMoveSpeedMultiplier(stageMoveSpeedMultiplier);
 
         monster.Health.OnDamaged += HandleMonsterDamaged;
         monster.OnDead += HandleMonsterDead;

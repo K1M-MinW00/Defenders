@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13768d4c406ba8242a0111e0e762a196, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitRangeIndicator
   rangeRenderer: {fileID: 6167471740219561528}
 --- !u!1 &344609166725255392
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5bb1c8876531b964797b514ce3c2c171, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitController
   unitData: {fileID: 0}
   fsmController: {fileID: 3840189056346183932}
@@ -235,6 +235,9 @@ MonoBehaviour:
   rangeIndicator: {fileID: 8571101271341991098}
   skillController: {fileID: 7431971341929807749}
   buffController: {fileID: 3215718443639412451}
+  runtimeState: 0
+  removalReason: 0
+  isCombatAlerted: 0
 --- !u!114 &6445384252813261213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +248,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a95a73a5e4245a418eaf9e74610440c, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitCombatController
   targetRefreshInterval: 0.2
 --- !u!114 &3501047133138749027
@@ -258,7 +261,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c88c82e9dc7e6d40ba96f3ea7deec71, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitEnergy
   energyRecovery: 10
 --- !u!114 &3840189056346183932
@@ -271,8 +274,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d8d4992fe5ea8574b953cc71fa0743ce, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitFSMController
+  idleTargetSearchInterval: 0.1
 --- !u!114 &4355781461577551962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,7 +287,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d94df24284ed7d419b49e70b5249273, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitHealth
 --- !u!114 &4401690349990203883
 MonoBehaviour:
@@ -295,8 +299,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eaede434c96f5f847a97928874b6c4de, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitMovementController
+  pathRefreshInterval: 0.15
+  destinationChangeThreshold: 0.1
 --- !u!114 &8104079232257518155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,7 +313,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3d821a1318a7874ea4a4738a6b45957, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitTargetingController
   rangeSensor: {fileID: 2085443474873524018}
 --- !u!114 &5495357012777275260
@@ -320,7 +326,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b4f046db1c0d4e04e8bf3a53f24016d5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimationController
   view: {fileID: 3303460934689142555}
 --- !u!114 &1838466798527487007
@@ -333,7 +339,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b46e8e9e02bb4d4ebfa0e81b0c0b975, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitStatService
 --- !u!114 &7431971341929807749
 MonoBehaviour:
@@ -345,8 +351,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4700edf9e2de23a44a00a699fd5dbf12, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkillController
+  executionTimeout: 2
 --- !u!114 &3215718443639412451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -357,8 +364,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 921ffd94e10d42149a6acefa3075f9ed, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitBuffController
+  debugActiveBuffCount: 0
+  debugActiveBuffs: []
 --- !u!114 &6338075697721484727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,13 +378,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66116622c9cbcb14f819285f7e7b2c4b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitHUDController
   unit: {fileID: 4470774158927102257}
   root: {fileID: 2774387734849985176}
   hpSlider: {fileID: 663795649373710863}
   energySlider: {fileID: 7222418128686505397}
-  starText: {fileID: 1006081842717739518}
+  starIcon: {fileID: 2800749987292697828}
 --- !u!1 &2774387734849985176
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,7 +560,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 804a8cf066fbfae4a82eaa1b289d251b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::RangeSensor
   enemyLayer:
     serializedVersion: 2
@@ -573,7 +582,7 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -588,7 +597,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0dfba4cafedd5c746b59c362ee9df7e0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimationEvent
 --- !u!114 &3303460934689142555
 MonoBehaviour:
@@ -600,7 +609,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bddb601f1e0834c4eade9165aee91229, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitView
   animator: {fileID: 5553442466312461035}
   visualRoot: {fileID: 1629001870847616044}
@@ -614,7 +623,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c6086e7af712a43b4933c4df1a1cd1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DropSpawnVFX2D
   body: {fileID: 1629001870847616044}
   height: 1.5
@@ -698,7 +707,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -892,19 +901,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
---- !u!114 &1006081842717739518 stripped
+--- !u!114 &2800749987292697828 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6034873282429458952, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8712279569918297874, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
   m_PrefabInstance: {fileID: 6788753528763274230}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Script: {fileID: 11500000, guid: e7dc831ce2bff2741a80c711e8d22cbb, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::UnitStarIconView
 --- !u!114 &7222418128686505397 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4183087968156520003, guid: 0e7fe7bd168411b4ab3df815b9a75115, type: 3}
@@ -914,5 +923,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider

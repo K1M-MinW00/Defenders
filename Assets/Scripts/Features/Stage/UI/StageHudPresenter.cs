@@ -8,6 +8,7 @@ public class StageHudPresenter : MonoBehaviour
     [SerializeField] private TextMeshProUGUI monsterCountText;
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private StageInterestIndicator interestIndicator;
     [SerializeField] private TextMeshProUGUI populationText;
     [SerializeField] private TextMeshProUGUI summonCostText;
     [SerializeField] private TextMeshProUGUI rerollCostText;
@@ -19,6 +20,7 @@ public class StageHudPresenter : MonoBehaviour
     private PopulationManager population;
     private StagePrepareTimerController flowController;
     private MonsterSpawner monsterSpawner;
+    private StagePreparationService preparationService;
 
     public void Initialize(
         StageDataSO stageData,
@@ -26,7 +28,8 @@ public class StageHudPresenter : MonoBehaviour
         EconomyManager economy,
         PopulationManager population,
         StagePrepareTimerController flowController,
-        MonsterSpawner monsterSpawner)
+        MonsterSpawner monsterSpawner,
+        StagePreparationService preparationService)
     {
         Dispose();
 
@@ -34,6 +37,7 @@ public class StageHudPresenter : MonoBehaviour
         this.population = population;
         this.flowController = flowController;
         this.monsterSpawner = monsterSpawner;
+        this.preparationService = preparationService;
 
         cachedState = initialState;
 
@@ -51,6 +55,7 @@ public class StageHudPresenter : MonoBehaviour
         population = null;
         flowController = null;
         monsterSpawner = null;
+        preparationService = null;
         cachedState = StageState.None;
     }
 
@@ -72,6 +77,9 @@ public class StageHudPresenter : MonoBehaviour
 
         if (monsterSpawner != null)
             monsterSpawner.OnRemainingCountChanged += UpdateMonsterCount;
+
+        if (preparationService != null)
+            preparationService.OnFreeRerollsChanged += UpdateRerollCost;
     }
 
     private void Unbind()
@@ -87,6 +95,9 @@ public class StageHudPresenter : MonoBehaviour
 
         if (monsterSpawner != null)
             monsterSpawner.OnRemainingCountChanged -= UpdateMonsterCount;
+
+        if (preparationService != null)
+            preparationService.OnFreeRerollsChanged -= UpdateRerollCost;
     }
 
     private void RefreshInitialValues()
@@ -98,12 +109,21 @@ public class StageHudPresenter : MonoBehaviour
             if (summonCostText != null)
                 summonCostText.SetText("{0}", economy.GetSummonCost());
 
-            if (rerollCostText != null)
-                rerollCostText.SetText("{0}", economy.GetRerollCost());
+            UpdateRerollCost(preparationService?.FreeRerollsRemaining ?? 0);
         }
 
         if (population != null)
             UpdatePopulation(population.CurrentPopulation, population.MaxPopulation);
+    }
+
+    private void UpdateRerollCost(int freeRemaining)
+    {
+        if (rerollCostText == null || economy == null)
+            return;
+
+        rerollCostText.text = freeRemaining > 0
+            ? $"무료 ({freeRemaining}회)"
+            : economy.GetRerollCost().ToString();
     }
 
     private void SetStageInfo(int stageName, int stageId)
@@ -116,6 +136,8 @@ public class StageHudPresenter : MonoBehaviour
     {
         if (goldText != null)
             goldText.SetText("{0}", gold);
+
+        interestIndicator?.SetInterest(economy?.CurrentInterestBonus ?? 0);
     }
 
     private void UpdatePopulation(int current, int max)

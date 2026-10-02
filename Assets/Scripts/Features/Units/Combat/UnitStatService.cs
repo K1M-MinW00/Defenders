@@ -37,6 +37,9 @@ public class UnitStatService : MonoBehaviour
         result.MaxHp = CalculateBuffedValue(StatType.MaxHp, stageBaseStats.MaxHp);
         result.AttackPerSec = CalculateBuffedValue(StatType.AttackPerSec, stageBaseStats.AttackPerSec);
         result.DetectRange = CalculateBuffedValue(StatType.DetectRange, stageBaseStats.DetectRange);
+        result.CritChance = CalculateBuffedValue(StatType.CritChance, stageBaseStats.CritChance);
+        result.CritDamage = CalculateBuffedValue(StatType.CritDamage, stageBaseStats.CritDamage);
+        result.EnergyRecovery = CalculateBuffedValue(StatType.EnergyRecovery, stageBaseStats.EnergyRecovery);
 
         return result;
     }

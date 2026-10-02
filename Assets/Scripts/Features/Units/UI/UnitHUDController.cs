@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,12 +10,14 @@ public class UnitHUDController : MonoBehaviour
     [SerializeField] private GameObject root;
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Slider energySlider;
-    [SerializeField] private TextMeshProUGUI starText;
+    [SerializeField] private UnitStarIconView starIcon;
 
     private void Awake()
     {
         if (unit == null)
             unit = GetComponent<UnitController>();
+        if (starIcon == null)
+            starIcon = GetComponentInChildren<UnitStarIconView>(true);
     }
 
     private void OnEnable()
@@ -92,7 +93,7 @@ public class UnitHUDController : MonoBehaviour
 
     private void RefreshStar()
     {
-        starText.text = unit.Star.ToString();
+        starIcon?.SetStar(unit.Star);
     }
 
     private void RefreshAll()

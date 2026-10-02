@@ -44,7 +44,7 @@ public class StageResultUI : MonoBehaviour
         if (clearWaveText != null)
         {
             int totalWaveCount = stage?.waves?.Count ?? 0;
-            clearWaveText.text = $"살아남은 웨이브 ({clearedWaveCount} / {totalWaveCount})";
+            clearWaveText.text = $"({clearedWaveCount} / {totalWaveCount})";
         }
 
         BindClearRewards(rewards);
@@ -61,7 +61,7 @@ public class StageResultUI : MonoBehaviour
         if (failWaveText != null)
         {
             int totalWaveCount = stage?.waves?.Count ?? 0;
-            failWaveText.text = $"살아남은 웨이브 ({clearedWaveCount} / {totalWaveCount})";
+            failWaveText.text = $"({clearedWaveCount} / {totalWaveCount})";
         }
 
         RewardData fuelReward = FindReward(rewards, RewardType.Fuel);

@@ -15,7 +15,6 @@ public class StagePauseUI : MonoBehaviour
 
     [Header("Toggles")]
     [SerializeField] private Toggle soundToggle;
-    [SerializeField] private Toggle vibrationToggle;
     [SerializeField] private Toggle pushToggle;
 
     private StageTimeController timeController;
@@ -46,7 +45,6 @@ public class StagePauseUI : MonoBehaviour
         exitButton?.onClick.AddListener(HandleExitClicked);
 
         soundToggle?.onValueChanged.AddListener(HandleSoundChanged);
-        vibrationToggle?.onValueChanged.AddListener(HandleVibrationChanged);
         pushToggle?.onValueChanged.AddListener(HandlePushChanged);
 
         timeController.OnPauseChanged += HandlePauseChanged;
@@ -71,9 +69,6 @@ public class StagePauseUI : MonoBehaviour
 
         if (soundToggle != null)
             soundToggle.onValueChanged.RemoveListener(HandleSoundChanged);
-
-        if (vibrationToggle != null)
-            vibrationToggle.onValueChanged.RemoveListener(HandleVibrationChanged);
 
         if (pushToggle != null)
             pushToggle.onValueChanged.RemoveListener(HandlePushChanged);
@@ -105,7 +100,6 @@ public class StagePauseUI : MonoBehaviour
         if (settings != null)
         {
             soundToggle?.SetIsOnWithoutNotify(settings.SoundEnabled);
-            vibrationToggle?.SetIsOnWithoutNotify(settings.VibrationEnabled);
             pushToggle?.SetIsOnWithoutNotify(settings.PushEnabled);
         }
 
@@ -133,14 +127,6 @@ public class StagePauseUI : MonoBehaviour
     private void HandleExternalSoundChanged(bool isOn)
     {
         soundToggle?.SetIsOnWithoutNotify(isOn);
-    }
-
-    private void HandleVibrationChanged(bool isOn)
-    {
-        if (suppressToggleEvent)
-            return;
-
-        settingsManager?.SetVibration(isOn);
     }
 
     private void HandlePushChanged(bool isOn)

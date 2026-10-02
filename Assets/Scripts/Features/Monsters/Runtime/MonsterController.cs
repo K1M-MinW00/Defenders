@@ -132,6 +132,14 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         agent.speed = FinalStats.moveSpeed;
     }
 
+    public void ApplyStageMoveSpeedMultiplier(float multiplier)
+    {
+        if (agent == null || FinalStats == null)
+            return;
+
+        agent.speed = FinalStats.moveSpeed * Mathf.Max(0f, multiplier);
+    }
+
 
     private void HandleDead(MonsterHealth health)
     {

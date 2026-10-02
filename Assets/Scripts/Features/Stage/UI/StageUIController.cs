@@ -11,6 +11,8 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private StageWaveTrackUI waveTrackUI;
     [SerializeField] private StageHpSummaryUI hpSummaryUI;
     [SerializeField] private StageResultUI resultUI;
+    [SerializeField] private StageRelicUI relicUI;
+    [SerializeField] private StageUnitInfoPanel unitInfoPanel;
 
     [Header("Time UI")]
     [SerializeField] private StageTimeController timeController;
@@ -27,6 +29,7 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private MonsterWaveHpTracker monsterHpTracker;
     [SerializeField] private StagePreparationService preparationService;
     private bool isInitialized;
+    public StageRelicUI RelicUI => relicUI;
 
     public void Initialize()
     {
@@ -47,14 +50,16 @@ public class StageUIController : MonoBehaviour
             economy,
             population,
             flowController,
-            monsterSpawner
+            monsterSpawner,
+            preparationService
         );
 
         prepareActionUI?.Initialize(preparationService, flowController);
-        unitDragActionUI?.Initialize(economy);
+        unitDragActionUI?.Initialize(economy, preparationService);
 
         hpSummaryUI?.Initialize(monsterHpTracker, unitHpTracker);
         resultUI?.Initialize(session);
+        relicUI?.Initialize();
         waveTrackUI?.Initialize(session.CurrentStageData);
 
         timeController?.Initialize();
@@ -90,13 +95,19 @@ public class StageUIController : MonoBehaviour
 
     public void SetPhase(StageState state)
     {
+        if (state != StageState.Preparing)
+            HideUnitInfo();
+
         phaseUIView?.SetPhase(state);
         hudPresenter?.SetPhase(state);
+
+        bool isResult = state == StageState.StageClear || state == StageState.StageFail;
+        relicUI?.SetOwnedHudVisible(!isResult);
 
         if (state == StageState.Preparing)
             SetUnitDragMode(false);
 
-        if (state == StageState.StageClear || state == StageState.StageFail)
+        if (isResult)
             return;
 
         if (monsterSpawner != null && session?.CurrentWave != null)
@@ -119,6 +130,23 @@ public class StageUIController : MonoBehaviour
     public void SetUnitDragMode(bool isDraggingUnit, bool canReroll = true, int star = 1)
     {
         unitDragActionUI?.SetDragMode(isDraggingUnit, canReroll, star);
+    }
+
+    public void ShowUnitInfo(UnitController unit)
+    {
+        if (unit == null || session == null)
+            return;
+
+        phaseUIView?.SetTopHudHidden(true, session.CurrentState);
+        unitInfoPanel?.Show(unit);
+    }
+
+    public void HideUnitInfo()
+    {
+        unitInfoPanel?.Hide();
+
+        if (session != null)
+            phaseUIView?.SetTopHudHidden(false, session.CurrentState);
     }
 
     public void ShowStageClear(

@@ -6,6 +6,8 @@ public class EconomyManager : MonoBehaviour
     [SerializeField] private EconomyConfig config;
 
     public int CurrentGold { get; private set; }
+    public int CurrentInterestBonus =>
+        IsInitialized ? config.CalculateInterestBonus(CurrentGold) : 0;
 
     public event Action<int> OnGoldChanged;
     public bool IsInitialized { get; private set; }
@@ -40,8 +42,7 @@ public class EconomyManager : MonoBehaviour
         if (!IsInitialized)
             return false;
 
-        int before = CurrentGold;
-        int bonus = config.CalculateBonus(before);
+        int bonus = CurrentInterestBonus;
         int waveReward = config.GetWaveReward(waveType);
 
         return TryAddGold(bonus + waveReward);

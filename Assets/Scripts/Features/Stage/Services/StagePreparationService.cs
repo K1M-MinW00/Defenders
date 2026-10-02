@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 public class StagePreparationService : MonoBehaviour
 {
+    private const string LastUnitRequiredMessage = "유닛을 1명 이상 배치해야 전투를 시작할 수 있습니다";
+
     [Header("References")]
     [SerializeField] private UnitSummoner unitSummoner;
     [SerializeField] private UnitRoster unitRoster;
@@ -11,8 +13,33 @@ public class StagePreparationService : MonoBehaviour
 
     private bool isPrepareMode;
     private StageUnitTransactionService unitTransactions;
+    private readonly StageRerollAllowance rerollAllowance = new();
 
     public bool IsPrepareMode => isPrepareMode;
+    public bool HasAnyUnit => unitRoster != null && unitRoster.RegisteredCount > 0;
+    public UnitRoster UnitRoster => unitRoster;
+    public UnitSummoner UnitSummoner => unitSummoner;
+    public EconomyManager EconomyManager => economyManager;
+    public int FreeRerollsRemaining => rerollAllowance.Remaining;
+    public event System.Action<int> OnFreeRerollsChanged
+    {
+        add => rerollAllowance.Changed += value;
+        remove => rerollAllowance.Changed -= value;
+    }
+
+    public event System.Action OnUnitRosterChanged
+    {
+        add
+        {
+            if (unitRoster != null)
+                unitRoster.OnRosterChanged += value;
+        }
+        remove
+        {
+            if (unitRoster != null)
+                unitRoster.OnRosterChanged -= value;
+        }
+    }
 
     private void Awake()
     {
@@ -20,7 +47,8 @@ public class StagePreparationService : MonoBehaviour
             unitSummoner,
             unitRoster,
             populationManager,
-            economyManager);
+            economyManager,
+            rerollAllowance);
 
         if (!unitTransactions.IsConfigured)
             Debug.LogError($"[{nameof(StagePreparationService)}] Unit transaction dependencies are missing.", this);
@@ -91,7 +119,18 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySummonUnit()
     {
-        bool succeeded = isPrepareMode && unitTransactions != null && unitTransactions.TrySummonUnit();
+        return TrySummonUnit(out _);
+    }
+
+    public bool TrySummonUnit(out StageUnitTransactionFailure failure)
+    {
+        if (!isPrepareMode || unitTransactions == null)
+        {
+            failure = StageUnitTransactionFailure.NotAvailable;
+            return false;
+        }
+
+        bool succeeded = unitTransactions.TrySummonUnit(out failure);
         if (succeeded)
             GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
 
@@ -100,12 +139,28 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TryIncreasePopulation()
     {
-        return isPrepareMode && unitTransactions != null && unitTransactions.TryIncreasePopulation();
+        return TryIncreasePopulation(out _);
+    }
+
+    public bool TryIncreasePopulation(out StageUnitTransactionFailure failure)
+    {
+        if (!isPrepareMode || unitTransactions == null)
+        {
+            failure = StageUnitTransactionFailure.NotAvailable;
+            return false;
+        }
+
+        return unitTransactions.TryIncreasePopulation(out failure);
     }
 
     private void HandleSellRequested(UnitController unit)
     {
-        TrySellUnit(unit);
+        if (TrySellUnit(unit, out StageUnitTransactionFailure failure))
+            return;
+
+        placementController?.RestoreDraggingUnitPosition();
+        if (failure == StageUnitTransactionFailure.LastUnitRequired)
+            UIFeedbackToast.Show(LastUnitRequiredMessage);
     }
 
     private void HandleRerollRequested(UnitController unit)
@@ -115,7 +170,18 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySellUnit(UnitController unit)
     {
-        return isPrepareMode && unitTransactions != null && unitTransactions.TrySellUnit(unit);
+        return TrySellUnit(unit, out _);
+    }
+
+    public bool TrySellUnit(UnitController unit, out StageUnitTransactionFailure failure)
+    {
+        if (!isPrepareMode || unitTransactions == null)
+        {
+            failure = StageUnitTransactionFailure.NotAvailable;
+            return false;
+        }
+
+        return unitTransactions.TrySellUnit(unit, out failure);
     }
 
     public bool TryRerollUnit(UnitController unit)
@@ -125,6 +191,11 @@ public class StagePreparationService : MonoBehaviour
             GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
 
         return succeeded;
+    }
+
+    public void GrantFreeRerolls(int count)
+    {
+        rerollAllowance.Grant(count);
     }
 
     private void BeginUnitsCombat()
