@@ -16,7 +16,7 @@ MonoBehaviour:
   stage: 3
   mapPrefab: {fileID: 4960614761546158943, guid: 8157f7e2d5de64d48935d55a53f158d6, type: 3}
   waves:
-  - waveType: 0
+  - waveType: 1
     subWaves:
     - spawnEntries:
       - data: {fileID: 11400000, guid: 3c3fbd2179dcd7b49a60604c771b1d48, type: 2}
@@ -42,7 +42,7 @@ MonoBehaviour:
         interval: 0.2
         delayAfterGroup: 0
       delayAfterSubWave: 5
-  - waveType: 0
+  - waveType: 1
     subWaves:
     - spawnEntries:
       - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
@@ -70,7 +70,7 @@ MonoBehaviour:
         interval: 0.2
         delayAfterGroup: 3
       delayAfterSubWave: 1
-  - waveType: 0
+  - waveType: 1
     subWaves:
     - spawnEntries:
       - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
@@ -115,18 +115,18 @@ MonoBehaviour:
   economyConfig: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}
   clearRewards:
   - type: 0
-    id:
+    id: 
     amount: 200
   - type: 1
-    id:
+    id: 
     amount: 20
   - type: 3
     id: material_exp_2
     amount: 1
   - type: 6
-    id:
+    id: 
     amount: 100
   failureRewards:
   - type: 2
-    id:
+    id: 
     amount: 5

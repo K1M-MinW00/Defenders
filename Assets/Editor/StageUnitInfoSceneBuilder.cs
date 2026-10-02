@@ -32,6 +32,7 @@ public static class StageUnitInfoSceneBuilder
         rootRect.pivot = new Vector2(0.5f, 0.5f);
         rootRect.anchoredPosition = Vector2.zero;
         rootRect.sizeDelta = Vector2.zero;
+        rootRect.localScale = Vector3.one;
 
         RemoveIfPresent<Image>(root);
         RemoveIfPresent<VerticalLayoutGroup>(root);
@@ -50,11 +51,11 @@ public static class StageUnitInfoSceneBuilder
 
         GameObject panelObject = CreateUi("Panel", root.transform);
         RectTransform panelRect = panelObject.GetComponent<RectTransform>();
-        panelRect.anchorMin = new Vector2(0f, 1f);
-        panelRect.anchorMax = new Vector2(0.96f, 1f);
+        panelRect.anchorMin = new Vector2(0.02f, 1f);
+        panelRect.anchorMax = new Vector2(0.98f, 1f);
         panelRect.pivot = new Vector2(0f, 1f);
-        panelRect.anchoredPosition = new Vector2(12f, -18f);
-        panelRect.sizeDelta = new Vector2(-12f, 360f);
+        panelRect.anchoredPosition = new Vector2(0f, -24f);
+        panelRect.sizeDelta = new Vector2(0f, 430f);
 
         Image background = panelObject.AddComponent<Image>();
         background.color = new Color(0.045f, 0.15f, 0.31f, 0.97f);
@@ -64,16 +65,16 @@ public static class StageUnitInfoSceneBuilder
         rootLayout.spacing = 10f;
         rootLayout.childAlignment = TextAnchor.UpperCenter;
         rootLayout.childControlWidth = true;
-        rootLayout.childControlHeight = false;
+        rootLayout.childControlHeight = true;
         rootLayout.childForceExpandWidth = true;
         rootLayout.childForceExpandHeight = false;
 
         GameObject header = CreateUi("Header", panelObject.transform, typeof(LayoutElement), typeof(HorizontalLayoutGroup));
         RectTransform headerRect = header.GetComponent<RectTransform>();
-        headerRect.sizeDelta = new Vector2(0f, 56f);
+        headerRect.sizeDelta = new Vector2(0f, 64f);
         LayoutElement headerElement = header.GetComponent<LayoutElement>();
         headerElement.minHeight = 56f;
-        headerElement.preferredHeight = 56f;
+        headerElement.preferredHeight = 64f;
         headerElement.flexibleHeight = 0f;
         HorizontalLayoutGroup headerLayout = header.GetComponent<HorizontalLayoutGroup>();
         headerLayout.spacing = 14f;
@@ -97,11 +98,11 @@ public static class StageUnitInfoSceneBuilder
 
         GameObject content = CreateUi("Content", panelObject.transform, typeof(LayoutElement), typeof(HorizontalLayoutGroup));
         RectTransform contentRect = content.GetComponent<RectTransform>();
-        contentRect.sizeDelta = new Vector2(0f, 264f);
+        contentRect.sizeDelta = new Vector2(0f, 326f);
         LayoutElement contentElement = content.GetComponent<LayoutElement>();
-        contentElement.minHeight = 264f;
-        contentElement.preferredHeight = 264f;
-        contentElement.flexibleHeight = 0f;
+        contentElement.minHeight = 0f;
+        contentElement.preferredHeight = 326f;
+        contentElement.flexibleHeight = 1f;
         HorizontalLayoutGroup contentLayout = content.GetComponent<HorizontalLayoutGroup>();
         contentLayout.spacing = 12f;
         contentLayout.childAlignment = TextAnchor.MiddleCenter;
@@ -110,8 +111,8 @@ public static class StageUnitInfoSceneBuilder
         contentLayout.childForceExpandWidth = false;
         contentLayout.childForceExpandHeight = true;
 
-        GameObject portraitRoot = CreateUi("Portrait", content.transform, typeof(Image), typeof(LayoutElement));
-        SetWidth(portraitRoot, 190f, 0f);
+        GameObject portraitRoot = CreateUi("Portrait", content.transform, typeof(Image));
+        portraitRoot.GetComponent<RectTransform>().sizeDelta = new Vector2(184f, 326f);
         Image portrait = portraitRoot.GetComponent<Image>();
         portrait.preserveAspect = true;
         portrait.raycastTarget = false;
@@ -145,8 +146,8 @@ public static class StageUnitInfoSceneBuilder
 
     private static SkillRefs CreateSkillCard(string objectName, string title, Transform parent)
     {
-        GameObject card = CreateUi(objectName, parent, typeof(Image), typeof(LayoutElement), typeof(VerticalLayoutGroup));
-        SetWidth(card, 260f, 1f);
+        GameObject card = CreateUi(objectName, parent, typeof(Image), typeof(VerticalLayoutGroup));
+        card.GetComponent<RectTransform>().sizeDelta = new Vector2(396f, 326f);
         Image background = card.GetComponent<Image>();
         background.color = new Color(0.1f, 0.14f, 0.2f, 0.96f);
         background.raycastTarget = false;
@@ -155,8 +156,9 @@ public static class StageUnitInfoSceneBuilder
         layout.spacing = 5f;
         layout.childAlignment = TextAnchor.UpperCenter;
         layout.childControlWidth = true;
-        layout.childControlHeight = false;
+        layout.childControlHeight = true;
         layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
 
         TMP_Text header = CreateText("Header", card.transform, 23f, 31f, FontStyles.Bold);
         header.text = title;
@@ -168,8 +170,17 @@ public static class StageUnitInfoSceneBuilder
         icon.preserveAspect = true;
         icon.raycastTarget = false;
         TMP_Text skillName = CreateText("SkillName", card.transform, 21f, 29f, FontStyles.Bold);
-        TMP_Text description = CreateText("Description", card.transform, 17f, 105f, FontStyles.Normal);
+        skillName.enableAutoSizing = true;
+        skillName.fontSizeMin = 14f;
+        skillName.fontSizeMax = 21f;
+        TMP_Text description = CreateText("Description", card.transform, 17f, 110f, FontStyles.Normal);
         description.alignment = TextAlignmentOptions.TopLeft;
+        description.enableAutoSizing = true;
+        description.fontSizeMin = 12f;
+        description.fontSizeMax = 17f;
+        LayoutElement descriptionElement = description.GetComponent<LayoutElement>();
+        descriptionElement.minHeight = 60f;
+        descriptionElement.flexibleHeight = 1f;
         return new SkillRefs(background, icon, skillName, description, lockText);
     }
 

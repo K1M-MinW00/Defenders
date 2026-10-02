@@ -68,7 +68,10 @@ public class UnitSummoner : MonoBehaviour
         return true;
     }
 
-    public bool TryCreateRandomUnit(out UnitController unit, int initialStar = 1)
+    public bool TryCreateRandomUnit(
+        out UnitController unit,
+        int initialStar = 1,
+        Vector3? requestedPosition = null)
     {
         unit = null;
 
@@ -84,7 +87,7 @@ public class UnitSummoner : MonoBehaviour
         if (data == null || data.unitPrefab == null)
             return false;
 
-        Vector3 pos = ResolveSpawnPosition();
+        Vector3 pos = requestedPosition ?? ResolveSpawnPosition();
         Poolable spawned = poolManager.Spawn(
             data.unitPrefab,
             pos,
@@ -115,6 +118,8 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
+        unit.GetComponent<DropSpawnView>()?.Replay();
+
         return true;
     }
 
@@ -124,9 +129,8 @@ public class UnitSummoner : MonoBehaviour
             return FusionResult.None;
 
         unitRoster?.Register(unit);
-        return fusionService != null
-            ? fusionService.TryAutoFuse(unit)
-            : FusionResult.WithoutFusion(unit);
+        fusionService?.BeginAutoFuse(unit);
+        return FusionResult.WithoutFusion(unit);
     }
 
     public void DiscardCreatedUnit(UnitController unit)

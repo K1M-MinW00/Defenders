@@ -19,6 +19,7 @@ public class PlacementController : MonoBehaviour
     private bool placementEnabled;
     public bool IsInputEnabled => placementEnabled;
     public UnitController DraggingUnit { get; private set; }
+    public Vector3 DragOrigin => originalPos;
     private Vector3 originalPos;
     private int activeFingerId = -1;
     private UnitController pressedUnit;
@@ -155,7 +156,7 @@ public class PlacementController : MonoBehaviour
             return;
 
         var unit = hit.GetComponent<UnitController>();
-        if (unit == null || unit.IsDead)
+        if (unit == null || unit.IsDead || unit.IsInteractionLocked)
             return;
 
         bool canInspect = unit.RuntimeState == UnitRuntimeState.Combat ||
@@ -164,6 +165,7 @@ public class PlacementController : MonoBehaviour
             return;
 
         pressedUnit = unit;
+        pressedUnit.GetComponent<UnitHUDController>()?.SetInteractionHidden(true);
         pressStartedAt = Time.unscaledTime;
         isInfoPanelVisible = false;
 
@@ -304,9 +306,17 @@ public class PlacementController : MonoBehaviour
 
     private void ClearPressedUnit()
     {
+        UnitController releasedUnit = pressedUnit;
         pressedUnit = null;
         pressStartedAt = 0f;
         activeFingerId = -1;
+
+        if (releasedUnit != null &&
+            releasedUnit.gameObject.activeInHierarchy &&
+            releasedUnit.RuntimeState != UnitRuntimeState.Removing)
+        {
+            releasedUnit.GetComponent<UnitHUDController>()?.SetInteractionHidden(false);
+        }
     }
 
     private Vector2 GetWorldPosition(Vector2 screenPosition)

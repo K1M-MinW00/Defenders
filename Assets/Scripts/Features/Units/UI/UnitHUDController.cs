@@ -12,6 +12,9 @@ public class UnitHUDController : MonoBehaviour
     [SerializeField] private Slider energySlider;
     [SerializeField] private UnitStarIconView starIcon;
 
+    private bool interactionHidden;
+    private bool transitionHidden;
+
     private void Awake()
     {
         if (unit == null)
@@ -45,6 +48,9 @@ public class UnitHUDController : MonoBehaviour
         unit.Health.OnDead -= HandleDead;
         unit.Health.OnHpChanged -= HandleHpChanged;
         unit.Energy.OnEnergyChanged -= HandleEnergyChanged;
+
+        interactionHidden = false;
+        transitionHidden = false;
     }
 
     private void HandleInitialized(UnitController instance) => RefreshAll();
@@ -72,7 +78,24 @@ public class UnitHUDController : MonoBehaviour
     private void SetHudVisible(bool visible)
     {
         if(root !=  null)
-            root.SetActive(visible);
+            root.SetActive(visible && !interactionHidden && !transitionHidden);
+    }
+
+    public void SetInteractionHidden(bool hidden)
+    {
+        interactionHidden = hidden;
+        RefreshVisibility();
+    }
+
+    public void SetTransitionHidden(bool hidden)
+    {
+        transitionHidden = hidden;
+        RefreshVisibility();
+    }
+
+    private void RefreshVisibility()
+    {
+        SetHudVisible(unit != null && unit.Runtime != null && !unit.IsDead);
     }
 
     private void RefreshHp()

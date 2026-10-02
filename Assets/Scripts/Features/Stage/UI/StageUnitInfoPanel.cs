@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Text;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,8 +17,9 @@ public sealed class StageUnitInfoPanel : MonoBehaviour
     [SerializeField] private UnitStarIconView starIcon;
     [SerializeField] private SkillCard activeCard;
     [SerializeField] private SkillCard passiveCard;
+    [SerializeField] private Vector2 shownAnchoredPosition = new(0f, -24f);
 
-    private Coroutine slideRoutine;
+    private Tween slideTween;
 
     public void Show(UnitController unit)
     {
@@ -54,31 +55,25 @@ public sealed class StageUnitInfoPanel : MonoBehaviour
     {
         StopSlide();
         Canvas.ForceUpdateCanvases();
-        float startX = -panelRect.rect.width - 24f;
-        panelRect.anchoredPosition = new Vector2(startX, -18f);
-        slideRoutine = StartCoroutine(SlideInRoutine(startX));
-    }
+        float startX = shownAnchoredPosition.x - panelRect.rect.width - 24f;
+        panelRect.anchoredPosition = new Vector2(startX, shownAnchoredPosition.y);
 
-    private IEnumerator SlideInRoutine(float startX)
-    {
-        float elapsed = 0f;
-        while (elapsed < SlideDuration)
+        Tween createdTween = panelRect
+            .DOAnchorPos(shownAnchoredPosition, SlideDuration)
+            .SetEase(Ease.OutCubic)
+            .BindTo(this, useUnscaledTime: true);
+
+        slideTween = createdTween;
+        createdTween.OnComplete(() =>
         {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / SlideDuration));
-            panelRect.anchoredPosition = new Vector2(Mathf.Lerp(startX, 12f, t), -18f);
-            yield return null;
-        }
-
-        panelRect.anchoredPosition = new Vector2(12f, -18f);
-        slideRoutine = null;
+            if (slideTween == createdTween)
+                slideTween = null;
+        });
     }
 
     private void StopSlide()
     {
-        if (slideRoutine != null)
-            StopCoroutine(slideRoutine);
-        slideRoutine = null;
+        TweenLifecycle.Kill(ref slideTween);
     }
 
     private static string BuildSkillDescription(SkillDataSO skill, int promotion)

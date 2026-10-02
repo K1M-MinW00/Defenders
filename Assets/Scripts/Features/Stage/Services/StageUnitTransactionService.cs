@@ -157,7 +157,7 @@ public sealed class StageUnitTransactionService
         return true;
     }
 
-    public bool TryRerollUnit(UnitController unit)
+    public bool TryRerollUnit(UnitController unit, UnityEngine.Vector3? replacementPosition = null)
     {
         if (!IsConfigured || unit == null || unit.Star != 1)
             return false;
@@ -166,7 +166,8 @@ public sealed class StageUnitTransactionService
         if (!useFreeReroll && !economyManager.TryReroll())
             return false;
 
-        if (!unitSummoner.TryCreateRandomUnit(out UnitController replacement))
+        UnityEngine.Vector3 spawnPosition = replacementPosition ?? unit.transform.position;
+        if (!unitSummoner.TryCreateRandomUnit(out UnitController replacement, requestedPosition: spawnPosition))
         {
             if (!useFreeReroll)
                 economyManager.RefundGold(economyManager.GetRerollCost());

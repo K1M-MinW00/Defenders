@@ -14,13 +14,23 @@ public class StageHudPresenter : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rerollCostText;
     [SerializeField] private TextMeshProUGUI increaseCostText;
 
+    [Header("Population")]
+    [SerializeField] private Color populationAtCapacityColor = new(1f, 0.25f, 0.25f, 1f);
+
     private StageState cachedState = StageState.None;
+    private Color populationDefaultColor = Color.white;
+    private bool hasPopulationDefaultColor;
 
     private EconomyManager economy;
     private PopulationManager population;
     private StagePrepareTimerController flowController;
     private MonsterSpawner monsterSpawner;
     private StagePreparationService preparationService;
+
+    private void Awake()
+    {
+        CachePopulationDefaultColor();
+    }
 
     public void Initialize(
         StageDataSO stageData,
@@ -143,10 +153,25 @@ public class StageHudPresenter : MonoBehaviour
     private void UpdatePopulation(int current, int max)
     {
         if (populationText != null)
+        {
+            CachePopulationDefaultColor();
             populationText.SetText("{0}/{1}", current, max);
+            populationText.color = current >= max
+                ? populationAtCapacityColor
+                : populationDefaultColor;
+        }
 
         if (increaseCostText != null && population != null)
             increaseCostText.SetText("{0}", population.GetNextIncreaseCost());
+    }
+
+    private void CachePopulationDefaultColor()
+    {
+        if (hasPopulationDefaultColor || populationText == null)
+            return;
+
+        populationDefaultColor = populationText.color;
+        hasPopulationDefaultColor = true;
     }
 
     private void UpdatePrepareTimer(float time)

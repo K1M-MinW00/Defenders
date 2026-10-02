@@ -165,7 +165,12 @@ public class StagePreparationService : MonoBehaviour
 
     private void HandleRerollRequested(UnitController unit)
     {
-        TryRerollUnit(unit);
+        Vector3 replacementPosition = placementController != null
+            ? placementController.DragOrigin
+            : unit.transform.position;
+
+        if (!TryRerollUnit(unit, replacementPosition))
+            placementController?.RestoreDraggingUnitPosition();
     }
 
     public bool TrySellUnit(UnitController unit)
@@ -184,9 +189,10 @@ public class StagePreparationService : MonoBehaviour
         return unitTransactions.TrySellUnit(unit, out failure);
     }
 
-    public bool TryRerollUnit(UnitController unit)
+    public bool TryRerollUnit(UnitController unit, Vector3? replacementPosition = null)
     {
-        bool succeeded = isPrepareMode && unitTransactions != null && unitTransactions.TryRerollUnit(unit);
+        bool succeeded = isPrepareMode && unitTransactions != null &&
+                         unitTransactions.TryRerollUnit(unit, replacementPosition);
         if (succeeded)
             GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
 

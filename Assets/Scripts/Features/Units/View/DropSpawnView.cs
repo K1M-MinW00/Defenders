@@ -1,52 +1,73 @@
-using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class DropSpawnView : MonoBehaviour
 {
-    [SerializeField] private Transform body;        // Body 오브젝트
-    [SerializeField] private float height = 1.5f;   // 떨어지는 높이(월드 유닛이 아니라 local Y)
+    [SerializeField] private Transform body;
+    [SerializeField] private float height = 1.5f;
     [SerializeField] private float duration = 0.25f;
     [SerializeField] private AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     private Vector3 bodyBaseLocalPos;
+    private Tween playTween;
+
+    public bool IsPlaying => playTween != null && playTween.IsActive();
 
     private void Awake()
     {
-        if (body == null) body = transform;
+        if (body == null)
+            body = transform;
         bodyBaseLocalPos = body.localPosition;
     }
 
     private void OnEnable()
     {
-        StartCoroutine(Play());
+        Replay();
     }
 
-    private IEnumerator Play()
+    private void OnDisable()
     {
+        StopPlayback();
+        ResetBody();
+    }
+
+    public void Replay()
+    {
+        if (!isActiveAndEnabled)
+            return;
+
+        StopPlayback();
         Vector3 startPos = bodyBaseLocalPos + Vector3.up * height;
         Vector3 endPos = bodyBaseLocalPos;
-
         Vector3 startScale = Vector3.one * 1.05f;
-        Vector3 endScale = Vector3.one;
 
         body.localPosition = startPos;
         body.localScale = startScale;
 
-        float t = 0f;
-        while (t < duration)
+        Sequence sequence = DOTween.Sequence()
+            .Join(body.DOLocalMove(endPos, duration).SetEase(ease))
+            .Join(body.DOScale(Vector3.one, duration).SetEase(ease))
+            .BindTo(this);
+
+        playTween = sequence;
+        sequence.OnComplete(() =>
         {
-            t += Time.deltaTime;
-            float u = Mathf.Clamp01(t / duration);
-            float e = ease.Evaluate(u);
+            if (playTween == sequence)
+                playTween = null;
+        });
+    }
 
-            body.localPosition = Vector3.LerpUnclamped(startPos, endPos, e);
-            body.localScale = Vector3.LerpUnclamped(startScale, endScale, e);
+    private void StopPlayback()
+    {
+        TweenLifecycle.Kill(ref playTween);
+    }
 
-            yield return null;
-        }
+    private void ResetBody()
+    {
+        if (body == null)
+            return;
 
-        body.localPosition = endPos;
-        body.localScale = endScale;
-
+        body.localPosition = bodyBaseLocalPos;
+        body.localScale = Vector3.one;
     }
 }

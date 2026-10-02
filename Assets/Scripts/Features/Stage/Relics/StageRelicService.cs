@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -6,9 +7,13 @@ public sealed class StageRelicService : MonoBehaviour
 {
     private readonly List<StageRelicDefinition> acquired = new();
     private readonly HashSet<StageRelicId> acquiredIds = new();
+    private readonly Queue<UnitSpawnRequest> pendingUnitSpawns = new();
     private StagePreparationService preparationService;
     private MonsterSpawner monsterSpawner;
     private StageRelicUI ui;
+    private Coroutine unitSpawnRoutine;
+
+    [SerializeField, Min(0f)] private float delayBetweenRelicUnits = 0.5f;
 
     public void Initialize(
         StagePreparationService preparation,
@@ -89,15 +94,37 @@ public sealed class StageRelicService : MonoBehaviour
 
     private void SpawnUnits(int count, int star)
     {
-        UnitSummoner summoner = preparationService?.UnitSummoner;
-        if (summoner == null)
+        if (count <= 0 || preparationService?.UnitSummoner == null)
             return;
 
-        for (int i = 0; i < count; i++)
+        pendingUnitSpawns.Enqueue(new UnitSpawnRequest(count, star));
+        if (unitSpawnRoutine == null)
+            unitSpawnRoutine = StartCoroutine(ProcessUnitSpawnQueue());
+    }
+
+    private IEnumerator ProcessUnitSpawnQueue()
+    {
+        while (pendingUnitSpawns.Count > 0)
         {
-            if (summoner.TryCreateRandomUnit(out UnitController unit, star))
+            UnitSpawnRequest request = pendingUnitSpawns.Dequeue();
+            UnitSummoner summoner = preparationService?.UnitSummoner;
+            if (summoner == null)
+                continue;
+
+            for (int i = 0; i < request.Count; i++)
+            {
+                if (!summoner.TryCreateRandomUnit(out UnitController unit, request.Star))
+                    continue;
+
                 summoner.CommitSummonedUnit(unit);
+
+                bool hasAnotherUnit = i < request.Count - 1 || pendingUnitSpawns.Count > 0;
+                if (hasAnotherUnit && delayBetweenRelicUnits > 0f)
+                    yield return new WaitForSecondsRealtime(delayBetweenRelicUnits);
+            }
         }
+
+        unitSpawnRoutine = null;
     }
 
     private void HandleRosterChanged()
@@ -133,7 +160,34 @@ public sealed class StageRelicService : MonoBehaviour
 
     private void OnDestroy()
     {
+        StopUnitSpawnQueue();
+
         if (preparationService?.UnitRoster != null)
             preparationService.UnitRoster.OnRosterChanged -= HandleRosterChanged;
+    }
+
+    private void OnDisable()
+    {
+        StopUnitSpawnQueue();
+    }
+
+    private void StopUnitSpawnQueue()
+    {
+        if (unitSpawnRoutine != null)
+            StopCoroutine(unitSpawnRoutine);
+        unitSpawnRoutine = null;
+        pendingUnitSpawns.Clear();
+    }
+
+    private readonly struct UnitSpawnRequest
+    {
+        public UnitSpawnRequest(int count, int star)
+        {
+            Count = count;
+            Star = star;
+        }
+
+        public int Count { get; }
+        public int Star { get; }
     }
 }

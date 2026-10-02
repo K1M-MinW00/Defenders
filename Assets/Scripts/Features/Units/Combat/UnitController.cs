@@ -78,6 +78,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
     public bool IsDead => Health.IsDead;
     public bool IsCombatPhase { get; private set; }
     public bool IsCombatAlerted => isCombatAlerted;
+    public bool IsInteractionLocked { get; private set; }
     public UnitRuntimeState RuntimeState => runtimeState;
     public UnitRemovalReason RemovalReason => removalReason;
     public Transform TargetTransform => transform;
@@ -270,6 +271,11 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         return true;
     }
 
+    public void SetInteractionLocked(bool locked)
+    {
+        IsInteractionLocked = locked;
+    }
+
     public void ReturnToPool()
     {
         if (RuntimeState != UnitRuntimeState.Removing)
@@ -292,6 +298,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         runtimeState = UnitRuntimeState.AwaitingInitialization;
         removalReason = UnitRemovalReason.None;
         isCombatAlerted = false;
+        IsInteractionLocked = false;
     }
 
     public void OnDespawn()
@@ -320,6 +327,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         OnInitialized = null;
         OnStatsChanged = null;
         runtimeState = UnitRuntimeState.Despawned;
+        IsInteractionLocked = false;
     }
 
     private void SetCombatActive(bool active)

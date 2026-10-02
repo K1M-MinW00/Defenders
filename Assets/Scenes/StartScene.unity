@@ -956,24 +956,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &910000000000000002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476442720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7e1fda94986456eb281742ee0d2d92a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SafeAreaFitter
-  targets:
-  - {fileID: 1485500993}
-  - {fileID: 652896879}
-  - {fileID: 1181409487}
-  applyHorizontal: 1
-  applyVertical: 1
 --- !u!1 &1485500992
 GameObject:
   m_ObjectHideFlags: 0
@@ -1467,6 +1449,24 @@ MonoBehaviour:
   statusText: {fileID: 797354629}
   startButton: {fileID: 1485500994}
   smoothSpeed: 3
+--- !u!114 &910000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476442720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7e1fda94986456eb281742ee0d2d92a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SafeAreaFitter
+  targets:
+  - {fileID: 1485500993}
+  - {fileID: 652896879}
+  - {fileID: 1181409487}
+  applyHorizontal: 1
+  applyVertical: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
