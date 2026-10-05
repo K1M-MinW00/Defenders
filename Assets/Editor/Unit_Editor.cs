@@ -7,6 +7,34 @@ public class Unit_Editor : Editor
 {
     private const float CornerRadius = 0.08f;
 
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        if (!Application.isPlaying)
+            return;
+
+        UnitController unit = (UnitController)target;
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Runtime Combat Debug", EditorStyles.boldLabel);
+        using (new EditorGUI.DisabledScope(true))
+        {
+            EditorGUILayout.TextField("Runtime State", unit.RuntimeState.ToString());
+            EditorGUILayout.TextField("FSM State", unit.FSMController?.CurrentStateName ?? "None");
+            EditorGUILayout.TextField("Attack Target", GetTargetName(unit.Target));
+
+            UnitSkillController skills = unit.SkillController;
+            EditorGUILayout.TextField("Active Skill", GetSkillName(skills?.ActiveSkill));
+            EditorGUILayout.TextField("Passive Skill", GetSkillName(skills?.PassiveSkill));
+            EditorGUILayout.TextField("Skill Phase", skills?.ExecutionPhase.ToString() ?? "None");
+            EditorGUILayout.TextField(
+                "Skill Target",
+                GetTargetName(skills?.ExecutionContext?.EnemyTarget));
+        }
+
+        Repaint();
+    }
+
     private void OnSceneGUI()
     {
         UnitController unit = (UnitController)target;
@@ -19,6 +47,7 @@ public class Unit_Editor : Editor
 
         DrawAttackRange(unit);
         DrawTargetLine(unit);
+        DrawSkillTargetLine(unit);
         DrawNavMeshPath(unit);
         DrawStateLabel(unit);
     }
@@ -88,31 +117,43 @@ public class Unit_Editor : Editor
         }
     }
 
+    private void DrawSkillTargetLine(UnitController unit)
+    {
+        ICombatTarget target = unit.SkillController?.ExecutionContext?.EnemyTarget;
+        if (!CombatTargetSelector.IsValid(target))
+            return;
+
+        Handles.color = new Color(1f, 0.45f, 0f, 1f);
+        Handles.DrawDottedLine(
+            unit.transform.position,
+            target.TargetTransform.position,
+            4f);
+    }
+
     private void DrawStateLabel(UnitController unit)
     {
-        string stateName = "Unknown";
-
-        try
-        {
-            var fsmField = typeof(UnitController).GetField("fsm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var fsm = fsmField?.GetValue(unit);
-
-            var currentStateProp = fsm?.GetType().GetProperty("CurrentState");
-            var state = currentStateProp?.GetValue(fsm);
-
-            if (state != null)
-                stateName = state.GetType().Name;
-        }
-        catch { }
-
-        string targetName = unit.Target?.TargetTransform != null
-            ? unit.Target.TargetTransform.name
-            : "None";
+        string stateName = unit.FSMController?.CurrentStateName ?? "None";
+        string targetName = GetTargetName(unit.Target);
+        UnitSkillController skills = unit.SkillController;
+        string skillName = GetSkillName(skills?.ActiveSkill);
+        string skillPhase = skills?.ExecutionPhase.ToString() ?? "None";
 
         Handles.color = Color.white;
         Handles.Label(
             unit.transform.position + Vector3.up * 0.8f,
-            $"State: {stateName}\nTarget: {targetName}"
+            $"State: {stateName}\nTarget: {targetName}\nSkill: {skillName} ({skillPhase})"
         );
+    }
+
+    private static string GetTargetName(ICombatTarget combatTarget)
+    {
+        return CombatTargetSelector.IsValid(combatTarget)
+            ? combatTarget.TargetTransform.name
+            : "None";
+    }
+
+    private static string GetSkillName(Component skill)
+    {
+        return skill != null ? skill.GetType().Name : "None";
     }
 }

@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Armored_Orc
   displayName: Armored_Orc
+  portrait: {fileID: 4831881393279159307, guid: d146ae4360c524a499b69d76a839cdfd, type: 3}
+  description: "단단한 갑옷과 강한 공격력을 지닌 오크"
   prefab: {fileID: 6357807370376951558, guid: e116070c625fa334fb5b32f281bb317d, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 50
-    moveSpeed: 3
-    atkDamage: 25
-    atkRange: 2
-    atkPerSec: 1
+    maxHp: 240
+    moveSpeed: 2.5
+    atkDamage: 20
+    atkRange: 1.9
+    atkPerSec: 0.75
+  threatCost: 5
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

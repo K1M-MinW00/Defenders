@@ -8,7 +8,7 @@ public sealed class PromotionProgressionTests
     public void PromotionEffects_MatchConfiguredProgression()
     {
         PromotionProgressionSO progression = Resources.Load<PromotionProgressionSO>(
-            "Database/PromotionProgression");
+            "GameData/Catalogs/PromotionProgression");
 
         Assert.That(progression, Is.Not.Null);
         Assert.That(progression.GetUnlockedStatBonuses(1), Is.Empty);
@@ -24,6 +24,10 @@ public sealed class PromotionProgressionTests
 
         Assert.That(progression.GetStartingEnergyPercent(3), Is.Zero);
         Assert.That(progression.GetStartingEnergyPercent(4), Is.EqualTo(50f));
+        Assert.That(
+            progression.GetUnlockedStatBonuses(4)
+                .Any(x => x.statType == StatType.AttackPerSec && x.percentValue == 5f),
+            Is.True);
     }
 
     [Test]

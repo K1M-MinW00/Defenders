@@ -6,6 +6,8 @@ public class MonsterDataSO : ScriptableObject
     [Header("Identity")]
     public string monsterId;
     public string displayName;
+    public Sprite portrait;
+    [TextArea(2, 5)] public string description;
     public GameObject prefab;
 
     [Header("Audio")]
@@ -14,11 +16,17 @@ public class MonsterDataSO : ScriptableObject
 
     [Header("Base Stats")]
     [SerializeField] private MonsterStats baseStats = new();
+    [SerializeField, Min(0.01f)] private float threatCost = 1f;
 
     [Header("Behavior")]
     [SerializeField] private MonsterBehaviorSettings behavior = new();
 
     public float BaseMaxHp => baseStats?.maxHp ?? 0f;
+    public float BaseMoveSpeed => baseStats?.moveSpeed ?? 0f;
+    public float BaseAttackDamage => baseStats?.atkDamage ?? 0f;
+    public float BaseAttackRange => baseStats?.atkRange ?? 0f;
+    public float BaseAttackPerSecond => baseStats?.atkPerSec ?? 0f;
+    public float ThreatCost => Mathf.Max(0.01f, threatCost);
     public float IdleTargetAcquireInterval =>
         Mathf.Max(0.02f, behavior?.idleTargetAcquireInterval ?? 0.5f);
     public float MoveTargetRefreshInterval =>
@@ -43,6 +51,8 @@ public class MonsterDataSO : ScriptableObject
             return Fail("Move speed, attack damage, and attack range cannot be negative.", out error);
         if (baseStats.atkPerSec <= 0f)
             return Fail("Attack per second must be positive.", out error);
+        if (threatCost <= 0f)
+            return Fail("Threat cost must be positive.", out error);
         if (behavior == null)
             return Fail("Monster behavior settings are missing.", out error);
         if (behavior.idleTargetAcquireInterval <= 0f || behavior.moveTargetRefreshInterval <= 0f)

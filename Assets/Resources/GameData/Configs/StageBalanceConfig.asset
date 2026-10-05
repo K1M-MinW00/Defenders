@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10b35e21d634155aa2bd2ef2f90b500, type: 3}
+  m_Name: StageBalanceConfig
+  m_EditorClassIdentifier: Assembly-CSharp::StageBalanceConfigSO
+  hpGrowthPerStage: 0.12
+  attackGrowthPerStage: 0.065
+  threatSpikeWarningRatio: 1.6
+  rangedRatioWarning: 0.6
+  presets:
+  - type: 0
+    hpMultiplier: 1
+    attackMultiplier: 1
+    pressureMultiplier: 1
+  - type: 1
+    hpMultiplier: 0.82
+    attackMultiplier: 0.9
+    pressureMultiplier: 1.3
+  - type: 2
+    hpMultiplier: 1.3
+    attackMultiplier: 0.9
+    pressureMultiplier: 0.9
+  - type: 3
+    hpMultiplier: 0.9
+    attackMultiplier: 1.22
+    pressureMultiplier: 1.05
+  - type: 4
+    hpMultiplier: 0.95
+    attackMultiplier: 1.05
+    pressureMultiplier: 1
+  - type: 5
+    hpMultiplier: 1.25
+    attackMultiplier: 1.15
+    pressureMultiplier: 0.8

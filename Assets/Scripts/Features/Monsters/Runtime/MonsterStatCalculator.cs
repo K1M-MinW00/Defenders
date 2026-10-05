@@ -9,6 +9,14 @@ public static class MonsterStatCalculator
         return Calculate(data?.CreateRuntimeStats());
     }
 
+    public static MonsterStats Calculate(MonsterDataSO data, float hpMultiplier, float attackMultiplier)
+    {
+        MonsterStats stats = data?.CreateRuntimeStats() ?? new MonsterStats();
+        stats.maxHp *= Mathf.Max(0.01f, hpMultiplier);
+        stats.atkDamage *= Mathf.Max(0.01f, attackMultiplier);
+        return Calculate(stats);
+    }
+
     public static MonsterStats Calculate(MonsterStats source)
     {
         MonsterStats stats = source?.CreateRuntimeCopy() ?? new MonsterStats();

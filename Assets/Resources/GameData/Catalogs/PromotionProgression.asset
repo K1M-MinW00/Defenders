@@ -30,6 +30,8 @@ MonoBehaviour:
       percentValue: 10
     startingEnergyPercent: 0
   - promotionLevel: 4
-    description: "\uC6E8\uC774\uBE0C \uC2DC\uC791 \uC2DC \uC5D0\uB108\uC9C0 50% \uD68D\uB4DD"
-    statBonuses: []
+    description: "\uC6E8\uC774\uBE0C \uC2DC\uC791 \uC2DC \uC5D0\uB108\uC9C0 50% \uD68D\uB4DD, \uACF5\uACA9 \uC18D\uB3C4 5% \uC99D\uAC00"
+    statBonuses:
+    - statType: 2
+      percentValue: 5
     startingEnergyPercent: 50

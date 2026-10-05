@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: WereWolf
   displayName: WereWolf
+  portrait: {fileID: 4565372846758268570, guid: 47661863db3a2d042a553d749731c80e, type: 3}
+  description: "빠르고 거센 연속 공격을 가하는 늑대인간"
   prefab: {fileID: 9212727190419322969, guid: 26d5d722accd23e4e97ad975b58a675b, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 60
-    moveSpeed: 5
+    maxHp: 160
+    moveSpeed: 4.4
     atkDamage: 15
-    atkRange: 4
-    atkPerSec: 3
+    atkRange: 1.8
+    atkPerSec: 1.6
+  threatCost: 5
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

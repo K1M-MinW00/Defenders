@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Slime
   displayName: Slime
+  portrait: {fileID: -7854738478779454800, guid: 726c67d9ac748154e91e4c567e5016e3, type: 3}
+  description: "빠르게 접근해 연속 공격하는 슬라임"
   prefab: {fileID: 763292298812824640, guid: 1a088a192fda8454aabf0879237ef865, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 20
-    moveSpeed: 6
-    atkDamage: 10
-    atkRange: 3
-    atkPerSec: 3
+    maxHp: 50
+    moveSpeed: 4.8
+    atkDamage: 7
+    atkRange: 1.6
+    atkPerSec: 1.3
+  threatCost: 1
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

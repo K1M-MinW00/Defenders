@@ -14,119 +14,197 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
   sector: 1
   stage: 3
+  prepareDuration: 90
   mapPrefab: {fileID: 4960614761546158943, guid: 8157f7e2d5de64d48935d55a53f158d6, type: 3}
   waves:
-  - waveType: 1
+  - waveType: 0
+    hpMultiplier: 0.92
+    attackMultiplier: 0.92
+    pressureMultiplier: 0.95
     subWaves:
     - spawnEntries:
       - data: {fileID: 11400000, guid: 3c3fbd2179dcd7b49a60604c771b1d48, type: 2}
-        count: 5
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 4
         spawnPointIndex: 0
-        interval: 0.2
-        delayAfterGroup: 0.5
-      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
-        count: 3
+        interval: 0.45
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 2
         spawnPointIndex: 1
-        interval: 0.2
-        delayAfterGroup: 0
-      delayAfterSubWave: 5
+        interval: 0.65
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+  - waveType: 0
+    hpMultiplier: 0.96
+    attackMultiplier: 0.96
+    pressureMultiplier: 1
+    subWaves:
     - spawnEntries:
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 3
+        spawnPointIndex: 0
+        interval: 0.6
+        delayAfterGroup: 0.35
       - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
-        count: 5
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 4
+        spawnPointIndex: 1
+        interval: 0.42
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: 3c3fbd2179dcd7b49a60604c771b1d48, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 4
         spawnPointIndex: 0
-        interval: 0.2
-        delayAfterGroup: 0.5
-      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
+        interval: 0.45
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
         count: 3
         spawnPointIndex: 1
-        interval: 0.2
-        delayAfterGroup: 0
-      delayAfterSubWave: 5
+        interval: 0.6
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
   - waveType: 1
+    hpMultiplier: 1
+    attackMultiplier: 1
+    pressureMultiplier: 1.02
     subWaves:
     - spawnEntries:
-      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
-        count: 3
-        spawnPointIndex: 0
-        interval: 0.2
-        delayAfterGroup: 1
-      - data: {fileID: 11400000, guid: 932336556b638544abda9d96b45af346, type: 2}
-        count: 3
-        spawnPointIndex: 1
-        interval: 0.2
-        delayAfterGroup: 1
-      delayAfterSubWave: 1
-  - waveType: 1
-    subWaves:
-    - spawnEntries:
-      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
-        count: 3
-        spawnPointIndex: 0
-        interval: 0.2
-        delayAfterGroup: 3
-      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
-        count: 5
-        spawnPointIndex: 1
-        interval: 0.2
-        delayAfterGroup: 3
-      delayAfterSubWave: 1
-  - waveType: 1
-    subWaves:
-    - spawnEntries:
-      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
-        count: 5
-        spawnPointIndex: 0
-        interval: 0.2
-        delayAfterGroup: 0.5
-      delayAfterSubWave: 1
-    - spawnEntries:
-      - data: {fileID: 11400000, guid: a7fc3d5aa8d1761449ae2e365c6f3d31, type: 2}
-        count: 8
-        spawnPointIndex: 1
-        interval: 0.2
-        delayAfterGroup: 0.5
-      delayAfterSubWave: 1
-  - waveType: 2
-    subWaves:
-    - spawnEntries:
-      - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
-        count: 3
-        spawnPointIndex: 0
-        interval: 0.5
-        delayAfterGroup: 0.5
-      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
+      - data: {fileID: 11400000, guid: 8c6e607510fa0384282ebe3c76e9ef64, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
         count: 2
         spawnPointIndex: 0
+        interval: 0.65
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.55
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: 8c6e607510fa0384282ebe3c76e9ef64, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 2
+        spawnPointIndex: 1
+        interval: 0.65
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 3c3fbd2179dcd7b49a60604c771b1d48, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 4
+        spawnPointIndex: 0
+        interval: 0.4
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+  - waveType: 0
+    hpMultiplier: 1.04
+    attackMultiplier: 1.02
+    pressureMultiplier: 1.04
+    subWaves:
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 4
+        spawnPointIndex: 0
         interval: 0.5
-        delayAfterGroup: 0.5
-      delayAfterSubWave: 3
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 3c3fbd2179dcd7b49a60604c771b1d48, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 5
+        spawnPointIndex: 1
+        interval: 0.38
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 1
+        spawnPointIndex: 0
+        interval: 0.7
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 3
+        spawnPointIndex: 1
+        interval: 0.5
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+  - waveType: 2
+    hpMultiplier: 1.1
+    attackMultiplier: 1.06
+    pressureMultiplier: 1
+    subWaves:
     - spawnEntries:
       - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
+        hpMultiplier: 1.1
+        attackMultiplier: 1.05
+        count: 1
+        spawnPointIndex: 0
+        interval: 0.8
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
         count: 3
         spawnPointIndex: 1
-        interval: 0.5
-        delayAfterGroup: 0.5
-      - data: {fileID: 11400000, guid: cbe8cbf612faed9459960d3be2926338, type: 2}
-        count: 3
+        interval: 0.52
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+    - spawnEntries:
+      - data: {fileID: 11400000, guid: 8c6e607510fa0384282ebe3c76e9ef64, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 2
         spawnPointIndex: 1
-        interval: 0.5
-        delayAfterGroup: 0.5
-      delayAfterSubWave: 1
+        interval: 0.65
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: 6c8ac03731f6afb449247d19e097fbed, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 3
+        spawnPointIndex: 0
+        interval: 0.52
+        delayAfterGroup: 0.35
+      delayAfterSubWave: 1.5
+  threatType: 4
+  hpMultiplier: 0.96
+  attackMultiplier: 0.95
+  pressureMultiplier: 0.98
   economyConfig: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}
   clearRewards:
   - type: 0
-    id: 
+    id:
     amount: 200
   - type: 1
-    id: 
-    amount: 20
+    id:
+    amount: 25
   - type: 3
-    id: material_exp_2
-    amount: 1
+    id: material_exp_1
+    amount: 3
   - type: 6
-    id: 
+    id:
     amount: 100
   failureRewards:
   - type: 2
-    id: 
+    id:
     amount: 5

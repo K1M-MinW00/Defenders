@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Skeleton
   displayName: Skeleton
+  portrait: {fileID: -6351682907161248583, guid: e0c1febf80363c0418cee8976a3e6a41, type: 3}
+  description: "느리지만 체력이 매우 높은 해골 병사"
   prefab: {fileID: 1049210806528777896, guid: 2c7c4a5e8a35940458a0156486052fbb, type: 3}
   attackSound:
     clip: {fileID: 0}
@@ -22,8 +24,12 @@ MonoBehaviour:
     clip: {fileID: 0}
     volume: 1
   baseStats:
-    maxHp: 100
-    moveSpeed: 2
-    atkDamage: 10
-    atkRange: 2
-    atkPerSec: 1
+    maxHp: 140
+    moveSpeed: 2.4
+    atkDamage: 12
+    atkRange: 1.8
+    atkPerSec: 0.8
+  threatCost: 3
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

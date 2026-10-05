@@ -67,6 +67,8 @@ public static class UserDataFactory
             roster.SelectedUnitIds.Add(unitId);
         }
 
+        roster.Power = FormationPowerCalculator.Calculate(roster, GameConfig.Units);
+
         return roster;
     }
 

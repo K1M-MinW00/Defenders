@@ -210,9 +210,10 @@ public static class UserDataNormalizer
         if (selectedIds.Count != roster.SelectedUnitIds.Count)
             roster.SelectedUnitIds = selectedIds;
 
-        if (roster.Power < 0)
+        int calculatedPower = FormationPowerCalculator.Calculate(roster, GameConfig.Units);
+        if (roster.Power != calculatedPower)
         {
-            roster.Power = 0;
+            roster.Power = calculatedPower;
             changed = true;
         }
 

@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Orc
   displayName: Orc
+  portrait: {fileID: 5120410236738981136, guid: 629d9145763bba841a7802b5f418eae9, type: 3}
+  description: "빠르게 돌진하는 근접 오크 전사"
   prefab: {fileID: 1910394245093498212, guid: 9caa2ab2fc886b546a48ff13790cf9e2, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 30
-    moveSpeed: 4
-    atkDamage: 10
-    atkRange: 2
-    atkPerSec: 2
+    maxHp: 100
+    moveSpeed: 3.4
+    atkDamage: 14
+    atkRange: 1.8
+    atkPerSec: 1
+  threatCost: 2
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

@@ -55,6 +55,7 @@ public sealed class UnitTrainingUseCase
 
         nextResources.Gold -= goldCost;
         ApplyExp(nextUnit, gainedExp, unitDefinition.maxLevel);
+        nextRoster.Power = FormationPowerCalculator.Calculate(nextRoster, GameConfig.Units);
 
         isExecuting = true;
 

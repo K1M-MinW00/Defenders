@@ -12,7 +12,14 @@ public class StageDataSO : ScriptableObject
     public GameObject mapPrefab;
 
     [Header("Wave")]
+    [Min(0f)] public float prepareDuration = 90f;
     public List<WaveData> waves = new();
+
+    [Header("Stage Balance")]
+    public StageThreatType threatType = StageThreatType.Balanced;
+    [Min(0.01f)] public float hpMultiplier = 1f;
+    [Min(0.01f)] public float attackMultiplier = 1f;
+    [Min(0.01f)] public float pressureMultiplier = 1f;
 
     [Header("Economy")]
     public EconomyConfig economyConfig;
@@ -43,6 +50,8 @@ public class StageDataSO : ScriptableObject
             return Fail("Map context placement area is missing.", out error);
         if (economyConfig == null)
             return Fail("Economy config is missing.", out error);
+        if (hpMultiplier <= 0f || attackMultiplier <= 0f || pressureMultiplier <= 0f)
+            return Fail("Stage balance multipliers must be positive.", out error);
         if (clearRewards == null || clearRewards.Count == 0)
             return Fail("Stage clear rewards are missing.", out error);
         if (!TryValidateRewards(clearRewards, "Clear", out error))
@@ -53,6 +62,8 @@ public class StageDataSO : ScriptableObject
             return false;
         if (waves == null || (waves.Count != 3 && waves.Count != 5 && waves.Count != 10))
             return Fail("Wave count must be 3, 5, or 10.", out error);
+        if (prepareDuration < 0f)
+            return Fail("Prepare duration cannot be negative.", out error);
         if (waves[^1] == null || waves[^1].waveType != WaveType.Boss)
             return Fail("The final wave must be a boss wave.", out error);
 
@@ -69,6 +80,8 @@ public class StageDataSO : ScriptableObject
                 return Fail($"Wave {waveIndex + 1} is a boss wave before the final wave.", out error);
             if (wave.subWaves == null || wave.subWaves.Count == 0)
                 return Fail($"Wave {waveIndex + 1} has no sub-waves.", out error);
+            if (wave.hpMultiplier <= 0f || wave.attackMultiplier <= 0f || wave.pressureMultiplier <= 0f)
+                return Fail($"Wave {waveIndex + 1} has an invalid balance multiplier.", out error);
 
             for (int subWaveIndex = 0; subWaveIndex < wave.subWaves.Count; subWaveIndex++)
             {
@@ -96,6 +109,8 @@ public class StageDataSO : ScriptableObject
                         return Fail($"{location} uses invalid spawn point {entry.spawnPointIndex}.", out error);
                     if (entry.interval < 0f || entry.delayAfterGroup < 0f)
                         return Fail($"{location} has a negative interval or delay.", out error);
+                    if (entry.hpMultiplier <= 0f || entry.attackMultiplier <= 0f)
+                        return Fail($"{location} has an invalid balance multiplier.", out error);
                 }
             }
         }

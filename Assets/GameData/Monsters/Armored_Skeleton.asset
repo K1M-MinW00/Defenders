@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Armored_Skeleton
   displayName: Armored_Skeleton
+  portrait: {fileID: 5525993030540068286, guid: 6bc8e12eaf619344eaf00d23f9e99155, type: 3}
+  description: "갑옷을 두르고 빠르게 공격하는 해골"
   prefab: {fileID: 5632995424696654250, guid: 3ef2766bb54d49b4d935c69885efbbe8, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 45
-    moveSpeed: 3
+    maxHp: 200
+    moveSpeed: 2.2
     atkDamage: 15
-    atkRange: 2
-    atkPerSec: 2
+    atkRange: 1.8
+    atkPerSec: 0.9
+  threatCost: 4
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class WaveData
 {
     public WaveType waveType;
+    [Min(0.01f)] public float hpMultiplier = 1f;
+    [Min(0.01f)] public float attackMultiplier = 1f;
+    [Min(0.01f)] public float pressureMultiplier = 1f;
     public List<SubWaveData> subWaves = new();
 
 
@@ -47,7 +50,7 @@ public class SubWaveData
 {
     public List<MonsterSpawnEntry> spawnEntries = new();
 
-    [Tooltip("이 SubWave가 모두 생성된 뒤, 다음 SubWave까지 대기 시간")]
+    [Tooltip("Delay before the next sub-wave begins.")]
     public float delayAfterSubWave = 1f;
 }
 
@@ -56,16 +59,20 @@ public class MonsterSpawnEntry
 {
     public MonsterDataSO data;
 
+    [Header("Balance Override")]
+    [Min(0.01f)] public float hpMultiplier = 1f;
+    [Min(0.01f)] public float attackMultiplier = 1f;
+
     [Min(0)]
     public int count = 1;
 
-    [Tooltip("StageMapContext의 SpawnPoints 배열 인덱스")]
+    [Tooltip("Index in the StageMapContext monster spawn point array.")]
     [Min(0)]
     public int spawnPointIndex = 0;
 
-    [Tooltip("같은 그룹 내 몬스터 간 생성 간격")]
+    [Tooltip("Delay between monsters in this spawn group.")]
     public float interval = 0.1f;
 
-    [Tooltip("이 그룹 생성이 끝난 뒤 다음 그룹까지 대기 시간")]
+    [Tooltip("Delay before the next spawn group begins.")]
     public float delayAfterGroup = 0f;
 }

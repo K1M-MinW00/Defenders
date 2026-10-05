@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Elite_Orc
   displayName: Elite_Orc
+  portrait: {fileID: -342681156859825065, guid: 45013d16888157047aeadc24f3c9fd00, type: 3}
+  description: "빠르고 강력한 정예 오크 전사"
   prefab: {fileID: 1101139171250549184, guid: f8d3676b92fbc4d44b6c6f811f32ca25, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 40
-    moveSpeed: 4
-    atkDamage: 25
+    maxHp: 300
+    moveSpeed: 3.6
+    atkDamage: 24
     atkRange: 2
-    atkPerSec: 2
+    atkPerSec: 1.15
+  threatCost: 8
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Orc_Rider
   displayName: Orc_Rider
+  portrait: {fileID: -6967218827304948987, guid: 338c47042be12fa4887c7b6e1c8c7863, type: 3}
+  description: "빠른 이동과 강한 일격이 특징인 기병"
   prefab: {fileID: 1991171823934676319, guid: d0c81796ed045cc46ad05161893be5ad, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 40
-    moveSpeed: 5
-    atkDamage: 25
-    atkRange: 3
-    atkPerSec: 1
+    maxHp: 180
+    moveSpeed: 4.2
+    atkDamage: 22
+    atkRange: 2.2
+    atkPerSec: 0.85
+  threatCost: 4
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

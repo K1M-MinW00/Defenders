@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
   monsterId: Skeleton_Archer
   displayName: Skeleton_Archer
+  portrait: {fileID: -6351682907161248583, guid: 00d6e5c76ffa34d44adbe426c781ca48, type: 3}
+  description: "멀리서 화살을 쏘는 해골 궁수"
   prefab: {fileID: 8784535451667196961, guid: a539764ef5af77647834e170f47bdc59, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
   baseStats:
-    maxHp: 30
-    moveSpeed: 3
-    atkDamage: 10
-    atkRange: 4
-    atkPerSec: 1
+    maxHp: 65
+    moveSpeed: 2.8
+    atkDamage: 13
+    atkRange: 5
+    atkPerSec: 0.75
+  threatCost: 2
+  behavior:
+    idleTargetAcquireInterval: 0.5
+    moveTargetRefreshInterval: 0.25

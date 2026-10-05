@@ -60,6 +60,7 @@ public sealed class UnitPromotionUseCase
         UserUnitData nextUnit = nextRoster.OwnedUnits
             .First(unit => unit != null && unit.UnitId == command.UnitId);
         nextUnit.Promotion++;
+        nextRoster.Power = FormationPowerCalculator.Calculate(nextRoster, GameConfig.Units);
 
         isExecuting = true;
 

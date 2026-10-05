@@ -43,6 +43,7 @@ public sealed class UnitLimitBreakUseCase
 
         nextUnit.DuplicateCount--;
         nextUnit.LimitBreak++;
+        nextRoster.Power = FormationPowerCalculator.Calculate(nextRoster, GameConfig.Units);
 
         isExecuting = true;
 
