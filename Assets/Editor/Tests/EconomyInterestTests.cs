@@ -29,4 +29,31 @@ public sealed class EconomyInterestTests
     {
         Assert.AreEqual(expected, config.CalculateInterestBonus(gold));
     }
+
+    [Test]
+    public void WaveRewardBreakdown_UsesGoldBeforeWaveReward()
+    {
+        config.initialGold = 25;
+        config.normalReward = 14;
+        GameObject owner = new("EconomyManagerTest");
+
+        try
+        {
+            EconomyManager economy = owner.AddComponent<EconomyManager>();
+            Assert.IsTrue(economy.Init(config));
+
+            Assert.IsTrue(economy.TryGetWaveRewardBreakdown(
+                WaveType.Normal,
+                out int waveReward,
+                out int bonusReward));
+
+            Assert.AreEqual(14, waveReward);
+            Assert.AreEqual(2, bonusReward);
+            Assert.AreEqual(25, economy.CurrentGold);
+        }
+        finally
+        {
+            Object.DestroyImmediate(owner);
+        }
+    }
 }

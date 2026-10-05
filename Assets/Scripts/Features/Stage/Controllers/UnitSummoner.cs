@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,9 +11,10 @@ public class UnitSummoner : MonoBehaviour
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private Transform unitsRoot;
     
-    [Header("Unit Pool (Inspector)")]
-    [SerializeField] private UnitDataSO[] unitPool;
-    private StageUnitInitData[] runtimeUnitPool;
+    private StageUnitInitData[] runtimeCombatFormation;
+
+    public IReadOnlyList<StageUnitInitData> RuntimeCombatFormation =>
+        runtimeCombatFormation ?? System.Array.Empty<StageUnitInitData>();
 
     [Header("Spawn Settings")]
     [SerializeField] private Transform spawnPoint;
@@ -30,33 +32,28 @@ public class UnitSummoner : MonoBehaviour
     {
         spawnPoint = null;
         placementArea = null;
-        unitPool = System.Array.Empty<UnitDataSO>();
-        runtimeUnitPool = System.Array.Empty<StageUnitInitData>();
+        runtimeCombatFormation = System.Array.Empty<StageUnitInitData>();
     }
 
-    public bool SetUnitPool(IReadOnlyList<StageUnitInitData> definitions)
+    public bool SetCombatFormation(IReadOnlyList<StageUnitInitData> definitions)
     {
         if (definitions == null || definitions.Count == 0)
         {
-            unitPool = System.Array.Empty<UnitDataSO>();
-            runtimeUnitPool = System.Array.Empty<StageUnitInitData>();
+            runtimeCombatFormation = System.Array.Empty<StageUnitInitData>();
             return false;
         }
 
-        List<UnitDataSO> dataList = new(definitions.Count);
         List<StageUnitInitData> runtimeList = new(definitions.Count);
         foreach (StageUnitInitData definition in definitions)
         {
             if (definition?.UnitData == null || definition.UserData == null)
                 continue;
 
-            dataList.Add(definition.UnitData);
             runtimeList.Add(definition);
         }
 
-        unitPool = dataList.ToArray();
-        runtimeUnitPool = runtimeList.ToArray();
-        return runtimeUnitPool.Length > 0;
+        runtimeCombatFormation = runtimeList.ToArray();
+        return runtimeCombatFormation.Length > 0;
     }
 
     public bool SummonRandomUnit()
@@ -71,17 +68,18 @@ public class UnitSummoner : MonoBehaviour
     public bool TryCreateRandomUnit(
         out UnitController unit,
         int initialStar = 1,
-        Vector3? requestedPosition = null)
+        Vector3? requestedPosition = null,
+        bool playSpawnPresentation = true)
     {
         unit = null;
 
-        if (runtimeUnitPool == null || runtimeUnitPool.Length == 0)
+        if (runtimeCombatFormation == null || runtimeCombatFormation.Length == 0)
         {
-            Debug.LogWarning("Summon blocked: unitPool is empty.");
+            Debug.LogWarning("Summon blocked: runtime combat formation is empty.");
             return false;
         }
 
-        StageUnitInitData definition = runtimeUnitPool[Random.Range(0, runtimeUnitPool.Length)];
+        StageUnitInitData definition = runtimeCombatFormation[Random.Range(0, runtimeCombatFormation.Length)];
         UnitDataSO data = definition.UnitData;
 
         if (data == null || data.unitPrefab == null)
@@ -118,7 +116,11 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
-        unit.GetComponent<DropSpawnView>()?.Replay();
+        DropSpawnView spawnView = unit.GetComponentInChildren<DropSpawnView>(true);
+        if (playSpawnPresentation)
+            spawnView?.Replay();
+        else
+            spawnView?.PrepareDeferredSpawn();
 
         return true;
     }
@@ -140,6 +142,40 @@ public class UnitSummoner : MonoBehaviour
 
         if (unit.TryBeginRemoval(UnitRemovalReason.Rerolled))
             unit.ReturnToPool();
+    }
+
+    public void CommitRerolledUnit(UnitController outgoing, UnitController replacement)
+    {
+        if (outgoing == null || replacement == null)
+            return;
+
+        replacement.SetInteractionLocked(true);
+        replacement.GetComponent<UnitHUDController>()?.SetTransitionHidden(true);
+        StartCoroutine(RerollPresentationRoutine(outgoing, replacement));
+    }
+
+    private IEnumerator RerollPresentationRoutine(UnitController outgoing, UnitController replacement)
+    {
+        bool exitComplete = false;
+        DropSpawnView outgoingView = outgoing.GetComponentInChildren<DropSpawnView>(true);
+        if (outgoingView != null)
+        {
+            outgoing.GetComponent<UnitHUDController>()?.SetTransitionHidden(true);
+            outgoingView.PlayRerollExit(() => exitComplete = true);
+            while (!exitComplete && outgoing != null && outgoing.gameObject.activeInHierarchy)
+                yield return null;
+        }
+
+        if (outgoing != null)
+            outgoing.ReturnToPool();
+
+        if (replacement == null || !replacement.gameObject.activeInHierarchy)
+            yield break;
+
+        replacement.SetInteractionLocked(false);
+        replacement.GetComponent<UnitHUDController>()?.SetTransitionHidden(false);
+        replacement.GetComponentInChildren<DropSpawnView>(true)?.Replay();
+        CommitSummonedUnit(replacement);
     }
 
     private Vector3 ResolveSpawnPosition()

@@ -46,7 +46,7 @@ public sealed class StageBootstrapper : MonoBehaviour
 
         if (!TryBuildUnitPool(
                 enterData.SelectedUnitIds,
-                out System.Collections.Generic.List<StageUnitInitData> unitPool,
+                out System.Collections.Generic.List<StageUnitInitData> combatFormation,
                 out error))
             return false;
 
@@ -63,7 +63,7 @@ public sealed class StageBootstrapper : MonoBehaviour
         placementController.Initialize(mapContext.PlacementArea);
 
         unitSummoner.SetMapContext(mapContext.UnitSpawnPoint, mapContext.PlacementArea);
-        if (!unitSummoner.SetUnitPool(unitPool))
+        if (!unitSummoner.SetCombatFormation(combatFormation))
         {
             RollbackInitialization(ref mapContext);
             error = "Runtime unit pool is empty.";
@@ -71,6 +71,10 @@ public sealed class StageBootstrapper : MonoBehaviour
         }
 
         monsterSpawner.SetSpawnPoints(mapContext.MonsterSpawnPoints);
+        int progressionIndex = StageBalanceCalculator.GetProgressionIndex(
+            stageData,
+            GameConfig.Stages.GetAll());
+        monsterSpawner.SetStageBalanceContext(stageData, progressionIndex);
         gameCameraController.Initialize(mapContext.MinBound, mapContext.MaxBound);
 
         IsInitialized = true;

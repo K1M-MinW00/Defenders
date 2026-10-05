@@ -20,6 +20,24 @@ public class EconomyConfig : ScriptableObject
     public int[] sellUnit = { 3, 6, 12, 24 };
     public int reRollUnit = 2;
 
+    [Header("Population")]
+    [Min(1)] public int initialPopulationLimit = 5;
+    [Min(1)] public int maximumPopulationLimit = 10;
+    [Tooltip("Costs for increasing the limit from 5 to 6, 6 to 7, and so on.")]
+    public int[] populationIncreaseCosts = { 5, 10, 15, 20, 25 };
+
+    public int GetPopulationIncreaseCost(int currentLimit)
+    {
+        if (currentLimit < initialPopulationLimit || currentLimit >= maximumPopulationLimit ||
+            populationIncreaseCosts == null)
+            return -1;
+
+        int index = currentLimit - initialPopulationLimit;
+        return index >= 0 && index < populationIncreaseCosts.Length
+            ? populationIncreaseCosts[index]
+            : -1;
+    }
+
     public int GetWaveReward(WaveType type)
     {
         return type switch

@@ -10,10 +10,10 @@ public class StagePhaseMachineTests
         Assert.That(machine.TryTransition(StageState.Loading), Is.True);
         Assert.That(machine.TryTransition(StageState.Preparing), Is.True);
         Assert.That(machine.TryTransition(StageState.Combat), Is.True);
-        Assert.That(machine.TryTransition(StageState.WaveCleared), Is.True);
+        Assert.That(machine.TryTransition(StageState.Resolving), Is.True);
         Assert.That(machine.TryTransition(StageState.Preparing), Is.True);
         Assert.That(machine.TryTransition(StageState.Combat), Is.True);
-        Assert.That(machine.TryTransition(StageState.WaveCleared), Is.True);
+        Assert.That(machine.TryTransition(StageState.Resolving), Is.True);
         Assert.That(machine.TryTransition(StageState.StageClear), Is.True);
         Assert.That(machine.Current, Is.EqualTo(StageState.StageClear));
     }
@@ -37,12 +37,14 @@ public class StagePhaseMachineTests
         var preparingFailure = new StagePhaseMachine();
         Assert.That(preparingFailure.TryTransition(StageState.Loading), Is.True);
         Assert.That(preparingFailure.TryTransition(StageState.Preparing), Is.True);
+        Assert.That(preparingFailure.TryTransition(StageState.Resolving), Is.True);
         Assert.That(preparingFailure.TryTransition(StageState.StageFail), Is.True);
 
         var combatFailure = new StagePhaseMachine();
         Assert.That(combatFailure.TryTransition(StageState.Loading), Is.True);
         Assert.That(combatFailure.TryTransition(StageState.Preparing), Is.True);
         Assert.That(combatFailure.TryTransition(StageState.Combat), Is.True);
+        Assert.That(combatFailure.TryTransition(StageState.Resolving), Is.True);
         Assert.That(combatFailure.TryTransition(StageState.StageFail), Is.True);
     }
 

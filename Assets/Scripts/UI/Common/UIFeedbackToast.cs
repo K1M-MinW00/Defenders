@@ -7,6 +7,7 @@ public sealed class UIFeedbackToast : MonoBehaviour
 {
     private const float VisibleSeconds = 2f;
     private const float FadeSeconds = 0.2f;
+    private const int ToastSortingOrder = 1000;
 
     private static UIFeedbackToast instance;
 
@@ -29,12 +30,7 @@ public sealed class UIFeedbackToast : MonoBehaviour
         if (instance != null)
             return instance;
 
-        Canvas canvas = FindTargetCanvas();
-        if (canvas == null)
-        {
-            Debug.LogWarning("[UIFeedbackToast] Active canvas not found.");
-            return null;
-        }
+        Canvas canvas = CreateToastCanvas();
 
         GameObject root = new("UI_FeedbackToast", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
         root.transform.SetParent(canvas.transform, false);
@@ -75,21 +71,21 @@ public sealed class UIFeedbackToast : MonoBehaviour
         return instance;
     }
 
-    private static Canvas FindTargetCanvas()
+    private static Canvas CreateToastCanvas()
     {
-        Canvas[] canvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
-        Canvas selectedCanvas = null;
+        GameObject canvasObject = new("UI_FeedbackToastCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = ToastSortingOrder;
 
-        foreach (Canvas canvas in canvases)
-        {
-            if (canvas == null || !canvas.isActiveAndEnabled || !canvas.isRootCanvas)
-                continue;
+        CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1080f, 1920f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
 
-            if (selectedCanvas == null || canvas.sortingOrder > selectedCanvas.sortingOrder)
-                selectedCanvas = canvas;
-        }
-
-        return selectedCanvas;
+        return canvas;
     }
 
     private void Display(string message)

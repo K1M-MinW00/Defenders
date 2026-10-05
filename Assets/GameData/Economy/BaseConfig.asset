@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248a3e40d1e3e874f848216ca528505c, type: 3}
   m_Name: BaseConfig
   m_EditorClassIdentifier: Assembly-CSharp::EconomyConfig
-  initialGold: 100
+  initialGold: 15
   normalReward: 14
   eliteReward: 28
   bossReward: 42
@@ -21,3 +21,6 @@ MonoBehaviour:
   summonUnit: 5
   sellUnit: 03000000060000000c00000018000000
   reRollUnit: 2
+  initialPopulationLimit: 5
+  maximumPopulationLimit: 10
+  populationIncreaseCosts: 050000000a0000000f0000001400000019000000

@@ -14,10 +14,12 @@ public class MonsterWaveHpTracker : MonoBehaviour
     public float CurrentHp => totalCurrentHp;
     public float MaxHp => totalMaxHp;
 
-    public void PrepareWave(WaveData waveData)
+    public void PrepareWave(
+        WaveData waveData,
+        Func<MonsterSpawnEntry, float> maxHpResolver = null)
     {
         UnsubscribeAll();
-        totalMaxHp = CalculateWaveTotalMaxHp(waveData);
+        totalMaxHp = CalculateWaveTotalMaxHp(waveData, maxHpResolver);
         totalCurrentHp = totalMaxHp;
         lastKnownHp.Clear();
 
@@ -75,8 +77,10 @@ public class MonsterWaveHpTracker : MonoBehaviour
         if (!lastKnownHp.TryGetValue(monster, out float previousHp))
             return;
 
-        totalCurrentHp = Mathf.Max(0f, totalCurrentHp - damage);
-        lastKnownHp[monster] = previousHp - damage;
+        float currentHp = Mathf.Clamp(monster.CurrentHp, 0f, monster.MaxHp);
+        float actualHpLoss = Mathf.Max(0f, previousHp - currentHp);
+        totalCurrentHp = Mathf.Clamp(totalCurrentHp - actualHpLoss, 0f, totalMaxHp);
+        lastKnownHp[monster] = currentHp;
 
         OnWaveHpChanged?.Invoke(totalCurrentHp, totalMaxHp);
     }
@@ -91,7 +95,9 @@ public class MonsterWaveHpTracker : MonoBehaviour
         lastKnownHp.Remove(monster.Health);
     }
 
-    private float CalculateWaveTotalMaxHp(WaveData waveData)
+    private float CalculateWaveTotalMaxHp(
+        WaveData waveData,
+        Func<MonsterSpawnEntry, float> maxHpResolver)
     {
         if (waveData == null)
             return 0f;
@@ -108,7 +114,10 @@ public class MonsterWaveHpTracker : MonoBehaviour
                 if (entry == null || entry.data == null)
                     continue;
 
-                total += entry.data.BaseMaxHp * entry.count;
+                float maxHp = maxHpResolver != null
+                    ? maxHpResolver(entry)
+                    : entry.data.BaseMaxHp;
+                total += Mathf.Max(0f, maxHp) * Mathf.Max(0, entry.count);
             }
         }
 

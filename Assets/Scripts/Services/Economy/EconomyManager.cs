@@ -6,10 +6,12 @@ public class EconomyManager : MonoBehaviour
     [SerializeField] private EconomyConfig config;
 
     public int CurrentGold { get; private set; }
+    public EconomyConfig Config => config;
     public int CurrentInterestBonus =>
         IsInitialized ? config.CalculateInterestBonus(CurrentGold) : 0;
 
     public event Action<int> OnGoldChanged;
+    public event Action<EconomyConfig> OnInitialized;
     public bool IsInitialized { get; private set; }
 
     public bool Init(EconomyConfig config)
@@ -27,6 +29,7 @@ public class EconomyManager : MonoBehaviour
         IsInitialized = true;
 
         NotifyGoldChanged();
+        OnInitialized?.Invoke(config);
         return true;
     }
 
@@ -35,17 +38,43 @@ public class EconomyManager : MonoBehaviour
         config = null;
         CurrentGold = 0;
         IsInitialized = false;
+        OnInitialized?.Invoke(null);
     }
 
     public bool ApplyWaveReward(WaveType waveType)
     {
+        return TryApplyWaveReward(waveType, out _);
+    }
+
+    public bool TryApplyWaveReward(WaveType waveType, out int grantedAmount)
+    {
+        grantedAmount = 0;
+        if (!TryGetWaveRewardBreakdown(waveType, out int waveReward, out int bonusReward))
+            return false;
+
+        grantedAmount = waveReward + bonusReward;
+
+        if (TryAddGold(grantedAmount))
+            return true;
+
+        grantedAmount = 0;
+        return false;
+    }
+
+    public bool TryGetWaveRewardBreakdown(
+        WaveType waveType,
+        out int waveReward,
+        out int bonusReward)
+    {
+        waveReward = 0;
+        bonusReward = 0;
         if (!IsInitialized)
             return false;
 
-        int bonus = CurrentInterestBonus;
-        int waveReward = config.GetWaveReward(waveType);
-
-        return TryAddGold(bonus + waveReward);
+        waveReward = config.GetWaveReward(waveType);
+        bonusReward = CurrentInterestBonus;
+        long totalAfterReward = (long)CurrentGold + waveReward + bonusReward;
+        return waveReward >= 0 && bonusReward >= 0 && totalAfterReward <= int.MaxValue;
     }
 
     public bool TryAddGold(int amount)
@@ -126,6 +155,24 @@ public class EconomyManager : MonoBehaviour
         {
             error = "Sell costs for stars 1 through 4 are required.";
             return false;
+        }
+
+        int requiredPopulationCosts = value.maximumPopulationLimit - value.initialPopulationLimit;
+        if (value.initialPopulationLimit <= 0 || value.maximumPopulationLimit < value.initialPopulationLimit ||
+            value.populationIncreaseCosts == null ||
+            value.populationIncreaseCosts.Length != requiredPopulationCosts)
+        {
+            error = "Population limits or increase costs are invalid.";
+            return false;
+        }
+
+        for (int i = 0; i < value.populationIncreaseCosts.Length; i++)
+        {
+            if (value.populationIncreaseCosts[i] < 0)
+            {
+                error = $"Population increase cost at index {i} cannot be negative.";
+                return false;
+            }
         }
 
         for (int i = 0; i < value.sellUnit.Length; i++)

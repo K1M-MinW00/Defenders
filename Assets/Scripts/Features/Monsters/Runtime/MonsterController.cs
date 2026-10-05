@@ -75,7 +75,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         idleState = new MonsterIdleState(this);
     }
 
-    public bool Initialize(UnitRoster unitRoster, MonsterDataSO data, StagePoolManager poolManager)
+    public bool Initialize(
+        UnitRoster unitRoster,
+        MonsterDataSO data,
+        StagePoolManager poolManager,
+        MonsterStats runtimeStats = null)
     {
         if (data == null)
         {
@@ -92,7 +96,9 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         }
 
         Data = data;
-        FinalStats = MonsterStatCalculator.Calculate(data);
+        FinalStats = runtimeStats != null
+            ? MonsterStatCalculator.Calculate(runtimeStats)
+            : MonsterStatCalculator.Calculate(data);
         this.poolManager = poolManager;
         targeting.Initialize(unitRoster);
 
@@ -146,6 +152,20 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         OnDead?.Invoke(this);
 
         poolable?.ReturnToPool();
+    }
+
+    public void SuspendForResultPresentation()
+    {
+        if (!IsRuntimeInitialized || IsDead)
+            return;
+
+        StopKnockback();
+        IsControlLocked = true;
+        fsm.Reset();
+        CancelAttack();
+        ClearTarget();
+        StopMovement();
+        PlayIdle();
     }
 
     private void ResetRuntimeState()
@@ -305,7 +325,8 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     private IEnumerator KnockbackRoutine(Vector2 direction, float distance, float duration)
     {
         Vector3 start = transform.position;
-        Vector3 end = start + (Vector3)(direction.normalized * distance);
+        Vector3 desiredEnd = start + (Vector3)(direction.normalized * distance);
+        Vector3 end = ResolveKnockbackDestination(start, desiredEnd, direction.normalized);
 
         float elapsed = 0f;
 
@@ -330,6 +351,24 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         knockbackRoutine = null;
         IsControlLocked = false;
         ResumeBehaviorAfterControlEffect();
+    }
+
+    private Vector3 ResolveKnockbackDestination(Vector3 start, Vector3 desiredEnd, Vector2 direction)
+    {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return start;
+
+        Vector3 end = desiredEnd;
+        if (NavMesh.Raycast(start, desiredEnd, out NavMeshHit boundaryHit, agent.areaMask))
+        {
+            float inset = Mathf.Max(0.05f, agent.radius * 0.25f);
+            end = boundaryHit.position - (Vector3)(direction * inset);
+        }
+
+        float sampleRadius = Mathf.Max(0.25f, agent.radius * 2f);
+        return NavMesh.SamplePosition(end, out NavMeshHit sampled, sampleRadius, agent.areaMask)
+            ? sampled.position
+            : start;
     }
 
     private void ResumeBehaviorAfterControlEffect()

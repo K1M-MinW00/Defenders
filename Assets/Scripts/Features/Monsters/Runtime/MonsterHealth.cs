@@ -59,6 +59,7 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
             resolution.IsLethal,
             resolution.IsCritical);
 
+        CombatDebugTelemetry.ReportDamageApplied(this, request, result);
         OnDamaged?.Invoke(this, result);
 
         if (CurrentHp <= 0f)

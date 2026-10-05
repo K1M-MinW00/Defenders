@@ -167,7 +167,10 @@ public sealed class StageUnitTransactionService
             return false;
 
         UnityEngine.Vector3 spawnPosition = replacementPosition ?? unit.transform.position;
-        if (!unitSummoner.TryCreateRandomUnit(out UnitController replacement, requestedPosition: spawnPosition))
+        if (!unitSummoner.TryCreateRandomUnit(
+                out UnitController replacement,
+                requestedPosition: spawnPosition,
+                playSpawnPresentation: false))
         {
             if (!useFreeReroll)
                 economyManager.RefundGold(economyManager.GetRerollCost());
@@ -183,8 +186,7 @@ public sealed class StageUnitTransactionService
         }
 
         unitRoster.Unregister(unit);
-        unit.ReturnToPool();
-        unitSummoner.CommitSummonedUnit(replacement);
+        unitSummoner.CommitRerolledUnit(unit, replacement);
         if (useFreeReroll)
             rerollAllowance.TryConsume();
         return true;

@@ -113,6 +113,47 @@ public static class GameSceneProjectValidator
             "populationManager",
             "economyManager",
             "placementController");
+
+        ValidateUiComponentOwnership(scene, sceneAsset, report);
+    }
+
+    private static void ValidateUiComponentOwnership(
+        Scene scene,
+        SceneAsset sceneAsset,
+        GameDataValidationReport report)
+    {
+        ValidateComponentOwner<StageUIController>(scene, sceneAsset, report, "Stage UI Root");
+        ValidateComponentOwner<StagePhaseUIView>(scene, sceneAsset, report, "Stage UI Phase Coordinator");
+
+        ValidateComponentOwner<StageHudPresenter>(scene, sceneAsset, report, "Stage HUD Canvas");
+        ValidateComponentOwner<StageWaveTrackUI>(scene, sceneAsset, report, "Stage HUD Canvas");
+        ValidateComponentOwner<StageHpSummaryUI>(scene, sceneAsset, report, "Stage HUD Canvas");
+        ValidateComponentOwner<StageTopControlUI>(scene, sceneAsset, report, "Stage HUD Canvas");
+
+        ValidateComponentOwner<StagePrepareActionUI>(scene, sceneAsset, report, "Stage Prepare Canvas");
+        ValidateComponentOwner<UnitDragActionUI>(scene, sceneAsset, report, "Stage Prepare Canvas");
+
+        ValidateComponentOwner<StageResultUI>(scene, sceneAsset, report, "Stage Popup Canvas");
+        ValidateComponentOwner<StagePauseUI>(scene, sceneAsset, report, "Stage Popup Canvas");
+    }
+
+    private static void ValidateComponentOwner<T>(
+        Scene scene,
+        SceneAsset sceneAsset,
+        GameDataValidationReport report,
+        string expectedObjectName) where T : Component
+    {
+        List<T> components = FindComponentsInScene<T>(scene);
+        if (components.Count != 1)
+            return;
+
+        T component = components[0];
+        if (component.gameObject.name != expectedObjectName)
+        {
+            report.AddError(sceneAsset,
+                $"{typeof(T).Name} must be attached to '{expectedObjectName}', " +
+                $"but is attached to '{component.gameObject.name}'.");
+        }
     }
 
     private static void ValidateRequiredComponent<T>(

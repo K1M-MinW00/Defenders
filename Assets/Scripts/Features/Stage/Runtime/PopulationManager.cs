@@ -7,12 +7,7 @@ public class PopulationManager : MonoBehaviour
     [SerializeField] private UnitRoster unitRoster;
     [SerializeField] private EconomyManager economyManager;
 
-    [Header("Limits")]
-    [SerializeField] private int initialMax = 5;
-    [SerializeField] private int hardMax = 10;
-
-    [Header("Increase Costs (Max 5->6, 6->7, ... 9->10)")]
-    [SerializeField] private int[] increaseCosts = { 5, 10, 15, 20, 25 };
+    private EconomyConfig config;
 
     public int MaxPopulation { get; private set; }
     public int CurrentPopulation => unitRoster?.RegisteredCount ?? 0;
@@ -22,10 +17,8 @@ public class PopulationManager : MonoBehaviour
 
     private void Awake()
     {
-        initialMax = Mathf.Max(1, initialMax);
-        hardMax = Mathf.Max(initialMax, hardMax);
-        MaxPopulation = initialMax;
-        IsInitialized = unitRoster != null && economyManager != null;
+        MaxPopulation = 0;
+        IsInitialized = false;
     }
     private void OnEnable()
     {
@@ -42,6 +35,9 @@ public class PopulationManager : MonoBehaviour
         }
 
         unitRoster.OnRosterChanged += Notify;
+        economyManager.OnInitialized += Initialize;
+        if (economyManager.IsInitialized)
+            Initialize(economyManager.Config);
         Notify();
     }
 
@@ -49,6 +45,8 @@ public class PopulationManager : MonoBehaviour
     {
         if (unitRoster != null)
             unitRoster.OnRosterChanged -= Notify;
+        if (economyManager != null)
+            economyManager.OnInitialized -= Initialize;
     }
 
     public bool CanSummon()
@@ -58,7 +56,7 @@ public class PopulationManager : MonoBehaviour
 
     public bool CanIncreaseMax()
     {
-        return IsInitialized && MaxPopulation < hardMax;
+        return IsInitialized && MaxPopulation < config.maximumPopulationLimit;
     }
 
     public int GetNextIncreaseCost()
@@ -66,14 +64,7 @@ public class PopulationManager : MonoBehaviour
         if (!CanIncreaseMax())
             return -1;
 
-        if (increaseCosts == null || increaseCosts.Length == 0) 
-            return -1;
-
-        int index = MaxPopulation - initialMax;
-        if (index < 0 || index >= increaseCosts.Length || increaseCosts[index] < 0)
-            return -1;
-
-        return increaseCosts[index];
+        return config.GetPopulationIncreaseCost(MaxPopulation);
     }
 
     public bool TryIncreaseMax()
@@ -91,6 +82,14 @@ public class PopulationManager : MonoBehaviour
         MaxPopulation++;
         Notify();
         return true;
+    }
+
+    private void Initialize(EconomyConfig economyConfig)
+    {
+        config = economyConfig;
+        IsInitialized = config != null && unitRoster != null && economyManager != null;
+        MaxPopulation = IsInitialized ? config.initialPopulationLimit : 0;
+        Notify();
     }
 
     private void Notify()

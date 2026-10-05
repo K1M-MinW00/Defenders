@@ -4,7 +4,7 @@ public enum StageState
     Loading,
     Preparing,
     Combat,
-    WaveCleared,
+    Resolving,
     StageClear,
     StageFail,
     InitializationFailed,

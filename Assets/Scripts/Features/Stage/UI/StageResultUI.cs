@@ -39,7 +39,7 @@ public class StageResultUI : MonoBehaviour
         HideAll();
 
         if (clearStageText != null)
-            clearStageText.text = stage != null ? $"스테이지 {stage.StageKey} 클리어" : "스테이지 클리어";
+            clearStageText.text = stage != null ? $"스테이지 {stage.StageKey}" : "스테이지 클리어";
 
         if (clearWaveText != null)
         {
@@ -56,7 +56,7 @@ public class StageResultUI : MonoBehaviour
         HideAll();
 
         if (failStageText != null)
-            failStageText.text = stage != null ? $"스테이지 {stage.StageKey} 실패" : "스테이지 실패";
+            failStageText.text = stage != null ? $"스테이지 {stage.StageKey}" : "스테이지 실패";
 
         if (failWaveText != null)
         {

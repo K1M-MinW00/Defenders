@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
@@ -17,12 +18,12 @@ public sealed class StageRelicUI : MonoBehaviour
     [SerializeField] private GameObject choiceOverlay;
     [SerializeField] private GameObject firstChoiceRoot;
     [SerializeField] private TMP_Text firstChoiceName;
-    [SerializeField] private TMP_Text firstChoiceSymbol;
+    [SerializeField] private Image firstChoiceSymbol;
     [SerializeField] private TMP_Text firstChoiceDescription;
     [SerializeField] private Button firstChoiceButton;
     [SerializeField] private GameObject secondChoiceRoot;
     [SerializeField] private TMP_Text secondChoiceName;
-    [SerializeField] private TMP_Text secondChoiceSymbol;
+    [SerializeField] private Image secondChoiceSymbol;
     [SerializeField] private TMP_Text secondChoiceDescription;
     [SerializeField] private Button secondChoiceButton;
 
@@ -31,6 +32,7 @@ public sealed class StageRelicUI : MonoBehaviour
     private StageRelicDefinition secondChoice;
     private TaskCompletionSource<StageRelicDefinition> choiceCompletion;
     private Transform tooltipHomeParent;
+    public event Action<bool> ChoiceVisibilityChanged;
 
     public void Initialize()
     {
@@ -86,6 +88,7 @@ public sealed class StageRelicUI : MonoBehaviour
 
         HideTooltip();
         choiceOverlay?.SetActive(true);
+        ChoiceVisibilityChanged?.Invoke(true);
         choiceCompletion = new TaskCompletionSource<StageRelicDefinition>();
         return choiceCompletion.Task;
     }
@@ -100,20 +103,27 @@ public sealed class StageRelicUI : MonoBehaviour
         icon.transform.SetParent(ownedList, false);
 
         var image = icon.GetComponent<Image>();
-        image.color = new Color(0.04f, 0.24f, 0.26f, 0.96f);
+        image.sprite = relic.Icon;
+        image.color = relic.Icon != null
+            ? Color.white
+            : new Color(0.04f, 0.24f, 0.26f, 0.96f);
+        image.preserveAspect = true;
         var layout = icon.GetComponent<LayoutElement>();
         layout.preferredWidth = 64f;
         layout.preferredHeight = 64f;
 
-        var labelObject = new GameObject("Symbol", typeof(RectTransform), typeof(TextMeshProUGUI));
-        labelObject.layer = gameObject.layer;
-        labelObject.transform.SetParent(icon.transform, false);
-        Stretch(labelObject.GetComponent<RectTransform>());
-        var label = labelObject.GetComponent<TextMeshProUGUI>();
-        label.text = relic.Symbol;
-        label.fontSize = 30f;
-        label.alignment = TextAlignmentOptions.Center;
-        label.raycastTarget = false;
+        if (relic.Icon == null)
+        {
+            var labelObject = new GameObject("Symbol", typeof(RectTransform), typeof(TextMeshProUGUI));
+            labelObject.layer = gameObject.layer;
+            labelObject.transform.SetParent(icon.transform, false);
+            Stretch(labelObject.GetComponent<RectTransform>());
+            var label = labelObject.GetComponent<TextMeshProUGUI>();
+            label.text = relic.Symbol;
+            label.fontSize = 30f;
+            label.alignment = TextAlignmentOptions.Center;
+            label.raycastTarget = false;
+        }
 
         icon.GetComponent<RelicTooltipPressHandler>().Initialize(
             () => ShowTooltip(relic, icon.GetComponent<RectTransform>()),
@@ -178,7 +188,7 @@ public sealed class StageRelicUI : MonoBehaviour
     private static void ApplyChoice(
         GameObject root,
         TMP_Text nameLabel,
-        TMP_Text symbolLabel,
+        Image symbolLabel,
         TMP_Text descriptionLabel,
         StageRelicDefinition relic)
     {
@@ -190,8 +200,20 @@ public sealed class StageRelicUI : MonoBehaviour
             return;
 
         nameLabel.text = relic.Name;
-        symbolLabel.text = relic.Symbol;
+        ApplyChoiceIcon(symbolLabel, relic);
         descriptionLabel.text = relic.Description;
+    }
+
+    private static void ApplyChoiceIcon(Image symbolLabel, StageRelicDefinition relic)
+    {
+        if (symbolLabel == null)
+            return;
+
+        symbolLabel.sprite = relic.Icon;
+        symbolLabel.color = Color.white;
+        symbolLabel.preserveAspect = true;
+        symbolLabel.raycastTarget = false;
+        symbolLabel.enabled = relic.Icon != null;
     }
 
     private void SelectFirstChoice() => SelectRelic(firstChoice);
@@ -203,6 +225,7 @@ public sealed class StageRelicUI : MonoBehaviour
             return;
 
         choiceOverlay?.SetActive(false);
+        ChoiceVisibilityChanged?.Invoke(false);
         TaskCompletionSource<StageRelicDefinition> completion = choiceCompletion;
         choiceCompletion = null;
         completion.TrySetResult(selected);
@@ -218,9 +241,16 @@ public sealed class StageRelicUI : MonoBehaviour
 
     private void OnDestroy()
     {
+        ChoiceVisibilityChanged?.Invoke(false);
         firstChoiceButton?.onClick.RemoveListener(SelectFirstChoice);
         secondChoiceButton?.onClick.RemoveListener(SelectSecondChoice);
         choiceCompletion?.TrySetCanceled();
+    }
+
+    private void OnDisable()
+    {
+        ChoiceVisibilityChanged?.Invoke(false);
+        HideTooltip();
     }
 }
 

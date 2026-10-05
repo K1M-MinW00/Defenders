@@ -13,6 +13,7 @@ public class StageHudPresenter : MonoBehaviour
     [SerializeField] private TextMeshProUGUI summonCostText;
     [SerializeField] private TextMeshProUGUI rerollCostText;
     [SerializeField] private TextMeshProUGUI increaseCostText;
+    [SerializeField] private GameObject increasePricePanel;
 
     [Header("Population")]
     [SerializeField] private Color populationAtCapacityColor = new(1f, 0.25f, 0.25f, 1f);
@@ -161,8 +162,14 @@ public class StageHudPresenter : MonoBehaviour
                 : populationDefaultColor;
         }
 
-        if (increaseCostText != null && population != null)
-            increaseCostText.SetText("{0}", population.GetNextIncreaseCost());
+        if (population != null)
+        {
+            bool canIncrease = population.CanIncreaseMax();
+            increasePricePanel?.SetActive(canIncrease);
+
+            if (canIncrease && increaseCostText != null)
+                increaseCostText.SetText("{0}", population.GetNextIncreaseCost());
+        }
     }
 
     private void CachePopulationDefaultColor()
@@ -177,7 +184,9 @@ public class StageHudPresenter : MonoBehaviour
     private void UpdatePrepareTimer(float time)
     {
         if (timerText != null)
-            timerText.SetText("{0:F1}", time);
+            timerText.text = Mathf.Max(0f, time).ToString(
+                "0.0",
+                System.Globalization.CultureInfo.InvariantCulture);
     }
 
     private void UpdateMonsterCount(int remainCount)

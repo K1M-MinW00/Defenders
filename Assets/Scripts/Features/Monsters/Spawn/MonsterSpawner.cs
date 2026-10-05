@@ -21,6 +21,8 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     private Coroutine spawnRoutine;
     private bool spawnFailed;
     private float stageMoveSpeedMultiplier = 1f;
+    private StageDataSO stageData;
+    private int stageProgressionIndex;
 
     public MonsterWaveHpTracker WaveHpTracker => waveHpTracker;
     public int AliveCount => aliveMonsters.Count;
@@ -39,6 +41,12 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         this.spawnPoints = spawnPoints;
     }
 
+    public void SetStageBalanceContext(StageDataSO data, int progressionIndex)
+    {
+        stageData = data;
+        stageProgressionIndex = Mathf.Max(0, progressionIndex);
+    }
+
     public void SetStageMoveSpeedMultiplier(float multiplier)
     {
         stageMoveSpeedMultiplier = Mathf.Max(0f, multiplier);
@@ -52,15 +60,32 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         if (currentWave != null || spawnRoutine != null)
             return;
 
+        currentWave = waveData;
         plannedMonsterCount = waveData?.TotalMonsterCount ?? 0;
         deadMonsterCount = 0;
+        waveHpTracker?.PrepareWave(waveData, CalculateEntryMaxHp);
+        currentWave = null;
         NotifyMonsterCounts();
+    }
+
+    private float CalculateEntryMaxHp(MonsterSpawnEntry entry)
+    {
+        if (entry?.data == null)
+            return 0f;
+
+        StageBalanceMultipliers multipliers = CalculateBalance(entry);
+        return MonsterStatCalculator.Calculate(
+            entry.data,
+            multipliers.Hp,
+            multipliers.Attack).maxHp;
     }
 
     public void ClearStageContext()
     {
         ClearWaveRuntime();
         spawnPoints = System.Array.Empty<Transform>();
+        stageData = null;
+        stageProgressionIndex = 0;
     }
 
     public bool TryStartWave(WaveData waveData)
@@ -110,8 +135,9 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
                 yield break;
             }
 
+            float pressure = CalculateBalance().Pressure;
             if (subWave.delayAfterSubWave > 0f)
-                yield return new WaitForSeconds(subWave.delayAfterSubWave);
+                yield return new WaitForSeconds(subWave.delayAfterSubWave / pressure);
 
             if (IsWaveAborted)
             {
@@ -140,7 +166,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
                 yield break;
 
             if (entry.delayAfterGroup > 0f)
-                yield return new WaitForSeconds(entry.delayAfterGroup);
+                yield return new WaitForSeconds(entry.delayAfterGroup / CalculateBalance(entry).Pressure);
         }
     }
 
@@ -168,14 +194,14 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         }
 
         int count = Mathf.Max(0, entry.count);
-        float interval = Mathf.Max(0f, entry.interval);
+        float interval = Mathf.Max(0f, entry.interval) / CalculateBalance(entry).Pressure;
 
         for (int i = 0; i < count; i++)
         {
             if (IsWaveAborted)
                 yield break;
 
-            if (SpawnMonster(entry.data, spawnPoint.position) == null)
+            if (SpawnMonster(entry, spawnPoint.position) == null)
             {
                 ReportSpawnFailure($"Failed to spawn monster: {entry.data.name}");
                 yield break;
@@ -254,8 +280,9 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         OnSpawnFailed?.Invoke();
     }
 
-    private MonsterController SpawnMonster(MonsterDataSO data, Vector3 spawnPos)
+    private MonsterController SpawnMonster(MonsterSpawnEntry entry, Vector3 spawnPos)
     {
+        MonsterDataSO data = entry?.data;
         if (data == null || data.prefab == null)
         {
             Debug.LogError("Spawn Monster failed. MonsterDataSO or prefab is null.");
@@ -278,7 +305,10 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
             return null;
         }
 
-        if (!monster.Initialize(unitRoster, data, poolManager))
+        StageBalanceMultipliers multipliers = CalculateBalance(entry);
+        MonsterStats runtimeStats = MonsterStatCalculator.Calculate(data, multipliers.Hp, multipliers.Attack);
+
+        if (!monster.Initialize(unitRoster, data, poolManager, runtimeStats))
         {
             if (monster.TryGetComponent(out Poolable failedSpawn))
                 poolManager.Despawn(failedSpawn);
@@ -298,8 +328,26 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         return monster;
     }
 
+    public void SuspendWaveRuntime()
+    {
+        StopSpawning();
+
+        foreach (MonsterController monster in aliveMonsters)
+            monster?.SuspendForResultPresentation();
+    }
+
+    private StageBalanceMultipliers CalculateBalance(MonsterSpawnEntry entry = null)
+    {
+        return StageBalanceCalculator.Calculate(
+            stageData,
+            stageProgressionIndex,
+            currentWave,
+            entry);
+    }
+
     private void HandleMonsterDead(MonsterController monster)
     {
+        damageUIService?.FlushMonsterDamage(monster.Health);
         monster.Health.OnDamaged -= HandleMonsterDamaged;
         monster.OnDead -= HandleMonsterDead;
 
@@ -313,8 +361,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
     private void HandleMonsterDamaged(MonsterHealth health, DamageResult result)
     {
-        Vector3 worldPos = health.transform.position;
-        damageUIService?.Show(worldPos, result);
+        damageUIService?.ShowMonsterDamage(health, result);
     }
 
     public MonsterController FindClosestAlive(Vector3 from)

@@ -100,10 +100,13 @@ public class WaveController : MonoBehaviour
         callback?.Invoke();
     }
 
-    public void StopWave()
+    public void StopWave(bool preserveMonsters = false)
     {
         UnsubscribeRuntimeEvents();
-        monsterSpawner?.ClearWaveRuntime();
+        if (preserveMonsters)
+            monsterSpawner?.SuspendWaveRuntime();
+        else
+            monsterSpawner?.ClearWaveRuntime();
 
         waveEnded = true;
         allMonstersSpawned = false;

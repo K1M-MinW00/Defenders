@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,8 @@ public sealed class StageInterestIndicator : MonoBehaviour
 
     [Header("Slots")]
     [SerializeField] private Image[] slots = new Image[5];
+
+    public IReadOnlyList<Image> Slots => slots;
 
     public void SetInterest(int interest)
     {

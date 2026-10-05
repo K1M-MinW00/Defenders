@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class StageUIController : MonoBehaviour
@@ -13,6 +14,8 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private StageResultUI resultUI;
     [SerializeField] private StageRelicUI relicUI;
     [SerializeField] private StageUnitInfoPanel unitInfoPanel;
+    [SerializeField] private StageMonsterInfoUI monsterInfoUI;
+    [SerializeField] private StageAnnouncementUI announcementUI;
 
     [Header("Time UI")]
     [SerializeField] private StageTimeController timeController;
@@ -29,6 +32,7 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private MonsterWaveHpTracker monsterHpTracker;
     [SerializeField] private StagePreparationService preparationService;
     private bool isInitialized;
+    private StageOverlayController overlayController;
     public StageRelicUI RelicUI => relicUI;
 
     public void Initialize()
@@ -60,12 +64,26 @@ public class StageUIController : MonoBehaviour
         hpSummaryUI?.Initialize(monsterHpTracker, unitHpTracker);
         resultUI?.Initialize(session);
         relicUI?.Initialize();
+        monsterInfoUI?.Initialize(session);
         waveTrackUI?.Initialize(session.CurrentStageData);
 
         timeController?.Initialize();
 
         topControlUI?.Initialize(timeController);
-        pausePanelUI?.Initialize(timeController, session);
+        pausePanelUI?.Initialize(
+            timeController,
+            session,
+            preparationService?.UnitSummoner?.RuntimeCombatFormation);
+
+        overlayController = new StageOverlayController(
+            FindFirstObjectByType<GameCameraController>(),
+            preparationService,
+            phaseUIView,
+            unitInfoPanel,
+            monsterInfoUI,
+            relicUI,
+            timeController,
+            session.CurrentState);
 
         isInitialized = true;
         SetPhase(session.CurrentState);
@@ -90,16 +108,22 @@ public class StageUIController : MonoBehaviour
 
         topControlUI?.Dispose();
         pausePanelUI?.Dispose();
+        overlayController?.Dispose();
+        overlayController = null;
+        monsterInfoUI?.Dispose();
         isInitialized = false;
     }
 
     public void SetPhase(StageState state)
     {
+        monsterInfoUI?.Close();
+
         if (state != StageState.Preparing)
             HideUnitInfo();
 
         phaseUIView?.SetPhase(state);
         hudPresenter?.SetPhase(state);
+        overlayController?.SetPhase(state);
 
         bool isResult = state == StageState.StageClear || state == StageState.StageFail;
         relicUI?.SetOwnedHudVisible(!isResult);
@@ -137,16 +161,12 @@ public class StageUIController : MonoBehaviour
         if (unit == null || session == null)
             return;
 
-        phaseUIView?.SetTopHudHidden(true, session.CurrentState);
-        unitInfoPanel?.Show(unit);
+        overlayController?.ShowUnitInfo(unit);
     }
 
     public void HideUnitInfo()
     {
-        unitInfoPanel?.Hide();
-
-        if (session != null)
-            phaseUIView?.SetTopHudHidden(false, session.CurrentState);
+        overlayController?.HideUnitInfo();
     }
 
     public void ShowStageClear(
@@ -168,5 +188,24 @@ public class StageUIController : MonoBehaviour
     public void HideAllResultPanels()
     {
         resultUI?.HideAll();
+    }
+
+    public Task ShowStageIntroAsync(StageDataSO stage)
+    {
+        return announcementUI != null
+            ? announcementUI.ShowStageIntroAsync(stage)
+            : Task.CompletedTask;
+    }
+
+    public Task ShowBossWaveAsync()
+    {
+        return announcementUI != null
+            ? announcementUI.ShowBossWaveAsync()
+            : Task.CompletedTask;
+    }
+
+    public void SetRewardPresentationVisible(bool visible)
+    {
+        phaseUIView?.SetRewardPresentationVisible(visible);
     }
 }

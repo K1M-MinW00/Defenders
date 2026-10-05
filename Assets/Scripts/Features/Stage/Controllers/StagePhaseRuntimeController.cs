@@ -25,6 +25,19 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     public StagePreparationService PreparationService => preparationService;
     public MonsterSpawner MonsterSpawner => monsterSpawner;
 
+    public void Configure(StageDataSO stageData)
+    {
+        if (stageData == null)
+            throw new ArgumentNullException(nameof(stageData));
+
+        prepareTimerController.Configure(stageData.prepareDuration);
+    }
+
+    public void CancelActiveUnitInteraction()
+    {
+        preparationService?.CancelActiveInteraction();
+    }
+
     public void BeginPreparation(WaveData wave, bool waitForFirstUnit, Action onFinished)
     {
         if (wave == null)
@@ -39,7 +52,6 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         {
             monsterPrewarmService.PrewarmForWave(wave);
             monsterSpawner.PrepareWavePreview(wave);
-            monsterSpawner.WaveHpTracker.PrepareWave(wave);
             if (!preparationService.EnterPrepareMode())
                 throw new InvalidOperationException("Failed to enter stage preparation mode.");
 
@@ -79,13 +91,13 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             onLose?.Invoke();
     }
 
-    public void EndCurrentPhase()
+    public void EndCurrentPhase(bool preserveCombatObjects = false)
     {
         if (currentPhase == RuntimePhase.None)
             return;
 
         currentPhase = RuntimePhase.None;
-        CleanupRuntime();
+        CleanupRuntime(preserveCombatObjects);
     }
 
     public void Shutdown()
@@ -95,10 +107,10 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
 
         isShutdown = true;
         currentPhase = RuntimePhase.None;
-        CleanupRuntime();
+        CleanupRuntime(preserveCombatObjects: false);
     }
 
-    private void CleanupRuntime()
+    private void CleanupRuntime(bool preserveCombatObjects = false)
     {
         if (preparationService != null)
             preparationService.OnUnitRosterChanged -= HandleUnitRosterChanged;
@@ -106,11 +118,11 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         pendingPrepareFinished = null;
         pathPreview?.Hide();
         prepareTimerController?.StopPreparePhase();
-        waveController?.StopWave();
+        waveController?.StopWave(preserveMonsters: preserveCombatObjects);
 
         stageTimeController?.ResetToNormalTime();
         preparationService?.EndCurrentPhase();
-        ClearTransientCombatObjects();
+        ClearTransientCombatObjects(preserveCombatObjects);
     }
 
     private void HandleUnitRosterChanged()
@@ -131,10 +143,19 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
             throw new InvalidOperationException("Failed to start the preparation timer.");
     }
 
-    private void ClearTransientCombatObjects()
+    private void ClearTransientCombatObjects(bool preserveMonsters)
     {
-        if (poolManager != null)
+        if (poolManager == null)
+            return;
+
+        if (!preserveMonsters)
+        {
             poolManager.DespawnWaveObjects();
+            return;
+        }
+
+        poolManager.DespawnAll(PoolCategory.Projectile);
+        poolManager.DespawnAll(PoolCategory.Effect);
     }
 
     private void OnDisable()

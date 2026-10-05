@@ -21,10 +21,13 @@ public static class StageEconomyHudSceneBuilder
         StageTimeController timeController = Object.FindFirstObjectByType<StageTimeController>();
         StageWaveTrackUI waveTrack = Object.FindFirstObjectByType<StageWaveTrackUI>();
         GameObject currencyView = GameObject.Find("Currency View");
+        GameObject bonusCurrencyView = GameObject.Find("BonusCurrency View");
         GameObject speedButton = GameObject.Find("Speed_Btn");
+        GameObject increaseButton = GameObject.Find("Increase Button");
 
         if (hud == null || topControl == null || timeController == null ||
-            currencyView == null || speedButton == null)
+            currencyView == null || bonusCurrencyView == null ||
+            speedButton == null || increaseButton == null)
         {
             Debug.LogError("[StageEconomyHudSceneBuilder] Required GameScene objects are missing.");
             return;
@@ -56,30 +59,13 @@ public static class StageEconomyHudSceneBuilder
         goldText.alignment = TextAlignmentOptions.MidlineLeft;
         goldText.raycastTarget = false;
 
-        Transform oldInterestText = amountGroup.Find("InterestBonus_Text");
-        if (oldInterestText != null)
-            Object.DestroyImmediate(oldInterestText.gameObject);
+        StageInterestIndicator interestIndicator = bonusCurrencyView.GetComponent<StageInterestIndicator>();
+        if (interestIndicator == null)
+        {
+            Debug.LogError("[StageEconomyHudSceneBuilder] BonusCurrency View has no StageInterestIndicator.");
+            return;
+        }
 
-        RectTransform interestRoot = GetOrCreateRect(amountGroup, "InterestIndicator");
-        ConfigureLayout(interestRoot.gameObject, 30f);
-        HorizontalLayoutGroup interestLayout = GetOrAdd<HorizontalLayoutGroup>(interestRoot.gameObject);
-        interestLayout.spacing = 3f;
-        interestLayout.childAlignment = TextAnchor.MiddleLeft;
-        interestLayout.childControlWidth = false;
-        interestLayout.childControlHeight = false;
-        interestLayout.childForceExpandWidth = false;
-        interestLayout.childForceExpandHeight = false;
-
-        StageInterestIndicator interestIndicator = GetOrAdd<StageInterestIndicator>(interestRoot.gameObject);
-        Image[] slots = new Image[5];
-        for (int i = 0; i < slots.Length; i++)
-            slots[i] = GetOrCreateInterestSlot(interestRoot, i + 1);
-        SetImageArray(interestIndicator, "slots", slots);
-
-        Sprite emptyGem = AssetDatabase.LoadAssetAtPath<Sprite>($"{GeneratedUiPath}/currency_gem_empty.png");
-        Sprite filledGem = AssetDatabase.LoadAssetAtPath<Sprite>($"{GeneratedUiPath}/currency_gem.png");
-        SetReference(interestIndicator, "emptySprite", emptyGem);
-        SetReference(interestIndicator, "filledSprite", filledGem);
         interestIndicator.SetInterest(0);
 
         Transform oldSpeedText = speedButton.transform.Find("Speed_Text");
@@ -95,6 +81,7 @@ public static class StageEconomyHudSceneBuilder
 
         speedIcon.gameObject.SetActive(true);
         SetReference(hud, "interestIndicator", interestIndicator);
+        SetReference(hud, "increasePricePanel", increaseButton.transform.Find("Price_Panel")?.gameObject);
         SetReference(topControl, "speedIcon", speedIcon);
 
         Sprite normalSpeedIcon = AssetDatabase.LoadAssetAtPath<Sprite>($"{GeneratedUiPath}/speed_normal.png");

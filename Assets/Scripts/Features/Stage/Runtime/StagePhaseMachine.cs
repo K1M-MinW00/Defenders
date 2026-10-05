@@ -14,12 +14,12 @@ public sealed class StagePhaseMachine
             StageState.Loading => next == StageState.Preparing ||
                                   next == StageState.InitializationFailed,
             StageState.Preparing => next == StageState.Combat ||
-                                    next == StageState.StageFail ||
+                                    next == StageState.Resolving ||
                                     next == StageState.InitializationFailed,
-            StageState.Combat => next == StageState.WaveCleared || next == StageState.StageFail,
-            StageState.WaveCleared => next == StageState.Preparing ||
-                                      next == StageState.StageClear ||
-                                      next == StageState.StageFail,
+            StageState.Combat => next == StageState.Resolving,
+            StageState.Resolving => next == StageState.Preparing ||
+                                    next == StageState.StageClear ||
+                                    next == StageState.StageFail,
             _ => false,
         };
     }

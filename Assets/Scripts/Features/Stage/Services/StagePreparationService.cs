@@ -204,6 +204,11 @@ public class StagePreparationService : MonoBehaviour
         rerollAllowance.Grant(count);
     }
 
+    public void CancelActiveInteraction()
+    {
+        placementController?.CancelActiveInteraction();
+    }
+
     private void BeginUnitsCombat()
     {
         if (unitRoster == null)

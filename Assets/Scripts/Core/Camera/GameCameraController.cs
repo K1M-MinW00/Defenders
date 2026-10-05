@@ -32,6 +32,7 @@ public class GameCameraController : MonoBehaviour
     private Vector3 lastPointerWorldPos;
     private int activeFingerId = -1;
     private bool hasValidBounds;
+    private bool isInputBlocked;
 
     private void Awake()
     {
@@ -77,6 +78,17 @@ public class GameCameraController : MonoBehaviour
         minBound = null;
         maxBound = null;
         hasValidBounds = false;
+        isDragging = false;
+        activeFingerId = -1;
+        isInputBlocked = false;
+    }
+
+    public void SetInputBlocked(bool blocked)
+    {
+        isInputBlocked = blocked;
+        if (!blocked)
+            return;
+
         isDragging = false;
         activeFingerId = -1;
     }
@@ -325,7 +337,7 @@ public class GameCameraController : MonoBehaviour
 
     private bool CanReceiveWorldInput()
     {
-        if (Mathf.Approximately(Time.timeScale, 0f))
+        if (isInputBlocked || Mathf.Approximately(Time.timeScale, 0f))
             return false;
 
         return placementController == null || placementController.DraggingUnit == null;

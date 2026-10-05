@@ -14,6 +14,7 @@ public class StageSessionController : MonoBehaviour
 
     [Header("Scene Flow")]
     [SerializeField] private string lobbySceneName = "LobbyScene";
+    [SerializeField, Min(0f)] private float resultPresentationDelay = 2f;
 
     [Header("Runtime")]
     [SerializeField] private StageDataSO currentStageData;
@@ -86,7 +87,12 @@ public class StageSessionController : MonoBehaviour
             }
 
             if (!TryStartStage(stageData, enterData, out string startError))
+            {
                 await HandleInitializationFailureAsync(startError);
+                return;
+            }
+
+            await BeginStageSequenceAsync();
         }
         catch (Exception exception)
         {
@@ -101,6 +107,7 @@ public class StageSessionController : MonoBehaviour
         currentStageData = stageData;
         waveSequence = new StageWaveSequence(stageData.waves);
         outcomeCoordinator = new StageOutcomeCoordinator(rewardService);
+        phaseRuntimeController.Configure(stageData);
 
         if (!bootstrapper.TryInitializeStage(stageData, enterData, out _, out string bootstrapError))
         {
@@ -115,9 +122,17 @@ public class StageSessionController : MonoBehaviour
             stageUI.RelicUI);
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
-        EnterPreparePhase();
         error = string.Empty;
-        return CurrentState == StageState.Preparing;
+        return CurrentState == StageState.Loading;
+    }
+
+    private async Task BeginStageSequenceAsync()
+    {
+        await stageUI.ShowStageIntroAsync(currentStageData);
+        if (isDisposed)
+            return;
+
+        EnterPreparePhase();
     }
 
     private bool TryValidateSceneReferences(out string error)
@@ -211,6 +226,8 @@ public class StageSessionController : MonoBehaviour
         if (isDisposed)
             return;
 
+        phaseRuntimeController.CancelActiveUnitInteraction();
+
         if (!TransitionTo(StageState.Combat))
             return;
 
@@ -232,26 +249,44 @@ public class StageSessionController : MonoBehaviour
         if (isDisposed || CurrentState != StageState.Combat)
             return;
 
-        if (!TransitionTo(StageState.WaveCleared))
+        if (!TransitionTo(StageState.Resolving))
             return;
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveClear);
-        rewardService.GiveWaveReward(CurrentWave);
+        WaveData clearedWave = CurrentWave;
         phaseRuntimeController.EndCurrentPhase();
 
-        if (CurrentWave.waveType == WaveType.Elite && relicService != null)
+        if (waveSequence.IsFinalWave)
+        {
+            await WaitForResultPresentationAsync();
+            if (isDisposed)
+                return;
+
+            await HandleStageClear();
+            return;
+        }
+
+        if (clearedWave.waveType == WaveType.Elite && relicService != null)
             await relicService.PresentChoiceAsync();
 
         if (isDisposed)
             return;
 
-        int clearedWaveCount = waveSequence.ClearedWaveCount;
-
-        if (waveSequence.IsFinalWave)
+        stageUI.SetRewardPresentationVisible(true);
+        try
         {
-            await HandleStageClear();
-            return;
+            await rewardService.GiveWaveRewardAsync(clearedWave);
         }
+        finally
+        {
+            if (!isDisposed)
+                stageUI.SetRewardPresentationVisible(false);
+        }
+
+        if (isDisposed)
+            return;
+
+        int clearedWaveCount = waveSequence.ClearedWaveCount;
 
         bool saved = await progressService.RecordWaveClearAsync(currentStageData, clearedWaveCount);
         if (isDisposed)
@@ -264,6 +299,13 @@ public class StageSessionController : MonoBehaviour
         {
             Debug.LogError("Failed to advance to the next wave.");
             return;
+        }
+
+        if (CurrentWave.waveType == WaveType.Boss)
+        {
+            await stageUI.ShowBossWaveAsync();
+            if (isDisposed)
+                return;
         }
 
         EnterPreparePhase();
@@ -289,8 +331,12 @@ public class StageSessionController : MonoBehaviour
             return;
 
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
-        phaseRuntimeController.EndCurrentPhase();
-        if (!TransitionTo(StageState.StageFail))
+        phaseRuntimeController.EndCurrentPhase(preserveCombatObjects: true);
+        if (!TransitionTo(StageState.Resolving))
+            return;
+
+        await WaitForResultPresentationAsync();
+        if (isDisposed || !TransitionTo(StageState.StageFail))
             return;
 
         stageUI.ShowStageFail(
@@ -302,7 +348,7 @@ public class StageSessionController : MonoBehaviour
 
     private async Task HandleStageClear()
     {
-        if (isDisposed)
+        if (isDisposed || !TransitionTo(StageState.StageClear))
             return;
 
         stageUI.ShowStageClear(
@@ -310,6 +356,14 @@ public class StageSessionController : MonoBehaviour
             waveSequence.ClearedWaveCount,
             currentStageData.clearRewards);
         await TrySaveStageOutcomeAsync(isClear: true);
+    }
+
+    private async Task WaitForResultPresentationAsync()
+    {
+        if (resultPresentationDelay <= 0f)
+            return;
+
+        await Task.Delay(TimeSpan.FromSeconds(resultPresentationDelay));
     }
 
     private async Task<bool> TrySaveStageOutcomeAsync(bool isClear)

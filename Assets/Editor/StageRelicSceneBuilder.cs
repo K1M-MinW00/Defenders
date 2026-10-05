@@ -9,6 +9,33 @@ public static class StageRelicSceneBuilder
 {
     private const string ScenePath = "Assets/Scenes/GameScene.unity";
 
+    [MenuItem("Tools/Defenders/Migrate Stage Relic Choice Icons")]
+    public static void MigrateChoiceIcons()
+    {
+        var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        StageRelicUI relicUI = Object.FindFirstObjectByType<StageRelicUI>(FindObjectsInactive.Include);
+        if (relicUI == null)
+            throw new System.InvalidOperationException("StageRelicUI was not found.");
+
+        Transform relicRoot = relicUI.transform;
+        Image firstSymbol = ConvertChoiceSymbol(
+            relicRoot.Find("RelicChoiceOverlay/Panel/Choices/ChoiceCard_1/Icon/Symbol"));
+        Image secondSymbol = ConvertChoiceSymbol(
+            relicRoot.Find("RelicChoiceOverlay/Panel/Choices/ChoiceCard_2/Icon/Symbol"));
+
+        SerializedObject serializedRelicUI = new(relicUI);
+        SetReference(serializedRelicUI, "firstChoiceSymbol", firstSymbol);
+        SetReference(serializedRelicUI, "secondChoiceSymbol", secondSymbol);
+        serializedRelicUI.ApplyModifiedPropertiesWithoutUndo();
+
+        EditorUtility.SetDirty(relicUI);
+        EditorUtility.SetDirty(firstSymbol.gameObject);
+        EditorUtility.SetDirty(secondSymbol.gameObject);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("[StageRelicSceneBuilder] Choice relic symbols migrated from TMP to Image.");
+    }
+
     [MenuItem("Tools/Defenders/Build Stage Relic UI Root")]
     public static void Build()
     {
@@ -188,9 +215,13 @@ public static class StageRelicSceneBuilder
         GameObject icon = CreateUi("Icon", root.transform, typeof(Image), typeof(LayoutElement));
         icon.GetComponent<Image>().color = new Color(0.02f, 0.42f, 0.45f, 1f);
         icon.GetComponent<LayoutElement>().preferredHeight = 190f;
-        TMP_Text symbol = CreateText("Symbol", icon.transform, string.Empty, 64f, 190f, FontStyles.Bold);
-        Stretch(symbol.rectTransform);
-        symbol.alignment = TextAlignmentOptions.Center;
+        GameObject symbolObject = CreateUi("Symbol", icon.transform, typeof(Image), typeof(LayoutElement));
+        Image symbol = symbolObject.GetComponent<Image>();
+        symbol.color = Color.white;
+        symbol.preserveAspect = true;
+        symbol.raycastTarget = false;
+        symbolObject.GetComponent<LayoutElement>().preferredHeight = 190f;
+        Stretch(symbolObject.GetComponent<RectTransform>());
 
         TMP_Text description = CreateText("Description", root.transform, string.Empty, 25f, 250f);
         description.alignment = TextAlignmentOptions.Center;
@@ -249,9 +280,27 @@ public static class StageRelicSceneBuilder
         target.FindProperty(propertyName).objectReferenceValue = value;
     }
 
+    private static Image ConvertChoiceSymbol(Transform symbolTransform)
+    {
+        if (symbolTransform == null)
+            throw new System.InvalidOperationException("Relic choice Symbol object was not found.");
+
+        TMP_Text text = symbolTransform.GetComponent<TMP_Text>();
+        if (text != null)
+            Object.DestroyImmediate(text, true);
+
+        Image image = GetOrAdd<Image>(symbolTransform.gameObject);
+        image.sprite = null;
+        image.color = Color.white;
+        image.preserveAspect = true;
+        image.raycastTarget = false;
+        image.enabled = true;
+        return image;
+    }
+
     private readonly struct ChoiceCardRefs
     {
-        public ChoiceCardRefs(GameObject root, TMP_Text name, TMP_Text symbol, TMP_Text description, Button button)
+        public ChoiceCardRefs(GameObject root, TMP_Text name, Image symbol, TMP_Text description, Button button)
         {
             Root = root;
             Name = name;
@@ -262,7 +311,7 @@ public static class StageRelicSceneBuilder
 
         public GameObject Root { get; }
         public TMP_Text Name { get; }
-        public TMP_Text Symbol { get; }
+        public Image Symbol { get; }
         public TMP_Text Description { get; }
         public Button Button { get; }
     }

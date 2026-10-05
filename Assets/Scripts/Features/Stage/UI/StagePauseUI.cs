@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class StagePauseUI : MonoBehaviour
@@ -17,6 +18,10 @@ public class StagePauseUI : MonoBehaviour
     [SerializeField] private Toggle soundToggle;
     [SerializeField] private Toggle pushToggle;
 
+    [Header("Combat Formation")]
+    [Tooltip("로비에서 선택한 전투 부대 순서대로 표시할 초상화 이미지입니다.")]
+    [SerializeField] private Image[] unitPortraitImages = new Image[5];
+
     private StageTimeController timeController;
     private StageSessionController session;
     private GameSettingsManager settingsManager;
@@ -25,7 +30,8 @@ public class StagePauseUI : MonoBehaviour
 
     public void Initialize(
         StageTimeController timeController,
-        StageSessionController session)
+        StageSessionController session,
+        IReadOnlyList<StageUnitInitData> combatFormation)
     {
         Dispose();
 
@@ -37,6 +43,8 @@ public class StagePauseUI : MonoBehaviour
 
         this.timeController = timeController;
         this.session = session;
+
+        BindCombatFormation(combatFormation);
 
         panelRoot.SetActive(false);
 
@@ -54,6 +62,28 @@ public class StagePauseUI : MonoBehaviour
             settingsManager.OnSoundChanged += HandleExternalSoundChanged;
 
         RefreshToggleStates();
+    }
+
+    private void BindCombatFormation(IReadOnlyList<StageUnitInitData> combatFormation)
+    {
+        if (unitPortraitImages == null)
+            return;
+
+        for (int i = 0; i < unitPortraitImages.Length; i++)
+        {
+            Image portrait = unitPortraitImages[i];
+            if (portrait == null)
+                continue;
+
+            Sprite sprite = i < (combatFormation?.Count ?? 0)
+                ? combatFormation[i]?.UnitData?.icon
+                : null;
+
+            portrait.sprite = sprite;
+            portrait.color = sprite != null ? Color.white : Color.clear;
+            portrait.preserveAspect = true;
+            portrait.raycastTarget = false;
+        }
     }
 
     public void Dispose()

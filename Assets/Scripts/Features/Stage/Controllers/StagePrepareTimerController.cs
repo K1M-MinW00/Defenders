@@ -4,7 +4,7 @@ using UnityEngine;
 
 public sealed class StagePrepareTimerController : MonoBehaviour
 {
-    [SerializeField] private float prepareDuration = 10f;
+    private float prepareDuration = 90f;
 
     private Coroutine prepareRoutine;
     private Action onPrepareFinished;
@@ -16,6 +16,16 @@ public sealed class StagePrepareTimerController : MonoBehaviour
     public bool IsPreparing => isPreparing;
 
     public event Action<float> OnPrepareTimerChanged;
+
+    public void Configure(float duration)
+    {
+        if (isPreparing)
+            StopPreparePhase();
+
+        prepareDuration = Mathf.Max(0f, duration);
+        timer = prepareDuration;
+        OnPrepareTimerChanged?.Invoke(timer);
+    }
 
     public bool TryStartPreparePhase(Action finishedCallback)
     {
@@ -84,10 +94,4 @@ public sealed class StagePrepareTimerController : MonoBehaviour
         StopPreparePhase();
     }
 
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        prepareDuration = Mathf.Max(0f, prepareDuration);
-    }
-#endif
 }
