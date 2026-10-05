@@ -26,7 +26,7 @@ public class UnitAnimationController : MonoBehaviour
 
     public void FaceTarget(ICombatTarget target)
     {
-        if (target == null) 
+        if (!CombatTargetSelector.IsValid(target))
             return;
 
         view?.FaceTo(transform.position, target.TargetTransform.position);

@@ -4,7 +4,6 @@ using UnityEngine;
 public class UnitEnergy : MonoBehaviour
 {
     private UnitController owner;
-    [SerializeField] private float energyRecovery = 10f;
     private float currentEnergy;
     private float maxEnergy = 100f;
     private bool isCombatPhase;
@@ -35,7 +34,7 @@ public class UnitEnergy : MonoBehaviour
         if (!isCombatPhase) return;
         if (IsFull) return;
 
-        Add(energyRecovery * deltaTime);
+        Add(Mathf.Max(0f, owner.Runtime.FinalStats.EnergyRecovery) * deltaTime);
     }
 
     public void Add(float amount)

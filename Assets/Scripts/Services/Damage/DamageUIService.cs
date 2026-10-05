@@ -1,7 +1,15 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DamageUIService : MonoBehaviour
 {
+    private sealed class PendingDamage
+    {
+        public float Amount;
+        public float ShowAt;
+        public Vector3 WorldPosition;
+    }
+
     [Header("Refs")]
     [SerializeField] private StagePoolManager poolManager;
     [SerializeField] private UnitRoster unitRoster;
@@ -11,11 +19,15 @@ public class DamageUIService : MonoBehaviour
     [SerializeField] private DamagePopup damagePopupPrefab;
     [SerializeField] private int prewarmCnt = 20;
 
-
     [Header("Position")]
-    [SerializeField] private Vector3 worldOffset = new Vector3(0f, 0.8f, 0f);
+    [SerializeField] private Vector3 worldOffset = new(0f, 0.8f, 0f);
     [SerializeField] private float randomX = 0.15f;
 
+    [Header("Readability")]
+    [SerializeField, Min(0f)] private float normalDamageMergeWindow = 0.15f;
+
+    private readonly Dictionary<MonsterHealth, PendingDamage> pendingDamage = new();
+    private readonly List<MonsterHealth> flushBuffer = new();
 
     private void Awake()
     {
@@ -26,37 +38,96 @@ public class DamageUIService : MonoBehaviour
     private void OnEnable()
     {
         if (unitRoster != null)
-            unitRoster.OnUnitDamaged += HandleUnitDamaged;
+            unitRoster.OnUnitHealed += HandleUnitHealed;
     }
 
     private void OnDisable()
     {
         if (unitRoster != null)
-            unitRoster.OnUnitDamaged -= HandleUnitDamaged;
+            unitRoster.OnUnitHealed -= HandleUnitHealed;
+
+        pendingDamage.Clear();
+        flushBuffer.Clear();
     }
 
-    public void Show(Vector3 worldPos, DamageResult result)
+    private void Update()
     {
-        if (!result.WasApplied || poolManager == null || damagePopupPrefab == null)
+        if (pendingDamage.Count == 0)
             return;
 
-        // 약간 랜덤으로 겹침 완화
-        float rx = Random.Range(-randomX, randomX);
-        Vector3 spawnPos = worldPos + worldOffset + new Vector3(rx, 0f, 0f);
+        float now = Time.time;
+        flushBuffer.Clear();
 
-        DamagePopup popup = poolManager.Spawn(damagePopupPrefab, spawnPos, Quaternion.identity, PoolCategory.UI, damageUIRoot);
+        foreach (KeyValuePair<MonsterHealth, PendingDamage> pair in pendingDamage)
+        {
+            if (now >= pair.Value.ShowAt)
+                flushBuffer.Add(pair.Key);
+        }
 
-        if (popup == null)
-            return;
+        for (int i = 0; i < flushBuffer.Count; i++)
+        {
+            MonsterHealth target = flushBuffer[i];
+            if (!pendingDamage.Remove(target, out PendingDamage value))
+                continue;
 
-        popup.Setup(Mathf.RoundToInt(result.AppliedAmount), result.WasCritical);
+            SpawnPopup(value.WorldPosition, popup => popup.SetupDamage(value.Amount, false));
+        }
     }
 
-    private void HandleUnitDamaged(UnitController unit, DamageResult result)
+    public void ShowMonsterDamage(MonsterHealth target, DamageResult result)
     {
-        if (unit == null)
+        if (target == null || !result.WasApplied)
             return;
 
-        Show(unit.transform.position, result);
+        Vector3 worldPosition = target.transform.position;
+        if (result.WasCritical || normalDamageMergeWindow <= 0f)
+        {
+            SpawnPopup(worldPosition, popup => popup.SetupDamage(result.AppliedAmount, result.WasCritical));
+            return;
+        }
+
+        if (!pendingDamage.TryGetValue(target, out PendingDamage pending))
+        {
+            pending = new PendingDamage();
+            pendingDamage.Add(target, pending);
+        }
+
+        pending.Amount += result.AppliedAmount;
+        pending.WorldPosition = worldPosition;
+        pending.ShowAt = Time.time + normalDamageMergeWindow;
+    }
+
+    public void FlushMonsterDamage(MonsterHealth target)
+    {
+        if (target == null || !pendingDamage.Remove(target, out PendingDamage pending))
+            return;
+
+        SpawnPopup(pending.WorldPosition, popup => popup.SetupDamage(pending.Amount, false));
+    }
+
+    private void HandleUnitHealed(UnitController unit, float amount)
+    {
+        if (unit == null || amount <= 0f)
+            return;
+
+        SpawnPopup(unit.transform.position, popup => popup.SetupHeal(amount));
+    }
+
+    private void SpawnPopup(Vector3 worldPosition, System.Action<DamagePopup> setup)
+    {
+        if (poolManager == null || damagePopupPrefab == null)
+            return;
+
+        float randomOffset = Random.Range(-randomX, randomX);
+        Vector3 spawnPosition = worldPosition + worldOffset + new Vector3(randomOffset, 0f, 0f);
+        DamagePopup popup = poolManager.Spawn(
+            damagePopupPrefab,
+            spawnPosition,
+            Quaternion.identity,
+            PoolCategory.UI,
+            damageUIRoot);
+
+        if (popup != null)
+            setup?.Invoke(popup);
     }
 }

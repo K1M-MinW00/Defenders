@@ -5,6 +5,14 @@ public class ModelView : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Transform visualRoot;
 
+    [Header("World Sorting")]
+    [SerializeField] private bool sortByWorldY = true;
+    [SerializeField] private int worldSortingBase = 1000;
+    [SerializeField, Min(1f)] private float sortingOrdersPerUnit = 10f;
+
+    private SpriteRenderer[] sortedRenderers;
+    private int[] rendererOrderOffsets;
+
     private bool isFacingRight = true;
 
     private static readonly int IdleHash = Animator.StringToHash("Idle");
@@ -17,6 +25,13 @@ public class ModelView : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        CacheWorldSorting();
+        RefreshWorldSorting();
+    }
+
+    private void LateUpdate()
+    {
+        RefreshWorldSorting();
     }
 
     public void PlayIdle()
@@ -78,6 +93,35 @@ public class ModelView : MonoBehaviour
     public Vector2 GetFacingDirection()
     {
         return isFacingRight ? Vector2.right : Vector2.left;
+    }
+
+    private void CacheWorldSorting()
+    {
+        sortedRenderers = GetComponentsInChildren<SpriteRenderer>(includeInactive: true);
+        rendererOrderOffsets = new int[sortedRenderers.Length];
+
+        if (sortedRenderers.Length == 0)
+            return;
+
+        int minimumOrder = sortedRenderers[0].sortingOrder;
+        for (int i = 1; i < sortedRenderers.Length; i++)
+            minimumOrder = Mathf.Min(minimumOrder, sortedRenderers[i].sortingOrder);
+
+        for (int i = 0; i < sortedRenderers.Length; i++)
+            rendererOrderOffsets[i] = sortedRenderers[i].sortingOrder - minimumOrder;
+    }
+
+    private void RefreshWorldSorting()
+    {
+        if (!sortByWorldY || sortedRenderers == null)
+            return;
+
+        int rootOrder = worldSortingBase - Mathf.RoundToInt(transform.position.y * sortingOrdersPerUnit);
+        for (int i = 0; i < sortedRenderers.Length; i++)
+        {
+            if (sortedRenderers[i] != null)
+                sortedRenderers[i].sortingOrder = rootOrder + rendererOrderOffsets[i];
+        }
     }
 
 }

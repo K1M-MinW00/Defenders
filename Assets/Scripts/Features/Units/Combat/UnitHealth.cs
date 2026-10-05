@@ -12,6 +12,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
     public event Action<UnitController, float, float> OnHpChanged;
     public event Action<UnitController, DamageResult> OnDamaged;
+    public event Action<UnitController, float> OnHealed;
     public event Action<UnitController> OnDead;
 
     public void Initialize(UnitController owner)
@@ -73,6 +74,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
             resolution.IsLethal,
             resolution.IsCritical);
 
+        CombatDebugTelemetry.ReportDamageApplied(this, request, result);
         OnDamaged?.Invoke(owner, result);
 
         if (IsDead)
@@ -89,10 +91,12 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
     public void Heal(float amount)
     {
-        if (state.Heal(amount) <= 0f)
+        float appliedAmount = state.Heal(amount);
+        if (appliedAmount <= 0f)
             return;
 
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
+        OnHealed?.Invoke(owner, appliedAmount);
     }
 
     private void Die()
@@ -112,6 +116,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
     {
         OnHpChanged = null;
         OnDamaged = null;
+        OnHealed = null;
         OnDead = null;
         owner = null;
     }

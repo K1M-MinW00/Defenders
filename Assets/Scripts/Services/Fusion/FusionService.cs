@@ -26,6 +26,8 @@ public class FusionService : MonoBehaviour
     [Header("Animation")]
     [SerializeField, Min(0f)] private float spawnSettleDelay = 0.5f;
     [SerializeField, Min(0.05f)] private float absorbDuration = 0.28f;
+    [SerializeField, Min(0f)] private float absorbArcHeight = 0.55f;
+    [SerializeField, Min(0f)] private float chainFuseDelay = 0.18f;
     [SerializeField] private AnimationCurve absorbEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     private const int MaxStar = 4;
@@ -44,7 +46,7 @@ public class FusionService : MonoBehaviour
     private IEnumerator AutoFuseRoutine(UnitController changedUnit)
     {
         UnitController seed = changedUnit;
-        DropSpawnView spawnView = seed.GetComponent<DropSpawnView>();
+        DropSpawnView spawnView = seed.GetComponentInChildren<DropSpawnView>(true);
         while (spawnView != null && spawnView.IsPlaying && IsValid(seed))
             yield return null;
 
@@ -71,7 +73,7 @@ public class FusionService : MonoBehaviour
                 elapsed += Time.unscaledDeltaTime;
                 float normalized = Mathf.Clamp01(elapsed / absorbDuration);
                 float eased = absorbEase != null ? absorbEase.Evaluate(normalized) : normalized;
-                seed.transform.position = Vector3.LerpUnclamped(start, target.transform.position, eased);
+                seed.transform.position = EvaluateAbsorbArc(start, target.transform.position, eased);
                 yield return null;
             }
 
@@ -85,16 +87,25 @@ public class FusionService : MonoBehaviour
 
             UnitController consumed = seed;
             target.ApplyStarUp();
+            target.GetComponentInChildren<DropSpawnView>(true)?.PlayFusionUpgrade();
             roster.Unregister(consumed);
             animatingUnits.Remove(consumed);
             consumed.ReturnToPool();
-
             seed = target;
-            if (spawnSettleDelay > 0f)
-                yield return new WaitForSecondsRealtime(spawnSettleDelay);
+
+            if (chainFuseDelay > 0f && seed.Star < MaxStar)
+                yield return new WaitForSecondsRealtime(chainFuseDelay);
         }
 
         ReleaseAnimationLock(seed);
+    }
+
+    private Vector3 EvaluateAbsorbArc(Vector3 start, Vector3 end, float t)
+    {
+        Vector3 midpoint = (start + end) * 0.5f + Vector3.up * absorbArcHeight;
+        Vector3 first = Vector3.LerpUnclamped(start, midpoint, t);
+        Vector3 second = Vector3.LerpUnclamped(midpoint, end, t);
+        return Vector3.LerpUnclamped(first, second, t);
     }
 
     private UnitController FindAvailableMatch(UnitController seed)
@@ -155,30 +166,15 @@ public class FusionService : MonoBehaviour
 
         UnitController seed = changedUnit;
         int fusionCount = 0;
-
-        while (seed != null && seed.UnitData != null)
+        while (seed != null && seed.UnitData != null && seed.Star < MaxStar)
         {
-            int star = seed.Star;
-
-            if (star >= MaxStar)
+            UnitController keep = roster.FindAny(seed.UnitId, seed.Star, exclude: seed);
+            if (keep == null || !seed.TryBeginRemoval(UnitRemovalReason.Fused))
                 break;
 
-            string unitId = seed.UnitId;
-
-            UnitController other = roster.FindAny(unitId, star, exclude: seed);
-
-            if (other == null)
-                break;
-
-            UnitController keep = other;
-            UnitController consume = seed;
-
-            if (!consume.TryBeginRemoval(UnitRemovalReason.Fused))
-                break;
-
+            roster.Unregister(seed);
+            seed.ReturnToPool();
             keep.ApplyStarUp();
-            roster.Unregister(consume);
-            consume.ReturnToPool();
             seed = keep;
             fusionCount++;
         }

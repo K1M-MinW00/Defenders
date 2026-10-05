@@ -39,7 +39,7 @@ public class UnitDragActionUI : MonoBehaviour
         sellZone?.SetActive(isDraggingUnit);
 
         if (sellCostText != null && economy != null)
-            sellCostText.SetText("{0}", economy.GetSellCost(star));
+            sellCostText.SetText("+{0}", economy.GetSellCost(star));
 
         RefreshRerollCost();
     }

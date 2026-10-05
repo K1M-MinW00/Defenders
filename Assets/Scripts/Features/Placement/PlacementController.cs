@@ -177,6 +177,7 @@ public class PlacementController : MonoBehaviour
         
         DraggingUnit.Movement.Stop();
         DraggingUnit.ShowRange();
+        DraggingUnit.GetComponentInChildren<DropSpawnView>(true)?.BeginDragHold();
 
         int star = unit.Star;
         bool canReroll = (star == 1);
@@ -271,6 +272,22 @@ public class PlacementController : MonoBehaviour
             ClearPressedUnit();
     }
 
+    public void CancelActiveInteraction()
+    {
+        // Phase changes can happen while a pointer is still held. Reset every
+        // interaction-related state explicitly so the following phase cannot
+        // inherit a stale drag, panel, finger id, range, or hidden unit HUD.
+        if (DraggingUnit != null)
+            CancelDrag();
+        else
+            ClearPressedUnit();
+
+        isInfoPanelVisible = false;
+        activeFingerId = -1;
+        stageUIController?.HideUnitInfo();
+        stageUIController?.SetUnitDragMode(false);
+    }
+
     public void RestoreDraggingUnitPosition()
     {
         if (DraggingUnit != null)
@@ -287,6 +304,7 @@ public class PlacementController : MonoBehaviour
             finishedUnit.gameObject.activeInHierarchy &&
             finishedUnit.RuntimeState != UnitRuntimeState.Removing)
         {
+            finishedUnit.GetComponentInChildren<DropSpawnView>(true)?.PlayPlacementLanding();
             finishedUnit.Movement.Resume();
             finishedUnit.HideRange();
         }
