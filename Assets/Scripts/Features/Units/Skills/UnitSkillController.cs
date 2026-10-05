@@ -29,6 +29,8 @@ public class UnitSkillController : MonoBehaviour
     public ActiveSkillBase ActiveSkill => activeSkill;
     public PassiveSkillBase PassiveSkill => passiveSkill;
     public bool IsSkillRunning => lifecycle.IsRunning;
+    public SkillExecutionPhase ExecutionPhase => lifecycle.Phase;
+    public SkillExecutionContext ExecutionContext => lifecycle.Context;
 
     public bool HasPassive => passiveSkill != null && IsSkillStageUnlocked(owner?.UnitData?.passiveSkill, 0);
     public bool HasActiveUpgrade2 => activeSkill != null && IsSkillStageUnlocked(owner?.UnitData?.activeSkill, 1);
@@ -61,6 +63,7 @@ public class UnitSkillController : MonoBehaviour
         skillStartedAt = float.NegativeInfinity;
         lifecycle.Cancel();
         activeSkill?.CancelSkill();
+        activeSkill?.CleanupExecutionResources();
         activeSkill = null;
         passiveSkill = null;
         owner = null;
@@ -94,10 +97,7 @@ public class UnitSkillController : MonoBehaviour
 
     private void HandleEnergyFull()
     {
-        if (!CanStartSkill())
-            return;
-
-        owner.FSMController.ChangeToSkill();
+        owner.FSMController.TryChangeToSkill();
     }
 
     public bool CanStartSkill()
@@ -153,11 +153,14 @@ public class UnitSkillController : MonoBehaviour
         }
     }
 
-    public void StartSkill()
+    public bool StartSkill()
     {
         SkillExecutionContext context = lifecycle.Context;
         if (context == null || !context.IsValid || !lifecycle.TryStart())
-            return;
+        {
+            CancelSkill();
+            return false;
+        }
 
         skillStartedAt = Time.time;
         activeSkill.OnSkillStart(context);
@@ -166,8 +169,32 @@ public class UnitSkillController : MonoBehaviour
 
         owner.Animation.PlaySkill();
 
-        if (context.EnemyTarget != null)
+        if (CombatTargetSelector.IsValid(context.EnemyTarget))
             owner.Animation.FaceTarget(context.EnemyTarget);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Cast animation 중 대상이 사라진 경우 새 대상을 찾고, 찾지 못하면 캐스팅을 취소한다.
+    /// 이미 효과가 적용된 스킬은 원래 종료 이벤트/타임아웃으로 마무리한다.
+    /// </summary>
+    public bool ValidateRunningSkillTarget()
+    {
+        if (lifecycle.Phase != SkillExecutionPhase.Running)
+            return true;
+
+        SkillExecutionContext context = lifecycle.Context;
+        if (context != null &&
+            activeSkill != null &&
+            activeSkill.TryResolveContext(context) &&
+            activeSkill.CanApply(context))
+        {
+            return true;
+        }
+
+        CancelSkill();
+        return false;
     }
 
     public void ApplySkill()
@@ -195,6 +222,8 @@ public class UnitSkillController : MonoBehaviour
             GameAudioPriority.High,
             0.1f,
             owner);
+        CombatDebugTelemetry.ReportSkillApplied(owner, activeSkill, Time.time);
+        activeSkill.HideTelegraph();
         activeSkill.OnSkillApply(context);
         OnSkillApplied?.Invoke();
         NotifyActiveSkillApplied();
@@ -207,6 +236,7 @@ public class UnitSkillController : MonoBehaviour
             return;
 
         activeSkill.OnSkillEnd(context);
+        activeSkill.CleanupExecutionResources();
         lifecycle.Complete();
         skillStartedAt = float.NegativeInfinity;
         OnSkillEnded?.Invoke();
@@ -221,6 +251,7 @@ public class UnitSkillController : MonoBehaviour
         skillStartedAt = float.NegativeInfinity;
 
         activeSkill?.CancelSkill();
+        activeSkill?.CleanupExecutionResources();
 
         if (!wasActive)
             return;

@@ -110,6 +110,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitBufferSize: 32
   multiTargetUnlockStar: 2
   hitboxPrefab: {fileID: 4535731998355591496, guid: 4092137df183b214abba216fe8072c3a, type: 3}
   boxSize: {x: 4, y: 2}
@@ -126,12 +127,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TemplarKnight_LightBeam_Skill
   damageMultiplier: 1.85
+  upgrade_damageMultiplier: 3
   beamLength: 40
   beamWidth: 1.2
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  hitBufferSize: 32
   beamEffectPrefab: {fileID: -5031632017064973516, guid: f4cbf35e8411fee42970a2907345ff06, type: 3}
 --- !u!114 &1583106785907814873
 MonoBehaviour:
@@ -146,5 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnightTemplar_SpearFormation
   knockbackDistance: 1.2
+  upgrade_knockbackDistance: 1
   knockbackDuration: 0.25
   cooldown: 1

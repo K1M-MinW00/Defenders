@@ -17,16 +17,11 @@ public class Knight_Cleave_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-
-        if (target == null)
+        if (!TryPrepareEnemyInRangeContext(out context))
             return false;
 
-        context.SetEnemyTarget(target);
         context.SetCastDirection(
-            (Vector2)target.TargetTransform.position - (Vector2)owner.transform.position);
+            (Vector2)context.EnemyTarget.TargetTransform.position - (Vector2)owner.transform.position);
 
         return true;
     }
@@ -35,6 +30,12 @@ public class Knight_Cleave_Skill : ActiveSkillBase
     {
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
+
+        Telegraph.ShowLine(
+            owner.transform,
+            context.CastDirection,
+            projectileSpeed * lifeTime,
+            new Color(1f, 0.85f, 0.2f, 0.95f));
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
@@ -44,15 +45,17 @@ public class Knight_Cleave_Skill : ActiveSkillBase
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
 
-        SwordAura projectile = owner.PoolManager.Spawn(swordAuraPrefab, owner.transform.position, rotation, PoolCategory.Projectile);
+        if (!TrySpawnSkillObject(
+                swordAuraPrefab,
+                owner.transform.position,
+                rotation,
+                PoolCategory.Projectile,
+                out SwordAura projectile))
+            return;
 
-        if (projectile != null)
-        {
-            float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
-            float damage = owner.Attack * multiplier;
-
-            projectile.Initialize(damage, dir, projectileSpeed, lifeTime, enemyLayer, owner);
-        }
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
+        float damage = owner.Attack * multiplier;
+        projectile.Initialize(damage, dir, projectileSpeed, lifeTime, enemyLayer, owner);
     }
 
     public override void OnSkillEnd(SkillExecutionContext context) { }

@@ -167,8 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00cec8d12390fd2459e58c4451d66ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoldierR_ArrowRain_Skill
-  damageMultiplier: 0.65
+  damageMultiplier: 0.35
+  upgrade_damageMultiplier: 0.3
   arrowCount: 6
+  upgrade_arrowCount: 10
   rainRadius: 1
   hitRadius: 0.5
   enemyLayer:
@@ -190,7 +192,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoliderR_DetectWeakness
   procChance: 0.2
-  bonusDamagePercent: 0.35
+  damageMultiplier: 1.2
+  upgrade_damageMultiplier: 1.5
 --- !u!4 &5910133605599066739 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1629001870847616044, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}

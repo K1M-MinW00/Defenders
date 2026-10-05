@@ -4,8 +4,10 @@ using UnityEngine;
 public class SoldierR_ArrowRain_Skill : ActiveSkillBase
 {
     [Header("Arrow Rain")]
-    [SerializeField] private float damageMultiplier = 1.5f;
-    [SerializeField] private float upgrade_damageMultiplier = 2f;
+    [Tooltip("화살 한 발의 공격력 배율입니다. 기본 총 기대 피해는 약 2.1배입니다.")]
+    [SerializeField] private float damageMultiplier = 0.35f;
+    [Tooltip("강화 후 화살 한 발의 공격력 배율입니다. 총 기대 피해는 약 3배입니다.")]
+    [SerializeField] private float upgrade_damageMultiplier = 0.3f;
     
     [SerializeField] private int arrowCount = 6;
     [SerializeField] private int upgrade_arrowCount = 10;
@@ -36,14 +38,10 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-        if (target == null)
+        if (!TryPrepareEnemyInRangeContext(out context))
             return false;
 
-        context.SetEnemyTarget(target);
-        context.SetCastPosition(target.TargetTransform.position);
+        context.SetCastPosition(context.EnemyTarget.TargetTransform.position);
         return true;
     }
 
@@ -51,13 +49,18 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
     {
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
+
+        Telegraph.ShowCircle(
+            context.CastPosition,
+            rainRadius,
+            new Color(1f, 0.25f, 0.08f, 0.9f));
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
         Vector2 center = context.CastPosition;
 
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
         float damage = owner.Attack * multiplier;
 
 #if UNITY_EDITOR
@@ -65,7 +68,7 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
         debugLandingPoints.Clear();
 #endif
 
-        int count = skillController.HasActiveUpgrade2 ? upgrade_arrowCount : arrowCount;
+        int count = ResolveActiveUpgrade(arrowCount, upgrade_arrowCount);
         for (int i = 0; i < count; i++)
         {
             Vector2 landingOffset = Random.insideUnitCircle * rainRadius;
@@ -82,14 +85,12 @@ public class SoldierR_ArrowRain_Skill : ActiveSkillBase
 
             Vector3 spawnPos = (Vector3)(landingPoint + spawnOffset) + Vector3.up * spawnHeight;
 
-            ArrowRainFallingArrow fallingArrow = owner.PoolManager.Spawn(
-                fallingArrowPrefab,
-                spawnPos,
-                Quaternion.identity,
-                PoolCategory.Projectile
-            );
-
-            if (fallingArrow == null)
+            if (!TrySpawnSkillObject(
+                    fallingArrowPrefab,
+                    spawnPos,
+                    Quaternion.identity,
+                    PoolCategory.Projectile,
+                    out ArrowRainFallingArrow fallingArrow))
                 continue;
 
             fallingArrow.Initialize(landingPoint, damage, hitRadius, enemyLayer, owner);

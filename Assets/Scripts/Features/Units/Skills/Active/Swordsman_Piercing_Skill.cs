@@ -24,7 +24,6 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
     private Vector2 origin;
     private Vector2 dir;
     private float angle;
-    private Coroutine skillRoutine;
     private WaitForSeconds hitDelay;
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
@@ -42,14 +41,7 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-        if (target == null)
-            return false;
-
-        context.SetEnemyTarget(target);
-        return true;
+        return TryPrepareEnemyWithinRangeContext(owner.DetectRange, out context);
     }
 
     public override void OnSkillStart(SkillExecutionContext context)
@@ -67,29 +59,20 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
         angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         SpawnHitEffect();
 
-        if (skillRoutine != null)
-            owner.StopCoroutine(skillRoutine);
-
-        skillRoutine = owner.StartCoroutine(CoPiercingThrust());
+        StartExecutionCoroutine(CoPiercingThrust());
     }
 
     public override void OnSkillEnd(SkillExecutionContext context){ }
 
     public override void CancelSkill() 
     {
-        if(skillRoutine != null)
-        {
-            owner.StopCoroutine(skillRoutine);
-            skillRoutine = null;
-        }
-
         damagedTargetsPerHit.Clear();
     }
 
     private IEnumerator CoPiercingThrust()
     {
         int hitCount = Mathf.Max(1, multCnt);
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
         float damagePerHit = owner.Attack * multiplier / hitCount;
 
         for (int i = 0; i < hitCount; i++)
@@ -100,56 +83,31 @@ public class Swordsman_Piercing_Skill : ActiveSkillBase
                 yield return hitDelay;
         }
 
-        skillRoutine = null;
     }
 
     private void ExecuteSingleThrust(float damage)
     {
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-
-        int hitCount = Physics2D.OverlapBox(
+        SkillAreaDamageUtility.ApplyBox(
             origin,
             boxSize,
             angle,
             hitFilter,
-            hitBuffer
-        );
-
-        ApplyDamage(hitCount, damage);
-    }
-
-    private void ApplyDamage(int hitCount, float damage)
-    {
-        if (hitCount <= 0)
-            return;
-
-        damagedTargetsPerHit.Clear();
-
-        for (int i = 0; i < hitCount; i++)
-        {
-            Collider2D hit = hitBuffer[i];
-
-            if (hit == null)
-                continue;
-
-            if (!CombatHitResolver.TryResolve(
-                    hit,
-                    enemyLayer,
-                    damagedTargetsPerHit,
-                    out ICombatHealth combatHealth))
-                continue;
-
-            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
-        }
+            hitBuffer,
+            enemyLayer,
+            damagedTargetsPerHit,
+            damage,
+            owner);
     }
 
     private void SpawnHitEffect()
     {
-        Poolable effect = owner.PoolManager.Spawn(hitEffectPrefab,origin,Quaternion.Euler(0f,0f,angle),
-            PoolCategory.Effect
-        );
-
-        if (effect != null && effect.TryGetComponent(out PooledVfx vfx))
+        if (TrySpawnSkillObject(
+                hitEffectPrefab,
+                origin,
+                Quaternion.Euler(0f, 0f, angle),
+                PoolCategory.Effect,
+                out Poolable effect) &&
+            effect.TryGetComponent(out PooledVfx vfx))
             vfx.Play();
     }
 

@@ -8,7 +8,6 @@ public class Priest_Heal_Skill : ActiveSkillBase
     [SerializeField] private float upgrade_healMultiplier = 3f;
 
     [SerializeField] private GameObject healEffectPrefab;
-    private Poolable spawnedEffect;
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.LowestHpAlliesInRangeOrGlobal;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
@@ -53,11 +52,16 @@ public class Priest_Heal_Skill : ActiveSkillBase
             return;
 
         owner.Animation.FaceTo(owner.transform.position, target.transform.position);
+        Telegraph.ShowCircle(
+            target.transform,
+            Vector3.zero,
+            0.45f,
+            new Color(0.2f, 1f, 0.4f, 0.9f));
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_healMultiplier : healMultiplier;
+        float multiplier = ResolveActiveUpgrade(healMultiplier, upgrade_healMultiplier);
 
         float healAmount = owner.Attack * multiplier;
         
@@ -70,29 +74,26 @@ public class Priest_Heal_Skill : ActiveSkillBase
 
     public override void OnSkillEnd(SkillExecutionContext context)
     {
-        ReturnHealEffect();
     }
 
     public override void CancelSkill()
     {
-        ReturnHealEffect();
     }
 
     private void SpawnHealEffect(UnitController target)
     {
-        spawnedEffect = owner.PoolManager.Spawn(healEffectPrefab, target.transform.position, Quaternion.identity, PoolCategory.Effect, target.transform);
-
-        if (spawnedEffect != null && spawnedEffect.TryGetComponent(out PooledVfx vfx))
+        if (TrySpawnSkillObject(
+                healEffectPrefab,
+                target.transform.position,
+                Quaternion.identity,
+                PoolCategory.Effect,
+                out Poolable spawnedEffect,
+                target.transform) &&
+            spawnedEffect.TryGetComponent(out PooledVfx vfx))
+        {
+            TrackExecutionEffect(spawnedEffect);
             vfx.Play();
-    }
-
-    private void ReturnHealEffect()
-    {
-        if (spawnedEffect == null)
-            return;
-
-        spawnedEffect.ReturnToPool();
-        spawnedEffect = null;
+        }
     }
 
 }

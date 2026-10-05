@@ -19,7 +19,7 @@ public class SoldierR_DetectWeakness : PassiveSkillBase
             return;
 
         float multiplier = skillController.HasPassiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
-        float additiveDamage = damage * multiplier;
+        float additiveDamage = damage * Mathf.Max(0f, multiplier - 1f);
 
         target.CombatHealth.ApplyDamage(
             new DamageRequest(additiveDamage, owner, DamageOrigin.Effect));

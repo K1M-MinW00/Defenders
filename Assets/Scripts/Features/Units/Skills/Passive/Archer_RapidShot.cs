@@ -24,12 +24,10 @@ public class Archer_RapidShot : PassiveSkillBase
             return;
 
         shotCount++;
-
         if (shotCount < requiredShots)
             return;
 
         shotCount = 0;
-
         ApplyArcherBuff();
     }
 

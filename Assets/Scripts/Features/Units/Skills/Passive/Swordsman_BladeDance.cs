@@ -34,7 +34,6 @@ public class Swordsman_BladeDance : PassiveSkillBase
             : maxStacks;
 
         currentStacks = Mathf.Min(currentStacks + 1, effectiveMaxStacks);
-
         float maximumBonus = maxStacks * attackSpeedBonusPerStack;
         float totalBonus = StackingBonusCalculator.Calculate(
             currentStacks,

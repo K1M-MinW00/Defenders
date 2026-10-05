@@ -12,13 +12,12 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
     [SerializeField] private int hitBufferSize = 32;
 
     private float radius = 3f;
-    private Poolable spawnedEffect;
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
     private readonly System.Collections.Generic.HashSet<ICombatHealth> damagedTargets = new();
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.SelfArea;
-    public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CastWithoutTarget;
+    public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
 
     private void Awake()
     {
@@ -32,18 +31,8 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
         radius = owner.DetectRange;
-        context.SetCastPosition(owner.transform.position);
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-
-        if (target != null)
-            context.SetEnemyTarget(target);
-
-        // 자기 위치 기준
-        return true;
+        return PrepareSelfAreaWithEnemyInRangeContext(radius, out context);
     }
 
     public override void OnSkillStart(SkillExecutionContext context)
@@ -51,6 +40,11 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
 
+        Telegraph.ShowCircle(
+            owner.transform,
+            Vector3.zero,
+            radius,
+            new Color(1f, 0.12f, 0.08f, 0.9f));
         SpawnEffect();
     }
 
@@ -58,56 +52,40 @@ public class Axeman_SpinSlash_Skill : ActiveSkillBase
     {
         Vector2 center = owner.transform.position;
 
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
         float damage = owner.Attack * multiplier;
 
-        int hitCount = Physics2D.OverlapCircle(center, radius, hitFilter, hitBuffer);
-
-        if (hitCount <= 0)
-            return;
-
-        damagedTargets.Clear();
-
-        for (int i = 0; i < hitCount; i++)
-        {
-            Collider2D hit = hitBuffer[i];
-
-            if (hit == null)
-                continue;
-
-            if (!CombatHitResolver.TryResolve(
-                    hit,
-                    enemyLayer,
-                    damagedTargets,
-                    out ICombatHealth combatHealth))
-                continue;
-
-            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
-        }
+        SkillAreaDamageUtility.ApplyCircle(
+            center,
+            radius,
+            hitFilter,
+            hitBuffer,
+            enemyLayer,
+            damagedTargets,
+            damage,
+            owner);
     }
 
     public override void OnSkillEnd(SkillExecutionContext context)
     {
-        ReturnEffect();
     }
 
     public override void CancelSkill()
     {
-        ReturnEffect();
     }
 
     private void SpawnEffect()
     {
-        spawnedEffect = owner.PoolManager.Spawn(spinEffectPrefab, owner.transform.position, Quaternion.identity, PoolCategory.Effect, owner.transform);
-    }
-
-    private void ReturnEffect()
-    {
-        if (spawnedEffect == null)
-            return;
-
-        spawnedEffect.ReturnToPool();
-        spawnedEffect = null;
+        if (TrySpawnSkillObject(
+            spinEffectPrefab,
+            owner.transform.position,
+            Quaternion.identity,
+            PoolCategory.Effect,
+            out Poolable spawnedEffect,
+            owner.transform))
+        {
+            TrackExecutionEffect(spawnedEffect);
+        }
     }
 
 

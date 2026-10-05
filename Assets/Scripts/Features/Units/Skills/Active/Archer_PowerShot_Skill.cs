@@ -16,21 +16,20 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-
-        if (target == null)
-            return false;
-
-        context.SetEnemyTarget(target);
-        return true;
+        return TryPrepareEnemyInRangeContext(out context);
     }
 
     public override void OnSkillStart(SkillExecutionContext context)
     {
         if (context.EnemyTarget != null)
+        {
             owner.Animation.FaceTarget(context.EnemyTarget);
+            Telegraph.ShowCircle(
+                context.EnemyTarget.TargetTransform,
+                Vector3.up * 0.55f,
+                0.22f,
+                new Color(1f, 0.12f, 0.08f, 0.95f));
+        }
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
@@ -43,14 +42,17 @@ public class Archer_PowerShot_Skill : ActiveSkillBase
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
 
-        PowerArrowProjectile arrow = owner.PoolManager.Spawn(arrow_Power_Projectile, spawnPos, rotation, PoolCategory.Projectile);
+        if (!TrySpawnSkillObject(
+                arrow_Power_Projectile,
+                spawnPos,
+                rotation,
+                PoolCategory.Projectile,
+                out PowerArrowProjectile arrow))
+            return;
 
-        if (arrow != null)
-        {
-            float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
-            float damage = owner.Attack * multiplier;
-            arrow.Initialize(damage, projectileSpeed, dir, enemyLayer, projectileLifeTime, owner);
-        }
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
+        float damage = owner.Attack * multiplier;
+        arrow.Initialize(damage, projectileSpeed, dir, enemyLayer, projectileLifeTime, owner);
     }
 
     public override void OnSkillEnd(SkillExecutionContext context) { }

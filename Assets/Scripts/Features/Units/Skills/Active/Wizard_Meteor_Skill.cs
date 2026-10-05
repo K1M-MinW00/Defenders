@@ -18,14 +18,10 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-        if (target == null)
+        if (!TryPrepareEnemyInRangeContext(out context))
             return false;
 
-        context.SetEnemyTarget(target);
-        context.SetCastPosition(target.TargetTransform.position);
+        context.SetCastPosition(context.EnemyTarget.TargetTransform.position);
 
         return true;
     }
@@ -34,6 +30,11 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
     {
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
+
+        Telegraph.ShowCircle(
+            context.CastPosition,
+            explosionRadius,
+            new Color(0.75f, 0.2f, 1f, 0.9f));
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
@@ -41,9 +42,15 @@ public class Wizard_Meteor_Skill : ActiveSkillBase
         Vector2 targetPos = context.CastPosition;
         Vector2 spawnPos = targetPos + Vector2.up * spawnHeight;
         
-        MeteorProjectile projectile = owner.PoolManager.Spawn(meteorPrefab, spawnPos, Quaternion.identity,PoolCategory.Projectile);
+        if (!TrySpawnSkillObject(
+                meteorPrefab,
+                spawnPos,
+                Quaternion.identity,
+                PoolCategory.Projectile,
+                out MeteorProjectile projectile))
+            return;
 
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
         float damage = owner.Attack * multiplier;
         projectile.Initialize(damage, targetPos, projectileSpeed, explosionRadius, enemyLayer, owner);
     }

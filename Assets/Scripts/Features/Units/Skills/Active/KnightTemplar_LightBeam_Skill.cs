@@ -13,29 +13,25 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
     [Header("Effect")]
     [SerializeField] private LightBeam beamEffectPrefab;
 
-    private LightBeam spawnedEffect;
-
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.EnemyInRange;
     public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.WaitUntilFound;
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-
-        if (target == null)
-            return false;
-
-        context.SetEnemyTarget(target);
-
-        return true;
+        return TryPrepareEnemyInRangeContext(out context);
     }
 
     public override void OnSkillStart(SkillExecutionContext context)
     {
         if (context.EnemyTarget != null)
+        {
             owner.Animation.FaceTarget(context.EnemyTarget);
+            Telegraph.ShowLine(
+                owner.transform,
+                context.EnemyTarget.TargetTransform,
+                beamLength,
+                new Color(1f, 0.85f, 0.2f, 0.95f));
+        }
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
@@ -45,19 +41,14 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
 
     public override void OnSkillEnd(SkillExecutionContext context)
     {
-        ReturnBeamEffect();
     }
 
     public override void CancelSkill()
     {
-        ReturnBeamEffect();
     }
 
     private void SpawnBeamEffect(SkillExecutionContext context)
     {
-        if (beamEffectPrefab == null || owner.PoolManager == null)
-            return;
-
         Vector2 origin = owner.transform.position;
         Vector2 targetPos = context.EnemyTarget.TargetTransform.position;
 
@@ -68,24 +59,19 @@ public class KnightTemplar_LightBeam_Skill : ActiveSkillBase
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
 
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
         float damamge = owner.Attack * multiplier;
 
-        spawnedEffect = owner.PoolManager.Spawn(beamEffectPrefab, center, rotation, PoolCategory.Effect);
-
-        if (spawnedEffect == null)
+        if (!TrySpawnSkillObject(
+                beamEffectPrefab,
+                center,
+                rotation,
+                PoolCategory.Effect,
+                out LightBeam spawnedEffect))
             return;
 
+        TrackExecutionEffect(spawnedEffect);
         spawnedEffect.Initialize(center, dir, beamLength, beamWidth, damamge, enemyLayer, owner);
-    }
-
-    private void ReturnBeamEffect()
-    {
-        if (spawnedEffect == null)
-            return;
-
-        spawnedEffect.ReturnToPool();
-        spawnedEffect = null;
     }
 
 #if UNITY_EDITOR

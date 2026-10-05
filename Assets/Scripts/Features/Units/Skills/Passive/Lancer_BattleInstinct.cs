@@ -30,6 +30,7 @@ public class Lancer_BattleInstinct:PassiveSkillBase
 
         if (currentStacks >= stacks)
             maxStackReady = true;
+
     }
 
     public override void OnAttackHit(ICombatTarget target, ref float damage)

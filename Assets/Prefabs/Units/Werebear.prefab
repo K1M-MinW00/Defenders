@@ -144,10 +144,10 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitBufferSize: 32
   multiTargetUnlockStar: 3
   hitboxPrefab: {fileID: 7640123193787790951, guid: 1cc63b24ad952d045b43c3fa41e00979, type: 3}
   attackAngle: 60
-  hitRadius: 3
 --- !u!114 &5277567523795421967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,10 +161,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Werebear_EarthSlam_Skill
   damageMultiplier: 1.45
+  upgrade_damageMultiplier: 3
   impactRadius: 3
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitBufferSize: 32
   impactEffectPrefab: {fileID: 7594024207365824745, guid: 1a5089cf42928014e8028a0c29112f9b, type: 3}
 --- !u!114 &2020778206256075707
 MonoBehaviour:
@@ -179,6 +181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Werebear_BloodThirst
   healRatio: 0.2
+  upgrade_healRatio: 0.3
 --- !u!4 &1592608118459287129 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1629001870847616044, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}

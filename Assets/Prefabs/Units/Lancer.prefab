@@ -126,6 +126,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitBufferSize: 32
   multiTargetUnlockStar: 2
   hitboxPrefab: {fileID: 4535731998355591496, guid: 4092137df183b214abba216fe8072c3a, type: 3}
   boxSize: {x: 4, y: 2}
@@ -144,6 +145,7 @@ MonoBehaviour:
   flagPrefab: {fileID: 7976678530230565780, guid: ef53f4e73ff3c594daec23e955467ff7, type: 3}
   radius: 3
   duration: 5
+  upgrade_duration: 5
   attackBonusPercent: 0.15
   attackSpeedBonusPercent: 0.1
   allyLayer:
@@ -162,5 +164,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lancer_BattleInstinct
   maxStacks: 5
+  upgrade_maxStacks: 4
   attackBonusPerStack: 0.04
   bonusDamageOnMaxStack: 0.3

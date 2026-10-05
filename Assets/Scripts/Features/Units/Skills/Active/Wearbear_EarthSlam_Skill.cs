@@ -19,7 +19,7 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
     private readonly HashSet<ICombatHealth> damagedTargets = new();
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.SelfArea;
-    public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CastWithoutTarget;
+    public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
     private void Awake()
     {
         hitBuffer = new Collider2D[hitBufferSize];
@@ -32,22 +32,19 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-
-        if (target != null)
-            context.SetEnemyTarget(target);
-
-        Vector3 castPos = owner.transform.position;
-        context.SetCastPosition(castPos);
-        return true;
+        return PrepareSelfAreaWithEnemyInRangeContext(impactRadius, out context);
     }
 
     public override void OnSkillStart(SkillExecutionContext context)
     {
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
+
+        Telegraph.ShowCircle(
+            owner.transform,
+            Vector3.zero,
+            impactRadius,
+            new Color(1f, 0.42f, 0.08f, 0.9f));
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
@@ -55,20 +52,18 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
         Vector2 center = context.CastPosition;
         SpawnImpactEffect(center);
 
-        int hitCount = Physics2D.OverlapCircle(
-                    center,
-                    impactRadius,
-                    hitFilter,
-                    hitBuffer
-                );
-
-        if (hitCount <= 0)
-            return;
-
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
         float damage = owner.Attack * multiplier;
 
-        ApplyDamage(hitCount, damage);
+        SkillAreaDamageUtility.ApplyCircle(
+            center,
+            impactRadius,
+            hitFilter,
+            hitBuffer,
+            enemyLayer,
+            damagedTargets,
+            damage,
+            owner);
     }
 
     public override void OnSkillEnd(SkillExecutionContext context) { }
@@ -76,43 +71,15 @@ public class Werebear_EarthSlam_Skill : ActiveSkillBase
     public override void CancelSkill() { }
     private void SpawnImpactEffect(Vector2 center)
     {
-        if (impactEffectPrefab == null || owner.PoolManager == null)
-            return;
-
-        Poolable effect = owner.PoolManager.Spawn(
-            impactEffectPrefab,
-            center,
-            Quaternion.identity,
-            PoolCategory.Effect
-        );
-
-        if (effect != null && effect.TryGetComponent(out PooledVfx vfx))
+        if (TrySpawnSkillObject(
+                impactEffectPrefab,
+                center,
+                Quaternion.identity,
+                PoolCategory.Effect,
+                out Poolable effect) &&
+            effect.TryGetComponent(out PooledVfx vfx))
             vfx.Play();
     }
-    private void ApplyDamage(int hitCount, float damage)
-    {
-        damagedTargets.Clear();
-
-        for (int i = 0; i < hitCount; i++)
-        {
-            Collider2D hit = hitBuffer[i];
-
-            if (hit == null)
-                continue;
-
-            if (!CombatHitResolver.TryResolve(
-                    hit,
-                    enemyLayer,
-                    damagedTargets,
-                    out ICombatHealth combatHealth))
-                continue;
-
-            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
-
-            // 추후 상태이상 시스템 추가
-        }
-    }
-
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {

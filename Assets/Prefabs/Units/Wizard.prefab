@@ -32,6 +32,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4446333820754413826, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446333820754413826, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4506400207549155660, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5553442466312461035, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Controller
       value: 
@@ -129,6 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Wizard_Meteor_Skill
   meteorPrefab: {fileID: 6453844778351835197, guid: 30ddcbf10669509479d86f654f857e12, type: 3}
   damageMultiplier: 2.4
+  upgrade_damageMultiplier: 3
   spawnHeight: 5
   explosionRadius: 4
   projectileSpeed: 9
@@ -149,3 +162,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Wizard_ArcaneEcho
   procChance: 0.25
   refundEnergy: 25
+  upgrade_refundEnergy: 50

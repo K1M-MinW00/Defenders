@@ -20,25 +20,33 @@ public class Lancer_BattleStandard_Skill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-        context.SetCastPosition(owner.transform.position);
-        return true;
+        return PrepareSelfAreaContext(out context, includeClosestEnemy: false);
     }
 
-    public override void OnSkillStart(SkillExecutionContext context) { }
+    public override void OnSkillStart(SkillExecutionContext context)
+    {
+        Telegraph.ShowCircle(
+            owner.transform,
+            Vector3.zero,
+            radius,
+            new Color(1f, 0.82f, 0.12f, 0.9f));
+    }
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        if (flagPrefab == null)
-            return;
-
         Vector3 spawnPos = context.CastPosition;
 
-        Lancer_Active_Aura flag = owner.PoolManager.Spawn(flagPrefab, spawnPos, Quaternion.identity, PoolCategory.Effect);
+        if (!TrySpawnSkillObject(
+                flagPrefab,
+                spawnPos,
+                Quaternion.identity,
+                PoolCategory.Effect,
+                out Lancer_Active_Aura flag))
+            return;
 
         string uniqueId = $"{owner.GetInstanceID()}_{Time.frameCount}";
 
-        float buffTime = skillController.HasActiveUpgrade2 ? upgrade_duration : duration;
+        float buffTime = ResolveActiveUpgrade(duration, upgrade_duration);
 
         flag.Initialize(buffTime, radius, attackBonusPercent, attackSpeedBonusPercent, allyLayer, uniqueId);
     }

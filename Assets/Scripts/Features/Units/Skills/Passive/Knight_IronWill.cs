@@ -42,7 +42,6 @@ public class Knight_IronWill : PassiveSkillBase
         hitCount++;
 
         int required = skillController.HasPassiveUpgrade2 ? upgrade_requiredHits : requiredHits;
-
         if (hitCount < required)
             return;
 

@@ -22,12 +22,10 @@ public class Priest_HealingEcho : PassiveSkillBase
         hitCount++;
 
         int required = skillController.HasPassiveUpgrade2 ? upgrade_requiredHits : requiredHits;
-
         if (hitCount < required)
             return;
 
         hitCount = 0;
-
         UnitController lowest = owner.UnitRoster.GetLowestHpAliveUnit();
 
         if (lowest == null)

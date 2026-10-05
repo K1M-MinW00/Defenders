@@ -114,6 +114,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitBufferSize: 32
   multiTargetUnlockStar: 3
   hitboxPrefab: {fileID: 8526793392125579738, guid: 8380673f8f0bd9f409865b8a7d5508c5, type: 3}
   boxSize: {x: 2, y: 2}
@@ -130,10 +131,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoldierMLeapSlashSkill
   damageMultiplier: 1.25
+  upgrade_damageMultiplier: 3
   impactRadius: 3
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitBufferSize: 32
 --- !u!114 &52262366381720829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,3 +151,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoldierM_Grit
   procChance: 0.18
   damageReductionPercent: 0.35
+  upgrade_damageReductionPercent: 0.6

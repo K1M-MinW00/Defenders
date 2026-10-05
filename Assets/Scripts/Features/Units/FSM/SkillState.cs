@@ -15,11 +15,15 @@ public class SkillState : IState
         owner.Movement.Stop();
         owner.Combat.CancelAttack();
 
-        bool prepared = owner.SkillController.TryPrepareSkill();
+        bool prepared = owner.SkillController.ExecutionPhase == SkillExecutionPhase.Prepared ||
+                        owner.SkillController.TryPrepareSkill();
 
         if (prepared)
         {
-            owner.SkillController.StartSkill();
+            if (owner.SkillController.StartSkill())
+                return;
+
+            owner.FSMController.ChangeToIdle();
             return;
         }
 
@@ -38,6 +42,13 @@ public class SkillState : IState
         if (owner.IsDead)
             return;
 
+        if (!owner.SkillController.ValidateRunningSkillTarget())
+        {
+            if (!isWaitingForTarget)
+                owner.FSMController.ChangeToIdle();
+            return;
+        }
+
         owner.SkillController.RecoverInterruptedSkill();
 
         if (owner.SkillController.IsSkillRunning)
@@ -48,8 +59,10 @@ public class SkillState : IState
             bool prepared = owner.SkillController.TryPrepareSkill();
             if (prepared)
             {
-                owner.SkillController.StartSkill();
-                isWaitingForTarget = false;
+                if (owner.SkillController.StartSkill())
+                    isWaitingForTarget = false;
+                else
+                    owner.FSMController.ChangeToIdle();
                 return;
             }
 

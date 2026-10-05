@@ -44,6 +44,14 @@ PrefabInstance:
       propertyPath: animator
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4446333820754413826, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4446333820754413826, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: unitData
       value: 
@@ -51,6 +59,10 @@ PrefabInstance:
     - target: {fileID: 4470774158927102257, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: runtime.Star
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4506400207549155660, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7008232585298219805, guid: 65881dc316d662246beb421ed61b7bcd, type: 3}
       propertyPath: m_Sprite
@@ -166,6 +178,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitBufferSize: 32
   multiTargetUnlockStar: 3
   hitboxPrefab: {fileID: 557064785834601686, guid: 726d72f63c788d04c83832af8e579873, type: 3}
   boxSize: {x: 2, y: 2}
@@ -183,6 +196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Knight_Cleave_Skill
   swordAuraPrefab: {fileID: 2084830849487182946, guid: 4f7f3383bdfc1d941bb9905610e18937, type: 3}
   damageMultiplier: 1.35
+  upgrade_damageMultiplier: 3
   projectileSpeed: 12
   lifeTime: 1
   enemyLayer:
@@ -201,5 +215,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Knight_Shield
   requiredHits: 4
+  upgrade_requiredHits: 3
   duration: 3
   damageReductionPercent: 0.3

@@ -10,6 +10,7 @@ public class UnitFSMController : MonoBehaviour
     private float nextIdleTargetSearchTime;
 
     public bool IsIdleState => fsm != null && fsm.CurrentState == idleState;
+    public string CurrentStateName => fsm?.CurrentState?.GetType().Name ?? "None";
     private IdleState idleState;
     private MoveState moveState;
     private AttackState attackState;
@@ -46,6 +47,11 @@ public class UnitFSMController : MonoBehaviour
             return false;
 
         if (!owner.SkillController.CanStartSkill())
+            return false;
+
+        // 타겟이 필요한 스킬은 유효한 실행 문맥을 확보한 뒤에만 현재 상태를 중단한다.
+        // 에너지가 가득 찬 채 타겟을 잃어도 Idle <-> Skill을 반복하며 멈추지 않게 한다.
+        if (!owner.SkillController.TryPrepareSkill())
             return false;
 
         ChangeToSkill();

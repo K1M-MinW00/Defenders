@@ -13,12 +13,16 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
     private Collider2D[] hitBuffer;
     private ContactFilter2D hitFilter;
     private readonly System.Collections.Generic.HashSet<ICombatHealth> damagedTargets = new();
+    private DropSpawnView presentation;
+    private Vector2 pendingImpactCenter;
+    private bool impactPending;
 
     public override ActiveSkillTargetType TargetType => ActiveSkillTargetType.SelfArea;
-    public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CastWithoutTarget;
+    public override SkillTargetFailPolicy TargetFailPolicy => SkillTargetFailPolicy.CancelAndRefund;
 
     private void Awake()
     {
+        presentation = GetComponent<DropSpawnView>();
         hitBuffer = new Collider2D[hitBufferSize];
         hitFilter = new ContactFilter2D
         {
@@ -30,53 +34,57 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
 
     public override bool TryBuildContext(out SkillExecutionContext context)
     {
-        context = PrepareReusableContext();
-
-        ICombatTarget target = owner.Targeting.GetClosestEnemyInRange();
-
-        if (target != null)
-            context.SetEnemyTarget(target);
-
-        Vector3 castPos = owner.transform.position;
-        context.SetCastPosition(castPos);
-
-        return true;
+        return PrepareSelfAreaWithEnemyInRangeContext(impactRadius, out context);
     }
 
     public override void OnSkillStart(SkillExecutionContext context)
     {
         if (context.EnemyTarget != null)
             owner.Animation.FaceTarget(context.EnemyTarget);
+
+        Telegraph.ShowCircle(
+            owner.transform,
+            Vector3.zero,
+            impactRadius,
+            new Color(1f, 0.35f, 0.08f, 0.9f));
     }
 
     public override void OnSkillApply(SkillExecutionContext context)
     {
-        Vector3 center = context.CastPosition;
+        pendingImpactCenter = owner.transform.position;
+        impactPending = true;
 
-        int hitCount = Physics2D.OverlapCircle(
-            center,
-            impactRadius,
-            hitFilter,
-            hitBuffer);
+        if (presentation != null)
+        {
+            presentation.PlaySkillLeap(ApplyLandingImpact);
+            return;
+        }
 
-        if (hitCount <= 0)
+        ApplyLandingImpact();
+    }
+
+    private void ApplyLandingImpact()
+    {
+        if (!impactPending)
             return;
 
-        float multiplier = skillController.HasActiveUpgrade2 ? upgrade_damageMultiplier : damageMultiplier;
+        impactPending = false;
+
+        if (owner == null || owner.IsDead || !owner.gameObject.activeInHierarchy)
+            return;
+
+        float multiplier = ResolveActiveUpgrade(damageMultiplier, upgrade_damageMultiplier);
         float damage = owner.Attack * multiplier;
 
-        damagedTargets.Clear();
-        for (int i = 0; i < hitCount; i++)
-        {
-            if (!CombatHitResolver.TryResolve(
-                    hitBuffer[i],
-                    enemyLayer,
-                    damagedTargets,
-                    out ICombatHealth combatHealth))
-                continue;
-
-            combatHealth.ApplyDamage(new DamageRequest(damage, owner, DamageOrigin.Skill));
-        }
+        SkillAreaDamageUtility.ApplyCircle(
+            pendingImpactCenter,
+            impactRadius,
+            hitFilter,
+            hitBuffer,
+            enemyLayer,
+            damagedTargets,
+            damage,
+            owner);
     }
 
     public override void OnSkillEnd(SkillExecutionContext context)
@@ -85,6 +93,8 @@ public class SoldierMLeapSlashSkill : ActiveSkillBase
 
     public override void CancelSkill()
     {
+        impactPending = false;
+        presentation?.CancelSkillLeap();
     }
 
 #if UNITY_EDITOR
