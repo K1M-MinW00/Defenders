@@ -73,7 +73,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour
         sectorDescriptionText.text = $"섹터 {preview.Sector} 기준 시간당 보상";
         goldHourlyText.text = FormatRate(preview.HourlyRates.FirstOrDefault(x => x.Type == RewardType.Gold));
         researchHourlyText.text = FormatRate(preview.HourlyRates.FirstOrDefault(x => x.Type == RewardType.ResearchMaterial));
-        accumulatedTimeText.text = $"{preview.AccumulatedMinutes / 60}시간 {preview.AccumulatedMinutes % 60}분 / 최대 12시간";
+        accumulatedTimeText.text = $"{preview.AccumulatedMinutes / 60}시간 {preview.AccumulatedMinutes % 60}분 / 최대 {preview.MaxMinutes / 60}시간";
         claimButton.interactable = preview.CanClaim && !claiming;
         RebuildSlots(preview.AccumulatedRewards);
     }

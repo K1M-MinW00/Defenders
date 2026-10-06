@@ -5,6 +5,11 @@ public static class LabBonusProvider
     public static float GetTotal(LabEffectType effectType)
     {
         UserDataRoot data = UserDataManager.Instance?.UserData;
+        return GetTotal(data, effectType);
+    }
+
+    public static float GetTotal(UserDataRoot data, LabEffectType effectType)
+    {
         LabConfigSO config = GameConfig.Lab;
         if (data?.Lab?.AcquiredCardIds == null || config?.Cards == null)
             return 0f;

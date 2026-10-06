@@ -130,7 +130,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         StageOutcomeUseCase = new StageOutcomeUseCase(repository, CurrentUserId, UserData);
         StageEntryFuelUseCase = new StageEntryFuelUseCase(repository, CurrentUserId, UserData);
         LabDevelopmentUseCase = new LabDevelopmentUseCase(repository, CurrentUserId, UserData, GameConfig.Lab);
-        IdleRewardUseCase = new IdleRewardUseCase(repository, CurrentUserId, UserData);
+        IdleRewardUseCase = new IdleRewardUseCase(repository as IIdleRewardRepository, CurrentUserId, UserData, GameConfig.IdleReward);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>

@@ -2,10 +2,11 @@ using Firebase;
 using Firebase.Firestore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public sealed class FirestoreUserDataRepository : IUserDataRepository
+public sealed class FirestoreUserDataRepository : IUserDataRepository, IIdleRewardRepository
 {
     private const int MaxAttempts = 3;
 
@@ -84,6 +85,58 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository
 
     public Task SaveRosterAsync(string userId, UserRosterData roster) =>
         SaveSectionAsync(userId, FirestoreDataContract.UserFields.Roster, roster);
+
+    public async Task<IdleRewardTransactionResult> ClaimAsync(string userId, IdleRewardConfigSO config)
+    {
+        if (string.IsNullOrWhiteSpace(userId) || config == null)
+            return IdleRewardTransactionResult.Fail(IdleRewardClaimFailure.InvalidData);
+
+        DocumentReference userReference = GetUserDocument(userId);
+        DocumentReference serverTimeReference = firestore
+            .Collection(FirestoreDataContract.ServerTimesCollection)
+            .Document(userId);
+
+        await ExecuteWithRetryAsync(
+            () => serverTimeReference.SetAsync(new Dictionary<string, object>
+            {
+                { FirestoreDataContract.ServerTimestampField, FieldValue.ServerTimestamp },
+            }, SetOptions.MergeAll),
+            "Synchronize idle reward server time");
+
+        return await ExecuteWithRetryAsync(() => firestore.RunTransactionAsync(async transaction =>
+        {
+            DocumentSnapshot userSnapshot = await transaction.GetSnapshotAsync(userReference);
+            DocumentSnapshot serverTimeSnapshot = await transaction.GetSnapshotAsync(serverTimeReference);
+            if (!userSnapshot.Exists || !serverTimeSnapshot.Exists ||
+                !serverTimeSnapshot.TryGetValue(FirestoreDataContract.ServerTimestampField, out Timestamp serverTimestamp))
+                return IdleRewardTransactionResult.Fail(IdleRewardClaimFailure.InvalidData);
+
+            UserDataRoot currentData = userSnapshot.ConvertTo<UserDataRoot>();
+            IdleRewardPreview preview = IdleRewardUseCase.BuildPreview(currentData, serverTimestamp.ToDateTime(), config);
+            if (preview == null) return IdleRewardTransactionResult.Fail(IdleRewardClaimFailure.InvalidData);
+            if (!preview.CanClaim) return IdleRewardTransactionResult.Fail(IdleRewardClaimFailure.NotReady);
+
+            List<RewardData> rewards = preview.AccumulatedRewards.Select(entry => new RewardData
+            {
+                Type = entry.Type,
+                Id = entry.ItemId,
+                Amount = entry.TotalAmount,
+            }).ToList();
+            RewardGrantResult grant = RewardGrantCalculator.Calculate(currentData, rewards);
+            if (!grant.Succeeded) return IdleRewardTransactionResult.Fail(IdleRewardClaimFailure.InvalidData);
+
+            UserIdleRewardData nextIdleReward = new() { LastClaimAt = serverTimestamp };
+            transaction.Update(userReference, new Dictionary<string, object>
+            {
+                { FirestoreDataContract.UserFields.Resource, grant.Resources },
+                { FirestoreDataContract.UserFields.Inventory, grant.Inventory },
+                { FirestoreDataContract.UserFields.IdleReward, nextIdleReward },
+                { FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp },
+            });
+
+            return IdleRewardTransactionResult.Success(grant.Resources, grant.Inventory, nextIdleReward);
+        }), "Claim idle reward transaction");
+    }
 
     public Task SaveSectionsAsync(string userId, UserDataUpdate update)
     {

@@ -15,7 +15,7 @@ public partial class UserDataManager
 
         return await RunSerializedMutationAsync(async () =>
         {
-            IdleRewardClaimFailure result = await IdleRewardUseCase.ClaimAsync(DateTime.UtcNow);
+            IdleRewardClaimFailure result = await IdleRewardUseCase.ClaimAsync();
             if (result == IdleRewardClaimFailure.None)
             {
                 RaiseResourceUpdated();

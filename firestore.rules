@@ -108,6 +108,14 @@ service cloud.firestore {
       }
     }
 
+    match /serverTimes/{userId} {
+      allow get: if isOwner(userId);
+      allow list, delete: if false;
+      allow create, update: if isOwner(userId) &&
+        request.resource.data.keys().hasOnly(['Timestamp']) &&
+        request.resource.data.Timestamp == request.time;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

@@ -3,6 +3,9 @@ internal static class FirestoreDataContract
     public const string UsersCollection = "users";
     public const string MailboxesCollection = "mailboxes";
     public const string MailsCollection = "mails";
+    public const string ServerTimesCollection = "serverTimes";
+
+    public const string ServerTimestampField = "Timestamp";
 
     public static class UserFields
     {

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 472946587903489fafcd6d0799458546, type: 3}
+  m_Name: IdleRewardConfig
+  m_EditorClassIdentifier: Assembly-CSharp::IdleRewardConfigSO
+  MinimumClaimMinutes: 10
+  MaximumAccumulationMinutes: 720
+  Rates:
+  - Type: 0
+    ItemId: 
+    UnlockSector: 1
+    BaseHourlyAmount: 600
+    AdditionalHourlyPerSector: 400
+  - Type: 7
+    ItemId: 
+    UnlockSector: 1
+    BaseHourlyAmount: 20
+    AdditionalHourlyPerSector: 5
+  - Type: 3
+    ItemId: material_exp_1
+    UnlockSector: 1
+    BaseHourlyAmount: 15
+    AdditionalHourlyPerSector: 3
+  - Type: 3
+    ItemId: material_prom_1
+    UnlockSector: 1
+    BaseHourlyAmount: 2
+    AdditionalHourlyPerSector: 1
+  - Type: 3
+    ItemId: material_exp_2
+    UnlockSector: 3
+    BaseHourlyAmount: 6
+    AdditionalHourlyPerSector: 1
+  - Type: 3
+    ItemId: material_prom_2
+    UnlockSector: 6
+    BaseHourlyAmount: 3
+    AdditionalHourlyPerSector: 1
