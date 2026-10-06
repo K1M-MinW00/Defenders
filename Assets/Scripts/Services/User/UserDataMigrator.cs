@@ -33,6 +33,12 @@ public static class UserDataMigrator
                 case 2:
                     MigrateVersion2To3(data);
                     break;
+                case 3:
+                    MigrateVersion3To4(data);
+                    break;
+                case 4:
+                    MigrateVersion4To5(data);
+                    break;
 
                 default:
                     throw new InvalidOperationException(
@@ -61,5 +67,17 @@ public static class UserDataMigrator
         data.Shop ??= UserDataFactory.CreateDefaultShop();
         data.Shop.SeenTabs ??= new System.Collections.Generic.List<UserShopTabSeenData>();
         data.SchemaVersion = 3;
+    }
+
+    private static void MigrateVersion3To4(UserDataRoot data)
+    {
+        data.Lab ??= UserDataFactory.CreateDefaultLab();
+        data.SchemaVersion = 4;
+    }
+
+    private static void MigrateVersion4To5(UserDataRoot data)
+    {
+        data.IdleReward ??= UserDataFactory.CreateDefaultIdleReward();
+        data.SchemaVersion = 5;
     }
 }

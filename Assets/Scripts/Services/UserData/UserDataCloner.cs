@@ -27,12 +27,27 @@ public static class UserDataCloner
         return new UserResourceData
         {
             Gold = source.Gold,
+            ResearchMaterial = source.ResearchMaterial,
             Gem = source.Gem,
             Fuel = source.Fuel,
             MaxFuel = source.MaxFuel,
             LastFuelUpdateTime = source.LastFuelUpdateTime,
         };
     }
+
+    public static UserLabData Copy(UserLabData source)
+    {
+        return new UserLabData
+        {
+            AcquiredCardIds = source?.AcquiredCardIds?.Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToList()
+                ?? new List<string>(),
+        };
+    }
+
+    public static UserIdleRewardData Copy(UserIdleRewardData source) => new()
+    {
+        LastClaimAt = source?.LastClaimAt ?? default,
+    };
 
     public static UserInventoryData Copy(UserInventoryData source)
     {

@@ -1,4 +1,4 @@
 public static class UserDataSchema
 {
-    public const int CurrentVersion = 3;
+    public const int CurrentVersion = 5;
 }

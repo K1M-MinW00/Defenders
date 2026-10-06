@@ -9,6 +9,8 @@ public class GameIconSetSO : ScriptableObject
     [SerializeField] private Sprite fuelIcon;
     [Tooltip("Optional. Uses the gold icon as a placeholder when empty.")]
     [SerializeField] private Sprite experienceIcon;
+    [Tooltip("연구소 전용 재화 아이콘. 비어 있으면 경험치 아이콘을 사용합니다.")]
+    [SerializeField] private Sprite researchMaterialIcon;
 
     [Header("Rarity Frame")]
     [SerializeField] private Sprite normalFrame;
@@ -19,6 +21,7 @@ public class GameIconSetSO : ScriptableObject
     public Sprite Gem => gemIcon;
     public Sprite Fuel => fuelIcon;
     public Sprite Experience => experienceIcon != null ? experienceIcon : goldIcon;
+    public Sprite ResearchMaterial => researchMaterialIcon != null ? researchMaterialIcon : Experience;
     public Sprite NormalRarityFrame => normalFrame;
     public Sprite RareRarityFrame => rareFrame;
     public Sprite LegendRarityFrame => legendFrame;

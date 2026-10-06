@@ -17,6 +17,15 @@
 
         ApplyModifier(ref stats, modifier);
 
+        stats.Attack = LabBonusProvider.ApplyPercent(stats.Attack, LabEffectType.AttackPercent);
+        stats.MaxHp = LabBonusProvider.ApplyPercent(stats.MaxHp, LabEffectType.MaxHpPercent);
+        stats.CritChance = UnityEngine.Mathf.Clamp01(
+            stats.CritChance + LabBonusProvider.GetTotal(LabEffectType.CriticalChance) / 100f);
+        stats.CritDamage = LabBonusProvider.ApplyPercent(stats.CritDamage, LabEffectType.CriticalDamagePercent);
+        stats.AttackPerSec = LabBonusProvider.ApplyPercent(stats.AttackPerSec, LabEffectType.AttackSpeedPercent);
+        stats.DetectRange = LabBonusProvider.ApplyPercent(stats.DetectRange, LabEffectType.DetectionRangePercent);
+        stats.EnergyRecovery = LabBonusProvider.ApplyPercent(stats.EnergyRecovery, LabEffectType.EnergyRecoveryPercent);
+
         return stats;
     }
 

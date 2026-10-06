@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de8e5bc2fcd3484baf31595f69fcce1, type: 3}
+  m_Name: critical_damage
+  m_EditorClassIdentifier: Assembly-CSharp::LabCardDataSO
+  CardId: critical_damage
+  DisplayName: "\uC57D\uC810 \uBD84\uC11D"
+  Description: "\uC544\uAD70 \uC720\uB2DB\uC758 \uCE58\uBA85\uD0C0 \uD53C\uD574\uAC00
+    \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  Rarity: 0
+  Icon: {fileID: 0}
+  EffectType: 4
+  Value: 12
+  DrawWeight: 70

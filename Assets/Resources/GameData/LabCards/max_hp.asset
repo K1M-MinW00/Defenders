@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de8e5bc2fcd3484baf31595f69fcce1, type: 3}
+  m_Name: max_hp
+  m_EditorClassIdentifier: Assembly-CSharp::LabCardDataSO
+  CardId: max_hp
+  DisplayName: "\uC0DD\uCCB4 \uAC15\uD654"
+  Description: "\uC544\uAD70 \uC720\uB2DB\uC758 \uCD5C\uB300 \uCCB4\uB825\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  Rarity: 0
+  Icon: {fileID: 0}
+  EffectType: 1
+  Value: 8
+  DrawWeight: 70

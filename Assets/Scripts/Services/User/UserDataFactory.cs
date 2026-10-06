@@ -16,6 +16,8 @@ public static class UserDataFactory
             Gacha = CreateDefaultGacha(),
             Ad = CreateDefaultAd(),
             Shop = CreateDefaultShop(),
+            Lab = CreateDefaultLab(),
+            IdleReward = CreateDefaultIdleReward(),
         };
 
         data.Profile.IconId = ProfileIconResolver.ResolveIconId(data.Profile.IconId, data.Roster);
@@ -97,4 +99,9 @@ public static class UserDataFactory
     }
 
     public static UserShopData CreateDefaultShop() => new();
+    public static UserLabData CreateDefaultLab() => new();
+    public static UserIdleRewardData CreateDefaultIdleReward() => new()
+    {
+        LastClaimAt = Timestamp.GetCurrentTimestamp(),
+    };
 }

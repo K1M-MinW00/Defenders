@@ -25,7 +25,7 @@ public class EconomyManager : MonoBehaviour
         }
 
         this.config = config;
-        CurrentGold = config.initialGold;
+        CurrentGold = Mathf.Max(0, config.initialGold + Mathf.RoundToInt(LabBonusProvider.GetTotal(LabEffectType.StartingMinerals)));
         IsInitialized = true;
 
         NotifyGoldChanged();
@@ -71,7 +71,8 @@ public class EconomyManager : MonoBehaviour
         if (!IsInitialized)
             return false;
 
-        waveReward = config.GetWaveReward(waveType);
+        waveReward = Mathf.Max(0, Mathf.RoundToInt(
+            LabBonusProvider.ApplyPercent(config.GetWaveReward(waveType), LabEffectType.WaveRewardPercent)));
         bonusReward = CurrentInterestBonus;
         long totalAfterReward = (long)CurrentGold + waveReward + bonusReward;
         return waveReward >= 0 && bonusReward >= 0 && totalAfterReward <= int.MaxValue;
@@ -115,18 +116,40 @@ public class EconomyManager : MonoBehaviour
     }
 
     public bool TrySummonUnit() => IsInitialized && TrySpendGold(config.summonUnit);
-    public bool TryReroll() => IsInitialized && TrySpendGold(config.reRollUnit);
+    public bool TryReroll() => IsInitialized && TrySpendGold(GetRerollCost());
     
 
     public int GetSummonCost() => IsInitialized ? config.summonUnit : -1;
-    public int GetRerollCost() => IsInitialized ? config.reRollUnit : -1;
-    public int GetSellCost(int star) =>
-        IsInitialized && star >= 1 && star <= 4 ? config.CalculateSellUnit(star) : -1;
+    public int GetRerollCost() => IsInitialized
+        ? ApplyDiscountWithMinimumCost(
+            config.reRollUnit,
+            LabBonusProvider.GetTotal(LabEffectType.RerollCostReductionPercent))
+        : -1;
+    public int GetSellCost(int star)
+    {
+        if (!IsInitialized || star < 1 || star > 4)
+            return -1;
+
+        int basePrice = config.CalculateSellUnit(star);
+        return basePrice < 0
+            ? -1
+            : Mathf.Max(0, Mathf.RoundToInt(
+                LabBonusProvider.ApplyPercent(basePrice, LabEffectType.SellPricePercent)));
+    }
 
     public bool SellUnit(int star)
     {
         int price = GetSellCost(star);
         return price >= 0 && TryAddGold(price);
+    }
+
+    private static int ApplyDiscountWithMinimumCost(int baseCost, float reductionPercent)
+    {
+        if (baseCost <= 0)
+            return 0;
+
+        float multiplier = 1f - Mathf.Clamp(reductionPercent, 0f, 100f) / 100f;
+        return Mathf.Max(1, Mathf.FloorToInt(baseCost * multiplier));
     }
 
     private void NotifyGoldChanged()

@@ -7,4 +7,5 @@ public enum RewardType
     Equipment,
     Unit,
     Experience,
+    ResearchMaterial,
 }

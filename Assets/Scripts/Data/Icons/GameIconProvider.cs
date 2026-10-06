@@ -23,6 +23,7 @@ public sealed class GameIconProvider : IGameIconProvider
             RewardType.Gem => iconSet.Gem,
             RewardType.Fuel => iconSet.Fuel,
             RewardType.Experience => iconSet.Experience,
+            RewardType.ResearchMaterial => iconSet.ResearchMaterial,
             _ => null,
         };
     }

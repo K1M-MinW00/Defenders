@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de8e5bc2fcd3484baf31595f69fcce1, type: 3}
+  m_Name: critical_chance
+  m_EditorClassIdentifier: Assembly-CSharp::LabCardDataSO
+  CardId: critical_chance
+  DisplayName: "\uC815\uBC00 \uC870\uC900"
+  Description: "\uC544\uAD70 \uC720\uB2DB\uC758 \uCE58\uBA85\uD0C0 \uD655\uB960\uC774
+    \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  Rarity: 0
+  Icon: {fileID: -2883354096886441535, guid: 011555b7fcc90c74ea3cba72ecf163a2, type: 3}
+  EffectType: 3
+  Value: 3
+  DrawWeight: 70

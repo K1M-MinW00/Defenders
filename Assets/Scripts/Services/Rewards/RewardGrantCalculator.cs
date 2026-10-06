@@ -49,6 +49,10 @@ public static class RewardGrantCalculator
                 resources.Gold = checked(resources.Gold + reward.Amount);
                 return true;
 
+            case RewardType.ResearchMaterial:
+                resources.ResearchMaterial = checked(resources.ResearchMaterial + reward.Amount);
+                return true;
+
             case RewardType.Gem:
                 resources.Gem = checked(resources.Gem + reward.Amount);
                 return true;

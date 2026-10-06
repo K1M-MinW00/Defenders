@@ -124,6 +124,36 @@ public static class UserDataNormalizer
 
         changed |= NormalizeShop(data.Shop);
 
+        if (data.Lab == null)
+        {
+            data.Lab = UserDataFactory.CreateDefaultLab();
+            changed = true;
+        }
+
+        if (data.IdleReward == null)
+        {
+            data.IdleReward = UserDataFactory.CreateDefaultIdleReward();
+            changed = true;
+        }
+
+        if (data.IdleReward.LastClaimAt == default)
+        {
+            data.IdleReward.LastClaimAt = Firebase.Firestore.Timestamp.GetCurrentTimestamp();
+            changed = true;
+        }
+
+        data.Lab.AcquiredCardIds ??= new List<string>();
+        HashSet<string> labIds = new();
+        for (int i = data.Lab.AcquiredCardIds.Count - 1; i >= 0; i--)
+        {
+            string id = data.Lab.AcquiredCardIds[i];
+            if (string.IsNullOrWhiteSpace(id) || !labIds.Add(id))
+            {
+                data.Lab.AcquiredCardIds.RemoveAt(i);
+                changed = true;
+            }
+        }
+
         return changed;
     }
 
@@ -162,6 +192,7 @@ public static class UserDataNormalizer
     {
         bool changed = false;
         changed |= SetIfDifferent(resources.Gold, Math.Max(resources.Gold, 0), value => resources.Gold = value);
+        changed |= SetIfDifferent(resources.ResearchMaterial, Math.Max(resources.ResearchMaterial, 0), value => resources.ResearchMaterial = value);
         changed |= SetIfDifferent(resources.Gem, Math.Max(resources.Gem, 0), value => resources.Gem = value);
         changed |= SetIfDifferent(resources.Fuel, Math.Max(resources.Fuel, 0), value => resources.Fuel = value);
 

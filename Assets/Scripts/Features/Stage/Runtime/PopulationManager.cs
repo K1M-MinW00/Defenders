@@ -64,7 +64,17 @@ public class PopulationManager : MonoBehaviour
         if (!CanIncreaseMax())
             return -1;
 
-        return config.GetPopulationIncreaseCost(MaxPopulation);
+        int baseCost = config.GetPopulationIncreaseCost(MaxPopulation);
+        if (baseCost < 0)
+            return -1;
+
+        float reduction = Mathf.Clamp(
+            LabBonusProvider.GetTotal(LabEffectType.PopulationUpgradeCostReductionPercent),
+            0f,
+            90f);
+        return baseCost == 0
+            ? 0
+            : Mathf.Max(1, Mathf.FloorToInt(baseCost * (1f - reduction / 100f)));
     }
 
     public bool TryIncreaseMax()
@@ -88,7 +98,9 @@ public class PopulationManager : MonoBehaviour
     {
         config = economyConfig;
         IsInitialized = config != null && unitRoster != null && economyManager != null;
-        MaxPopulation = IsInitialized ? config.initialPopulationLimit : 0;
+        MaxPopulation = IsInitialized
+            ? Mathf.Min(config.maximumPopulationLimit, config.initialPopulationLimit + Mathf.RoundToInt(LabBonusProvider.GetTotal(LabEffectType.MaxUnitCount)))
+            : 0;
         Notify();
     }
 

@@ -27,7 +27,7 @@ public static class RewardPresentationResolver
         if (reward == null || icons == null)
             return false;
 
-        if (reward.Type is RewardType.Gold or RewardType.Gem or RewardType.Fuel or RewardType.Experience)
+        if (reward.Type is RewardType.Gold or RewardType.Gem or RewardType.Fuel or RewardType.Experience or RewardType.ResearchMaterial)
         {
             presentation = new RewardPresentation(
                 icons.GetResourceIcon(reward.Type),
@@ -76,6 +76,7 @@ public static class RewardPresentationResolver
             RewardType.Gem => "Gem",
             RewardType.Fuel => "연료",
             RewardType.Experience => "경험치",
+            RewardType.ResearchMaterial => "연구 재료",
             _ => type.ToString(),
         };
     }

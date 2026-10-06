@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c5041042dc06c74fa442adda2a63843, type: 3}
   m_Name: GameIconSet
   m_EditorClassIdentifier: Assembly-CSharp::GameIconSetSO
-  goldIcon: {fileID: -7042419175670095977, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
-  gemIcon: {fileID: -3168886646009006091, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
-  fuelIcon: {fileID: -868760601263279499, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
+  goldIcon: {fileID: 5882271007754919176, guid: 32c75d531a8df8348aa662fd601c345c, type: 3}
+  gemIcon: {fileID: -4276837374870022542, guid: 2f74f62649b6fb4438dd3d4123a82a48, type: 3}
+  fuelIcon: {fileID: -3884122842518043567, guid: 846ab50d73e659a479c2e46355e40dbe, type: 3}
+  experienceIcon: {fileID: -2052836617332424088, guid: e48904d84eccd194192fe18e2eba9c83, type: 3}
+  researchMaterialIcon: {fileID: 4404780854224974158, guid: 367ececd3ea197a44b0ae1aa2064a106, type: 3}
   normalFrame: {fileID: -2198792403302273151, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
   rareFrame: {fileID: 1868800845473577927, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
   legendFrame: {fileID: -7860896277611520029, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}

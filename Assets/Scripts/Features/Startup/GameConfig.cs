@@ -9,8 +9,9 @@ public static class GameConfig
     public static IUnitCatalog Units { get; private set; }
     public static IItemCatalog Items { get; private set; }
     public static IStageCatalog Stages { get; private set; }
+    public static LabConfigSO Lab { get; private set; }
     public static bool IsInitialized => NewUserConfig != null && UserLevelProgression != null &&
-        GachaEconomy != null && Icons != null && Units != null && Items != null && Stages != null;
+        GachaEconomy != null && Icons != null && Units != null && Items != null && Stages != null && Lab != null;
 
     public static void Initialize()
     {
@@ -24,11 +25,13 @@ public static class GameConfig
         IUnitCatalog units = new UnitCatalog(Resources.LoadAll<UnitDataSO>("GameData/Units"));
         IItemCatalog items = new ItemCatalog(Resources.LoadAll<ItemDataSO>("GameData/Items"));
         IStageCatalog stages = new StageCatalog(Resources.LoadAll<StageDataSO>("GameData/Stages"));
+        LabConfigSO lab = LoadRequired<LabConfigSO>("GameData/Configs/LabConfig");
         IGameIconProvider icons = new GameIconProvider(iconSet);
 
         Validate(newUserConfig.TryValidate(units, out string newUserError), "NewUserConfig", newUserError);
         Validate(levelProgression.TryValidate(out string levelError), "UserLevelProgression", levelError);
         Validate(gachaEconomy.TryValidate(out string economyError), "GachaEconomyConfig", economyError);
+        Validate(lab.TryValidate(out string labError), "LabConfig", labError);
 
         NewUserConfig = newUserConfig;
         UserLevelProgression = levelProgression;
@@ -37,6 +40,7 @@ public static class GameConfig
         Items = items;
         Stages = stages;
         Icons = icons;
+        Lab = lab;
     }
 
     private static T LoadRequired<T>(string path) where T : UnityEngine.Object

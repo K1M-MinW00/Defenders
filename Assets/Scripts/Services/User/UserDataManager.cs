@@ -21,6 +21,8 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     private GemShopPurchaseUseCase GemShopPurchaseUseCase { get; set; }
     private StageOutcomeUseCase StageOutcomeUseCase { get; set; }
     private StageEntryFuelUseCase StageEntryFuelUseCase { get; set; }
+    private LabDevelopmentUseCase LabDevelopmentUseCase { get; set; }
+    private IdleRewardUseCase IdleRewardUseCase { get; set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -34,6 +36,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     public event Action OnRosterUpdated;
     public event Action OnProgressUpdated;
     public event Action OnShopUpdated;
+    public event Action OnLabUpdated;
 
     private IUserDataRepository repository;
     private UserDataLoader userDataLoader;
@@ -126,6 +129,8 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         GemShopPurchaseUseCase = new GemShopPurchaseUseCase(repository, CurrentUserId, UserData);
         StageOutcomeUseCase = new StageOutcomeUseCase(repository, CurrentUserId, UserData);
         StageEntryFuelUseCase = new StageEntryFuelUseCase(repository, CurrentUserId, UserData);
+        LabDevelopmentUseCase = new LabDevelopmentUseCase(repository, CurrentUserId, UserData, GameConfig.Lab);
+        IdleRewardUseCase = new IdleRewardUseCase(repository, CurrentUserId, UserData);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>
@@ -219,5 +224,24 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     private void RaiseShopUpdated()
     {
         OnShopUpdated?.Invoke();
+    }
+
+    public int GetNextLabDevelopmentCost() => LabDevelopmentUseCase?.GetNextCost() ?? 0;
+    public LabOfferResult CreateLabOffer() => LabDevelopmentUseCase?.CreateOffer() ?? LabOfferResult.Fail(LabDevelopmentFailure.InvalidRequest);
+
+    public async Task<LabDevelopmentFailure> AcquireLabCardAsync(LabCardDataSO card, int quotedCost, System.Collections.Generic.IReadOnlyList<LabCardDataSO> offeredCards)
+    {
+        if (LabDevelopmentUseCase == null)
+            return LabDevelopmentFailure.InvalidRequest;
+        return await RunSerializedMutationAsync(async () =>
+        {
+            LabDevelopmentFailure result = await LabDevelopmentUseCase.AcquireAsync(card, quotedCost, offeredCards);
+            if (result == LabDevelopmentFailure.None)
+            {
+                RaiseResourceUpdated();
+                OnLabUpdated?.Invoke();
+            }
+            return result;
+        });
     }
 }
