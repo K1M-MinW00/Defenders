@@ -11,27 +11,6 @@ public static class IdleRewardSceneBuilder
     private const string ScenePath = "Assets/Scenes/LobbyScene.unity";
     private const string PrefabPath = "Assets/Prefabs/UI/IdleRewardSlot.prefab";
 
-    [InitializeOnLoadMethod]
-    private static void BuildAfterImport()
-    {
-        EditorApplication.delayCall += () =>
-        {
-            if (EditorApplication.isCompiling) return;
-            try
-            {
-                IdleRewardSlotView slot = CreateSlotPrefab();
-                Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-                if (NeedsBuild(scene))
-                {
-                    GameObject existing = Find(scene, "IdleRewardPopup");
-                    if (existing != null) Object.DestroyImmediate(existing);
-                    BuildScene(scene, slot);
-                }
-            }
-            catch (System.Exception e) { Debug.LogError($"[IdleRewardSceneBuilder] {e}"); }
-        };
-    }
-
     [MenuItem("Tools/Defenders/Build Idle Reward UI")]
     public static void Build()
     {
@@ -41,6 +20,35 @@ public static class IdleRewardSceneBuilder
         if (existing != null) Object.DestroyImmediate(existing);
         BuildScene(scene, slot);
         AssetDatabase.SaveAssets();
+    }
+
+    [MenuItem("Tools/Defenders/Relink Idle Reward Controller")]
+    public static void RelinkController()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        GameObject popup = Find(scene, "IdleRewardPopup");
+        GameObject panelReward = Find(scene, "Panel_Reward");
+        IdleRewardPanelView source = popup?.GetComponent<IdleRewardPanelView>();
+        if (popup == null || panelReward == null || source == null)
+            throw new System.InvalidOperationException("IdleRewardPopup, Panel_Reward, or the existing IdleRewardPanelView was not found.");
+
+        IdleRewardPanelView destination = panelReward.GetComponent<IdleRewardPanelView>() ?? panelReward.AddComponent<IdleRewardPanelView>();
+        SerializedObject sourceObject = new(source);
+        SerializedObject destinationObject = new(destination);
+        string[] fields =
+        {
+            "supplyButton", "closeButton", "claimButton", "popup", "sectorDescriptionText",
+            "goldHourlyText", "researchHourlyText", "accumulatedTimeText", "rewardContent",
+            "rewardGrid", "rewardSlotPrefab",
+        };
+        foreach (string field in fields)
+            destinationObject.FindProperty(field).objectReferenceValue = sourceObject.FindProperty(field).objectReferenceValue;
+        destinationObject.ApplyModifiedPropertiesWithoutUndo();
+        Object.DestroyImmediate(source);
+        EditorUtility.SetDirty(destination);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("[IdleRewardSceneBuilder] Moved IdleRewardPanelView to active Panel_Reward without rebuilding UI.");
     }
 
     private static void BuildScene(Scene scene, IdleRewardSlotView slotPrefab)
@@ -53,7 +61,8 @@ public static class IdleRewardSceneBuilder
 
         GameObject popup = Panel(parent, "IdleRewardPopup", new Color(.02f, .06f, .12f, .94f));
         Stretch((RectTransform)popup.transform);
-        IdleRewardPanelView view = popup.AddComponent<IdleRewardPanelView>();
+        IdleRewardPanelView view = supplyObject.transform.parent.GetComponent<IdleRewardPanelView>() ??
+                                   supplyObject.transform.parent.gameObject.AddComponent<IdleRewardPanelView>();
 
         GameObject window = Panel(popup.transform, "Window", new Color(.08f, .16f, .27f, 1f));
         Anchor((RectTransform)window.transform, new Vector2(.08f, .08f), new Vector2(.92f, .92f));
@@ -107,15 +116,6 @@ public static class IdleRewardSceneBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.ImportAsset(PrefabPath, ImportAssetOptions.ForceSynchronousImport);
         return AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath)?.GetComponent<IdleRewardSlotView>();
-    }
-
-    private static bool NeedsBuild(Scene scene)
-    {
-        GameObject popup = Find(scene, "IdleRewardPopup");
-        if (popup == null) return true;
-        IdleRewardPanelView view = popup.GetComponent<IdleRewardPanelView>();
-        SerializedObject so = view != null ? new SerializedObject(view) : null;
-        return so == null || so.FindProperty("rewardSlotPrefab")?.objectReferenceValue == null;
     }
 
     private static GameObject Find(Scene scene, string name) { foreach (GameObject root in scene.GetRootGameObjects()) { Transform found = Find(root.transform, name); if (found != null) return found.gameObject; } return null; }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public sealed class IdleRewardPanelView : MonoBehaviour
@@ -23,35 +22,14 @@ public sealed class IdleRewardPanelView : MonoBehaviour
     private readonly List<IdleRewardSlotView> slots = new();
     private Coroutine refreshRoutine;
     private bool claiming;
-    private bool initialized;
     private int lastDisplayedMinute = -1;
 
 #if UNITY_EDITOR
     public void SetRewardSlotPrefabEditor(GameObject value) => rewardSlotPrefab = value;
 #endif
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void RegisterSceneInitialization()
+    private void Awake()
     {
-        SceneManager.sceneLoaded -= HandleSceneLoaded;
-        SceneManager.sceneLoaded += HandleSceneLoaded;
-    }
-
-    private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        foreach (GameObject root in scene.GetRootGameObjects())
-            foreach (IdleRewardPanelView view in root.GetComponentsInChildren<IdleRewardPanelView>(true))
-                view.Initialize();
-    }
-
-    private void Awake() => Initialize();
-
-    private void Initialize()
-    {
-        if (initialized)
-            return;
-
-        initialized = true;
         supplyButton?.onClick.AddListener(Open);
         closeButton?.onClick.AddListener(Close);
         claimButton?.onClick.AddListener(Claim);
@@ -137,9 +115,6 @@ public sealed class IdleRewardPanelView : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (!initialized)
-            return;
-
         supplyButton?.onClick.RemoveListener(Open);
         closeButton?.onClick.RemoveListener(Close);
         claimButton?.onClick.RemoveListener(Claim);
