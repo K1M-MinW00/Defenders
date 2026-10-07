@@ -46,16 +46,9 @@ public sealed class UnitPromotionUseCase
 
         UserInventoryData nextInventory = UserDataCloner.Copy(userData.Inventory);
         UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
-        InventoryStackItem materialStack = nextInventory.Materials
-            .FirstOrDefault(item => item != null && item.ItemId == cost.MaterialId);
-
-        if (materialStack == null || materialStack.Count < cost.Count)
+        InventoryMutationService inventoryMutations = new(GameConfig.Items);
+        if (!inventoryMutations.Consume(nextInventory, cost.MaterialId, cost.Count).Succeeded)
             return PromoteUnitResult.Fail(PromoteUnitFailure.InsufficientMaterials);
-
-        materialStack.Count -= cost.Count;
-
-        if (materialStack.Count == 0)
-            nextInventory.Materials.Remove(materialStack);
 
         UserUnitData nextUnit = nextRoster.OwnedUnits
             .First(unit => unit != null && unit.UnitId == command.UnitId);

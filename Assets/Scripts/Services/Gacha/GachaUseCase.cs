@@ -43,9 +43,8 @@ public sealed class GachaUseCase
             return RecruitUnitsResult.Fail(RecruitUnitsFailure.InvalidBanner);
         }
 
-        InventoryStackItem currentTickets = userData.Inventory.Consumables?
-            .FirstOrDefault(item => item != null && item.ItemId == banner.TicketItemId);
-        int ticketUseCount = Math.Min(Math.Max(currentTickets?.Count ?? 0, 0), command.Count);
+        InventoryMutationService inventoryMutations = new(GameConfig.Items);
+        int ticketUseCount = Math.Min(inventoryMutations.GetCount(userData.Inventory, banner.TicketItemId), command.Count);
         int gemRecruitCount = command.Count - ticketUseCount;
         long gemCost = (long)gemRecruitCount * banner.GemCost;
 
@@ -57,7 +56,11 @@ public sealed class GachaUseCase
         UserGachaData nextGacha = UserDataCloner.Copy(userData.Gacha);
         UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
 
-        ConsumeTickets(nextInventory, banner.TicketItemId, ticketUseCount);
+        if (ticketUseCount > 0 &&
+            !inventoryMutations.Consume(nextInventory, banner.TicketItemId, ticketUseCount).Succeeded)
+        {
+            return RecruitUnitsResult.Fail(RecruitUnitsFailure.InvalidRequest);
+        }
         nextResources.Gem -= (int)gemCost;
 
         List<GachaResult> results = new(command.Count);
@@ -126,19 +129,6 @@ public sealed class GachaUseCase
         ItemDataSO ticket = GameConfig.Items.Get(banner.TicketItemId);
 
         return ticket != null && ticket.Category == ItemCategory.Consumable;
-    }
-
-    private static void ConsumeTickets(UserInventoryData inventory, string ticketId, int count)
-    {
-        if (count <= 0)
-            return;
-
-        InventoryStackItem tickets = inventory.Consumables
-            .First(item => item != null && item.ItemId == ticketId);
-        tickets.Count -= count;
-
-        if (tickets.Count == 0)
-            inventory.Consumables.Remove(tickets);
     }
 
     private bool IsLegendGuaranteed(UserGachaData gacha, GachaDataSO banner)

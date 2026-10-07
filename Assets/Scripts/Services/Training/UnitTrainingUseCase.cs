@@ -47,7 +47,8 @@ public sealed class UnitTrainingUseCase
         UserInventoryData nextInventory = UserDataCloner.Copy(userData.Inventory);
         UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
 
-        if (!TryConsumeMaterials(nextInventory, command.Materials))
+        InventoryMutationService inventoryMutations = new(GameConfig.Items);
+        if (!inventoryMutations.ConsumeBatch(nextInventory, command.Materials).Succeeded)
             return TrainUnitResult.Fail(TrainUnitFailure.InsufficientMaterials);
 
         UserUnitData nextUnit = nextRoster.OwnedUnits
@@ -122,33 +123,6 @@ public sealed class UnitTrainingUseCase
         gainedExp = (int)totalExp;
         goldCost = gainedExp;
         return gainedExp > 0;
-    }
-
-    private static bool TryConsumeMaterials(
-        UserInventoryData inventory,
-        IReadOnlyDictionary<string, int> materials)
-    {
-        if (inventory?.Materials == null)
-            return false;
-
-        foreach (KeyValuePair<string, int> pair in materials)
-        {
-            InventoryStackItem item = inventory.Materials.FirstOrDefault(x => x != null && x.ItemId == pair.Key);
-
-            if (item == null || item.Count < pair.Value)
-                return false;
-        }
-
-        foreach (KeyValuePair<string, int> pair in materials)
-        {
-            InventoryStackItem item = inventory.Materials.First(x => x != null && x.ItemId == pair.Key);
-            item.Count -= pair.Value;
-
-            if (item.Count == 0)
-                inventory.Materials.Remove(item);
-        }
-
-        return true;
     }
 
     private static void ApplyExp(UserUnitData unit, int amount, int maxLevel)

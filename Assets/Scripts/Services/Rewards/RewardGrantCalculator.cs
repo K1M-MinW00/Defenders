@@ -12,19 +12,21 @@ public static class RewardGrantCalculator
         if (source?.Profile == null || source.Resource == null || source.Inventory == null || source.Roster == null)
             return RewardGrantResult.Fail(RewardGrantFailure.InvalidData);
 
-        if (rewards == null || rewards.Count == 0 || rewards.Any(reward => reward == null || reward.Amount <= 0))
+        if (rewards == null || rewards.Count == 0)
             return RewardGrantResult.Fail(RewardGrantFailure.InvalidReward);
 
         UserResourceData resources = UserDataCloner.Copy(source.Resource);
         UserInventoryData inventory = UserDataCloner.Copy(source.Inventory);
         UserRosterData roster = UserDataCloner.Copy(source.Roster);
         UserProfileData profile = UserDataCloner.Copy(source.Profile);
+        InventoryMutationService inventoryMutations = new(GameConfig.Items);
 
         try
         {
             foreach (RewardData reward in rewards)
             {
-                if (!ApplyReward(reward, resources, inventory, roster, profile))
+                if (reward == null || reward.Amount <= 0 ||
+                    !ApplyReward(reward, resources, inventory, roster, profile, inventoryMutations))
                     return RewardGrantResult.Fail(RewardGrantFailure.InvalidReward);
             }
         }
@@ -41,7 +43,8 @@ public static class RewardGrantCalculator
         UserResourceData resources,
         UserInventoryData inventory,
         UserRosterData roster,
-        UserProfileData profile)
+        UserProfileData profile,
+        InventoryMutationService inventoryMutations)
     {
         switch (reward.Type)
         {
@@ -66,10 +69,14 @@ public static class RewardGrantCalculator
                 return true;
 
             case RewardType.Item:
-                return AddStackItem(inventory, reward.Id, reward.Amount);
+                ItemDataSO stackItem = GameConfig.Items.Get(reward.Id);
+                return stackItem != null && stackItem.Category != ItemCategory.Equipment &&
+                    inventoryMutations.Add(inventory, reward.Id, reward.Amount).Succeeded;
 
             case RewardType.Equipment:
-                return AddEquipment(inventory, reward.Id, reward.Amount);
+                ItemDataSO equipment = GameConfig.Items.Get(reward.Id);
+                return equipment?.Category == ItemCategory.Equipment &&
+                    inventoryMutations.Add(inventory, reward.Id, reward.Amount).Succeeded;
 
             case RewardType.Unit:
                 return AddUnit(resources, roster, reward.Id, reward.Amount);
@@ -99,48 +106,6 @@ public static class RewardGrantCalculator
             profile.Exp -= requiredExp;
             profile.Level = checked(profile.Level + 1);
         }
-    }
-
-    private static bool AddStackItem(UserInventoryData inventory, string itemId, int amount)
-    {
-        ItemDataSO item = GameConfig.Items.Get(itemId);
-
-        if (item == null || !item.Stackable || item.Category == ItemCategory.Equipment)
-            return false;
-
-        List<InventoryStackItem> target = item.Category == ItemCategory.Material
-            ? inventory.Materials
-            : inventory.Consumables;
-        InventoryStackItem owned = target.FirstOrDefault(stack => stack != null && stack.ItemId == itemId);
-
-        if (owned == null)
-        {
-            target.Add(new InventoryStackItem { ItemId = itemId, Count = amount });
-            return true;
-        }
-
-        owned.Count = checked(owned.Count + amount);
-        return true;
-    }
-
-    private static bool AddEquipment(UserInventoryData inventory, string itemId, int amount)
-    {
-        ItemDataSO item = GameConfig.Items.Get(itemId);
-
-        if (item == null || item.Category != ItemCategory.Equipment)
-            return false;
-
-        for (int i = 0; i < amount; i++)
-        {
-            inventory.Equipments.Add(new EquipmentItemData
-            {
-                UniqueId = Guid.NewGuid().ToString(),
-                ItemId = itemId,
-                Level = 1,
-            });
-        }
-
-        return true;
     }
 
     private static bool AddUnit(
