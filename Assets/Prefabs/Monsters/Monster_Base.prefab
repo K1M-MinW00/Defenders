@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1385343888076783973}
   - component: {fileID: 4173038608186531338}
   - component: {fileID: 7485299739719026670}
+  - component: {fileID: 2924555979757776060}
   m_Layer: 6
   m_Name: Monster_Base
   m_TagString: Enemy
@@ -159,6 +160,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f982b5ebb74f4947bab9c744ad44aae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Poolable
+--- !u!114 &2924555979757776060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390678771801392321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec6011041a84894a7378499a18255da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterTargetingController
 --- !u!1 &5829918057703837809
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,3 +301,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModelView
   animator: {fileID: 4277420300358080374}
   visualRoot: {fileID: 982547969679316628}
+  sortByWorldY: 1
+  worldSortingBase: 1000
+  sortingOrdersPerUnit: 10

@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using LabCardRarity = Rarity;
 
 public static class LabSceneBuilder
 {
@@ -19,6 +20,11 @@ public static class LabSceneBuilder
     {
         EditorApplication.delayCall += () =>
         {
+            // delayCall은 스크립트 임포트 직후 예약되지만, 실행 전에 사용자가 Play를
+            // 시작할 수 있다. 이 상태에서 EditorSceneManager.OpenScene을 호출하면 예외가 난다.
+            if (!CanModifyEditorScene())
+                return;
+
             if (!EditorApplication.isCompiling)
             {
                 try
@@ -48,6 +54,12 @@ public static class LabSceneBuilder
     [MenuItem("Tools/Defenders/Build Lab System")]
     public static void Build()
     {
+        if (!CanModifyEditorScene())
+        {
+            Debug.LogWarning("[LabSceneBuilder] Build skipped while entering or running Play Mode.");
+            return;
+        }
+
         EnsureFolder(CardFolder);
         EnsureFolder(PrefabFolder);
         LabConfigSO config = CreateConfig();
@@ -55,8 +67,8 @@ public static class LabSceneBuilder
         LabCardView offerPrefab = CreateCardPrefab("LabOfferCard", 220f, 300f);
 
         var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        GameObject lab = FindSceneObject(scene, "Lab_Panel");
-        if (lab == null) throw new System.InvalidOperationException("Lab_Panel was not found.");
+        GameObject lab = FindSceneObject(scene, "LabPanel") ?? FindSceneObject(scene, "Lab_Panel");
+        if (lab == null) throw new System.InvalidOperationException("LabPanel was not found.");
 
         LabPanelView view = GetOrAdd<LabPanelView>(lab);
         Transform upperBar = Find(lab.transform, "Upper_Bar");
@@ -85,13 +97,16 @@ public static class LabSceneBuilder
         TMP_Text limit = Text(panel, "LimitText", "", 24, TextAlignmentOptions.Center);
         Anchor(limit.rectTransform, new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, -45), new Vector2(0, 35));
 
-        Transform mainPanel = FindAncestor(lab.transform, "Main_Panel");
+        Transform mainPanel = FindAncestor(lab.transform, "MainPanel") ?? FindAncestor(lab.transform, "Main_Panel");
         Transform overlayParent = mainPanel?.parent;
         if (overlayParent == null) throw new System.InvalidOperationException("The parent outside Main_Panel was not found.");
+        DestroySceneObject(scene, "LabOfferOverlay");
         DestroySceneObject(scene, "Lab_OfferOverlay");
         DestroySceneObject(scene, "Lab_DetailPopup");
+        DestroySceneObject(scene, "LabDetailOverlay");
+        DestroySceneObject(scene, "Lab_DetailOverlay");
 
-        GameObject offer = Panel(overlayParent, "Lab_OfferOverlay", new Color(0.02f, 0.03f, 0.05f, 0.94f));
+        GameObject offer = Panel(overlayParent, "LabOfferOverlay", new Color(0.02f, 0.03f, 0.05f, 0.94f));
         Stretch((RectTransform)offer.transform, 0, 0, 0, 0);
         Transform offerContent = ChildRect(offer.transform, "Cards");
         Anchor((RectTransform)offerContent, new Vector2(.08f, .33f), new Vector2(.92f, .7f), Vector2.zero, Vector2.zero);
@@ -100,11 +115,13 @@ public static class LabSceneBuilder
         Button offerDismiss = GetOrAdd<Button>(offer);
         offerDismiss.targetGraphic = offer.GetComponent<Image>();
         offerDismiss.transition = Selectable.Transition.None;
+        ModalBackdropDismiss offerStackEntry = GetOrAdd<ModalBackdropDismiss>(offer);
+        offerStackEntry.Configure(null, offer, view, false);
         offer.SetActive(false);
 
-        GameObject detail = Panel(overlayParent, "Lab_DetailPopup", new Color(0, 0, 0, .82f));
+        GameObject detail = Panel(overlayParent, "LabDetailOverlay", new Color(0, 0, 0, .82f));
         Stretch((RectTransform)detail.transform, 0, 0, 0, 0);
-        GameObject detailCard = Panel(detail.transform, "Card", Color.white);
+        GameObject detailCard = Panel(detail.transform, "ModalCard", Color.white);
         LabCardGradient detailGradient = detailCard.AddComponent<LabCardGradient>();
         Anchor((RectTransform)detailCard.transform, new Vector2(.18f, .25f), new Vector2(.82f, .75f), Vector2.zero, Vector2.zero);
         Image detailIcon = ImageObject(detailCard.transform, "Icon", Color.white);
@@ -116,7 +133,8 @@ public static class LabSceneBuilder
         TMP_Text detailValue = Text(detailCard.transform, "Value", "", 52, TextAlignmentOptions.Center);
         detailValue.color = new Color(.25f, 1f, .35f);
         Anchor(detailValue.rectTransform, new Vector2(.08f, .05f), new Vector2(.92f, .25f), Vector2.zero, Vector2.zero);
-        Button detailDismiss = GetOrAdd<Button>(detail); detailDismiss.targetGraphic = detail.GetComponent<Image>();
+        ModalBackdropDismiss detailBackdrop = GetOrAdd<ModalBackdropDismiss>(detail);
+        detailBackdrop.Configure(detailCard.transform as RectTransform, detail, view);
         detail.SetActive(false);
 
         SerializedObject so = new(view);
@@ -124,7 +142,7 @@ public static class LabSceneBuilder
         Set(so, "developButton", develop); Set(so, "cardContent", content); Set(so, "cardGrid", grid); Set(so, "cardPrefab", prefab);
         Set(so, "offerOverlay", offer); Set(so, "offerContent", offerContent); Set(so, "offerCardPrefab", offerPrefab); Set(so, "offerDismissButton", offerDismiss);
         Set(so, "detailPopup", detail); Set(so, "detailBackground", detailCard.GetComponent<Image>()); Set(so, "detailGradient", detailGradient); Set(so, "detailIcon", detailIcon); Set(so, "detailName", detailName);
-        Set(so, "detailDescription", detailDescription); Set(so, "detailValue", detailValue); Set(so, "detailDismissButton", detailDismiss);
+        Set(so, "detailDescription", detailDescription); Set(so, "detailValue", detailValue); Set(so, "detailDismissButton", null);
         so.ApplyModifiedPropertiesWithoutUndo();
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -133,31 +151,38 @@ public static class LabSceneBuilder
         Debug.Log($"[LabSceneBuilder] Built {config.Cards.Count} cards and wired LobbyScene.");
     }
 
+    private static bool CanModifyEditorScene()
+    {
+        return !EditorApplication.isPlayingOrWillChangePlaymode &&
+               !EditorApplication.isPlaying &&
+               !EditorApplication.isUpdating;
+    }
+
     private static LabConfigSO CreateConfig()
     {
         LabConfigSO config = AssetDatabase.LoadAssetAtPath<LabConfigSO>(ConfigPath);
         if (config == null) { config = ScriptableObject.CreateInstance<LabConfigSO>(); AssetDatabase.CreateAsset(config, ConfigPath); }
         config.BaseDevelopmentCost = 100; config.CostGrowth = 1.5f; config.ChoiceCount = 4; config.Cards.Clear();
-        Add(config, "damage_reduction", "강화 장갑", "아군 유닛이 받는 피해가 감소합니다.", LabEffectType.DamageReduction, 3, LabCardRarity.Common);
-        Add(config, "max_hp", "생체 강화", "아군 유닛의 최대 체력이 증가합니다.", LabEffectType.MaxHpPercent, 8, LabCardRarity.Common);
-        Add(config, "attack", "화력 증폭", "아군 유닛의 공격력이 증가합니다.", LabEffectType.AttackPercent, 7, LabCardRarity.Common);
-        Add(config, "critical_chance", "정밀 조준", "아군 유닛의 치명타 확률이 증가합니다.", LabEffectType.CriticalChance, 3, LabCardRarity.Common);
-        Add(config, "critical_damage", "약점 분석", "아군 유닛의 치명타 피해가 증가합니다.", LabEffectType.CriticalDamagePercent, 12, LabCardRarity.Common);
-        Add(config, "starting_minerals", "초기 보급", "전투 시작 시 보유 광물이 증가합니다.", LabEffectType.StartingMinerals, 2, LabCardRarity.Rare);
-        Add(config, "reroll_discount", "재활용 공정", "유닛 리롤에 필요한 광물이 감소합니다.", LabEffectType.RerollCostReductionPercent, 10, LabCardRarity.Rare);
-        Add(config, "max_units", "지휘 체계", "전투 시작 시 최대 유닛 수가 증가합니다.", LabEffectType.MaxUnitCount, 1, LabCardRarity.Legendary);
-        Add(config, "idle_reward", "자동 연구", "방치형 보상 획득량이 증가합니다.", LabEffectType.IdleRewardPercent, 10, LabCardRarity.Rare);
-        Add(config, "attack_speed", "신경 가속", "아군 유닛의 공격 속도가 증가합니다.", LabEffectType.AttackSpeedPercent, 5, LabCardRarity.Common);
-        Add(config, "detection_range", "광역 탐지", "아군 유닛의 탐지 범위가 증가합니다.", LabEffectType.DetectionRangePercent, 10, LabCardRarity.Common);
-        Add(config, "energy_recovery", "동력 순환", "아군 유닛의 에너지 회복량이 증가합니다.", LabEffectType.EnergyRecoveryPercent, 8, LabCardRarity.Common);
-        Add(config, "wave_reward", "현장 채굴", "웨이브 완료 시 획득하는 광물이 증가합니다.", LabEffectType.WaveRewardPercent, 10, LabCardRarity.Rare);
-        Add(config, "sell_price", "자원 회수", "유닛 판매로 돌려받는 광물이 증가합니다.", LabEffectType.SellPricePercent, 20, LabCardRarity.Rare);
-        Add(config, "population_discount", "지휘 자동화", "최대 유닛 수 확장에 필요한 광물이 감소합니다.", LabEffectType.PopulationUpgradeCostReductionPercent, 15, LabCardRarity.Rare);
+        Add(config, "damage_reduction", "강화 장갑", "아군 유닛이 받는 피해가 감소합니다.", LabEffectType.DamageReduction, 3, LabCardRarity.Rare);
+        Add(config, "max_hp", "생체 강화", "아군 유닛의 최대 체력이 증가합니다.", LabEffectType.MaxHpPercent, 8, LabCardRarity.Rare);
+        Add(config, "attack", "화력 증폭", "아군 유닛의 공격력이 증가합니다.", LabEffectType.AttackPercent, 7, LabCardRarity.Rare);
+        Add(config, "critical_chance", "정밀 조준", "아군 유닛의 치명타 확률이 증가합니다.", LabEffectType.CriticalChance, 3, LabCardRarity.Rare);
+        Add(config, "critical_damage", "약점 분석", "아군 유닛의 치명타 피해가 증가합니다.", LabEffectType.CriticalDamagePercent, 12, LabCardRarity.Rare);
+        Add(config, "starting_minerals", "초기 보급", "전투 시작 시 보유 광물이 증가합니다.", LabEffectType.StartingMinerals, 2, LabCardRarity.Epic);
+        Add(config, "reroll_discount", "재활용 공정", "유닛 리롤에 필요한 광물이 감소합니다.", LabEffectType.RerollCostReductionPercent, 10, LabCardRarity.Epic);
+        Add(config, "max_units", "지휘 체계", "전투 시작 시 최대 유닛 수가 증가합니다.", LabEffectType.MaxUnitCount, 1, LabCardRarity.Legend);
+        Add(config, "idle_reward", "자동 연구", "방치형 보상 획득량이 증가합니다.", LabEffectType.IdleRewardPercent, 10, LabCardRarity.Epic);
+        Add(config, "attack_speed", "신경 가속", "아군 유닛의 공격 속도가 증가합니다.", LabEffectType.AttackSpeedPercent, 5, LabCardRarity.Rare);
+        Add(config, "detection_range", "광역 탐지", "아군 유닛의 탐지 범위가 증가합니다.", LabEffectType.DetectionRangePercent, 10, LabCardRarity.Rare);
+        Add(config, "energy_recovery", "동력 순환", "아군 유닛의 에너지 회복량이 증가합니다.", LabEffectType.EnergyRecoveryPercent, 8, LabCardRarity.Rare);
+        Add(config, "wave_reward", "현장 채굴", "웨이브 완료 시 획득하는 광물이 증가합니다.", LabEffectType.WaveRewardPercent, 10, LabCardRarity.Epic);
+        Add(config, "sell_price", "자원 회수", "유닛 판매로 돌려받는 광물이 증가합니다.", LabEffectType.SellPricePercent, 20, LabCardRarity.Epic);
+        Add(config, "population_discount", "지휘 자동화", "최대 유닛 수 확장에 필요한 광물이 감소합니다.", LabEffectType.PopulationUpgradeCostReductionPercent, 15, LabCardRarity.Epic);
         EditorUtility.SetDirty(config);
         return config;
     }
 
-    private static void Add(LabConfigSO config, string id, string title, string description, LabEffectType type, float value, LabCardRarity rarity)
+    private static void Add(LabConfigSO config, string id, string title, string description, LabEffectType type, float value, Rarity rarity)
     {
         string path = $"{CardFolder}/{id}.asset";
         LabCardDataSO card = AssetDatabase.LoadAssetAtPath<LabCardDataSO>(path);
@@ -167,9 +192,10 @@ public static class LabSceneBuilder
             card.Icon = ResolveDefaultIcon(id);
         card.EffectType = type; card.Value = value; card.DrawWeight = rarity switch
         {
-            LabCardRarity.Common => 70f,
-            LabCardRarity.Rare => 25f,
-            LabCardRarity.Legendary => 5f,
+            Rarity.Normal => 70f,
+            Rarity.Rare => 40f,
+            Rarity.Epic => 25f,
+            Rarity.Legend => 5f,
             _ => 1f,
         };
         EditorUtility.SetDirty(card); config.Cards.Add(card);
@@ -266,8 +292,8 @@ public static class LabSceneBuilder
         string yaml = System.IO.File.ReadAllText(ScenePath);
         return !yaml.Contains("m_Name: Lab_Runtime") &&
                yaml.Contains("Assembly-CSharp::LabPanelView") &&
-               yaml.Contains("m_Name: Lab_OfferOverlay") &&
-               yaml.Contains("m_Name: Lab_DetailPopup") &&
+               yaml.Contains("m_Name: LabOfferOverlay") &&
+               yaml.Contains("m_Name: LabDetailOverlay") &&
                yaml.Contains("detailGradient:") &&
                !yaml.Contains("detailGradient: {fileID: 0}") &&
                !yaml.Contains("currencyText: {fileID: 0}") &&

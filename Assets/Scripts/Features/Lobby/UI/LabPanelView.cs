@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class LabPanelView : MonoBehaviour
+public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Main")]
     [SerializeField] private TMP_Text currencyText;
@@ -36,6 +36,12 @@ public sealed class LabPanelView : MonoBehaviour
     private IReadOnlyList<LabCardDataSO> currentOffer;
     private int quotedCost;
     private bool resolving;
+    private ModalOverlayLifecycle offerLifecycle;
+    private ModalOverlayLifecycle detailLifecycle;
+    private ModalOverlayLifecycle OfferLifecycle =>
+        offerLifecycle ??= new ModalOverlayLifecycle(offerOverlay);
+    private ModalOverlayLifecycle DetailLifecycle =>
+        detailLifecycle ??= new ModalOverlayLifecycle(detailPopup);
 
 #if UNITY_EDITOR
     private void Reset() => AutoWireEditorReferences();
@@ -76,11 +82,17 @@ public sealed class LabPanelView : MonoBehaviour
     }
 #endif
 
+    private void Awake()
+    {
+        OfferLifecycle.HideImmediately();
+        DetailLifecycle.HideImmediately();
+    }
+
     private void OnEnable()
     {
         developButton?.onClick.AddListener(HandleDevelop);
         offerDismissButton?.onClick.AddListener(DismissOffer);
-        detailDismissButton?.onClick.AddListener(() => detailPopup.SetActive(false));
+        detailDismissButton?.onClick.AddListener(DismissDetail);
         if (UserDataManager.Instance != null)
         {
             UserDataManager.Instance.OnResourceUpdated += Refresh;
@@ -95,11 +107,14 @@ public sealed class LabPanelView : MonoBehaviour
     {
         developButton?.onClick.RemoveListener(HandleDevelop);
         offerDismissButton?.onClick.RemoveListener(DismissOffer);
+        detailDismissButton?.onClick.RemoveListener(DismissDetail);
         if (UserDataManager.Instance != null)
         {
             UserDataManager.Instance.OnResourceUpdated -= Refresh;
             UserDataManager.Instance.OnLabUpdated -= Refresh;
         }
+        OfferLifecycle.HideImmediately();
+        DetailLifecycle.HideImmediately();
     }
 
     private void BuildCards()
@@ -164,7 +179,7 @@ public sealed class LabPanelView : MonoBehaviour
             view.ShowOffer(card, false, false, HandleOfferSelected);
             offerViews.Add(view);
         }
-        offerOverlay.SetActive(true);
+        OfferLifecycle.Show();
         offerDismissButton.interactable = false;
     }
 
@@ -173,6 +188,11 @@ public sealed class LabPanelView : MonoBehaviour
         if (resolving) return;
         resolving = true;
         LabDevelopmentFailure failure = await UserDataManager.Instance.AcquireLabCardAsync(selected, quotedCost, currentOffer);
+        if (!isActiveAndEnabled)
+        {
+            resolving = false;
+            return;
+        }
         if (failure != LabDevelopmentFailure.None)
         {
             resolving = false;
@@ -183,12 +203,22 @@ public sealed class LabPanelView : MonoBehaviour
         offerViews[selectedIndex].PlayReveal(selected, true);
         float selectedRevealWait = offerViews[selectedIndex].RevealDuration + revealDelay;
         await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(selectedRevealWait * 1000f));
+        if (!isActiveAndEnabled)
+        {
+            resolving = false;
+            return;
+        }
         for (int i = 0; i < offerViews.Count; i++)
         {
             if (i != selectedIndex)
                 offerViews[i].PlayReveal(currentOffer[i], false);
         }
         await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(offerViews[0].RevealDuration * 1000f));
+        if (!isActiveAndEnabled)
+        {
+            resolving = false;
+            return;
+        }
         offerDismissButton.interactable = true;
         resolving = false;
         ShowDetail(selected);
@@ -204,12 +234,29 @@ public sealed class LabPanelView : MonoBehaviour
         detailName.text = card.DisplayName;
         detailDescription.text = card.Description;
         detailValue.text = card.GetFormattedValue();
-        detailPopup.SetActive(true);
+        DetailLifecycle.Show();
     }
 
     private void DismissOffer()
     {
-        if (!resolving && offerDismissButton.interactable) offerOverlay.SetActive(false);
+        if (!resolving && offerDismissButton.interactable)
+            OfferLifecycle.Close();
+    }
+
+    private void DismissDetail()
+    {
+        DetailLifecycle.Close();
+    }
+
+    public void Dismiss()
+    {
+        if (DetailLifecycle.IsVisible)
+        {
+            DismissDetail();
+            return;
+        }
+
+        DismissOffer();
     }
 
     private static string FailureMessage(LabDevelopmentFailure failure) => failure switch

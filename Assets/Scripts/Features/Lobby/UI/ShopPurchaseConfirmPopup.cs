@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public sealed class ShopPurchaseConfirmPopup : MonoBehaviour
+public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform rewardContainer;
@@ -18,13 +18,15 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour
 
     private UnityAction onConfirm;
     private UnityAction onRecharge;
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
     private void Awake()
     {
         if (confirmButton != null)
             confirmButton.onClick.AddListener(Confirm);
         if (cancelButton != null)
-            cancelButton.onClick.AddListener(Hide);
+            cancelButton.onClick.AddListener(Dismiss);
         if (rechargeButton != null)
             rechargeButton.onClick.AddListener(OpenRecharge);
     }
@@ -78,8 +80,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour
         if (rechargeButton != null)
             rechargeButton.gameObject.SetActive(!affordable);
 
-        gameObject.SetActive(true);
-        transform.SetAsLastSibling();
+        Lifecycle.Show();
     }
 
     public void SetBusy(bool busy)
@@ -95,11 +96,20 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour
             warningText.text = "구매 처리 중...";
     }
 
-    public void Hide()
+    public void Dismiss()
     {
-        onConfirm = null;
-        onRecharge = null;
-        gameObject.SetActive(false);
+        Lifecycle.Close(ClearActions);
+    }
+
+    public void Hide() => Dismiss();
+
+    public void Hide(UnityAction onHidden)
+    {
+        Lifecycle.Close(() =>
+        {
+            ClearActions();
+            onHidden?.Invoke();
+        });
     }
 
     private void RebuildRewards(ShopProductData product)
@@ -129,9 +139,17 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour
     private void OpenRecharge()
     {
         UnityAction action = onRecharge;
-        Hide();
-        if (action != null)
-            action.Invoke();
+        Lifecycle.Close(() =>
+        {
+            ClearActions();
+            action?.Invoke();
+        });
+    }
+
+    private void ClearActions()
+    {
+        onConfirm = null;
+        onRecharge = null;
     }
 
     private void OnDestroy()
@@ -139,7 +157,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour
         if (confirmButton != null)
             confirmButton.onClick.RemoveListener(Confirm);
         if (cancelButton != null)
-            cancelButton.onClick.RemoveListener(Hide);
+            cancelButton.onClick.RemoveListener(Dismiss);
         if (rechargeButton != null)
             rechargeButton.onClick.RemoveListener(OpenRecharge);
     }

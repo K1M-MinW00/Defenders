@@ -2,12 +2,14 @@
 using TMPro;
 using UnityEngine;
 
-public class GemConfirmPopupView : MonoBehaviour
+public class GemConfirmPopupView : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] TMP_Text messageText;
 
     private readonly OneShotConfirmation confirmation = new();
     private bool isConfirming;
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
     public bool Open(int gemCost, Action confirmAction)
     {
@@ -25,7 +27,7 @@ public class GemConfirmPopupView : MonoBehaviour
         }
 
         messageText.text = $"{gemCost:N0} 개를 사용하여 모집하시겠습니까?";
-        gameObject.SetActive(true);
+        Lifecycle.Show();
         return true;
     }
 
@@ -35,16 +37,20 @@ public class GemConfirmPopupView : MonoBehaviour
             return;
 
         isConfirming = true;
-        gameObject.SetActive(false);
-        isConfirming = false;
-        confirmation.TryConfirm();
+        Lifecycle.Close(() =>
+        {
+            isConfirming = false;
+            confirmation.TryConfirm();
+        });
     }
 
     public void OnCancel()
     {
         confirmation.Cancel();
-        gameObject.SetActive(false);
+        Lifecycle.Close();
     }
+
+    public void Dismiss() => OnCancel();
 
     private void OnDisable()
     {

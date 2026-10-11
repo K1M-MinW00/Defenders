@@ -109,7 +109,9 @@ public static class ShopDataValidator
             PackageShopProductData => product.Tab == ShopTabType.Package,
             RechargeShopProductData => product.Tab == ShopTabType.Recharge,
             ExchangeShopProductData => product.Tab == ShopTabType.Exchange,
-            _ => false,
+            // Standalone products (for example the fuel panel offers) use the base
+            // type and are not displayed in one of the four shop tabs.
+            _ => product.GetType() == typeof(ShopProductData),
         };
 
         if (!valid)

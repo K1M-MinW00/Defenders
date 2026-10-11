@@ -11,8 +11,9 @@ public struct UnitStats
     public float CritDamage;
 
     public float EnergyRecovery;
+    public float DamageReduction;
 
-    public UnitStats(float attack, float maxHp, float attackPerSec, float detectRange, float critChance, float critDamage, float energyRecovery)
+    public UnitStats(float attack, float maxHp, float attackPerSec, float detectRange, float critChance, float critDamage, float energyRecovery, float damageReduction = 0f)
     {
         Attack = attack;
         MaxHp = maxHp;
@@ -21,5 +22,6 @@ public struct UnitStats
         CritChance = critChance;
         CritDamage = critDamage;
         EnergyRecovery = energyRecovery;
+        DamageReduction = damageReduction;
     }
 }

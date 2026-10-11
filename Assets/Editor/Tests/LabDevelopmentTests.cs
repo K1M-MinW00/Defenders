@@ -28,7 +28,7 @@ public sealed class LabDevelopmentTests
             card.DrawWeight = 1;
             config.Cards.Add(card);
         }
-        UserDataRoot data = Data(level: 10, gold: 1000);
+        UserDataRoot data = Data(level: 10, researchMaterial: 1000);
         data.Lab.AcquiredCardIds.Add("card_0");
         LabOfferResult result = new LabDevelopmentUseCase(new FakeRepository(), "u", data, config, new System.Random(1)).CreateOffer();
         Assert.That(result.Succeeded, Is.True);
@@ -43,20 +43,20 @@ public sealed class LabDevelopmentTests
         LabConfigSO config = ScriptableObject.CreateInstance<LabConfigSO>();
         config.BaseDevelopmentCost = 100;
         LabCardDataSO card = ScriptableObject.CreateInstance<LabCardDataSO>(); card.CardId = "attack"; card.DrawWeight = 1; config.Cards.Add(card);
-        UserDataRoot data = Data(level: 5, gold: 150);
+        UserDataRoot data = Data(level: 5, researchMaterial: 150);
         FakeRepository repository = new();
         LabDevelopmentUseCase useCase = new(repository, "u", data, config);
         LabDevelopmentFailure result = await useCase.AcquireAsync(card, 100, new[] { card });
         Assert.That(result, Is.EqualTo(LabDevelopmentFailure.None));
-        Assert.That(data.Resource.Gold, Is.EqualTo(50));
+        Assert.That(data.Resource.ResearchMaterial, Is.EqualTo(50));
         Assert.That(data.Lab.AcquiredCardIds, Contains.Item("attack"));
         Assert.That(repository.SavedSections, Is.EqualTo(1));
     }
 
-    private static UserDataRoot Data(int level, int gold) => new()
+    private static UserDataRoot Data(int level, int researchMaterial) => new()
     {
         Profile = new UserProfileData { UserId = "u", Level = level },
-        Resource = new UserResourceData { Gold = gold },
+        Resource = new UserResourceData { ResearchMaterial = researchMaterial },
         Lab = new UserLabData(),
     };
 

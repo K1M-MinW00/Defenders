@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Poolable))]
 public class SwordAura : MonoBehaviour, IPoolable
 {
     private Poolable poolable;
@@ -18,8 +19,6 @@ public class SwordAura : MonoBehaviour, IPoolable
     private void Awake()
     {
         poolable = GetComponent<Poolable>();
-        if(poolable ==  null )
-            poolable = gameObject.AddComponent<Poolable>();
     }
 
     public void Initialize(float damage, Vector2 direction, float projectileSpeed, float projectileLifeTime, LayerMask targetLayer, ICombatTarget source)

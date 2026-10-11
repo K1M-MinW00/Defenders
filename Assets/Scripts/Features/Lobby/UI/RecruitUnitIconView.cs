@@ -8,8 +8,8 @@ public class RecruitUnitIconView : MonoBehaviour
     [SerializeField] private Image iconImage;
     [SerializeField] private GameObject duplicateMark;
     [SerializeField] private UnitVisualConfigSO visualConfig;
+    [SerializeField] private CanvasGroup revealCanvasGroup;
 
-    private CanvasGroup revealCanvasGroup;
     private Coroutine revealRoutine;
 
     public void Setup(GachaResult result)
@@ -29,7 +29,6 @@ public class RecruitUnitIconView : MonoBehaviour
     public void RevealAnimated(float duration)
     {
         gameObject.SetActive(true);
-        EnsureCanvasGroup();
 
         if (revealRoutine != null)
             StopCoroutine(revealRoutine);
@@ -53,7 +52,6 @@ public class RecruitUnitIconView : MonoBehaviour
             revealRoutine = null;
         }
 
-        EnsureCanvasGroup();
         revealCanvasGroup.alpha = 1f;
         transform.localScale = Vector3.one;
     }
@@ -79,14 +77,4 @@ public class RecruitUnitIconView : MonoBehaviour
         revealRoutine = null;
     }
 
-    private void EnsureCanvasGroup()
-    {
-        if (revealCanvasGroup != null)
-            return;
-
-        revealCanvasGroup = GetComponent<CanvasGroup>();
-
-        if (revealCanvasGroup == null)
-            revealCanvasGroup = gameObject.AddComponent<CanvasGroup>();
-    }
 }

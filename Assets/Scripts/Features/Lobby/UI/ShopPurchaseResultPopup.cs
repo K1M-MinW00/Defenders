@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class ShopPurchaseResultPopup : MonoBehaviour
+public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private TMP_Text resultTitleText;
     [SerializeField] private TMP_Text productNameText;
@@ -11,10 +11,13 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour
     [SerializeField] private ShopRewardSlotView rewardSlotPrefab;
     [SerializeField] private Button closeButton;
 
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
+
     private void Awake()
     {
         if (closeButton != null)
-            closeButton.onClick.AddListener(Hide);
+            closeButton.onClick.AddListener(Dismiss);
     }
 
     public void Show(ShopProductData product, ShopPurchaseResult result)
@@ -39,14 +42,15 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour
         if (closeButton != null)
             closeButton.interactable = true;
 
-        gameObject.SetActive(true);
-        transform.SetAsLastSibling();
+        Lifecycle.Show();
     }
 
-    public void Hide()
+    public void Dismiss()
     {
-        gameObject.SetActive(false);
+        Lifecycle.Close();
     }
+
+    public void Hide() => Dismiss();
 
     private void RebuildRewards(ShopProductData product)
     {
@@ -73,6 +77,6 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour
     private void OnDestroy()
     {
         if (closeButton != null)
-            closeButton.onClick.RemoveListener(Hide);
+            closeButton.onClick.RemoveListener(Dismiss);
     }
 }

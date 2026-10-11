@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class RatePopupPanelView : MonoBehaviour
+public class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private RateGroupView legendGroup;
     [SerializeField] private RateGroupView rareGroup;
@@ -8,6 +8,8 @@ public class RatePopupPanelView : MonoBehaviour
 
     private readonly System.Collections.Generic.List<RateGroupView> groupViews = new();
     private Coroutine rebuildRoutine;
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
     private void Awake()
     {
@@ -29,7 +31,7 @@ public class RatePopupPanelView : MonoBehaviour
             return false;
         }
 
-        gameObject.SetActive(true);
+        Lifecycle.Show();
         InitializeGroupViews();
 
         System.Collections.Generic.IReadOnlyList<RecruitRatePreviewRow> rows = RecruitRatePreviewBuilder.Build(banner);
@@ -59,8 +61,10 @@ public class RatePopupPanelView : MonoBehaviour
 
     public void Close()
     {
-        gameObject.SetActive(false);
+        Lifecycle.Close();
     }
+
+    public void Dismiss() => Close();
 
     private System.Collections.IEnumerator RebuildNextFrame()
     {

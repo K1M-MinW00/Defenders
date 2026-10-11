@@ -254,6 +254,12 @@ public static class UserDataNormalizer
     private static bool NormalizeUnit(UserUnitData unit)
     {
         bool changed = false;
+        if (unit.Equipment == null)
+        {
+            unit.Equipment = new EquipmentLoadout();
+            changed = true;
+        }
+
         UnitDataSO definition = GameConfig.Units.Get(unit.UnitId);
         int maxLevel = Math.Max(1, definition?.maxLevel ?? int.MaxValue);
         int maxPromotion = Math.Max(0, definition?.promotionCost?.Length ?? int.MaxValue);
@@ -299,9 +305,16 @@ public static class UserDataNormalizer
                 continue;
             }
 
-            if (equipment.Level < 1)
+            int normalizedLevel = Math.Clamp(equipment.Level, 0, 10);
+            if (equipment.Level != normalizedLevel)
             {
-                equipment.Level = 1;
+                equipment.Level = normalizedLevel;
+                changed = true;
+            }
+
+            if (equipment.EnhancementExp < 0)
+            {
+                equipment.EnhancementExp = 0;
                 changed = true;
             }
         }

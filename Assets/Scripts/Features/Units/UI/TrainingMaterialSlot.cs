@@ -7,8 +7,7 @@ public class TrainingMaterialSlot : MonoBehaviour
 {
     [SerializeField] private Button selectButton;
     [SerializeField] private Button minusButton;
-    [SerializeField] private Image iconImage;
-    [SerializeField] private TMP_Text ownedCountText;
+    [SerializeField] private CommonSlotUI commonSlot;
     [SerializeField] private TMP_Text selectedCountText;
 
     private MaterialDataSO materialData;
@@ -18,6 +17,9 @@ public class TrainingMaterialSlot : MonoBehaviour
 
     public string ItemId => materialData?.ItemId;
 
+    public void Configure(Button select, Button minus, CommonSlotUI slot, TMP_Text selectedText)
+    { selectButton = select; minusButton = minus; commonSlot = slot; selectedCountText = selectedText; }
+
     public void Setup(MaterialDataSO data, int owned, Action addHandler, Action removeHandler)
     {
         materialData = data;
@@ -25,8 +27,16 @@ public class TrainingMaterialSlot : MonoBehaviour
         onAdd = addHandler;
         onRemove = removeHandler;
 
-        if (iconImage != null)
-            iconImage.sprite = data != null ? data.Icon : null;
+        if (data != null)
+        {
+            commonSlot?.Setup(
+                data.Icon,
+                data.Rarity,
+                ownedCount,
+                true,
+                null,
+                false);
+        }
 
         if (selectButton != null)
         {
@@ -54,11 +64,11 @@ public class TrainingMaterialSlot : MonoBehaviour
     }
 
     public void Refresh(int selectedCount)
+        => Refresh(selectedCount, true);
+
+    public void Refresh(int selectedCount, bool allowAdd)
     {
         selectedCount = Mathf.Clamp(selectedCount, 0, ownedCount);
-
-        if (ownedCountText != null)
-            ownedCountText.text = ownedCount.ToString("N0");
 
         if (selectedCountText != null)
             selectedCountText.text = selectedCount > 0 ? selectedCount.ToString("N0") : string.Empty;
@@ -67,7 +77,7 @@ public class TrainingMaterialSlot : MonoBehaviour
             minusButton.gameObject.SetActive(selectedCount > 0);
 
         if (selectButton != null)
-            selectButton.interactable = materialData != null && selectedCount < ownedCount;
+            selectButton.interactable = allowAdd && materialData != null && selectedCount < ownedCount;
     }
 
     private void OnDestroy()

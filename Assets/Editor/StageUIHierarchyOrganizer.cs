@@ -6,6 +6,7 @@ using UnityEditorInternal;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public static class StageUIHierarchyOrganizer
 {
@@ -45,6 +46,70 @@ public static class StageUIHierarchyOrganizer
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         Debug.Log("[StageUIHierarchyOrganizer] GameScene UI components were organized.");
+    }
+
+    [MenuItem("Tools/Defenders/Configure Stage Result Reward Scroll")]
+    public static void ConfigureStageResultRewardScroll()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        StageResultUI result = UnityEngine.Object.FindFirstObjectByType<StageResultUI>(FindObjectsInactive.Include);
+        if (result == null)
+            throw new InvalidOperationException("StageResultUI was not found in GameScene.");
+
+        Transform scrollTransform = FindChild(result.transform, "ClearRewardScroll") ??
+                                    FindChild(result.transform, "Reward_Panel");
+        if (scrollTransform is not RectTransform viewport)
+            throw new InvalidOperationException("Stage clear reward viewport was not found.");
+
+        viewport.name = "ClearRewardScroll";
+        HorizontalLayoutGroup oldLayout = viewport.GetComponent<HorizontalLayoutGroup>();
+        if (oldLayout != null)
+            UnityEngine.Object.DestroyImmediate(oldLayout);
+
+        if (viewport.GetComponent<RectMask2D>() == null)
+            viewport.gameObject.AddComponent<RectMask2D>();
+        ScrollRect scroll = viewport.GetComponent<ScrollRect>() ?? viewport.gameObject.AddComponent<ScrollRect>();
+
+        for (int i = viewport.childCount - 1; i >= 0; i--)
+            UnityEngine.Object.DestroyImmediate(viewport.GetChild(i).gameObject);
+
+        GameObject contentObject = new("RewardContent", typeof(RectTransform), typeof(HorizontalLayoutGroup), typeof(ContentSizeFitter));
+        RectTransform content = contentObject.GetComponent<RectTransform>();
+        content.SetParent(viewport, false);
+        content.anchorMin = new Vector2(0f, 0f);
+        content.anchorMax = new Vector2(0f, 1f);
+        content.pivot = new Vector2(0f, 0.5f);
+        content.anchoredPosition = Vector2.zero;
+        content.sizeDelta = Vector2.zero;
+
+        HorizontalLayoutGroup layout = contentObject.GetComponent<HorizontalLayoutGroup>();
+        layout.padding = new RectOffset(30, 30, 20, 20);
+        layout.spacing = 24f;
+        layout.childAlignment = TextAnchor.MiddleLeft;
+        layout.childControlWidth = false;
+        layout.childControlHeight = false;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = false;
+
+        ContentSizeFitter fitter = contentObject.GetComponent<ContentSizeFitter>();
+        fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+        fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+        scroll.viewport = viewport;
+        scroll.content = content;
+        scroll.horizontal = true;
+        scroll.vertical = false;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+        scroll.inertia = true;
+
+        SerializedObject serialized = new(result);
+        serialized.FindProperty("clearRewardContent").objectReferenceValue = content;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(result);
+        EditorUtility.SetDirty(scroll);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("[StageUIHierarchyOrganizer] Stage result reward scroll configured.");
     }
 
     private static void MoveComponent(Scene scene, GameObject sourceObject, Type type, GameObject destination)
@@ -150,6 +215,18 @@ public static class StageUIHierarchyOrganizer
             }
         }
 
+        return null;
+    }
+
+    private static Transform FindChild(Transform root, string name)
+    {
+        if (root == null) return null;
+        if (root.name == name) return root;
+        foreach (Transform child in root)
+        {
+            Transform found = FindChild(child, name);
+            if (found != null) return found;
+        }
         return null;
     }
 }

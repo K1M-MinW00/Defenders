@@ -52,10 +52,12 @@ public class StageRewardService : MonoBehaviour
 
     public Task<StageOutcomeResult> GiveStageFailRewardAsync(
         StageDataSO stageData,
-        int clearedWaveCount)
+        int clearedWaveCount,
+        int entryFuelCost)
     {
         return UserDataManager.Instance.FailStageAsync(
             stageData,
-            clearedWaveCount);
+            clearedWaveCount,
+            entryFuelCost);
     }
 }

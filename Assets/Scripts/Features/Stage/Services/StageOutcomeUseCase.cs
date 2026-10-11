@@ -40,7 +40,8 @@ public sealed class StageOutcomeUseCase
 
     public Task<StageOutcomeResult> FailAsync(
         StageDataSO stage,
-        int clearedWaveCount)
+        int clearedWaveCount,
+        int entryFuelCost)
     {
         if (stage == null)
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
@@ -59,7 +60,10 @@ public sealed class StageOutcomeUseCase
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
         }
 
-        return GrantAndSaveAsync(stage.failureRewards, nextProgress);
+        IReadOnlyList<RewardData> rewards = StageFailureRefundPolicy.BuildRewards(
+            stage.failureRewards,
+            entryFuelCost);
+        return GrantAndSaveAsync(rewards, nextProgress);
     }
 
     private async Task<StageOutcomeResult> GrantAndSaveAsync(

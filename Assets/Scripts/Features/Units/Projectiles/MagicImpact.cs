@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Poolable))]
 public class MagicImpact : MonoBehaviour, IPoolable
 {
     [Header("Impact")]
@@ -18,8 +19,6 @@ public class MagicImpact : MonoBehaviour, IPoolable
     {
         poolable = GetComponent<Poolable>();
 
-        if (poolable == null)
-            poolable = gameObject.AddComponent<Poolable>();
     }
 
     public void Initialize(float damage, LayerMask target, ICombatTarget source)

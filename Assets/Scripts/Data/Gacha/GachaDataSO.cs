@@ -21,6 +21,9 @@ public class GachaDataSO : ScriptableObject
     [SerializeField] private float rareRate = 13f;
 
     [Range(0, 100)]
+    [SerializeField] private float epicRate;
+
+    [Range(0, 100)]
     [SerializeField] private float legendRate = 2f;
 
     [Header("Pity")]
@@ -29,6 +32,7 @@ public class GachaDataSO : ScriptableObject
     [Header("Pools")]
     [SerializeField] private List<UnitDataSO> normalPool = new();
     [SerializeField] private List<UnitDataSO> rarePool = new();
+    [SerializeField] private List<UnitDataSO> epicPool = new();
     [SerializeField] private List<UnitDataSO> legendPool = new();
 
     [Header("Cost")]
@@ -42,10 +46,12 @@ public class GachaDataSO : ScriptableObject
     public float PickupRateWithinRarity => pickupRateWithinRarity;
     public float NormalRate => normalRate;
     public float RareRate => rareRate;
+    public float EpicRate => epicRate;
     public float LegendRate => legendRate;
     public int LegendPityCount => legendPityCount;
     public IReadOnlyList<UnitDataSO> NormalPool => normalPool;
     public IReadOnlyList<UnitDataSO> RarePool => rarePool;
+    public IReadOnlyList<UnitDataSO> EpicPool => epicPool;
     public IReadOnlyList<UnitDataSO> LegendPool => legendPool;
     public string TicketItemId => ticketItemId;
     public int GemCost => gemCost;
@@ -56,6 +62,7 @@ public class GachaDataSO : ScriptableObject
         {
             Rarity.Normal => normalPool,
             Rarity.Rare => rarePool,
+            Rarity.Epic => epicPool,
             Rarity.Legend => legendPool,
             _ => null,
         };
@@ -95,9 +102,9 @@ public class GachaDataSO : ScriptableObject
             return Fail("Gem cost cannot be negative.", out error);
         if (legendPityCount <= 0)
             return Fail("Legend pity count must be positive.", out error);
-        if (normalRate < 0f || rareRate < 0f || legendRate < 0f)
+        if (normalRate < 0f || rareRate < 0f || epicRate < 0f || legendRate < 0f)
             return Fail("Recruit rates cannot be negative.", out error);
-        if (Mathf.Abs(normalRate + rareRate + legendRate - 100f) > 0.01f)
+        if (Mathf.Abs(normalRate + rareRate + epicRate + legendRate - 100f) > 0.01f)
             return Fail("Recruit rates must add up to 100%.", out error);
         if (recruitType == RecruitType.Special &&
             (pickupRateWithinRarity <= 0f || pickupRateWithinRarity > 100f))
@@ -107,7 +114,8 @@ public class GachaDataSO : ScriptableObject
 
         if (!IsValidPool(legendPool, Rarity.Legend) ||
             (normalRate > 0f && !IsValidPool(normalPool, Rarity.Normal)) ||
-            (rareRate > 0f && !IsValidPool(rarePool, Rarity.Rare)))
+            (rareRate > 0f && !IsValidPool(rarePool, Rarity.Rare)) ||
+            (epicRate > 0f && !IsValidPool(epicPool, Rarity.Epic)))
         {
             return Fail("A required pool is empty or contains an invalid unit rarity.", out error);
         }

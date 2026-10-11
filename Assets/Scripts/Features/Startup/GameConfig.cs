@@ -11,8 +11,9 @@ public static class GameConfig
     public static IStageCatalog Stages { get; private set; }
     public static LabConfigSO Lab { get; private set; }
     public static IdleRewardConfigSO IdleReward { get; private set; }
+    public static EquipmentBalanceConfigSO EquipmentBalance { get; private set; }
     public static bool IsInitialized => NewUserConfig != null && UserLevelProgression != null &&
-        GachaEconomy != null && Icons != null && Units != null && Items != null && Stages != null && Lab != null && IdleReward != null;
+        GachaEconomy != null && Icons != null && Units != null && Items != null && Stages != null && Lab != null && IdleReward != null && EquipmentBalance != null;
 
     public static void Initialize()
     {
@@ -28,6 +29,7 @@ public static class GameConfig
         IStageCatalog stages = new StageCatalog(Resources.LoadAll<StageDataSO>("GameData/Stages"));
         LabConfigSO lab = LoadRequired<LabConfigSO>("GameData/Configs/LabConfig");
         IdleRewardConfigSO idleReward = LoadRequired<IdleRewardConfigSO>("GameData/Configs/IdleRewardConfig");
+        EquipmentBalanceConfigSO equipmentBalance = LoadRequired<EquipmentBalanceConfigSO>("GameData/Configs/EquipmentBalanceConfig");
         IGameIconProvider icons = new GameIconProvider(iconSet);
 
         Validate(newUserConfig.TryValidate(units, out string newUserError), "NewUserConfig", newUserError);
@@ -35,6 +37,7 @@ public static class GameConfig
         Validate(gachaEconomy.TryValidate(out string economyError), "GachaEconomyConfig", economyError);
         Validate(lab.TryValidate(out string labError), "LabConfig", labError);
         Validate(idleReward.TryValidate(items, out string idleRewardError), "IdleRewardConfig", idleRewardError);
+        Validate(equipmentBalance.TryValidate(items, out string equipmentError), "EquipmentBalanceConfig", equipmentError);
 
         NewUserConfig = newUserConfig;
         UserLevelProgression = levelProgression;
@@ -45,6 +48,7 @@ public static class GameConfig
         Icons = icons;
         Lab = lab;
         IdleReward = idleReward;
+        EquipmentBalance = equipmentBalance;
     }
 
     private static T LoadRequired<T>(string path) where T : UnityEngine.Object

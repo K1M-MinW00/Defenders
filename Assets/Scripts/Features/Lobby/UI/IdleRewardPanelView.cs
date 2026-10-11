@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class IdleRewardPanelView : MonoBehaviour
+public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private Button supplyButton;
     [SerializeField] private Button closeButton;
@@ -23,6 +23,9 @@ public sealed class IdleRewardPanelView : MonoBehaviour
     private Coroutine refreshRoutine;
     private bool claiming;
     private int lastDisplayedMinute = -1;
+    private ModalOverlayLifecycle popupLifecycle;
+    private ModalOverlayLifecycle PopupLifecycle =>
+        popupLifecycle ??= new ModalOverlayLifecycle(popup);
 
 #if UNITY_EDITOR
     public void SetRewardSlotPrefabEditor(GameObject value) => rewardSlotPrefab = value;
@@ -31,34 +34,34 @@ public sealed class IdleRewardPanelView : MonoBehaviour
     private void Awake()
     {
         supplyButton?.onClick.AddListener(Open);
-        closeButton?.onClick.AddListener(Close);
+        closeButton?.onClick.AddListener(Dismiss);
         claimButton?.onClick.AddListener(Claim);
         if (rewardGrid != null)
         {
             rewardGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             rewardGrid.constraintCount = 5;
         }
-        popup?.SetActive(false);
+        PopupLifecycle.HideImmediately();
     }
 
     private void Open()
     {
-        popup.SetActive(true);
+        PopupLifecycle.Show();
         Refresh(true);
         if (refreshRoutine != null) StopCoroutine(refreshRoutine);
         refreshRoutine = StartCoroutine(RefreshEachMinute());
     }
 
-    private void Close()
+    public void Dismiss()
     {
-        popup.SetActive(false);
         if (refreshRoutine != null) StopCoroutine(refreshRoutine);
         refreshRoutine = null;
+        PopupLifecycle.Close();
     }
 
     private IEnumerator RefreshEachMinute()
     {
-        while (popup.activeSelf)
+        while (PopupLifecycle.IsVisible)
         {
             Refresh(false);
             yield return new WaitForSecondsRealtime(1f);
@@ -110,13 +113,13 @@ public sealed class IdleRewardPanelView : MonoBehaviour
             return;
         }
         UIFeedbackToast.Show("방치형 보상을 획득했습니다.");
-        Close();
+        Dismiss();
     }
 
     private void OnDestroy()
     {
         supplyButton?.onClick.RemoveListener(Open);
-        closeButton?.onClick.RemoveListener(Close);
+        closeButton?.onClick.RemoveListener(Dismiss);
         claimButton?.onClick.RemoveListener(Claim);
     }
 }

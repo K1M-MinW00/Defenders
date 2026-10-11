@@ -2,6 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Poolable))]
 public class Lancer_Active_Aura : MonoBehaviour, IPoolable
 {
     [SerializeField] private SpriteRenderer rangeSrdr;
@@ -34,8 +35,6 @@ public class Lancer_Active_Aura : MonoBehaviour, IPoolable
         if (circleTrigger != null)
             circleTrigger.isTrigger = true;
 
-        if (poolable == null)
-            poolable = gameObject.AddComponent<Poolable>();
     }
 
     public void Initialize(float duration,float radius,float attackBonusPercent,float attackSpeedBonusPercent,LayerMask allyLayer,string uniqueId)

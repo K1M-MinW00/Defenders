@@ -30,9 +30,9 @@ public static class ShopSceneBuilder
         ShopProductGroup group = BuildProducts();
 
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        GameObject panel = FindInScene(scene, "Shop_Panel");
+        GameObject panel = FindInScene(scene, "ShopPanel") ?? FindInScene(scene, "Shop_Panel");
         if (panel == null)
-            throw new InvalidOperationException("Shop_Panel was not found.");
+            throw new InvalidOperationException("ShopPanel was not found.");
 
         foreach (LobbyTabView obsolete in panel.GetComponents<LobbyTabView>())
             UnityEngine.Object.DestroyImmediate(obsolete);
@@ -131,7 +131,7 @@ public static class ShopSceneBuilder
         GameObject overlay = ImageObject(parent, "PurchaseConfirmPopup", new Color32(0, 12, 28, 220)).gameObject;
         Rect((RectTransform)overlay.transform, Vector2.zero, Vector2.one);
 
-        GameObject card = ImageObject(overlay.transform, "Card", new Color32(35, 91, 139, 255)).gameObject;
+        GameObject card = ImageObject(overlay.transform, "ModalCard", new Color32(35, 91, 139, 255)).gameObject;
         Rect((RectTransform)card.transform, new Vector2(.08f, .25f), new Vector2(.92f, .75f));
         Outline outline = card.AddComponent<Outline>();
         outline.effectColor = new Color32(8, 30, 55, 255);
@@ -206,7 +206,7 @@ public static class ShopSceneBuilder
         GameObject overlay = ImageObject(parent, "PurchaseResultPopup", new Color32(0, 12, 28, 220)).gameObject;
         Rect((RectTransform)overlay.transform, Vector2.zero, Vector2.one);
 
-        GameObject card = ImageObject(overlay.transform, "Card", new Color32(44, 106, 157, 255)).gameObject;
+        GameObject card = ImageObject(overlay.transform, "ModalCard", new Color32(44, 106, 157, 255)).gameObject;
         Rect((RectTransform)card.transform, new Vector2(.10f, .28f), new Vector2(.90f, .72f));
         Outline outline = card.AddComponent<Outline>();
         outline.effectColor = new Color32(8, 30, 55, 255);
@@ -241,6 +241,9 @@ public static class ShopSceneBuilder
         Set(serialized, "rewardSlotPrefab", rewardSlot);
         Set(serialized, "closeButton", close);
         serialized.ApplyModifiedPropertiesWithoutUndo();
+
+        ModalBackdropDismiss dismiss = overlay.AddComponent<ModalBackdropDismiss>();
+        dismiss.Configure(card.transform as RectTransform, overlay, popup);
 
         overlay.SetActive(false);
         return popup;
@@ -293,7 +296,7 @@ public static class ShopSceneBuilder
         layout.constraintCount = 2;
         layout.childAlignment = TextAnchor.UpperCenter;
         ShopResponsiveGrid responsive = grid.gameObject.AddComponent<ShopResponsiveGrid>();
-        responsive.Configure(2, 400f / 340f, 20f, 4f);
+        responsive.Configure(2, 400f / 340f, 20f, 4f, 400f);
         ContentSizeFitter fit = grid.gameObject.AddComponent<ContentSizeFitter>();
         fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         return grid;
@@ -327,7 +330,8 @@ public static class ShopSceneBuilder
         layout.childAlignment = TextAnchor.UpperCenter;
         float aspectRatio = columns == 1 ? 840f / 430f : columns == 3 ? 255f / 340f : 400f / 340f;
         ShopResponsiveGrid responsive = grid.gameObject.AddComponent<ShopResponsiveGrid>();
-        responsive.Configure(columns, aspectRatio, 20f, 4f);
+        float maxCellWidth = columns == 1 ? 840f : columns == 3 ? 255f : 400f;
+        responsive.Configure(columns, aspectRatio, 20f, 4f, maxCellWidth);
         grid.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         content = grid;
         return panel;

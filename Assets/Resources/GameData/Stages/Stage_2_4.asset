@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
   sector: 2
   stage: 4
-  prepareDuration: 90
   mapPrefab: {fileID: 7110379718879009835, guid: d0bf25c8c1775664fab965bbc9fb11bd, type: 3}
+  prepareDuration: 90
   waves:
   - waveType: 0
     hpMultiplier: 0.92
@@ -193,18 +193,15 @@ MonoBehaviour:
   economyConfig: {fileID: 11400000, guid: 97412bff6f5056c45b3d7aca9b389d6c, type: 2}
   clearRewards:
   - type: 0
-    id:
+    id: 
     amount: 475
   - type: 1
-    id:
+    id: 
     amount: 35
   - type: 3
     id: material_exp_2
     amount: 4
   - type: 6
-    id:
+    id: 
     amount: 225
-  failureRewards:
-  - type: 2
-    id:
-    amount: 10
+  failureRewards: []

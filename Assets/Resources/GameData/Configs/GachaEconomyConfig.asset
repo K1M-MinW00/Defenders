@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GachaEconomyConfigSO
   normalDuplicateGem: 30
   rareDuplicateGem: 100
+  epicDuplicateGem: 200
   legendDuplicateGem: 300

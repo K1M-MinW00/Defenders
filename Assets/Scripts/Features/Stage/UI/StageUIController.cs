@@ -94,6 +94,15 @@ public class StageUIController : MonoBehaviour
         Dispose();
     }
 
+    private void Update()
+    {
+        // Android's hardware/software Back action is reported as Escape by Unity.
+        if (!isInitialized || !Input.GetKeyDown(KeyCode.Escape))
+            return;
+
+        overlayController?.HandleSystemBack();
+    }
+
     public void Dispose()
     {
         if (!isInitialized)
@@ -169,21 +178,24 @@ public class StageUIController : MonoBehaviour
         overlayController?.HideUnitInfo();
     }
 
-    public void ShowStageClear(
+    public void ShowStageResultSettling(
+        bool isClear,
         StageDataSO stage,
-        int clearedWaveCount,
-        IReadOnlyList<RewardData> rewards)
+        int clearedWaveCount)
     {
-        resultUI?.ShowClear(stage, clearedWaveCount, rewards);
+        resultUI?.ShowSettling(isClear, stage, clearedWaveCount);
     }
 
-    public void ShowStageFail(
+    public void ShowStageResult(
+        bool isClear,
         StageDataSO stage,
         int clearedWaveCount,
         IReadOnlyList<RewardData> rewards)
     {
-        resultUI?.ShowFail(stage, clearedWaveCount, rewards);
+        resultUI?.ShowResult(isClear, stage, clearedWaveCount, rewards);
     }
+
+    public void ShowStageResultSaveFailure() => resultUI?.ShowSaveFailure();
 
     public void HideAllResultPanels()
     {

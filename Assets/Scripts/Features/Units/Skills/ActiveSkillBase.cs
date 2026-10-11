@@ -22,10 +22,10 @@ public abstract class ActiveSkillBase : MonoBehaviour
     {
         this.owner = owner;
         this.skillController = skillController;
+        telegraph = owner.GetComponentInChildren<SkillTelegraphView>(true);
     }
 
-    protected SkillTelegraphView Telegraph =>
-        telegraph != null ? telegraph : telegraph = SkillTelegraphView.GetOrCreate(owner.transform);
+    protected SkillTelegraphView Telegraph => telegraph;
 
     internal void HideTelegraph()
     {

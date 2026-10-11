@@ -15,7 +15,7 @@ MonoBehaviour:
   unitId: unit_lancer
   displayName: Lancer
   icon: {fileID: 2508781651783504918, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
-  rarity: 1
+  rarity: 2
   unitPrefab: {fileID: 6053776636646679034, guid: e9c296e1c39059b42abbe8b35ef6b376, type: 3}
   attackSound:
     clip: {fileID: 8300000, guid: 3f260e5b54b7a614bb6bf77e7e371d41, type: 3}
@@ -68,16 +68,16 @@ MonoBehaviour:
   limitBreaks:
   - statType: 1
     value: 10
-    description: "체력 10% 증가"
+    description: "\uCCB4\uB825 10% \uC99D\uAC00"
   - statType: 6
     value: 15
-    description: "에너지 회복 15% 증가"
+    description: "\uC5D0\uB108\uC9C0 \uD68C\uBCF5 15% \uC99D\uAC00"
   - statType: 0
     value: 10
-    description: "공격력 10% 증가"
+    description: "\uACF5\uACA9\uB825 10% \uC99D\uAC00"
   - statType: 2
     value: 10
-    description: "공격 속도 10% 증가"
+    description: "\uACF5\uACA9 \uC18D\uB3C4 10% \uC99D\uAC00"
   - statType: 6
     value: 15
-    description: "에너지 회복 15% 증가"
+    description: "\uC5D0\uB108\uC9C0 \uD68C\uBCF5 15% \uC99D\uAC00"

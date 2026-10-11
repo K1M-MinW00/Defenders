@@ -2,6 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(Poolable))]
 public class DamagePopup : MonoBehaviour, IPoolable
 {
     [SerializeField] private TextMeshProUGUI damageText;
@@ -25,9 +26,6 @@ public class DamagePopup : MonoBehaviour, IPoolable
     private void Awake()
     {
         poolable = GetComponent<Poolable>();
-
-        if(poolable == null)
-            poolable = gameObject.AddComponent<Poolable>();
 
         damageText = GetComponent<TextMeshProUGUI>();
         canvasGroup = GetComponent<CanvasGroup>();

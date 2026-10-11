@@ -120,7 +120,7 @@ public sealed class StageBootstrapper : MonoBehaviour
                 return false;
             }
 
-            definitions.Add(new StageUnitInitData(data, userData));
+            definitions.Add(new StageUnitInitData(data, userData, 1, UserDataManager.Instance.UserData.Inventory));
         }
 
         error = string.Empty;

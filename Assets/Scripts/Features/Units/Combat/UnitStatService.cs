@@ -11,7 +11,7 @@ public class UnitStatService : MonoBehaviour
 
     public void BuildInitialStats(StageUnitInitData initData)
     {
-        UnitStats origin = UnitStatCalculator.Calculate(initData.UnitData, initData.UserData);
+        UnitStats origin = UnitStatCalculator.Calculate(initData.UnitData, initData.UserData, initData.Inventory);
         owner.Runtime.SetOriginStats(origin);
 
         Recalculate(StatRefreshPolicy.FullHeal);

@@ -90,7 +90,7 @@ public static class UserDataPipelineTestRunner
 
         GameIconProviderTests iconProviderTests = new();
         iconProviderTests.ProjectIconSet_IsComplete();
-        iconProviderTests.Provider_MapsResourcesAndRarityFrames();
+        iconProviderTests.Provider_MapsResourcePresentation();
 
         GameCatalogTests catalogTests = new();
         catalogTests.ProjectCatalogs_LoadAndResolveEveryAsset();

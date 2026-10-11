@@ -56,9 +56,7 @@ public class StageDataSO : ScriptableObject
             return Fail("Stage clear rewards are missing.", out error);
         if (!TryValidateRewards(clearRewards, "Clear", out error))
             return false;
-        if (failureRewards == null || failureRewards.Count == 0)
-            return Fail("Stage failure rewards are missing.", out error);
-        if (!TryValidateRewards(failureRewards, "Failure", out error))
+        if (failureRewards != null && !TryValidateRewards(failureRewards, "Failure", out error))
             return false;
         if (waves == null || (waves.Count != 3 && waves.Count != 5 && waves.Count != 10))
             return Fail("Wave count must be 3, 5, or 10.", out error);

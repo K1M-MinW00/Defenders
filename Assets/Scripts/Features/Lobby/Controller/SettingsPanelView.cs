@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsPanelView : MonoBehaviour
+public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject panelRoot;
@@ -22,7 +22,6 @@ public class SettingsPanelView : MonoBehaviour
     [SerializeField] private Button editNicknameButton;
     [SerializeField] private Button copyUidButton;
     [SerializeField] private Button linkAccountButton;
-    [SerializeField] private Button closeButton;
 
     [Header("Setting")]
     [SerializeField] private Toggle soundToggle;
@@ -31,24 +30,25 @@ public class SettingsPanelView : MonoBehaviour
     private SettingsPanelPresenter presenter;
     private bool isRefreshingUI;
     private bool isSubscribed;
+    private ModalOverlayLifecycle lifecycle;
+    private GameObject Root => panelRoot != null ? panelRoot : gameObject;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(Root);
 
     private void Awake()
     {
         ConfigureLanguageOptions();
 
-        closeButton.onClick.AddListener(Close);
-        editProfileButton.onClick.AddListener(OpenProfileEditor);
-        editNicknameButton.onClick.AddListener(OpenNicknameEditor);
-        copyUidButton.onClick.AddListener(CopyUserId);
-        linkAccountButton.onClick.AddListener(OpenAccountLinkPopup);
-        soundToggle.onValueChanged.AddListener(HandleSoundToggleChanged);
-        languageDropdown.onValueChanged.AddListener(HandleLanguageDropdownChanged);
+        editProfileButton?.onClick.AddListener(OpenProfileEditor);
+        editNicknameButton?.onClick.AddListener(OpenNicknameEditor);
+        copyUidButton?.onClick.AddListener(CopyUserId);
+        linkAccountButton?.onClick.AddListener(OpenAccountLinkPopup);
+        soundToggle?.onValueChanged.AddListener(HandleSoundToggleChanged);
+        languageDropdown?.onValueChanged.AddListener(HandleLanguageDropdownChanged);
     }
 
     public void Open()
     {
-        if (panelRoot != null)
-            panelRoot.SetActive(true);
+        Lifecycle.Show();
     }
 
     private void OnEnable()
@@ -66,10 +66,12 @@ public class SettingsPanelView : MonoBehaviour
         UnsubscribeEvents();
     }
 
-    public void Close()
+    public void Dismiss()
     {
-        panelRoot.SetActive(false);
+        Lifecycle.Close(CleanupChildPopups);
     }
+
+    public void Close() => Dismiss();
 
     public void Refresh()
     {
@@ -78,17 +80,20 @@ public class SettingsPanelView : MonoBehaviour
             return;
 
         isRefreshingUI = true;
-        iconImage.sprite = state.ProfileIcon;
-        nicknameText.text = state.Nickname;
-        uidText.text = state.UserId;
-        levelText.text = state.Level.ToString();
-        soundToggle.SetIsOnWithoutNotify(state.SoundEnabled);
-        languageDropdown.SetValueWithoutNotify(state.LanguageIndex);
+        if (iconImage != null) iconImage.sprite = state.ProfileIcon;
+        if (nicknameText != null) nicknameText.text = state.Nickname;
+        if (uidText != null) uidText.text = state.UserId;
+        if (levelText != null) levelText.text = state.Level.ToString();
+        soundToggle?.SetIsOnWithoutNotify(state.SoundEnabled);
+        languageDropdown?.SetValueWithoutNotify(state.LanguageIndex);
         isRefreshingUI = false;
     }
 
     private void ConfigureLanguageOptions()
     {
+        if (languageDropdown == null)
+            return;
+
         languageDropdown.ClearOptions();
         List<TMP_Dropdown.OptionData> options = new();
         foreach (string label in SettingsPanelPresenter.LanguageLabels)
@@ -122,6 +127,13 @@ public class SettingsPanelView : MonoBehaviour
     private void OpenAccountLinkPopup()
     {
         accountLinkPopup?.Open();
+    }
+
+    private void CleanupChildPopups()
+    {
+        editProfilePopup?.HideImmediately();
+        editNicknamePopup?.HideImmediately();
+        accountLinkPopup?.HideImmediately();
     }
 
     private void HandleSoundToggleChanged(bool enabled)
@@ -166,17 +178,16 @@ public class SettingsPanelView : MonoBehaviour
 
     private void HandleSoundChanged(bool enabled)
     {
-        soundToggle.SetIsOnWithoutNotify(enabled);
+        soundToggle?.SetIsOnWithoutNotify(enabled);
     }
 
     private void HandleLanguageChanged(string languageCode)
     {
-        languageDropdown.SetValueWithoutNotify(SettingsPanelPresenter.GetLanguageIndex(languageCode));
+        languageDropdown?.SetValueWithoutNotify(SettingsPanelPresenter.GetLanguageIndex(languageCode));
     }
 
     private void OnDestroy()
     {
-        closeButton?.onClick.RemoveListener(Close);
         editProfileButton?.onClick.RemoveListener(OpenProfileEditor);
         editNicknameButton?.onClick.RemoveListener(OpenNicknameEditor);
         copyUidButton?.onClick.RemoveListener(CopyUserId);

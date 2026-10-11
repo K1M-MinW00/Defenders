@@ -15,7 +15,7 @@ MonoBehaviour:
   unitId: unit_soldierR
   displayName: Soldier_Range
   icon: {fileID: -7319071494286620450, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
-  rarity: 0
+  rarity: 1
   unitPrefab: {fileID: 4635945194083421887, guid: da061a48600fb0640ad4b7377b9f53db, type: 3}
   attackSound:
     clip: {fileID: 8300000, guid: dccb67c98fcf3ed4fa1554efb1455765, type: 3}
@@ -68,16 +68,16 @@ MonoBehaviour:
   limitBreaks:
   - statType: 0
     value: 10
-    description: "공격력 10% 증가"
+    description: "\uACF5\uACA9\uB825 10% \uC99D\uAC00"
   - statType: 6
     value: 10
-    description: "에너지 회복 10% 증가"
+    description: "\uC5D0\uB108\uC9C0 \uD68C\uBCF5 10% \uC99D\uAC00"
   - statType: 4
     value: 15
-    description: "치명타 확률 15% 증가"
+    description: "\uCE58\uBA85\uD0C0 \uD655\uB960 15% \uC99D\uAC00"
   - statType: 2
     value: 10
-    description: "공격 속도 10% 증가"
+    description: "\uACF5\uACA9 \uC18D\uB3C4 10% \uC99D\uAC00"
   - statType: 5
     value: 15
-    description: "치명타 피해 15% 증가"
+    description: "\uCE58\uBA85\uD0C0 \uD53C\uD574 15% \uC99D\uAC00"

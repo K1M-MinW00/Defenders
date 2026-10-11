@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StageResultUI : MonoBehaviour
+public sealed class StageResultUI : MonoBehaviour
 {
     [SerializeField] private GameObject stageClearPanel;
     [SerializeField] private GameObject stageFailPanel;
@@ -11,21 +11,38 @@ public class StageResultUI : MonoBehaviour
     [Header("Clear Result")]
     [SerializeField] private TMP_Text clearStageText;
     [SerializeField] private TMP_Text clearWaveText;
-    [SerializeField] private RectTransform clearRewardViewport;
-    [SerializeField] private ShopRewardSlotView rewardSlotPrefab;
+    [SerializeField] private GameObject clearRewardArea;
+    [SerializeField] private ShopRewardSlotView[] clearRewardSlots;
+    [SerializeField] private Button clearReturnButton;
+    [SerializeField] private TMP_Text clearReturnButtonText;
 
     [Header("Fail Result")]
     [SerializeField] private TMP_Text failStageText;
     [SerializeField] private TMP_Text failWaveText;
+    [SerializeField] private GameObject failRewardArea;
     [SerializeField] private Image failFuelIcon;
     [SerializeField] private TMP_Text failFuelAmountText;
+    [SerializeField] private Button failReturnButton;
+    [SerializeField] private TMP_Text failReturnButtonText;
 
     [Header("Scene")]
     [SerializeField] private string lobbySceneName = "LobbyScene";
 
     private StageSessionController session;
-    private RectTransform clearRewardContent;
+    private StageResultPresentation currentPresentation;
     private bool isReturningToLobby;
+
+    private void Awake()
+    {
+        clearReturnButton.onClick.AddListener(OnClickReturnToLobby);
+        failReturnButton.onClick.AddListener(OnClickReturnToLobby);
+    }
+
+    private void OnDestroy()
+    {
+        clearReturnButton.onClick.RemoveListener(OnClickReturnToLobby);
+        failReturnButton.onClick.RemoveListener(OnClickReturnToLobby);
+    }
 
     public void Initialize(StageSessionController stageSession)
     {
@@ -34,152 +51,104 @@ public class StageResultUI : MonoBehaviour
         HideAll();
     }
 
-    public void ShowClear(StageDataSO stage, int clearedWaveCount, IReadOnlyList<RewardData> rewards)
+    public void ShowSettling(bool isClear, StageDataSO stage, int clearedWaveCount)
     {
+        currentPresentation = StageResultPresenter.Create(isClear, stage, clearedWaveCount, System.Array.Empty<RewardData>());
         HideAll();
-
-        if (clearStageText != null)
-            clearStageText.text = stage != null ? $"스테이지 {stage.StageKey}" : "스테이지 클리어";
-
-        if (clearWaveText != null)
-        {
-            int totalWaveCount = stage?.waves?.Count ?? 0;
-            clearWaveText.text = $"({clearedWaveCount} / {totalWaveCount})";
-        }
-
-        BindClearRewards(rewards);
-        stageClearPanel?.SetActive(true);
     }
 
-    public void ShowFail(StageDataSO stage, int clearedWaveCount, IReadOnlyList<RewardData> rewards)
+    public void ShowResult(bool isClear, StageDataSO stage, int clearedWaveCount, IReadOnlyList<RewardData> rewards)
     {
-        HideAll();
+        currentPresentation = StageResultPresenter.Create(isClear, stage, clearedWaveCount, rewards);
+        if (isClear)
+            ShowClear(currentPresentation);
+        else
+            ShowFail(currentPresentation);
+    }
 
-        if (failStageText != null)
-            failStageText.text = stage != null ? $"스테이지 {stage.StageKey}" : "스테이지 실패";
+    public void ShowSaveFailure()
+    {
+        if (currentPresentation.IsClear)
+            ShowClear(currentPresentation);
+        else
+            ShowFail(currentPresentation);
 
-        if (failWaveText != null)
-        {
-            int totalWaveCount = stage?.waves?.Count ?? 0;
-            failWaveText.text = $"({clearedWaveCount} / {totalWaveCount})";
-        }
-
-        RewardData fuelReward = FindReward(rewards, RewardType.Fuel);
-        if (failFuelIcon != null)
-            failFuelIcon.sprite = GameConfig.Icons?.GetResourceIcon(RewardType.Fuel);
-        if (failFuelAmountText != null)
-            failFuelAmountText.text = fuelReward != null ? $"+{fuelReward.Amount:N0}" : "+0";
-
-        stageFailPanel?.SetActive(true);
+        SetReturnButtons(true, "다시 시도");
+        UIFeedbackToast.Show("결과 저장에 실패했습니다. 다시 시도해 주세요.");
     }
 
     public void HideAll()
     {
-        stageClearPanel?.SetActive(false);
-        stageFailPanel?.SetActive(false);
+        stageClearPanel.SetActive(false);
+        stageFailPanel.SetActive(false);
+    }
+
+    private void ShowClear(StageResultPresentation presentation)
+    {
+        HideAll();
+        clearStageText.text = presentation.StageLabel;
+        clearWaveText.text = $"{presentation.ClearedWaveCount} / {presentation.TotalWaveCount}";
+        BindClearRewards(presentation.Rewards);
+        SetReturnButtons(true, "돌아가기");
+        stageClearPanel.SetActive(true);
+    }
+
+    private void ShowFail(StageResultPresentation presentation)
+    {
+        HideAll();
+        failStageText.text = presentation.StageLabel;
+        failWaveText.text = $"{presentation.ClearedWaveCount} / {presentation.TotalWaveCount}";
+
+        RewardData fuelReward = FindReward(presentation.Rewards, RewardType.Fuel);
+        failRewardArea.SetActive(fuelReward != null && fuelReward.Amount > 0);
+        failFuelIcon.sprite = GameConfig.Icons?.GetResourceIcon(RewardType.Fuel);
+        failFuelAmountText.text = fuelReward != null ? fuelReward.Amount.ToString("N0") : "0";
+        SetReturnButtons(true, "돌아가기");
+        stageFailPanel.SetActive(true);
     }
 
     private void BindClearRewards(IReadOnlyList<RewardData> rewards)
     {
-        EnsureRewardScroll();
-        if (clearRewardContent == null || rewardSlotPrefab == null)
-            return;
-
-        for (int i = clearRewardContent.childCount - 1; i >= 0; i--)
-            Destroy(clearRewardContent.GetChild(i).gameObject);
-
-        if (rewards == null)
-            return;
-
-        foreach (RewardData reward in rewards)
+        int visibleCount = Mathf.Min(rewards?.Count ?? 0, clearRewardSlots.Length);
+        clearRewardArea.SetActive(visibleCount > 0);
+        for (int i = 0; i < clearRewardSlots.Length; i++)
         {
-            if (reward == null)
-                continue;
-
-            ShopRewardSlotView slot = Instantiate(rewardSlotPrefab, clearRewardContent);
-            if (slot.transform is RectTransform slotRect)
-                slotRect.sizeDelta = new Vector2(180f, 180f);
-            slot.Bind(reward);
+            bool visible = i < visibleCount;
+            clearRewardSlots[i].gameObject.SetActive(visible);
+            if (visible)
+                clearRewardSlots[i].Bind(rewards[i]);
         }
     }
 
-    private void EnsureRewardScroll()
+    private void SetReturnButtons(bool interactable, string label)
     {
-        if (clearRewardContent != null || clearRewardViewport == null)
-            return;
-
-        for (int i = clearRewardViewport.childCount - 1; i >= 0; i--)
-        {
-            GameObject child = clearRewardViewport.GetChild(i).gameObject;
-            child.SetActive(false);
-            Destroy(child);
-        }
-
-        HorizontalLayoutGroup oldLayout = clearRewardViewport.GetComponent<HorizontalLayoutGroup>();
-        if (oldLayout != null)
-            oldLayout.enabled = false;
-
-        if (clearRewardViewport.GetComponent<RectMask2D>() == null)
-            clearRewardViewport.gameObject.AddComponent<RectMask2D>();
-
-        ScrollRect scroll = clearRewardViewport.GetComponent<ScrollRect>() ??
-                            clearRewardViewport.gameObject.AddComponent<ScrollRect>();
-
-        GameObject contentObject = new("RewardContent", typeof(RectTransform));
-        clearRewardContent = contentObject.GetComponent<RectTransform>();
-        clearRewardContent.SetParent(clearRewardViewport, false);
-        clearRewardContent.anchorMin = new Vector2(0f, 0f);
-        clearRewardContent.anchorMax = new Vector2(0f, 1f);
-        clearRewardContent.pivot = new Vector2(0f, 0.5f);
-        clearRewardContent.anchoredPosition = Vector2.zero;
-        clearRewardContent.sizeDelta = Vector2.zero;
-
-        HorizontalLayoutGroup layout = contentObject.AddComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(30, 30, 20, 20);
-        layout.spacing = 24f;
-        layout.childAlignment = TextAnchor.MiddleLeft;
-        layout.childControlWidth = false;
-        layout.childControlHeight = false;
-        layout.childForceExpandWidth = false;
-        layout.childForceExpandHeight = false;
-
-        ContentSizeFitter fitter = contentObject.AddComponent<ContentSizeFitter>();
-        fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-        fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
-
-        scroll.viewport = clearRewardViewport;
-        scroll.content = clearRewardContent;
-        scroll.horizontal = true;
-        scroll.vertical = false;
-        scroll.movementType = ScrollRect.MovementType.Clamped;
-        scroll.inertia = true;
+        clearReturnButton.interactable = interactable;
+        failReturnButton.interactable = interactable;
+        clearReturnButtonText.text = label;
+        failReturnButtonText.text = label;
     }
 
     private static RewardData FindReward(IReadOnlyList<RewardData> rewards, RewardType type)
     {
         if (rewards == null)
             return null;
-
         foreach (RewardData reward in rewards)
-        {
             if (reward?.Type == type)
                 return reward;
-        }
-
         return null;
     }
 
-    public async void OnClickReturnToLobby()
+    private async void OnClickReturnToLobby()
     {
         if (isReturningToLobby)
             return;
 
         isReturningToLobby = true;
-
+        SetReturnButtons(false, "처리 중...");
         if (session == null || !await session.TryPrepareExitAsync())
         {
             isReturningToLobby = false;
-            Debug.LogWarning("[StageResultUI] Progress and rewards are not saved yet. Lobby transition was blocked; press again to retry.");
+            ShowSaveFailure();
             return;
         }
 
@@ -187,7 +156,8 @@ public class StageResultUI : MonoBehaviour
         if (result != SceneTransitionResult.Succeeded && this != null)
         {
             isReturningToLobby = false;
-            Debug.LogError($"[StageResultUI] Failed to return to lobby: {result}");
+            SetReturnButtons(true, "돌아가기");
+            UIFeedbackToast.Show("로비로 이동하지 못했습니다. 다시 시도해 주세요.");
         }
     }
 }

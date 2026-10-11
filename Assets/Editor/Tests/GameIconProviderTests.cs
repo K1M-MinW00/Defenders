@@ -11,7 +11,7 @@ public sealed class GameIconProviderTests
         Assert(iconSet.TryValidate(out string error), $"Game icon set should be complete: {error}");
     }
 
-    public void Provider_MapsResourcesAndRarityFrames()
+    public void Provider_MapsResourcePresentation()
     {
         GameIconSetSO iconSet = Resources.Load<GameIconSetSO>("GameData/Catalogs/GameIconSet");
         GameIconProvider provider = new(iconSet);
@@ -21,9 +21,8 @@ public sealed class GameIconProviderTests
         Assert(provider.GetResourceIcon(RewardType.Fuel) == iconSet.Fuel, "Fuel icon should come from the configured icon set.");
         Assert(provider.GetResourceIcon(RewardType.Experience) != null, "Experience should use its configured icon or a placeholder.");
         Assert(provider.GetResourceIcon(RewardType.Item) == null, "Non-resource reward types should not resolve a resource icon.");
-        Assert(provider.GetRarityFrame(Rarity.Normal) == iconSet.NormalRarityFrame, "Normal frame should be mapped.");
-        Assert(provider.GetRarityFrame(Rarity.Rare) == iconSet.RareRarityFrame, "Rare frame should be mapped.");
-        Assert(provider.GetRarityFrame(Rarity.Legend) == iconSet.LegendRarityFrame, "Legend frame should be mapped.");
+        Assert(provider.GetResourceDisplayName(RewardType.Gold) == "골드", "Gold display name should come from the configured icon set.");
+        Assert(provider.GetResourceRarity(RewardType.Gold) == Rarity.Normal, "Gold rarity should come from the configured icon set.");
     }
 
     private static void Assert(bool condition, string message)

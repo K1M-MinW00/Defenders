@@ -20,7 +20,7 @@ public sealed class UnitDetailPresenter
         if (definition == null || userUnit == null)
             return null;
 
-        UnitStats stats = UnitStatCalculator.Calculate(definition, userUnit);
+        UnitStats stats = UnitStatCalculator.Calculate(definition, userUnit, rosterService.GetInventory());
 
         return new UnitDetailViewState
         {

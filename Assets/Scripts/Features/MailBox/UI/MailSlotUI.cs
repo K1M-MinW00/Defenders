@@ -65,12 +65,10 @@ public class MailSlotUI : MonoBehaviour
                 continue;
 
             CommonSlotUI slot = Instantiate(slotPrefab, rewardRoot);
-            slot.Setup(
-                presentation.Icon,
-                presentation.Frame,
+            slot.SetupPresentation(
+                presentation,
                 reward.Amount,
-                presentation.ShowAmount,
-                null);
+                () => ItemTooltipUI.Show(presentation.DisplayName, slot.transform as RectTransform));
         }
     }
 

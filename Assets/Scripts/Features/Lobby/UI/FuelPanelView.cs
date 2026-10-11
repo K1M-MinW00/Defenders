@@ -3,10 +3,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FuelPanelView : MonoBehaviour
+public class FuelPanelView : MonoBehaviour, IModalDismissHandler
 {
-    public void Open() => gameObject.SetActive(true);
-    public void Close() => gameObject.SetActive(false);
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
+
+    public void Open() => Lifecycle.Show();
+    public void Close() => Lifecycle.Close();
+    public void Dismiss() => Close();
 
     [Header("Fuel")]
     [SerializeField] private TMP_Text fuelText;
@@ -17,10 +21,15 @@ public class FuelPanelView : MonoBehaviour
     [SerializeField] private TMP_Text dailyAdText;
     [SerializeField] private Button rewardAdButton;
 
-    [Header("Operation Values")]
-    [SerializeField, Min(1)] private int rewardAdFuelAmount = 30;
-    [SerializeField, Min(1)] private int purchaseFuelAmount = 30;
-    [SerializeField, Min(1)] private int purchaseFuelGemCost = 100;
+    [Header("Product Catalog")]
+    [SerializeField] private ShopProductGroup productCatalog;
+    [SerializeField] private string rewardAdProductId = "fuel_rewarded_ad";
+    [SerializeField] private string gemPurchaseProductId = "fuel_by_gem";
+
+    [Header("Product Slots")]
+    [SerializeField] private CommonSlotUI rewardAdRewardSlot;
+    [SerializeField] private CommonSlotUI gemPurchaseRewardSlot;
+    [SerializeField] private TMP_Text gemPurchaseButtonText;
 
     private FuelPanelPresenter presenter;
     private UserDataManager userDataManager;
@@ -30,6 +39,14 @@ public class FuelPanelView : MonoBehaviour
     private bool isSavingAdReward;
     private bool hasAdClosed;
     private bool isPurchasingFuel;
+    private ShopProductData rewardAdProduct;
+    private ShopProductData gemPurchaseProduct;
+
+    private void Awake()
+    {
+        ResolveProducts();
+        BindProductSlots();
+    }
 
     private void OnEnable()
     {
@@ -71,6 +88,55 @@ public class FuelPanelView : MonoBehaviour
 
         presenter ??= new FuelPanelPresenter(userDataManager.UserData);
         return true;
+    }
+
+    private void ResolveProducts()
+    {
+        rewardAdProduct = productCatalog?.GetById(rewardAdProductId);
+        gemPurchaseProduct = productCatalog?.GetById(gemPurchaseProductId);
+
+        if (!TryGetFuelRewardAmount(rewardAdProduct, out _) || rewardAdProduct.PurchaseType != ShopPurchaseType.Advertisement)
+            Debug.LogError($"[FuelPanelView] Invalid rewarded-ad fuel product: {rewardAdProductId}", this);
+
+        if (!TryGetFuelRewardAmount(gemPurchaseProduct, out _) || gemPurchaseProduct.PurchaseType != ShopPurchaseType.Gem)
+            Debug.LogError($"[FuelPanelView] Invalid gem fuel product: {gemPurchaseProductId}", this);
+    }
+
+    private void BindProductSlots()
+    {
+        BindFuelReward(rewardAdRewardSlot, rewardAdProduct);
+        BindFuelReward(gemPurchaseRewardSlot, gemPurchaseProduct);
+
+        if (gemPurchaseButtonText != null && gemPurchaseProduct != null)
+        {
+            string gemName = GameConfig.Icons?.GetResourceDisplayName(RewardType.Gem) ?? "젬";
+            gemPurchaseButtonText.text = $"{gemName} {gemPurchaseProduct.CostAmount:N0}";
+        }
+    }
+
+    private static void BindFuelReward(CommonSlotUI slot, ShopProductData product)
+    {
+        if (slot == null || !TryGetFuelReward(product, out RewardData reward))
+            return;
+
+        if (RewardPresentationResolver.TryResolve(reward, GameConfig.Icons, out RewardPresentation presentation))
+            slot.SetupPresentation(
+                presentation,
+                reward.Amount,
+                () => ItemTooltipUI.Show(presentation.DisplayName, slot.transform as RectTransform));
+    }
+
+    private static bool TryGetFuelRewardAmount(ShopProductData product, out int amount)
+    {
+        bool found = TryGetFuelReward(product, out RewardData reward);
+        amount = found ? reward.Amount : 0;
+        return found && amount > 0;
+    }
+
+    private static bool TryGetFuelReward(ShopProductData product, out RewardData fuelReward)
+    {
+        fuelReward = product?.Rewards?.Find(reward => reward != null && reward.Type == RewardType.Fuel);
+        return fuelReward != null;
     }
 
     private void SubscribeEvents()
@@ -180,7 +246,13 @@ public class FuelPanelView : MonoBehaviour
 
         try
         {
-            ClaimAdFuelRewardResult result = await userDataManager.ClaimAdFuelRewardAsync(rewardAdFuelAmount);
+            if (!TryGetFuelRewardAmount(rewardAdProduct, out int fuelAmount))
+            {
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
+                return;
+            }
+
+            ClaimAdFuelRewardResult result = await userDataManager.ClaimAdFuelRewardAsync(fuelAmount);
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Ad fuel reward failed: {result.Failure}");
@@ -208,7 +280,13 @@ public class FuelPanelView : MonoBehaviour
 
         try
         {
-            PurchaseFuelResult result = await userDataManager.PurchaseFuelAsync(purchaseFuelGemCost, purchaseFuelAmount);
+            if (!TryGetFuelRewardAmount(gemPurchaseProduct, out int fuelAmount))
+            {
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
+                return;
+            }
+
+            PurchaseFuelResult result = await userDataManager.PurchaseFuelAsync(gemPurchaseProduct.CostAmount, fuelAmount);
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Fuel purchase failed: {result.Failure}");

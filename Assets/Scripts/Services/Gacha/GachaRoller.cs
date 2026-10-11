@@ -18,6 +18,10 @@ public sealed class GachaRoller
             return Rarity.Legend;
 
         roll -= banner.LegendRate;
+        if (roll < banner.EpicRate)
+            return Rarity.Epic;
+
+        roll -= banner.EpicRate;
         return roll < banner.RareRate ? Rarity.Rare : Rarity.Normal;
     }
 

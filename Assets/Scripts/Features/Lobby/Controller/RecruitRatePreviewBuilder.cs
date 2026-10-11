@@ -9,6 +9,8 @@ public static class RecruitRatePreviewBuilder
             return rows;
 
         AddRarityRows(rows, banner, Rarity.Legend, "전설", banner.LegendRate);
+        if (banner.EpicRate > 0f)
+            AddRarityRows(rows, banner, Rarity.Epic, "영웅", banner.EpicRate);
         AddRarityRows(rows, banner, Rarity.Rare, "희귀", banner.RareRate);
         AddRarityRows(rows, banner, Rarity.Normal, "일반", banner.NormalRate);
         return rows;

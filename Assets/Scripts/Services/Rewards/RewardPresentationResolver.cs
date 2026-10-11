@@ -3,16 +3,16 @@ using UnityEngine;
 public readonly struct RewardPresentation
 {
     public Sprite Icon { get; }
-    public Sprite Frame { get; }
+    public Rarity Rarity { get; }
     public string DisplayName { get; }
-    public bool ShowAmount { get; }
+    public bool Countable { get; }
 
-    public RewardPresentation(Sprite icon, Sprite frame, string displayName, bool showAmount)
+    public RewardPresentation(Sprite icon, Rarity rarity, string displayName, bool countable)
     {
         Icon = icon;
-        Frame = frame;
+        Rarity = rarity;
         DisplayName = displayName;
-        ShowAmount = showAmount;
+        Countable = countable;
     }
 }
 
@@ -31,8 +31,8 @@ public static class RewardPresentationResolver
         {
             presentation = new RewardPresentation(
                 icons.GetResourceIcon(reward.Type),
-                icons.GetRarityFrame(Rarity.Normal),
-                GetResourceName(reward.Type),
+                icons.GetResourceRarity(reward.Type),
+                icons.GetResourceDisplayName(reward.Type),
                 true);
             return true;
         }
@@ -45,7 +45,7 @@ public static class RewardPresentationResolver
 
             presentation = new RewardPresentation(
                 item.Icon,
-                icons.GetRarityFrame(item.Rarity),
+                item.Rarity,
                 item.ItemName,
                 reward.Type == RewardType.Item && item.Stackable);
             return true;
@@ -59,25 +59,12 @@ public static class RewardPresentationResolver
 
             presentation = new RewardPresentation(
                 unit.icon,
-                icons.GetRarityFrame(unit.rarity),
+                unit.rarity,
                 unit.displayName,
                 false);
             return true;
         }
 
         return false;
-    }
-
-    private static string GetResourceName(RewardType type)
-    {
-        return type switch
-        {
-            RewardType.Gold => "골드",
-            RewardType.Gem => "Gem",
-            RewardType.Fuel => "연료",
-            RewardType.Experience => "경험치",
-            RewardType.ResearchMaterial => "연구 재료",
-            _ => type.ToString(),
-        };
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EditProfilePanelView : MonoBehaviour
+public class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject panelRoot;
@@ -15,25 +15,26 @@ public class EditProfilePanelView : MonoBehaviour
     [SerializeField] private ProfileIconSlotUI slotPrefab;
 
     [Header("Button")]
-    [SerializeField] private Button backdropButton;
     [SerializeField] private Button cancelButton;
     [SerializeField] private Button confirmButton;
 
     private readonly List<ProfileIconSlotUI> slots = new();
     private ProfileIconEditPresenter presenter;
     private bool isSaving;
+    private ModalOverlayLifecycle lifecycle;
+    private GameObject Root => panelRoot != null ? panelRoot : gameObject;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(Root);
 
     private void Awake()
     {
-        backdropButton?.onClick.AddListener(Close);
-        cancelButton.onClick.AddListener(Close);
+        cancelButton.onClick.AddListener(Dismiss);
         confirmButton.onClick.AddListener(HandleConfirmButtonClicked);
     }
 
     public void Open()
     {
-        if (!isSaving && panelRoot != null)
-            panelRoot.SetActive(true);
+        if (!isSaving)
+            Lifecycle.Show();
     }
 
     private void OnEnable()
@@ -57,11 +58,16 @@ public class EditProfilePanelView : MonoBehaviour
         ClearSlots();
     }
 
-    public void Close()
+    public void Dismiss()
     {
         if (!isSaving)
-            panelRoot.SetActive(false);
+            Lifecycle.Close();
     }
+
+    public void HideImmediately() => Lifecycle.HideImmediately();
+
+    // Inspector compatibility for scenes created before the modal convention.
+    public void Close() => Dismiss();
 
     private void CreateIconSlots(IReadOnlyList<ProfileIconOption> options)
     {
@@ -130,16 +136,13 @@ public class EditProfilePanelView : MonoBehaviour
         }
 
         presenter.MarkSaved();
-        Close();
+        Dismiss();
     }
 
     private void OnDestroy()
     {
-        if (backdropButton != null)
-            backdropButton.onClick.RemoveListener(Close);
-
         if (cancelButton != null)
-            cancelButton.onClick.RemoveListener(Close);
+            cancelButton.onClick.RemoveListener(Dismiss);
 
         if (confirmButton != null)
             confirmButton.onClick.RemoveListener(HandleConfirmButtonClicked);

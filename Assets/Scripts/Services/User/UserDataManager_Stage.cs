@@ -47,7 +47,8 @@ public partial class UserDataManager
 
     public async Task<StageOutcomeResult> FailStageAsync(
         StageDataSO stage,
-        int clearedWaveCount)
+        int clearedWaveCount,
+        int entryFuelCost)
     {
         if (StageOutcomeUseCase == null)
             return StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest);
@@ -55,7 +56,7 @@ public partial class UserDataManager
         return await RunSerializedMutationAsync(async () =>
         {
             StageOutcomeResult result =
-                await StageOutcomeUseCase.FailAsync(stage, clearedWaveCount);
+                await StageOutcomeUseCase.FailAsync(stage, clearedWaveCount, entryFuelCost);
             if (result.Succeeded)
                 RaiseStageOutcomeUpdated();
             return result;

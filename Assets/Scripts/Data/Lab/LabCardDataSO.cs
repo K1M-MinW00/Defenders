@@ -7,7 +7,7 @@ public sealed class LabCardDataSO : ScriptableObject
     public string CardId;
     public string DisplayName;
     [TextArea] public string Description;
-    public LabCardRarity Rarity;
+    public Rarity Rarity;
     public Sprite Icon;
 
     [Header("Effect")]
@@ -29,9 +29,10 @@ public sealed class LabCardDataSO : ScriptableObject
 
         return Rarity switch
         {
-            LabCardRarity.Common => 70f,
-            LabCardRarity.Rare => 25f,
-            LabCardRarity.Legendary => 5f,
+            Rarity.Normal => 70f,
+            Rarity.Rare => 40f,
+            Rarity.Epic => 25f,
+            Rarity.Legend => 5f,
             _ => 1f,
         };
     }

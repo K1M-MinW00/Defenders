@@ -128,7 +128,7 @@ public class UnitPromotionPanel : MonoBehaviour
         CommonSlotUI slot = Instantiate(materialSlotPrefab, materialRoot);
         slot.SetupRequirement(
             material.Icon,
-            GameConfig.Icons.GetRarityFrame(material.Rarity),
+            material.Rarity,
             owned,
             cost.Count,
             null);

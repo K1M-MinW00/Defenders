@@ -16,7 +16,7 @@ public static class IdleRewardSceneBuilder
     {
         IdleRewardSlotView slot = CreateSlotPrefab();
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        GameObject existing = Find(scene, "IdleRewardPopup");
+        GameObject existing = Find(scene, "IdleRewardOverlay") ?? Find(scene, "IdleRewardPopup");
         if (existing != null) Object.DestroyImmediate(existing);
         BuildScene(scene, slot);
         AssetDatabase.SaveAssets();
@@ -26,11 +26,11 @@ public static class IdleRewardSceneBuilder
     public static void RelinkController()
     {
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        GameObject popup = Find(scene, "IdleRewardPopup");
+        GameObject popup = Find(scene, "IdleRewardOverlay") ?? Find(scene, "IdleRewardPopup");
         GameObject panelReward = Find(scene, "Panel_Reward");
         IdleRewardPanelView source = popup?.GetComponent<IdleRewardPanelView>();
         if (popup == null || panelReward == null || source == null)
-            throw new System.InvalidOperationException("IdleRewardPopup, Panel_Reward, or the existing IdleRewardPanelView was not found.");
+            throw new System.InvalidOperationException("IdleRewardOverlay, Panel_Reward, or the existing IdleRewardPanelView was not found.");
 
         IdleRewardPanelView destination = panelReward.GetComponent<IdleRewardPanelView>() ?? panelReward.AddComponent<IdleRewardPanelView>();
         SerializedObject sourceObject = new(source);
@@ -55,16 +55,18 @@ public static class IdleRewardSceneBuilder
     {
         GameObject supplyObject = Find(scene, "Button_Supply");
         Button supply = supplyObject?.GetComponent<Button>();
-        Transform main = supplyObject != null ? FindAncestor(supplyObject.transform, "Main_Panel") : null;
+        Transform main = supplyObject != null
+            ? FindAncestor(supplyObject.transform, "MainPanel") ?? FindAncestor(supplyObject.transform, "Main_Panel")
+            : null;
         Transform parent = main?.parent;
         if (supply == null || parent == null) throw new System.InvalidOperationException("Battle_Panel/Panel_Reward/Button_Supply or the parent outside Main_Panel was not found.");
 
-        GameObject popup = Panel(parent, "IdleRewardPopup", new Color(.02f, .06f, .12f, .94f));
+        GameObject popup = Panel(parent, "IdleRewardOverlay", new Color(.02f, .06f, .12f, .94f));
         Stretch((RectTransform)popup.transform);
         IdleRewardPanelView view = supplyObject.transform.parent.GetComponent<IdleRewardPanelView>() ??
                                    supplyObject.transform.parent.gameObject.AddComponent<IdleRewardPanelView>();
 
-        GameObject window = Panel(popup.transform, "Window", new Color(.08f, .16f, .27f, 1f));
+        GameObject window = Panel(popup.transform, "ModalCard", new Color(.08f, .16f, .27f, 1f));
         Anchor((RectTransform)window.transform, new Vector2(.08f, .08f), new Vector2(.92f, .92f));
         TMP_Text title = Text(window.transform, "Title", "보급품", 54, TextAlignmentOptions.Center);
         Anchor(title.rectTransform, new Vector2(.05f, .86f), new Vector2(.95f, .98f));
@@ -100,7 +102,10 @@ public static class IdleRewardSceneBuilder
         if (slotAsset == null) throw new System.InvalidOperationException("Idle reward slot prefab could not be loaded.");
         Set(so, "rewardContent", content); Set(so, "rewardGrid", grid); Set(so, "rewardSlotPrefab", slotAsset); so.ApplyModifiedPropertiesWithoutUndo();
         view.SetRewardSlotPrefabEditor(slotAsset);
+        ModalBackdropDismiss dismiss = popup.AddComponent<ModalBackdropDismiss>();
+        dismiss.Configure(window.transform as RectTransform, popup, view);
         EditorUtility.SetDirty(view);
+        EditorUtility.SetDirty(dismiss);
         popup.SetActive(false);
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
     }

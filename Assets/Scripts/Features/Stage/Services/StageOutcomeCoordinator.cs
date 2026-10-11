@@ -8,6 +8,7 @@ public sealed class StageOutcomeCoordinator
     private StageDataSO pendingStage;
     private bool pendingIsClear;
     private int pendingClearedWaveCount;
+    private int pendingEntryFuelCost;
     private Task<StageOutcomeResult> saveTask;
 
     public bool HasPendingOutcome => pendingStage != null;
@@ -21,7 +22,8 @@ public sealed class StageOutcomeCoordinator
     public Task<StageOutcomeResult> SaveAsync(
         StageDataSO stage,
         bool isClear,
-        int clearedWaveCount)
+        int clearedWaveCount,
+        int entryFuelCost)
     {
         if (stage == null)
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
@@ -32,6 +34,7 @@ public sealed class StageOutcomeCoordinator
         pendingStage = stage;
         pendingIsClear = isClear;
         pendingClearedWaveCount = clearedWaveCount;
+        pendingEntryFuelCost = entryFuelCost;
         return StartPendingSaveAsync();
     }
 
@@ -48,6 +51,7 @@ public sealed class StageOutcomeCoordinator
         pendingStage = null;
         pendingIsClear = false;
         pendingClearedWaveCount = 0;
+        pendingEntryFuelCost = 0;
         saveTask = null;
     }
 
@@ -62,6 +66,7 @@ public sealed class StageOutcomeCoordinator
             {
                 pendingStage = null;
                 pendingClearedWaveCount = 0;
+                pendingEntryFuelCost = 0;
             }
 
             return result;
@@ -76,6 +81,9 @@ public sealed class StageOutcomeCoordinator
     {
         return pendingIsClear
             ? rewardService.GiveStageClearRewardAsync(pendingStage)
-            : rewardService.GiveStageFailRewardAsync(pendingStage, pendingClearedWaveCount);
+            : rewardService.GiveStageFailRewardAsync(
+                pendingStage,
+                pendingClearedWaveCount,
+                pendingEntryFuelCost);
     }
 }

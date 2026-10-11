@@ -14,20 +14,30 @@ public sealed class LabCardGradient : BaseMeshEffect
         graphic?.SetVerticesDirty();
     }
 
-    public void SetRarity(LabCardRarity rarity)
+    public void SetRarity(Rarity rarity)
     {
         switch (rarity)
         {
-            case LabCardRarity.Rare:
-                SetColors(new Color(0.72f, 0.38f, 1f), new Color(0.3f, 0.08f, 0.58f));
+            case Rarity.Rare:
+                SetFromBaseColor(RarityPalette.Rare);
                 break;
-            case LabCardRarity.Legendary:
-                SetColors(new Color(1f, 0.82f, 0.2f), new Color(0.9f, 0.38f, 0.02f));
+            case Rarity.Epic:
+                SetFromBaseColor(RarityPalette.Epic);
+                break;
+            case Rarity.Legend:
+                SetFromBaseColor(RarityPalette.Legend);
                 break;
             default:
-                SetColors(new Color(0.3f, 0.82f, 1f), new Color(0.04f, 0.34f, 0.78f));
+                SetFromBaseColor(RarityPalette.Normal);
                 break;
         }
+    }
+
+    private void SetFromBaseColor(Color color)
+    {
+        SetColors(
+            Color.Lerp(color, Color.white, 0.18f),
+            Color.Lerp(color, Color.black, 0.32f));
     }
 
     public override void ModifyMesh(VertexHelper vertexHelper)

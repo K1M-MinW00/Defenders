@@ -17,6 +17,13 @@ MonoBehaviour:
   fuelIcon: {fileID: -3884122842518043567, guid: 846ab50d73e659a479c2e46355e40dbe, type: 3}
   experienceIcon: {fileID: -2052836617332424088, guid: e48904d84eccd194192fe18e2eba9c83, type: 3}
   researchMaterialIcon: {fileID: 4404780854224974158, guid: 367ececd3ea197a44b0ae1aa2064a106, type: 3}
-  normalFrame: {fileID: -2198792403302273151, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
-  rareFrame: {fileID: 1868800845473577927, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
-  legendFrame: {fileID: -7860896277611520029, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
+  goldDisplayName: "\uACE8\uB4DC"
+  goldRarity: 2
+  gemDisplayName: "\uBCF4\uC11D"
+  gemRarity: 3
+  fuelDisplayName: "\uC5F0\uB8CC"
+  fuelRarity: 2
+  experienceDisplayName: "\uACBD\uD5D8\uCE58"
+  experienceRarity: 1
+  researchMaterialDisplayName: "\uC5F0\uAD6C \uC7AC\uB8CC"
+  researchMaterialRarity: 3

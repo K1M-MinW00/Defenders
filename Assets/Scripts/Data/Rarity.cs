@@ -1,6 +1,7 @@
 public enum Rarity
 {
-    Normal,
-    Rare,
-    Legend,
+    Normal = 0,
+    Rare = 1,
+    Epic = 2,
+    Legend = 3,
 }

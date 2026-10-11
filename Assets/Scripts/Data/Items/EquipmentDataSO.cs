@@ -5,9 +5,9 @@ public class EquipmentDataSO : ItemDataSO
 {
     [Header("Equipment")]
     public EquipmentType EquipmentType;
-
-    public int Attack;
-    public int Defense;
+    [Tooltip("0강 장비의 고정 옵션 종류입니다.")]
+    public EquipmentStatType BaseStatType;
+    [Min(0f)] public float BaseStatValue;
 
     public override ItemCategory Category => ItemCategory.Equipment;
 

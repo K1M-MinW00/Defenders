@@ -25,7 +25,7 @@ public sealed class LabCardView : MonoBehaviour
         card = value;
         onClick = clicked;
         bool faceUp = acquired && card != null;
-        ApplyCardColors(faceUp, card != null ? card.Rarity : LabCardRarity.Common);
+        ApplyCardColors(faceUp, card != null ? card.Rarity : Rarity.Normal);
         SetSelectionVisible(false);
         icon.sprite = faceUp ? card.Icon : null;
         icon.enabled = faceUp && card.Icon != null;
@@ -60,7 +60,7 @@ public sealed class LabCardView : MonoBehaviour
     {
         card = value;
         onClick = clicked;
-        ApplyCardColors(faceUp, card != null ? card.Rarity : LabCardRarity.Common);
+        ApplyCardColors(faceUp, card != null ? card.Rarity : Rarity.Normal);
         SetSelectionVisible(faceUp && highlighted);
         icon.sprite = faceUp ? card.Icon : null;
         icon.enabled = faceUp && card.Icon != null;
@@ -78,7 +78,7 @@ public sealed class LabCardView : MonoBehaviour
             selectionFrame.enabled = visible;
     }
 
-    private void ApplyCardColors(bool faceUp, LabCardRarity rarity)
+    private void ApplyCardColors(bool faceUp, Rarity rarity)
     {
         background.color = Color.white;
         if (gradient == null)

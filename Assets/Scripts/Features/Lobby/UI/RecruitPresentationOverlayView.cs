@@ -9,25 +9,31 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
     private const int MaxRayCount = 16;
     private const int MaxStarCount = 10;
 
-    private readonly List<Image> rays = new();
-    private readonly List<Image> stars = new();
-    private readonly List<RectTransform> bands = new();
-    private readonly List<Vector2> bandPositions = new();
+    [SerializeField] private List<Image> rays = new();
+    [SerializeField] private List<Image> stars = new();
+    [SerializeField] private List<RectTransform> bands = new();
+    [SerializeField] private List<Vector2> bandPositions = new();
 
-    private Image rootBlocker;
-    private GameObject introContent;
-    private Image backdropImage;
-    private Image unitIconImage;
-    private Image namePanelImage;
-    private TMP_Text newUnitText;
-    private TMP_Text unitNameText;
-    private TMP_Text rarityText;
-    private Button skipButton;
+    [SerializeField] private Image rootBlocker;
+    [SerializeField] private GameObject introContent;
+    [SerializeField] private Image backdropImage;
+    [SerializeField] private Image unitIconImage;
+    [SerializeField] private Image namePanelImage;
+    [SerializeField] private TMP_Text newUnitText;
+    [SerializeField] private TMP_Text unitNameText;
+    [SerializeField] private TMP_Text rarityText;
+    [SerializeField] private Button skipButton;
     private Color rarityColor;
     private float effectStrength;
 
     public event Action SkipRequested;
 
+    private void Awake()
+    {
+        skipButton.onClick.AddListener(HandleSkip);
+    }
+
+#if UNITY_EDITOR
     public static RecruitPresentationOverlayView Create(Transform parent)
     {
         GameObject root = new("RecruitPresentation_Overlay", typeof(RectTransform), typeof(Image));
@@ -41,6 +47,7 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
         root.SetActive(false);
         return view;
     }
+#endif
 
     public void ShowUnitIntro(UnitDataSO unit, Color color)
     {
@@ -115,6 +122,7 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+#if UNITY_EDITOR
     private void BuildRuntimeView()
     {
         rootBlocker = GetComponent<Image>();
@@ -252,12 +260,11 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
         image.color = new Color(0f, 0f, 0f, 0.72f);
         skipButton = buttonObject.GetComponent<Button>();
         skipButton.targetGraphic = image;
-        skipButton.onClick.AddListener(HandleSkip);
-
         TMP_Text label = CreateText("Label", buttonObject.transform, Vector2.zero, Vector2.one, 24f);
         label.text = "SKIP";
         label.fontStyle = FontStyles.Bold;
     }
+#endif
 
     private void ConfigureRarity(Rarity rarity)
     {
@@ -270,6 +277,11 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
                 effectStrength = 1f;
                 activeRays = 16;
                 activeStars = 10;
+                break;
+            case Rarity.Epic:
+                effectStrength = 0.9f;
+                activeRays = 14;
+                activeStars = 8;
                 break;
             case Rarity.Rare:
                 effectStrength = 0.78f;
@@ -310,6 +322,7 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
             alpha);
     }
 
+#if UNITY_EDITOR
     private static TMP_Text CreateText(
         string objectName,
         Transform parent,
@@ -339,6 +352,7 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
         rect.offsetMin = Vector2.zero;
         rect.offsetMax = Vector2.zero;
     }
+#endif
 
     private void HandleSkip()
     {

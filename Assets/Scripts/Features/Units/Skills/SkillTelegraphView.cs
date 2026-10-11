@@ -1,11 +1,11 @@
 using UnityEngine;
 
+[RequireComponent(typeof(LineRenderer))]
 public sealed class SkillTelegraphView : MonoBehaviour
 {
     private const int CircleSegments = 40;
 
-    private LineRenderer line;
-    private Material runtimeMaterial;
+    [SerializeField] private LineRenderer line;
     private Transform followCenter;
     private Transform lineOrigin;
     private Transform lineTarget;
@@ -17,31 +17,8 @@ public sealed class SkillTelegraphView : MonoBehaviour
     private Color baseColor;
     private bool circleMode;
 
-    public static SkillTelegraphView GetOrCreate(Transform owner)
-    {
-        SkillTelegraphView existing = owner.GetComponentInChildren<SkillTelegraphView>(true);
-        if (existing != null)
-            return existing;
-
-        GameObject child = new("SkillTelegraph");
-        child.transform.SetParent(owner, false);
-        return child.AddComponent<SkillTelegraphView>();
-    }
-
     private void Awake()
     {
-        line = gameObject.AddComponent<LineRenderer>();
-        line.useWorldSpace = true;
-        line.loop = false;
-        line.widthMultiplier = 0.055f;
-        line.numCapVertices = 3;
-        line.numCornerVertices = 2;
-        line.textureMode = LineTextureMode.Stretch;
-        line.sortingOrder = 600;
-
-        Shader shader = Shader.Find("Sprites/Default");
-        runtimeMaterial = new Material(shader) { name = "SkillTelegraph_Runtime" };
-        line.sharedMaterial = runtimeMaterial;
         Hide();
     }
 
@@ -159,9 +136,4 @@ public sealed class SkillTelegraphView : MonoBehaviour
 
     private void OnDisable() => Hide();
 
-    private void OnDestroy()
-    {
-        if (runtimeMaterial != null)
-            Destroy(runtimeMaterial);
-    }
 }

@@ -28,14 +28,8 @@ public sealed class GameIconProvider : IGameIconProvider
         };
     }
 
-    public Sprite GetRarityFrame(Rarity rarity)
-    {
-        return rarity switch
-        {
-            Rarity.Normal => iconSet.NormalRarityFrame,
-            Rarity.Rare => iconSet.RareRarityFrame,
-            Rarity.Legend => iconSet.LegendRarityFrame,
-            _ => iconSet.NormalRarityFrame,
-        };
-    }
+    public string GetResourceDisplayName(RewardType type) => iconSet.GetResourceDisplayName(type);
+
+    public Rarity GetResourceRarity(RewardType type) => iconSet.GetResourceRarity(type);
+
 }

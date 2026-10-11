@@ -62,8 +62,6 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
         Health = GetComponent<MonsterHealth>();
         targeting = GetComponent<MonsterTargetingController>();
-        if (targeting == null)
-            targeting = gameObject.AddComponent<MonsterTargetingController>();
         Health.OnDead += HandleDead;
 
         agent.updateRotation = false;

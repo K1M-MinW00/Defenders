@@ -27,3 +27,6 @@ MonoBehaviour:
   ExchangeProducts:
   - {fileID: 11400000, guid: f396890b80a1723429ff0a57d1d685f9, type: 2}
   - {fileID: 11400000, guid: 5a4fff685598b154b940642a29981d22, type: 2}
+  UtilityProducts:
+  - {fileID: 11400000, guid: 86d1a27cab1d4c40b6f739aec012e2e7, type: 2}
+  - {fileID: 11400000, guid: b36f15c2c47b4d36a7df6cb203949c8c, type: 2}

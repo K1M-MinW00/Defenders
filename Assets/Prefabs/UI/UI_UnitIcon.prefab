@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 2776248159013736669}
   - component: {fileID: 461759218750889097}
   - component: {fileID: 4114549724763984705}
+  - component: {fileID: 565389005847087261}
   m_Layer: 5
   m_Name: UI_UnitIcon
   m_TagString: Untagged
@@ -169,6 +170,19 @@ MonoBehaviour:
   iconImage: {fileID: 7182531148138049261}
   duplicateMark: {fileID: 5306984525851157515}
   visualConfig: {fileID: 11400000, guid: b35a62096de54a64a3915d346269523d, type: 2}
+  revealCanvasGroup: {fileID: 565389005847087261}
+--- !u!225 &565389005847087261
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3372329266272841205}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5306984525851157515
 GameObject:
   m_ObjectHideFlags: 0

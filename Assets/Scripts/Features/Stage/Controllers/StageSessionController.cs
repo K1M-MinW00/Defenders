@@ -339,11 +339,14 @@ public class StageSessionController : MonoBehaviour
         if (isDisposed || !TransitionTo(StageState.StageFail))
             return;
 
-        stageUI.ShowStageFail(
-            currentStageData,
-            CurrentWaveIndex,
-            currentStageData.failureRewards);
-        await TrySaveStageOutcomeAsync(isClear: false);
+        stageUI.ShowStageResultSettling(false, currentStageData, CurrentWaveIndex);
+        StageOutcomeResult result = await TrySaveStageOutcomeAsync(isClear: false);
+        if (isDisposed)
+            return;
+        if (result.Succeeded)
+            stageUI.ShowStageResult(false, currentStageData, CurrentWaveIndex, result.GrantedRewards);
+        else
+            stageUI.ShowStageResultSaveFailure();
     }
 
     private async Task HandleStageClear()
@@ -351,11 +354,15 @@ public class StageSessionController : MonoBehaviour
         if (isDisposed || !TransitionTo(StageState.StageClear))
             return;
 
-        stageUI.ShowStageClear(
-            currentStageData,
-            waveSequence.ClearedWaveCount,
-            currentStageData.clearRewards);
-        await TrySaveStageOutcomeAsync(isClear: true);
+        int clearedWaveCount = waveSequence.ClearedWaveCount;
+        stageUI.ShowStageResultSettling(true, currentStageData, clearedWaveCount);
+        StageOutcomeResult result = await TrySaveStageOutcomeAsync(isClear: true);
+        if (isDisposed)
+            return;
+        if (result.Succeeded)
+            stageUI.ShowStageResult(true, currentStageData, clearedWaveCount, result.GrantedRewards);
+        else
+            stageUI.ShowStageResultSaveFailure();
     }
 
     private async Task WaitForResultPresentationAsync()
@@ -366,28 +373,29 @@ public class StageSessionController : MonoBehaviour
         await Task.Delay(TimeSpan.FromSeconds(resultPresentationDelay));
     }
 
-    private async Task<bool> TrySaveStageOutcomeAsync(bool isClear)
+    private async Task<StageOutcomeResult> TrySaveStageOutcomeAsync(bool isClear)
     {
         if (isDisposed)
-            return false;
+            return StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest);
 
         StageOutcomeResult result = await outcomeCoordinator.SaveAsync(
             currentStageData,
             isClear,
-            CurrentWaveIndex);
+            isClear ? waveSequence.ClearedWaveCount : CurrentWaveIndex,
+            enterData?.EntryFuelCost ?? 0);
 
         if (isDisposed)
-            return false;
+            return StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest);
 
         if (!result.Succeeded)
         {
             Debug.LogWarning(
                 $"Stage outcome save failed ({result.Failure}). " +
                 $"Lobby exit is blocked until retry succeeds: {currentStageData?.StageKey}");
-            return false;
+            return result;
         }
 
-        return !isClear || CurrentState == StageState.StageClear || TransitionTo(StageState.StageClear);
+        return result;
     }
 
     public async Task<bool> TryPrepareExitAsync()

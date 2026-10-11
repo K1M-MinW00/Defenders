@@ -16,7 +16,7 @@ MonoBehaviour:
   DisplayName: "\uC790\uC6D0 \uD68C\uC218"
   Description: "\uC720\uB2DB \uD310\uB9E4\uB85C \uB3CC\uB824\uBC1B\uB294 \uAD11\uBB3C\uC774
     \uC99D\uAC00\uD569\uB2C8\uB2E4."
-  Rarity: 1
+  Rarity: 2
   Icon: {fileID: 0}
   EffectType: 13
   Value: 20

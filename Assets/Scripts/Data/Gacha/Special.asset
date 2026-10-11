@@ -17,16 +17,18 @@ MonoBehaviour:
   bannerImage: {fileID: 5543941588292853863, guid: 25431b7bc0c8a5d47a10821d4223c1ab, type: 3}
   pickupUnit: {fileID: 11400000, guid: fb64b41c4fe0490498e313d58fd9145b, type: 2}
   pickupRateWithinRarity: 50
-  normalRate: 80
-  rareRate: 15
+  normalRate: 0
+  rareRate: 80
+  epicRate: 15
   legendRate: 5
   legendPityCount: 50
-  normalPool:
+  normalPool: []
+  rarePool:
   - {fileID: 11400000, guid: e12e44d1608e1a146bf3abaaf97b8731, type: 2}
   - {fileID: 11400000, guid: eac385cdf226b304cbdd7a01bcfc951e, type: 2}
   - {fileID: 11400000, guid: 90cbe44048e981442ba0547dbb64138c, type: 2}
   - {fileID: 11400000, guid: 0d4af60c8da9f5743aaa2fb6c98e79b1, type: 2}
-  rarePool:
+  epicPool:
   - {fileID: 11400000, guid: 80624c56eb0c40c4d95dae888164153f, type: 2}
   - {fileID: 11400000, guid: a25a1f0fc0651444080745516046c3a5, type: 2}
   - {fileID: 11400000, guid: faa184ffc77758046a9d0f72f5336312, type: 2}

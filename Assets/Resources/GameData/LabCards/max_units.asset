@@ -16,7 +16,7 @@ MonoBehaviour:
   DisplayName: "\uC9C0\uD718 \uCCB4\uACC4"
   Description: "\uC804\uD22C \uC2DC\uC791 \uC2DC \uCD5C\uB300 \uC720\uB2DB \uC218\uAC00
     \uC99D\uAC00\uD569\uB2C8\uB2E4."
-  Rarity: 2
+  Rarity: 3
   Icon: {fileID: 21300000, guid: 4b30de750f53eed44b6b61de498c18ee, type: 3}
   EffectType: 7
   Value: 1

@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitDetailView : MonoBehaviour
+public class UnitDetailView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject detailRoot;
@@ -32,7 +32,7 @@ public class UnitDetailView : MonoBehaviour
     [SerializeField] private UnitTrainingPanel trainingPanel;
     [SerializeField] private UnitPromotionPanel promotionPanel;
     [SerializeField] private UnitLimitBreakPanel limitBreakPanel;
-    //[SerializeField] private UnitEquipmentPanel equipmentPanel;
+    [SerializeField] private UnitEquipmentPanel equipmentPanel;
 
     [Header("Bottom Buttons")]
     [SerializeField] private Button backButton;
@@ -49,7 +49,7 @@ public class UnitDetailView : MonoBehaviour
     private void Awake()
     {
         if (backButton != null)
-            backButton.onClick.AddListener(Close);
+            backButton.onClick.AddListener(Dismiss);
 
         if (activeSkillButton != null)
             activeSkillButton.onClick.AddListener(OpenActiveSkillPopup);
@@ -57,7 +57,7 @@ public class UnitDetailView : MonoBehaviour
         if (passiveSkillButton != null)
             passiveSkillButton.onClick.AddListener(OpenPassiveSkillPopup);
 
-        Close();
+        SetVisibleImmediately(false);
     }
 
     public void Open(LobbyUnitViewModel vm)
@@ -86,12 +86,18 @@ public class UnitDetailView : MonoBehaviour
     }
 
 
-    public void Close()
+    public void Dismiss()
     {
-        if (detailRoot != null)
-            detailRoot.SetActive(false);
-        else
-            gameObject.SetActive(false);
+        GameObject root = detailRoot != null ? detailRoot : gameObject;
+        ModalTransitionUtility.RequestExit(root, () => root.SetActive(false));
+    }
+
+    public void Close() => Dismiss();
+
+    private void SetVisibleImmediately(bool visible)
+    {
+        GameObject root = detailRoot != null ? detailRoot : gameObject;
+        root.SetActive(visible);
     }
 
     private void BindUpperUIs()
@@ -115,7 +121,7 @@ public class UnitDetailView : MonoBehaviour
         if (currentState == null)
         {
             Debug.LogWarning($"[UnitDetailView] Cannot refresh unit: {currentUnitId}");
-            Close();
+            Dismiss();
             return;
         }
 
@@ -128,7 +134,10 @@ public class UnitDetailView : MonoBehaviour
         trainingPanel?.Bind(currentState.Definition);
         promotionPanel?.Bind(currentState.Definition);
         limitBreakPanel?.Bind(currentState.Definition);
+        equipmentPanel?.Bind(currentUnitId);
     }
+
+    public void ConfigureEquipmentPanel(UnitEquipmentPanel panel) => equipmentPanel = panel;
 
     private void BindCommonInfo()
     {
@@ -217,7 +226,7 @@ public class UnitDetailView : MonoBehaviour
     private void OnDestroy()
     {
         if (backButton != null)
-            backButton.onClick.RemoveListener(Close);
+            backButton.onClick.RemoveListener(Dismiss);
 
         if (activeSkillButton != null)
             activeSkillButton.onClick.RemoveListener(OpenActiveSkillPopup);

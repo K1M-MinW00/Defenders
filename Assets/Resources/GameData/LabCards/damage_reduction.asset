@@ -15,8 +15,8 @@ MonoBehaviour:
   CardId: damage_reduction
   DisplayName: "\uAC15\uD654 \uC7A5\uAC11"
   Description: "\uC544\uAD70 \uC720\uB2DB\uC774 \uBC1B\uB294 \uD53C\uD574\uAC00 \uAC10\uC18C\uD569\uB2C8\uB2E4."
-  Rarity: 0
+  Rarity: 1
   Icon: {fileID: 0}
   EffectType: 0
   Value: 3
-  DrawWeight: 70
+  DrawWeight: 40

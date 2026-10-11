@@ -2,11 +2,8 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class InventoryPanelView : MonoBehaviour
+public class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 {
-    public void Open() => gameObject.SetActive(true);
-    public void Close() => gameObject.SetActive(false);
-
     private enum InventoryTab
     {
         Consumables,
@@ -17,9 +14,14 @@ public class InventoryPanelView : MonoBehaviour
     [Header("Inventory List")]
     [SerializeField] private Transform contentRoot;
     [SerializeField] private CommonSlotUI slotPrefab;
+    [SerializeField] private GameObject consumableInventoryPanel;
+    [SerializeField] private Transform consumableContentRoot;
+    [SerializeField] private GameObject materialInventoryPanel;
+    [SerializeField] private Transform materialContentRoot;
 
     [Header("Popup")]
     [SerializeField] private ItemDetailPanelView detailPopup;
+    [SerializeField] private EquipmentInventoryPanelView equipmentPanel;
 
     [Header("Buttons")]
     [SerializeField] private Button consumableTabButton;
@@ -30,6 +32,19 @@ public class InventoryPanelView : MonoBehaviour
     private readonly Dictionary<string, CommonSlotUI> slotsByKey = new();
     private readonly List<string> staleSlotKeys = new();
     private InventoryTab currentTab;
+    private Transform currentContentRoot;
+    private ModalOverlayLifecycle lifecycle;
+
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
+
+    public void Open()
+    {
+        Lifecycle.Show();
+        RefreshCurrentTab();
+    }
+
+    public void Close() => Lifecycle.Close(CleanupTransientUi);
+    public void Dismiss() => Close();
 
     private void Awake()
     {
@@ -40,6 +55,9 @@ public class InventoryPanelView : MonoBehaviour
 
     private void OnEnable()
     {
+        if (UserDataManager.Instance == null)
+            return;
+
         inventoryService = UserDataManager.Instance.InventoryService;
         UserDataManager.Instance.OnInventoryUpdated += RefreshCurrentTab;
         ShowConsumables();
@@ -53,28 +71,51 @@ public class InventoryPanelView : MonoBehaviour
 
     public void ShowConsumables()
     {
-        currentTab = InventoryTab.Consumables;
-        RefreshCurrentTab();
+        SelectTab(InventoryTab.Consumables);
     }
 
     public void ShowMaterials()
     {
-        currentTab = InventoryTab.Materials;
-        RefreshCurrentTab();
+        SelectTab(InventoryTab.Materials);
     }
 
     public void ShowEquipments()
     {
-        currentTab = InventoryTab.Equipments;
+        SelectTab(InventoryTab.Equipments);
+    }
+
+    private void SelectTab(InventoryTab tab)
+    {
+        detailPopup?.HideImmediately();
+        currentTab = tab;
+
+        if (tab == InventoryTab.Equipments)
+        {
+            SetInventoryBody(null);
+            ClearStandardSlots();
+            equipmentPanel?.Show();
+            return;
+        }
+
+        equipmentPanel?.Hide();
+        bool consumables = tab == InventoryTab.Consumables;
+        SetInventoryBody(consumables ? consumableInventoryPanel : materialInventoryPanel);
+        currentContentRoot = consumables
+            ? (consumableContentRoot != null ? consumableContentRoot : contentRoot)
+            : (materialContentRoot != null ? materialContentRoot : contentRoot);
         RefreshCurrentTab();
     }
 
     private void RefreshCurrentTab()
     {
-        if (inventoryService == null || contentRoot == null || slotPrefab == null)
+        if (currentTab == InventoryTab.Equipments)
+        {
+            equipmentPanel?.Show();
             return;
+        }
 
-        detailPopup?.Hide();
+        if (inventoryService == null || currentContentRoot == null || slotPrefab == null)
+            return;
 
         HashSet<string> visibleKeys = new();
         int siblingIndex = 0;
@@ -92,12 +133,39 @@ public class InventoryPanelView : MonoBehaviour
                 break;
 
             case InventoryTab.Equipments:
-                foreach (EquipmentItemData equipment in inventoryService.GetEquipments())
-                    ReconcileEquipmentSlot(equipment, visibleKeys, ref siblingIndex);
                 break;
         }
 
         RemoveStaleSlots(visibleKeys);
+    }
+
+    public void ConfigureEquipmentPanel(EquipmentInventoryPanelView panel) => equipmentPanel = panel;
+
+    public void ConfigureInventoryBodies(GameObject consumablePanel, Transform consumableContent,
+        GameObject materialPanel, Transform materialContent)
+    {
+        consumableInventoryPanel = consumablePanel;
+        consumableContentRoot = consumableContent;
+        materialInventoryPanel = materialPanel;
+        materialContentRoot = materialContent;
+    }
+
+    private void SetInventoryBody(GameObject active)
+    {
+        if (consumableInventoryPanel != null) consumableInventoryPanel.SetActive(consumableInventoryPanel == active);
+        if (materialInventoryPanel != null) materialInventoryPanel.SetActive(materialInventoryPanel == active);
+    }
+
+    private void ClearStandardSlots()
+    {
+        RemoveStaleSlots(new HashSet<string>());
+    }
+
+    private void CleanupTransientUi()
+    {
+        detailPopup?.HideImmediately();
+        equipmentPanel?.Hide();
+        ClearStandardSlots();
     }
 
     private void ReconcileStackSlot(
@@ -110,22 +178,6 @@ public class InventoryPanelView : MonoBehaviour
 
         string key = $"stack:{item.ItemId}";
         ReconcileSlot(key, item.ItemId, item.Count, visibleKeys, ref siblingIndex);
-    }
-
-    private void ReconcileEquipmentSlot(
-        EquipmentItemData equipment,
-        HashSet<string> visibleKeys,
-        ref int siblingIndex)
-    {
-        if (equipment == null || string.IsNullOrWhiteSpace(equipment.ItemId))
-            return;
-
-        string identity = string.IsNullOrWhiteSpace(equipment.UniqueId)
-            ? $"{equipment.ItemId}:{siblingIndex}"
-            : equipment.UniqueId;
-        string key = $"equipment:{identity}";
-
-        ReconcileSlot(key, equipment.ItemId, 1, visibleKeys, ref siblingIndex);
     }
 
     private void ReconcileSlot(
@@ -141,18 +193,13 @@ public class InventoryPanelView : MonoBehaviour
 
         if (!slotsByKey.TryGetValue(key, out CommonSlotUI slot) || slot == null)
         {
-            slot = Instantiate(slotPrefab, contentRoot);
+            slot = Instantiate(slotPrefab, currentContentRoot);
             slotsByKey[key] = slot;
         }
 
         slot.gameObject.SetActive(true);
         slot.transform.SetSiblingIndex(siblingIndex++);
-        slot.Setup(
-            itemData.Icon,
-            GameConfig.Icons.GetRarityFrame(itemData.Rarity),
-            count,
-            itemData.Stackable,
-            () => detailPopup?.Show(itemData, count));
+        slot.SetupItem(itemData, count, () => detailPopup?.Show(itemData, count));
     }
 
     private void RemoveStaleSlots(HashSet<string> visibleKeys)

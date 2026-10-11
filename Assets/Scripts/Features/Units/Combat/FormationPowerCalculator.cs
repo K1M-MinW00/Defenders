@@ -11,6 +11,9 @@ public static class FormationPowerCalculator
     private const float MaximumEnergyBonus = 0.15f;
 
     public static int Calculate(UserRosterData roster, IUnitCatalog catalog)
+        => Calculate(roster, catalog, null);
+
+    public static int Calculate(UserRosterData roster, IUnitCatalog catalog, UserInventoryData inventory)
     {
         if (roster?.SelectedUnitIds == null || roster.OwnedUnits == null || catalog == null)
             return 0;
@@ -36,7 +39,7 @@ public static class FormationPowerCalculator
             if (definition == null)
                 continue;
 
-            total += CalculateUnit(definition, userUnit);
+            total += CalculateUnit(definition, userUnit, inventory);
             if (total >= int.MaxValue)
                 return int.MaxValue;
         }
@@ -45,11 +48,14 @@ public static class FormationPowerCalculator
     }
 
     public static int CalculateUnit(UnitDataSO definition, UserUnitData userUnit)
+        => CalculateUnit(definition, userUnit, null);
+
+    public static int CalculateUnit(UnitDataSO definition, UserUnitData userUnit, UserInventoryData inventory)
     {
         if (definition == null || userUnit == null)
             return 0;
 
-        UnitStats stats = UnitStatCalculator.Calculate(definition, userUnit);
+        UnitStats stats = UnitStatCalculator.Calculate(definition, userUnit, inventory);
         float hp = Math.Max(1f, stats.MaxHp);
         float attack = Math.Max(0f, stats.Attack);
         float attacksPerSecond = Math.Max(0.01f, stats.AttackPerSec);

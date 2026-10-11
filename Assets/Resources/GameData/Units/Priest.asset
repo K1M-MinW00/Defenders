@@ -15,7 +15,7 @@ MonoBehaviour:
   unitId: unit_priest
   displayName: Priest
   icon: {fileID: 3682586899303601402, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
-  rarity: 2
+  rarity: 3
   unitPrefab: {fileID: 8124817616355146090, guid: 93d5a249e97a5da4fa9d26a5046abadd, type: 3}
   attackSound:
     clip: {fileID: 8300000, guid: dccb67c98fcf3ed4fa1554efb1455765, type: 3}

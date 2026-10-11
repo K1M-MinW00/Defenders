@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EditNicknamePanelView : MonoBehaviour
+public class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject panelRoot;
@@ -11,29 +11,30 @@ public class EditNicknamePanelView : MonoBehaviour
     [SerializeField] private TMP_InputField nicknameInput;
 
     [Header("Button")]
-    [SerializeField] private Button backdropButton;
     [SerializeField] private Button cancelButton;
     [SerializeField] private Button confirmButton;
 
     private TMP_Text confirmButtonLabel;
     private NicknameEditPresenter presenter;
     private bool isSaving;
+    private ModalOverlayLifecycle lifecycle;
+    private GameObject Root => panelRoot != null ? panelRoot : gameObject;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(Root);
 
     private void Awake()
     {
-        backdropButton?.onClick.AddListener(Close);
         nicknameInput.characterLimit = NicknamePolicy.MaxLength;
         confirmButtonLabel = confirmButton.GetComponentInChildren<TMP_Text>(true);
 
-        cancelButton.onClick.AddListener(Close);
+        cancelButton.onClick.AddListener(Dismiss);
         confirmButton.onClick.AddListener(HandleConfirmButtonClicked);
         nicknameInput.onValueChanged.AddListener(HandleNicknameInputChanged);
     }
 
     public void Open()
     {
-        if (!isSaving && panelRoot != null)
-            panelRoot.SetActive(true);
+        if (!isSaving)
+            Lifecycle.Show();
     }
 
     private void OnEnable()
@@ -55,11 +56,16 @@ public class EditNicknamePanelView : MonoBehaviour
         nicknameInput.ActivateInputField();
     }
 
-    public void Close()
+    public void Dismiss()
     {
         if (!isSaving)
-            panelRoot.SetActive(false);
+            Lifecycle.Close();
     }
+
+    public void HideImmediately() => Lifecycle.HideImmediately();
+
+    // Inspector compatibility for scenes created before the modal convention.
+    public void Close() => Dismiss();
 
     private void HandleNicknameInputChanged(string value)
     {
@@ -101,7 +107,7 @@ public class EditNicknamePanelView : MonoBehaviour
         }
 
         presenter.MarkSaved(nickname);
-        Close();
+        Dismiss();
     }
 
     private static string GetFailureMessage(NicknameChangeFailure failure)
@@ -118,11 +124,8 @@ public class EditNicknamePanelView : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (backdropButton != null)
-            backdropButton.onClick.RemoveListener(Close);
-
         if (cancelButton != null)
-            cancelButton.onClick.RemoveListener(Close);
+            cancelButton.onClick.RemoveListener(Dismiss);
 
         if (confirmButton != null)
             confirmButton.onClick.RemoveListener(HandleConfirmButtonClicked);

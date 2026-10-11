@@ -2,6 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Poolable))]
 public class PowerArrowProjectile : MonoBehaviour, IPoolable
 {
     private Poolable poolable;
@@ -19,8 +20,6 @@ public class PowerArrowProjectile : MonoBehaviour, IPoolable
     {
         poolable = GetComponent<Poolable>();
 
-        if (poolable == null)
-            poolable = gameObject.AddComponent<Poolable>();
     }
 
     public void Initialize(float damage, float speed, Vector2 direction, LayerMask enemyLayer, float lifeTime, ICombatTarget source)

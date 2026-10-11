@@ -1,20 +1,22 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public sealed class IdleRewardSlotView : MonoBehaviour
 {
-    [SerializeField] private Image icon;
-    [SerializeField] private TMP_Text amountText;
+    [SerializeField] private CommonSlotUI commonSlot;
 
     public void Bind(IdleRewardEntry entry)
     {
         RewardData reward = new() { Type = entry.Type, Id = entry.ItemId, Amount = entry.TotalAmount };
         if (RewardPresentationResolver.TryResolve(reward, GameConfig.Icons, out RewardPresentation presentation))
         {
-            icon.sprite = presentation.Icon;
-            icon.enabled = presentation.Icon != null;
+            commonSlot.SetupPresentation(
+                presentation,
+                entry.TotalAmount,
+                () => ItemTooltipUI.Show(presentation.DisplayName, transform as RectTransform));
         }
-        amountText.text = entry.TotalAmount.ToString("N0");
+        else
+        {
+            commonSlot?.Clear();
+        }
     }
 }

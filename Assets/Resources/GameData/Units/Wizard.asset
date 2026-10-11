@@ -15,7 +15,7 @@ MonoBehaviour:
   unitId: unit_wizard
   displayName: Wizard
   icon: {fileID: -1229185169664441540, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
-  rarity: 2
+  rarity: 3
   unitPrefab: {fileID: 8164363347632917002, guid: 8a290fb8d46757443ac11ca29a3c9a4a, type: 3}
   attackSound:
     clip: {fileID: 8300000, guid: dccb67c98fcf3ed4fa1554efb1455765, type: 3}

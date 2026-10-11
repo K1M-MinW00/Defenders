@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Poolable))]
 public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
 {
     [Header("Fall")]
@@ -24,9 +25,6 @@ public class ArrowRainFallingArrow : MonoBehaviour, IPoolable
     private void Awake()
     {
         poolable = GetComponent<Poolable>();
-
-        if(poolable == null)
-            poolable = gameObject.AddComponent<Poolable>();
 
         hitBuffer = new Collider2D[hitBufferSize];
 

@@ -86,7 +86,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
     private float ApplyDefensiveModifiers(float damage)
     {
         owner.SkillController.NotifyBeforeTakeDamage(ref damage);
-        float reduction = Mathf.Clamp(LabBonusProvider.GetTotal(LabEffectType.DamageReduction), 0f, 90f);
+        float reduction = Mathf.Clamp(LabBonusProvider.GetTotal(LabEffectType.DamageReduction) + owner.Runtime.FinalStats.DamageReduction, 0f, 90f);
         damage *= 1f - reduction / 100f;
         return damage;
     }

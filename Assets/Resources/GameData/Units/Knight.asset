@@ -15,7 +15,7 @@ MonoBehaviour:
   unitId: unit_knight
   displayName: Knight
   icon: {fileID: -6013459150365757729, guid: f35b84e3067b0f8438a471272c620fb7, type: 3}
-  rarity: 0
+  rarity: 1
   unitPrefab: {fileID: 8701186199276537277, guid: 3853f4a0cc9151443b2cdbad6f3aa303, type: 3}
   attackSound:
     clip: {fileID: 8300000, guid: 3f260e5b54b7a614bb6bf77e7e371d41, type: 3}
@@ -68,16 +68,16 @@ MonoBehaviour:
   limitBreaks:
   - statType: 1
     value: 12
-    description: "체력 12% 증가"
+    description: "\uCCB4\uB825 12% \uC99D\uAC00"
   - statType: 6
     value: 10
-    description: "에너지 회복 10% 증가"
+    description: "\uC5D0\uB108\uC9C0 \uD68C\uBCF5 10% \uC99D\uAC00"
   - statType: 0
     value: 10
-    description: "공격력 10% 증가"
+    description: "\uACF5\uACA9\uB825 10% \uC99D\uAC00"
   - statType: 1
     value: 12
-    description: "체력 12% 증가"
+    description: "\uCCB4\uB825 12% \uC99D\uAC00"
   - statType: 2
     value: 10
-    description: "공격 속도 10% 증가"
+    description: "\uACF5\uACA9 \uC18D\uB3C4 10% \uC99D\uAC00"

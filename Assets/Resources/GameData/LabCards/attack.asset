@@ -15,8 +15,8 @@ MonoBehaviour:
   CardId: attack
   DisplayName: "\uD654\uB825 \uC99D\uD3ED"
   Description: "\uC544\uAD70 \uC720\uB2DB\uC758 \uACF5\uACA9\uB825\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
-  Rarity: 0
+  Rarity: 1
   Icon: {fileID: -3773416935493682931, guid: 2ff98e9176b5b4c43b4c7d7d1f3321af, type: 3}
   EffectType: 2
   Value: 7
-  DrawWeight: 70
+  DrawWeight: 40

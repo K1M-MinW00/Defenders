@@ -173,9 +173,6 @@ public sealed class LobbyShopPanelView : MonoBehaviour
         ShopPurchaseResult result =
             await manager.PurchaseShopProductAsync(product);
 
-        if (purchaseConfirmPopup != null)
-            purchaseConfirmPopup.Hide();
-
         if (feedbackText != null)
             feedbackText.text = ShopFeedbackMessages.Get(result);
 
@@ -187,8 +184,10 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
         RefreshItemStates();
 
-        if (purchaseResultPopup != null)
-            purchaseResultPopup.Show(product, result);
+        if (purchaseConfirmPopup != null)
+            purchaseConfirmPopup.Hide(() => purchaseResultPopup?.Show(product, result));
+        else
+            purchaseResultPopup?.Show(product, result);
     }
 
     private int GetCurrentGem()

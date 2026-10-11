@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RecruitResultPopupView : MonoBehaviour
+public class RecruitResultPopupView : MonoBehaviour, IModalDismissHandler
 {
     [Header("UI")]
     [SerializeField] private Button closeButton;
@@ -14,6 +14,8 @@ public class RecruitResultPopupView : MonoBehaviour
 
     private readonly List<RecruitUnitIconView> slots = new();
     private bool isPresenting;
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
     public int ResultCount => slots.Count;
     public event Action SkipRequested;
@@ -31,7 +33,7 @@ public class RecruitResultPopupView : MonoBehaviour
 
     public void Prepare(IReadOnlyList<GachaResult> results)
     {
-        gameObject.SetActive(true);
+        Lifecycle.Show();
         Clear();
         isPresenting = true;
 
@@ -73,10 +75,10 @@ public class RecruitResultPopupView : MonoBehaviour
 
     public void Close()
     {
-        gameObject.SetActive(false);
+        Lifecycle.Close();
     }
 
-    private void HandleCloseButton()
+    public void Dismiss()
     {
         if (isPresenting)
         {
@@ -85,6 +87,11 @@ public class RecruitResultPopupView : MonoBehaviour
         }
 
         Close();
+    }
+
+    private void HandleCloseButton()
+    {
+        Dismiss();
     }
 
     private void OnDestroy()

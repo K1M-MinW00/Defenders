@@ -15,5 +15,5 @@ MonoBehaviour:
   ItemId: summon_ticket_normal
   ItemName: "\uC77C\uBC18 \uC720\uB2DB \uBF51\uAE30\uAD8C"
   Icon: {fileID: -2539642333317298262, guid: 3b1be0e407de560478b58493a4719f45, type: 3}
-  Rarity: 1
+  Rarity: 3
   Description: "\uC77C\uBC18 \uC720\uB2DB \uBF51\uAE30\uAD8C"

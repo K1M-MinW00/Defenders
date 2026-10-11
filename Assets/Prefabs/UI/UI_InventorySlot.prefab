@@ -205,8 +205,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7860896277611520029, guid: 30a5e674aac575e4c979030e03dbe939, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -6577370300016305975, guid: 50e1afb919fa3ac40a888222e75a43d6, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -275,6 +275,12 @@ MonoBehaviour:
   frameImage: {fileID: 7344636656932377967}
   countText: {fileID: 7478038667514161493}
   button: {fileID: 7152840232490270588}
+  normalFrameColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
+  rareFrameColor: {r: 0.2, g: 0.55, b: 1, a: 1}
+  epicFrameColor: {r: 0.65, g: 0.3, b: 0.9, a: 1}
+  legendFrameColor: {r: 1, g: 0.72, b: 0.12, a: 1}
+  normalCountColor: {r: 1, g: 1, b: 1, a: 1}
+  insufficientCountColor: {r: 1, g: 0.25, b: 0.25, a: 1}
 --- !u!1 &7513196767764090807
 GameObject:
   m_ObjectHideFlags: 0

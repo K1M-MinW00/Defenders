@@ -16,7 +16,6 @@ public sealed class RecruitPresentationController : MonoBehaviour
     private RecruitPresentationConfigSO config;
     private Coroutine presentationRoutine;
     private bool isPresenting;
-    private bool ownsOverlayView;
 
     public bool IsPresenting => isPresenting;
     public event Action PresentationCompleted;
@@ -35,11 +34,6 @@ public sealed class RecruitPresentationController : MonoBehaviour
         {
             resultPopup.SkipRequested += Skip;
 
-            if (overlayView == null && resultPopup.transform.parent != null)
-            {
-                overlayView = RecruitPresentationOverlayView.Create(resultPopup.transform.parent);
-                ownsOverlayView = true;
-            }
         }
 
         if (overlayView != null)
@@ -190,13 +184,7 @@ public sealed class RecruitPresentationController : MonoBehaviour
         if (config != null)
             return config.GetRarityColor(rarity);
 
-        return rarity switch
-        {
-            Rarity.Normal => new Color(0.08f, 0.28f, 1f, 1f),
-            Rarity.Rare => new Color(0.63f, 0.13f, 0.94f, 1f),
-            Rarity.Legend => new Color(1f, 0.92f, 0.02f, 1f),
-            _ => Color.white,
-        };
+        return RarityPalette.Get(rarity);
     }
 
     private void OnDestroy()
@@ -207,8 +195,6 @@ public sealed class RecruitPresentationController : MonoBehaviour
         if (overlayView != null)
             overlayView.SkipRequested -= Skip;
 
-        if (ownsOverlayView && overlayView != null)
-            Destroy(overlayView.gameObject);
     }
 
     private void OnDisable()

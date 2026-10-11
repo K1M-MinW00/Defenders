@@ -19,14 +19,17 @@ public static class RewardGrantCalculator
         UserInventoryData inventory = UserDataCloner.Copy(source.Inventory);
         UserRosterData roster = UserDataCloner.Copy(source.Roster);
         UserProfileData profile = UserDataCloner.Copy(source.Profile);
-        InventoryMutationService inventoryMutations = new(GameConfig.Items);
+        InventoryMutationService inventoryMutations = GameConfig.Items != null
+            ? new InventoryMutationService(GameConfig.Items)
+            : null;
+        int discardedEquipmentCount = 0;
 
         try
         {
             foreach (RewardData reward in rewards)
             {
                 if (reward == null || reward.Amount <= 0 ||
-                    !ApplyReward(reward, resources, inventory, roster, profile, inventoryMutations))
+                    !ApplyReward(reward, resources, inventory, roster, profile, inventoryMutations, ref discardedEquipmentCount))
                     return RewardGrantResult.Fail(RewardGrantFailure.InvalidReward);
             }
         }
@@ -35,7 +38,7 @@ public static class RewardGrantCalculator
             return RewardGrantResult.Fail(RewardGrantFailure.Overflow);
         }
 
-        return RewardGrantResult.Success(resources, inventory, roster, profile);
+        return RewardGrantResult.Success(resources, inventory, roster, profile, discardedEquipmentCount);
     }
 
     private static bool ApplyReward(
@@ -44,7 +47,8 @@ public static class RewardGrantCalculator
         UserInventoryData inventory,
         UserRosterData roster,
         UserProfileData profile,
-        InventoryMutationService inventoryMutations)
+        InventoryMutationService inventoryMutations,
+        ref int discardedEquipmentCount)
     {
         switch (reward.Type)
         {
@@ -69,14 +73,19 @@ public static class RewardGrantCalculator
                 return true;
 
             case RewardType.Item:
-                ItemDataSO stackItem = GameConfig.Items.Get(reward.Id);
+                ItemDataSO stackItem = GameConfig.Items?.Get(reward.Id);
                 return stackItem != null && stackItem.Category != ItemCategory.Equipment &&
-                    inventoryMutations.Add(inventory, reward.Id, reward.Amount).Succeeded;
+                    inventoryMutations != null && inventoryMutations.Add(inventory, reward.Id, reward.Amount).Succeeded;
 
             case RewardType.Equipment:
-                ItemDataSO equipment = GameConfig.Items.Get(reward.Id);
-                return equipment?.Category == ItemCategory.Equipment &&
-                    inventoryMutations.Add(inventory, reward.Id, reward.Amount).Succeeded;
+                ItemDataSO equipment = GameConfig.Items?.Get(reward.Id);
+                if (equipment?.Category != ItemCategory.Equipment)
+                    return false;
+                EquipmentInventoryIndex index = new(inventory, roster);
+                int accepted = Math.Min(reward.Amount, Math.Max(0, EquipmentInventoryIndex.UnequippedCapacity - index.UnequippedCount));
+                discardedEquipmentCount = checked(discardedEquipmentCount + reward.Amount - accepted);
+                return accepted == 0 || inventoryMutations != null &&
+                    inventoryMutations.Add(inventory, reward.Id, accepted).Succeeded;
 
             case RewardType.Unit:
                 return AddUnit(resources, roster, reward.Id, reward.Amount);

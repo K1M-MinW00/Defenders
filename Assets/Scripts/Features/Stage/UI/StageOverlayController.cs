@@ -87,6 +87,43 @@ public sealed class StageOverlayController : IDisposable
         ApplyPolicy();
     }
 
+    /// <summary>
+    /// Routes Android/system back input through the currently visible stage UI.
+    /// Informational overlays close first. Mandatory choice and result screens
+    /// consume the input because dismissing them would leave the stage flow in
+    /// an invalid state. With no overlay open, back toggles the pause state.
+    /// </summary>
+    public bool HandleSystemBack()
+    {
+        if (disposed)
+            return false;
+
+        if (monsterInfoOpen)
+        {
+            monsterInfoUI?.Close();
+            return true;
+        }
+
+        if (unitInfoOpen)
+        {
+            HideUnitInfo();
+            return true;
+        }
+
+        if (relicChoiceOpen || resultOpen)
+            return true;
+
+        if (timeController == null)
+            return false;
+
+        if (pauseOpen)
+            timeController.Resume();
+        else
+            timeController.Pause();
+
+        return true;
+    }
+
     public void Dispose()
     {
         if (disposed)

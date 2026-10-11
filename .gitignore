@@ -9,6 +9,7 @@
 /[Bb]uild/
 /[Bb]uilds/
 /[Ll]ogs/
+/TestResults/
 /[Uu]ser[Ss]ettings/
 *.log
 

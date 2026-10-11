@@ -62,6 +62,14 @@ public static class UserDataCloner
                     UniqueId = item.UniqueId,
                     ItemId = item.ItemId,
                     Level = item.Level,
+                    EnhancementExp = item.EnhancementExp,
+                    TotalInvestedExp = item.TotalInvestedExp,
+                    BonusOption = item.BonusOption == null ? null : new EquipmentBonusOptionData
+                    {
+                        StatType = item.BonusOption.StatType,
+                        ModifierType = item.BonusOption.ModifierType,
+                        Value = item.BonusOption.Value,
+                    },
                 })
                 .ToList() ?? new List<EquipmentItemData>(),
         };
@@ -83,10 +91,19 @@ public static class UserDataCloner
                     LimitBreak = unit.LimitBreak,
                     Promotion = unit.Promotion,
                     DuplicateCount = unit.DuplicateCount,
+                    Equipment = CopyEquipmentLoadout(unit.Equipment),
                 })
                 .ToList() ?? new List<UserUnitData>(),
         };
     }
+
+    private static EquipmentLoadout CopyEquipmentLoadout(EquipmentLoadout source) => new()
+    {
+        HelmetId = source?.HelmetId,
+        ArmorId = source?.ArmorId,
+        MainWeaponId = source?.MainWeaponId,
+        SubWeaponId = source?.SubWeaponId,
+    };
 
     public static UserGachaData Copy(UserGachaData source)
     {

@@ -72,7 +72,8 @@ public sealed class InventoryMutationService
                 {
                     UniqueId = Guid.NewGuid().ToString(),
                     ItemId = itemId,
-                    Level = 1,
+                    Level = 0,
+                    EnhancementExp = 0,
                 });
             }
 

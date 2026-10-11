@@ -4,10 +4,14 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
-public class MailboxPanelView : MonoBehaviour
+public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
 {
-    public void Open() => gameObject.SetActive(true);
-    public void Close() => gameObject.SetActive(false);
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
+
+    public void Open() => Lifecycle.Show();
+    public void Close() => Lifecycle.Close();
+    public void Dismiss() => Close();
 
     [Header("Mail List")]
     [SerializeField] private Transform contentRoot;

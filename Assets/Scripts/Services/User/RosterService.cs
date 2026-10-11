@@ -54,4 +54,6 @@ public sealed class RosterService
         return Roster.SelectedUnitIds;
     }
 
+    public UserInventoryData GetInventory() => userData?.Inventory;
+
 }

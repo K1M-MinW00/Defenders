@@ -15,7 +15,7 @@ MonoBehaviour:
   ItemId: material_prom_4
   ItemName: "\uCD5C\uACE0\uAE09 \uC9C4\uAE09 \uC7AC\uB8CC"
   Icon: {fileID: 6555605228825646875, guid: 0d371a78772bd954b99878cc3b5fb942, type: 3}
-  Rarity: 2
+  Rarity: 3
   Description: "\uC720\uB2DB \uC9C4\uAE09\uC744 \uC704\uD55C \uCD5C\uACE0\uAE09 \uC7AC\uB8CC"
   Value: 0
   MaterialType: 2

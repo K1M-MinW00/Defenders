@@ -6,6 +6,7 @@ public sealed class GachaEconomyConfigSO : ScriptableObject
     [Header("Duplicate Unit Gem Reward")]
     [SerializeField, Min(0)] private int normalDuplicateGem = 30;
     [SerializeField, Min(0)] private int rareDuplicateGem = 100;
+    [SerializeField, Min(0)] private int epicDuplicateGem = 200;
     [SerializeField, Min(0)] private int legendDuplicateGem = 300;
 
     public int GetDuplicateGemReward(Rarity rarity)
@@ -14,6 +15,7 @@ public sealed class GachaEconomyConfigSO : ScriptableObject
         {
             Rarity.Normal => normalDuplicateGem,
             Rarity.Rare => rareDuplicateGem,
+            Rarity.Epic => epicDuplicateGem,
             Rarity.Legend => legendDuplicateGem,
             _ => 0,
         };
@@ -21,7 +23,7 @@ public sealed class GachaEconomyConfigSO : ScriptableObject
 
     public bool TryValidate(out string error)
     {
-        if (normalDuplicateGem < 0 || rareDuplicateGem < 0 || legendDuplicateGem < 0)
+        if (normalDuplicateGem < 0 || rareDuplicateGem < 0 || epicDuplicateGem < 0 || legendDuplicateGem < 0)
         {
             error = "Duplicate unit rewards cannot be negative.";
             return false;

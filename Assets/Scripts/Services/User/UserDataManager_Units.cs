@@ -2,6 +2,22 @@ using System.Threading.Tasks;
 
 public partial class UserDataManager
 {
+    public Task<EquipmentOperationFailure> EquipAsync(string unitId, string equipmentId) => RunEquipmentMutationAsync(() => EquipmentUseCase?.EquipAsync(unitId, equipmentId));
+    public Task<EquipmentOperationFailure> UnequipAsync(string unitId, EquipmentType type) => RunEquipmentMutationAsync(() => EquipmentUseCase?.UnequipAsync(unitId, type));
+    public Task<EquipmentOperationFailure> EnhanceEquipmentAsync(string equipmentId, System.Collections.Generic.IReadOnlyDictionary<string, int> materials) => RunEquipmentMutationAsync(() => EquipmentUseCase?.EnhanceAsync(equipmentId, materials));
+    public Task<EquipmentOperationFailure> DismantleEquipmentAsync(System.Collections.Generic.IReadOnlyCollection<string> equipmentIds) => RunEquipmentMutationAsync(() => EquipmentUseCase?.DismantleAsync(equipmentIds));
+
+    private async Task<EquipmentOperationFailure> RunEquipmentMutationAsync(System.Func<Task<EquipmentOperationFailure>> operation)
+    {
+        if (operation == null || EquipmentUseCase == null) return EquipmentOperationFailure.InvalidRequest;
+        return await RunSerializedMutationAsync(async () =>
+        {
+            EquipmentOperationFailure result = await operation();
+            if (result == EquipmentOperationFailure.None) { RaiseInventoryUpdated(); RaiseRosterUpdated(); }
+            return result;
+        });
+    }
+
     public async Task<TrainUnitResult> TrainUnitAsync(TrainUnitCommand command)
     {
         if (UnitTrainingUseCase == null)

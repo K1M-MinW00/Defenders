@@ -133,7 +133,7 @@ public static class GameSceneProjectValidator
         ValidateComponentOwner<StagePrepareActionUI>(scene, sceneAsset, report, "Stage Prepare Canvas");
         ValidateComponentOwner<UnitDragActionUI>(scene, sceneAsset, report, "Stage Prepare Canvas");
 
-        ValidateComponentOwner<StageResultUI>(scene, sceneAsset, report, "Stage Popup Canvas");
+        ValidateComponentOwner<StageResultUI>(scene, sceneAsset, report, "StageResultOverlay");
         ValidateComponentOwner<StagePauseUI>(scene, sceneAsset, report, "Stage Popup Canvas");
     }
 

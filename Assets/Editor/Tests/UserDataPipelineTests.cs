@@ -246,6 +246,7 @@ public sealed class UserDataPipelineTests
             Inventory = new UserInventoryData(),
             Gacha = new UserGachaData(),
             Ad = new UserAdData(),
+            IdleReward = UserDataFactory.CreateDefaultIdleReward(),
         };
     }
 

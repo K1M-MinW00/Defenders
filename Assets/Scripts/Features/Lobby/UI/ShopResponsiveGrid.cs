@@ -10,17 +10,19 @@ public sealed class ShopResponsiveGrid : MonoBehaviour
     [SerializeField, Min(0f)] private float horizontalSpacing = 20f;
     [SerializeField, Min(0f)] private float verticalSpacing = 20f;
     [SerializeField, Min(0f)] private float horizontalPadding = 4f;
+    [SerializeField, Min(1f)] private float maxCellWidth = 400f;
 
     private RectTransform rectTransform;
     private GridLayoutGroup grid;
     private float appliedWidth = -1f;
 
-    public void Configure(int columnCount, float aspectRatio, float spacing, float padding)
+    public void Configure(int columnCount, float aspectRatio, float spacing, float padding, float maximumCellWidth)
     {
         columns = Mathf.Max(1, columnCount);
         cardAspectRatio = Mathf.Max(0.1f, aspectRatio);
         horizontalSpacing = verticalSpacing = Mathf.Max(0f, spacing);
         horizontalPadding = Mathf.Max(0f, padding);
+        maxCellWidth = Mathf.Max(1f, maximumCellWidth);
         ApplyLayout(true);
     }
 
@@ -66,7 +68,8 @@ public sealed class ShopResponsiveGrid : MonoBehaviour
         appliedWidth = width;
         float usableWidth = Mathf.Max(1f,
             width - horizontalPadding * 2f - horizontalSpacing * (columns - 1));
-        float cellWidth = usableWidth / columns;
+        // 기준 해상도보다 넓더라도 카드 자체를 확대하지 않는다. 좁은 화면에서만 축소한다.
+        float cellWidth = Mathf.Min(usableWidth / columns, maxCellWidth);
 
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = columns;

@@ -15,7 +15,7 @@ MonoBehaviour:
   ItemId: material_exp_2
   ItemName: "\uD6C8\uB828 \uC7AC\uB8CC 2"
   Icon: {fileID: 2729078193229508051, guid: 3b1be0e407de560478b58493a4719f45, type: 3}
-  Rarity: 1
+  Rarity: 2
   Description: "\uC720\uB2DB \uB808\uBCA8\uC5C5\uC744 \uC704\uD55C \uD6C8\uB828 \uC7AC\uB8CC\n\uC720\uB2DB
     \uACBD\uD5D8\uCE58 + 100"
   Value: 100

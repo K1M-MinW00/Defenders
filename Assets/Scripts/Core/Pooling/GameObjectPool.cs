@@ -13,6 +13,11 @@ public class GameObjectPool
 
     public GameObjectPool(GameObject prefab, Transform inactiveRoot)
     {
+        if (prefab == null)
+            throw new System.ArgumentNullException(nameof(prefab));
+        if (!prefab.TryGetComponent(out Poolable _))
+            throw new System.InvalidOperationException($"Pool prefab '{prefab.name}' must contain a Poolable component.");
+
         this.prefab = prefab;
         this.inactiveRoot = inactiveRoot;
     }
@@ -102,9 +107,7 @@ public class GameObjectPool
         GameObject obj = Object.Instantiate(prefab, inactiveRoot);
         obj.SetActive(false);
 
-        if (!obj.TryGetComponent(out Poolable poolable))
-            poolable = obj.AddComponent<Poolable>();
-
+        Poolable poolable = obj.GetComponent<Poolable>();
         poolable.SetOwner(this);
         return poolable;
     }

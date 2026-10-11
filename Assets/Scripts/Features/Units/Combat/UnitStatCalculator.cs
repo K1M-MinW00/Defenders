@@ -1,6 +1,10 @@
 ﻿public static class UnitStatCalculator
 {
     public static UnitStats Calculate(UnitDataSO unitData, UserUnitData userUnit)
+        => Calculate(unitData, userUnit, null, null, null);
+
+    public static UnitStats Calculate(UnitDataSO unitData, UserUnitData userUnit, UserInventoryData inventory,
+        IItemCatalog itemCatalog = null, EquipmentBalanceConfigSO equipmentConfig = null)
     {
         if (unitData == null || userUnit == null)
             return default;
@@ -13,7 +17,8 @@
 
         ApplyLimitBreak(modifier, unitData, userUnit.LimitBreak);
 
-        // ApplyEquipment(modifier, userUnit);
+        ApplyEquipment(modifier, userUnit, inventory, itemCatalog ?? GameConfig.Items,
+            equipmentConfig ?? GameConfig.EquipmentBalance, ref stats);
 
         ApplyModifier(ref stats, modifier);
 
@@ -27,6 +32,32 @@
         stats.EnergyRecovery = LabBonusProvider.ApplyPercent(stats.EnergyRecovery, LabEffectType.EnergyRecoveryPercent);
 
         return stats;
+    }
+
+    private static void ApplyEquipment(UnitStatModifier modifier, UserUnitData unit, UserInventoryData inventory,
+        IItemCatalog catalog, EquipmentBalanceConfigSO config, ref UnitStats stats)
+    {
+        if (unit?.Equipment == null || inventory?.Equipments == null || catalog == null || config == null) return;
+        foreach (string id in unit.Equipment.EnumerateIds())
+        {
+            EquipmentItemData item = inventory.Equipments.Find(candidate => candidate?.UniqueId == id);
+            EquipmentDataSO definition = item == null ? null : catalog.Get(item.ItemId) as EquipmentDataSO;
+            if (definition == null) continue;
+            float baseValue = config.GetBaseStatValue(definition, item.Level);
+            if (definition.BaseStatType == EquipmentStatType.Attack) modifier.AttackFlat += baseValue;
+            else if (definition.BaseStatType == EquipmentStatType.MaxHp) modifier.MaxHpFlat += baseValue;
+
+            EquipmentBonusOptionData bonus = item.BonusOption;
+            if (bonus == null) continue;
+            bool percent = bonus.ModifierType == EquipmentModifierType.Percent;
+            switch (bonus.StatType)
+            {
+                case EquipmentStatType.Attack: if (percent) modifier.AttackPercent += bonus.Value; else modifier.AttackFlat += bonus.Value; break;
+                case EquipmentStatType.MaxHp: if (percent) modifier.MaxHpPercent += bonus.Value; else modifier.MaxHpFlat += bonus.Value; break;
+                case EquipmentStatType.CritChance: stats.CritChance += percent ? bonus.Value / 100f : bonus.Value; break;
+                case EquipmentStatType.DamageReduction: stats.DamageReduction += bonus.Value; break;
+            }
+        }
     }
 
     private static void ApplyPromotion(UnitStatModifier modifier, int promotion)

@@ -2,6 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Poolable))]
 public class WaveProjectile : MonoBehaviour, IPoolable
 {
     [Header("Runtime")]
@@ -25,8 +26,6 @@ public class WaveProjectile : MonoBehaviour, IPoolable
     private void Awake()
     {
         poolable = GetComponent<Poolable>();
-        if (poolable == null)
-            poolable = gameObject.AddComponent<Poolable>();
     }
 
     public void Initialize(float damage,Vector2 direction,float speed,float maxDistance,LayerMask targetLayer,bool pierceTargets,int maxHitCount, ICombatTarget source)

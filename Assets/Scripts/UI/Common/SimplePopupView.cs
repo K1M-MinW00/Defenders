@@ -1,7 +1,13 @@
 using UnityEngine;
 
-public sealed class SimplePopupView : MonoBehaviour
+public sealed class SimplePopupView : MonoBehaviour, IModalDismissHandler
 {
-    public void Open() => gameObject.SetActive(true);
-    public void Close() => gameObject.SetActive(false);
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
+
+    public bool IsVisible => Lifecycle.IsVisible;
+    public void Open() => Lifecycle.Show();
+    public void Close() => Lifecycle.Close();
+    public void HideImmediately() => Lifecycle.HideImmediately();
+    public void Dismiss() => Close();
 }

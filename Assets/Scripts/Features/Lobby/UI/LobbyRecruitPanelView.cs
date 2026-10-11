@@ -35,22 +35,16 @@ public class LobbyRecruitPanelView : MonoBehaviour
     [Header("Presentation")]
     [Tooltip("Optional. Leave empty to use the built-in timing and rarity colors.")]
     [SerializeField] private RecruitPresentationConfigSO presentationConfig;
+    [SerializeField] private RecruitPresentationController presentationController;
 
     private GachaDataSO currentBanner;
     private LobbyRecruitPresenter presenter;
-    private RecruitPresentationController presentationController;
     private RecruitPanelViewState currentState;
     private bool isRecruiting;
     private bool isSubscribed;
 
     private void Awake()
     {
-        if (presentationController == null)
-            presentationController = GetComponent<RecruitPresentationController>();
-
-        if (presentationController == null)
-            presentationController = gameObject.AddComponent<RecruitPresentationController>();
-
         presentationController.Initialize(resultPopup, presentationConfig);
         presentationController.PresentationCompleted += Refresh;
 

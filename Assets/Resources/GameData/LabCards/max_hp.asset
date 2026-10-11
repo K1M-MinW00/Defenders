@@ -15,8 +15,8 @@ MonoBehaviour:
   CardId: max_hp
   DisplayName: "\uC0DD\uCCB4 \uAC15\uD654"
   Description: "\uC544\uAD70 \uC720\uB2DB\uC758 \uCD5C\uB300 \uCCB4\uB825\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
-  Rarity: 0
+  Rarity: 1
   Icon: {fileID: 0}
   EffectType: 1
   Value: 8
-  DrawWeight: 70
+  DrawWeight: 40

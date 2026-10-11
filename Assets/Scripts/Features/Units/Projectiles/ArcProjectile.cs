@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Poolable))]
 public class ArcProjectile : MonoBehaviour, IPoolable
 {
     [SerializeField] private int hitBufferSize = 32;
@@ -24,9 +25,6 @@ public class ArcProjectile : MonoBehaviour, IPoolable
     private void Awake()
     {
         poolable = GetComponent<Poolable>();
-        if (poolable == null)
-            poolable = gameObject.AddComponent<Poolable>();
-
         hitBuffer = new Collider2D[hitBufferSize];
         hitFilter = new ContactFilter2D
         {

@@ -70,10 +70,10 @@ public sealed class StageOutcomeUseCaseTests
         {
             StageOutcomeUseCase useCase = new(repository, "user", user);
             stage.failureRewards = new List<RewardData> { fuel };
-            StageOutcomeResult result = await useCase.FailAsync(stage, 3);
+            StageOutcomeResult result = await useCase.FailAsync(stage, 3, 10);
 
             Assert.That(result.Succeeded, Is.True);
-            Assert.That(user.Resource.Fuel, Is.EqualTo(45));
+            Assert.That(user.Resource.Fuel, Is.EqualTo(49));
             Assert.That(user.Progress.CurrentStage, Is.EqualTo(1));
             Assert.That(user.Progress.BestWaveCleared, Is.EqualTo(3));
         }
@@ -81,6 +81,33 @@ public sealed class StageOutcomeUseCaseTests
         {
             UnityEngine.Object.DestroyImmediate(stage);
         }
+    }
+
+    [TestCase(10, 9)]
+    [TestCase(5, 4)]
+    [TestCase(1, 0)]
+    [TestCase(0, 0)]
+    public void FailureRefund_UsesNinetyPercentRoundedDown(int entryFuelCost, int expectedRefund)
+    {
+        Assert.That(StageFailureRefundPolicy.CalculateFuelRefund(entryFuelCost), Is.EqualTo(expectedRefund));
+    }
+
+    [Test]
+    public void FailureRefund_ReplacesLegacyConfiguredFuelButKeepsOtherRewards()
+    {
+        List<RewardData> configured = new()
+        {
+            new RewardData { Type = RewardType.Fuel, Amount = 999 },
+            new RewardData { Type = RewardType.Gold, Amount = 25 },
+        };
+
+        IReadOnlyList<RewardData> rewards = StageFailureRefundPolicy.BuildRewards(configured, 10);
+
+        Assert.That(rewards, Has.Count.EqualTo(2));
+        Assert.That(rewards[0].Type, Is.EqualTo(RewardType.Gold));
+        Assert.That(rewards[0].Amount, Is.EqualTo(25));
+        Assert.That(rewards[1].Type, Is.EqualTo(RewardType.Fuel));
+        Assert.That(rewards[1].Amount, Is.EqualTo(9));
     }
 
     [Test]
