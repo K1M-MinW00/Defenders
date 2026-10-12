@@ -16,7 +16,7 @@ MonoBehaviour:
   DefaultProfileIconId: unit_knight
   NicknameChangeGemCost: 500
   StartGold: 10000
-  StartGem: 300
+  StartGem: 3000
   StartFuel: 100
   MaxFuel: 100
   DefaultOwnedUnitIds:
