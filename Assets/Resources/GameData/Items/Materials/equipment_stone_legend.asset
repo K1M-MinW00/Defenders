@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: equipment_stone_legend
   m_EditorClassIdentifier: Assembly-CSharp::MaterialDataSO
   ItemId: equipment_stone_legend
-  ItemName: "\uC7A5\uBE44 \uAC15\uD654\uC11D (Legend)"
+  ItemName: "\uD0DC\uCD08\uC758 \uB9C8\uB825\uC11D"
   Icon: {fileID: 21300000, guid: ef643a82ecd1c8a4d9563494243a0ecb, type: 3}
   Rarity: 3
-  Description: "\uC7A5\uBE44 \uAC15\uD654 \uACBD\uD5D8\uCE58 +250"
+  Description: "\uD0DC\uCD08\uC758 \uB9C8\uB825\uC774 \uACB0\uC815\uD654\uB41C \uD669\uAE08\uBE5B
+    \uAD11\uC11D.\n\uC804\uC124\uC801\uC778 \uC7A5\uBE44\uC758 \uAC15\uD654\uC5D0
+    \uC0AC\uC6A9\uB418\uB294 \uD76C\uADC0\uD55C \uC7AC\uB8CC."
   Value: 250
   MaterialType: 3

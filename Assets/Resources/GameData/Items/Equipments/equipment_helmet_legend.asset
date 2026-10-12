@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: equipment_helmet_legend
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   ItemId: equipment_helmet_legend
-  ItemName: Legend 투구
-  Icon: {fileID: -7245316952313549488, guid: c4436f7307f71814a8baa86de182ea82, type: 3}
+  ItemName: "\uCC9C\uC0C1\uC758 \uD22C\uAD6C"
+  Icon: {fileID: 21300000, guid: 05ded65740e795d46b6520cb811e5672, type: 3}
   Rarity: 3
-  Description: "0강 기준 최대 체력 +250"
+  Description: "\uACE0\uB300 \uC2E0\uB4E4\uC758 \uCD95\uBCF5\uC744 \uBC1B\uC558\uB2E4\uACE0
+    \uC804\uD574\uC9C0\uB294 \uD669\uAE08\uBE5B \uD22C\uAD6C.\n\uC2E0\uC131\uD55C
+    \uC218\uD638\uC758 \uD798\uC774 \uAE43\uB4E4\uC5B4 \uC788\uB2E4."
   EquipmentType: 1
   BaseStatType: 0
   BaseStatValue: 250

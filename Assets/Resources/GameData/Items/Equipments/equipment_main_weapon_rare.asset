@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: equipment_main_weapon_rare
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   ItemId: equipment_main_weapon_rare
-  ItemName: Rare 주 무기
-  Icon: {fileID: -7245316952313549488, guid: c4436f7307f71814a8baa86de182ea82, type: 3}
+  ItemName: "\uAC15\uCCA0 \uC7A5\uAC80"
+  Icon: {fileID: 21300000, guid: 7ab24bd44c082c24098fa3691d795276, type: 3}
   Rarity: 1
-  Description: "0강 기준 공격력 +100"
+  Description: "\uC815\uAD50\uD558\uAC8C \uC81C\uB828\uB41C \uAC15\uCCA0 \uC7A5\uAC80.\n\uADE0\uD615
+    \uC7A1\uD78C \uBB34\uAC8C\uC640 \uB0A0\uCE74\uB85C\uC6B4 \uCE7C\uB0A0\uC744 \uC9C0\uB154\uB2E4."
   EquipmentType: 3
   BaseStatType: 1
   BaseStatValue: 100

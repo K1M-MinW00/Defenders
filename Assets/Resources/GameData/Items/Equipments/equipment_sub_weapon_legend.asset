@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: equipment_sub_weapon_legend
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   ItemId: equipment_sub_weapon_legend
-  ItemName: Legend 보조 무기
-  Icon: {fileID: -7245316952313549488, guid: c4436f7307f71814a8baa86de182ea82, type: 3}
+  ItemName: "\uCC9C\uC0C1\uC758 \uBC29\uD328"
+  Icon: {fileID: 21300000, guid: a920ae804967881438d675967ae13da4, type: 3}
   Rarity: 3
-  Description: "0강 기준 공격력 +150"
+  Description: "\uC2E0\uC131\uD55C \uD669\uAE08\uBE5B\uC744 \uBC1C\uD558\uB294 \uC804\uC124\uC758
+    \uBC29\uD328.\n\uC5B4\uB5A4 \uC704\uD611\uC5D0\uB3C4 \uAD74\uD558\uC9C0 \uC54A\uB294
+    \uC218\uD638\uC758 \uD798\uC744 \uC9C0\uB154\uB2E4."
   EquipmentType: 4
   BaseStatType: 1
   BaseStatValue: 150

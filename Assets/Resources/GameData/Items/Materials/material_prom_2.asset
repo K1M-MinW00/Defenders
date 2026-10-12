@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: material_prom_2
   m_EditorClassIdentifier: Assembly-CSharp::MaterialDataSO
   ItemId: material_prom_2
-  ItemName: "\uC911\uAE09 \uC9C4\uAE09 \uC7AC\uB8CC"
+  ItemName: "\uC6A9\uB9F9\uC758 \uC99D\uD45C"
   Icon: {fileID: -5419496535822654946, guid: 0d371a78772bd954b99878cc3b5fb942, type: 3}
   Rarity: 1
-  Description: "\uC720\uB2DB \uC9C4\uAE09\uC744 \uC704\uD55C \uC911\uAE09 \uC7AC\uB8CC"
+  Description: "\uC804\uC7A5\uC5D0\uC11C \uC6A9\uB9F9\uC744 \uC785\uC99D\uD55C \uC804\uC0AC\uC5D0\uAC8C
+    \uC8FC\uC5B4\uC9C0\uB294 \uC99D\uD45C.\n\uC720\uB2DB \uC9C4\uAE09\uC5D0 \uC0AC\uC6A9\uB41C\uB2E4."
   Value: 0
   MaterialType: 2

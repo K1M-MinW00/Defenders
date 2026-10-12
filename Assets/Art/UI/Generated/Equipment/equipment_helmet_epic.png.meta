@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e25f4722fcb6a5f42871e89393bd38c3
+guid: d11a878424b47244c870d760d9860ffc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2517827744231961136
-    second: equipment_helmet_epic_0
+      213: -4423407829070934588
+    second: equipment_helmet_epic_v2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,12 +126,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: equipment_helmet_epic_0
+      name: equipment_helmet_epic_v2_0
       rect:
         serializedVersion: 2
-        x: 22
+        x: 28
         y: 12
-        width: 106
+        width: 94
         height: 126
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0dd4e63b101ee0dd0800000000000000
-      internalID: -2517827744231961136
+      spriteID: 4cd8b830406ec92c0800000000000000
+      internalID: -4423407829070934588
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      equipment_helmet_epic_0: -2517827744231961136
+      equipment_helmet_epic_v2_0: -4423407829070934588
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: equipment_helmet_rare
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   ItemId: equipment_helmet_rare
-  ItemName: Rare 투구
-  Icon: {fileID: -7245316952313549488, guid: c4436f7307f71814a8baa86de182ea82, type: 3}
+  ItemName: "\uAC15\uCCA0 \uD22C\uAD6C"
+  Icon: {fileID: 21300000, guid: c7df6888d756d454ea7563efe9b01519, type: 3}
   Rarity: 1
-  Description: "0강 기준 최대 체력 +50"
+  Description: "\uB2E8\uB2E8\uD55C \uAC15\uCCA0\uB85C \uC81C\uC791\uB41C \uD22C\uAD6C.\n\uC804\uC7A5\uC5D0\uC11C
+    \uCC29\uC6A9\uC790\uC758 \uBA38\uB9AC\uB97C \uC548\uC804\uD558\uAC8C \uBCF4\uD638\uD55C\uB2E4."
   EquipmentType: 1
   BaseStatType: 0
   BaseStatValue: 50

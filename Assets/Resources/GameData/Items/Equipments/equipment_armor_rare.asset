@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: equipment_armor_rare
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   ItemId: equipment_armor_rare
-  ItemName: Rare 갑옷
-  Icon: {fileID: -7245316952313549488, guid: c4436f7307f71814a8baa86de182ea82, type: 3}
+  ItemName: "\uAC15\uCCA0 \uAC11\uC637"
+  Icon: {fileID: 21300000, guid: 7d8cbae32909fb745a635734c02915d1, type: 3}
   Rarity: 1
-  Description: "0강 기준 최대 체력 +100"
+  Description: "\uACAC\uACE0\uD55C \uAC15\uCCA0\uD310\uC744 \uC774\uC5B4 \uC81C\uC791\uD55C
+    \uAC11\uC637.\n\uC801\uC758 \uACF5\uACA9\uC73C\uB85C\uBD80\uD130 \uCC29\uC6A9\uC790\uB97C
+    \uBCF4\uD638\uD55C\uB2E4."
   EquipmentType: 2
   BaseStatType: 0
   BaseStatValue: 100

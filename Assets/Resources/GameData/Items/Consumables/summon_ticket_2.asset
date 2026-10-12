@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: summon_ticket_2
   m_EditorClassIdentifier: Assembly-CSharp::ConsumableDataSO
   ItemId: summon_ticket_special
-  ItemName: "\uACE0\uAE09 \uC720\uB2DB \uBF51\uAE30\uAD8C"
+  ItemName: "\uC601\uC6C5 \uC18C\uD658\uAD8C"
   Icon: {fileID: 9013296249961276397, guid: 3b1be0e407de560478b58493a4719f45, type: 3}
   Rarity: 3
-  Description: "\uACE0\uAE09 \uC720\uB2DB \uBF51\uAE30\uAD8C"
+  Description: "\uB6F0\uC5B4\uB09C \uC804\uC0AC\uB4E4\uC758 \uC774\uB984\uC774 \uC0C8\uACA8\uC9C4
+    \uD2B9\uBCC4\uD55C \uC18C\uD658\uAD8C"

@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: equipment_stone_epic
   m_EditorClassIdentifier: Assembly-CSharp::MaterialDataSO
   ItemId: equipment_stone_epic
-  ItemName: "\uC7A5\uBE44 \uAC15\uD654\uC11D (Epic)"
+  ItemName: "\uC2EC\uC5F0\uC758 \uB9C8\uB825\uC11D"
   Icon: {fileID: 21300000, guid: ce2045af4e3636f46968847f10c1607d, type: 3}
   Rarity: 2
-  Description: "\uC7A5\uBE44 \uAC15\uD654 \uACBD\uD5D8\uCE58 +50"
+  Description: "\uAE4A\uC740 \uC9C0\uD558\uC5D0\uC11C \uBC1C\uACAC\uB418\uB294 \uBCF4\uB78F\uBE5B
+    \uAD11\uC11D.\n\uAC15\uB825\uD55C \uB9C8\uB825\uC774 \uC751\uCD95\uB418\uC5B4
+    \uC788\uC73C\uBA70, \uC7A5\uBE44 \uAC15\uD654\uC5D0 \uC0AC\uC6A9\uB41C\uB2E4."
   Value: 50
   MaterialType: 3

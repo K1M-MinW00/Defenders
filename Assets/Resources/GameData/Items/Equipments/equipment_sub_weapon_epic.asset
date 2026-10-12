@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: equipment_sub_weapon_epic
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentDataSO
   ItemId: equipment_sub_weapon_epic
-  ItemName: Epic 보조 무기
-  Icon: {fileID: -7245316952313549488, guid: c4436f7307f71814a8baa86de182ea82, type: 3}
+  ItemName: "\uBBF8\uC2A4\uB9B4 \uBC29\uD328"
+  Icon: {fileID: 21300000, guid: f88dbbb0844d4444b88e3dc0a1a7ba3b, type: 3}
   Rarity: 2
-  Description: "0강 기준 공격력 +100"
+  Description: "\uD76C\uADC0\uD55C \uBBF8\uC2A4\uB9B4\uB85C \uC81C\uC791\uD55C \uC740\uC740\uD55C
+    \uBCF4\uB78F\uBE5B \uBC29\uD328.\n\uAC00\uBCBC\uC6B4 \uBB34\uAC8C\uC5D0\uB3C4
+    \uB6F0\uC5B4\uB09C \uB0B4\uAD6C\uC131\uC744 \uC790\uB791\uD55C\uB2E4."
   EquipmentType: 4
   BaseStatType: 1
   BaseStatValue: 100

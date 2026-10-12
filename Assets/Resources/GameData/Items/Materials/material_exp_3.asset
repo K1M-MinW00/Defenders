@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: material_exp_3
   m_EditorClassIdentifier: Assembly-CSharp::MaterialDataSO
   ItemId: material_exp_3
-  ItemName: "\uD6C8\uB828 \uC7AC\uB8CC 3"
+  ItemName: "\uCD08\uC6D4\uC758 \uC815\uC218"
   Icon: {fileID: 99477494420869604, guid: 3b1be0e407de560478b58493a4719f45, type: 3}
   Rarity: 3
-  Description: "\uC720\uB2DB \uB808\uBCA8\uC5C5\uC744 \uC704\uD55C \uD6C8\uB828 \uC7AC\uB8CC\n\uC720\uB2DB
-    \uACBD\uD5D8\uCE58 + 500"
+  Description: "\uACE0\uB300 \uC5F0\uAE08\uC220\uB85C \uC644\uC131\uB41C \uD669\uAE08\uBE5B
+    \uC815\uC218.\n\uC7A0\uC7AC\uB41C \uD798\uC744 \uC77C\uAE68\uC6B0\uBA70, \uC720\uB2DB
+    \uD6C8\uB828\uC5D0 \uC0AC\uC6A9\uB41C\uB2E4."
   Value: 500
   MaterialType: 1
