@@ -31,6 +31,7 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private UnitRosterHpTracker unitHpTracker;
     [SerializeField] private MonsterWaveHpTracker monsterHpTracker;
     [SerializeField] private StagePreparationService preparationService;
+    [SerializeField] private GameCameraController gameCameraController;
     private bool isInitialized;
     private StageOverlayController overlayController;
     public StageRelicUI RelicUI => relicUI;
@@ -39,9 +40,9 @@ public class StageUIController : MonoBehaviour
     {
         Dispose();
 
-        if (session == null || flowController == null)
+        if (session == null || flowController == null || gameCameraController == null)
         {
-            Debug.LogError("StageUIController Initialize failed.");
+            Debug.LogError($"[{nameof(StageUIController)}] Required scene references are missing.", this);
             return;
         }
 
@@ -76,7 +77,7 @@ public class StageUIController : MonoBehaviour
             preparationService?.UnitSummoner?.RuntimeCombatFormation);
 
         overlayController = new StageOverlayController(
-            FindFirstObjectByType<GameCameraController>(),
+            gameCameraController,
             preparationService,
             phaseUIView,
             unitInfoPanel,

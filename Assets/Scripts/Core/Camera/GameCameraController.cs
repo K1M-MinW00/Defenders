@@ -38,8 +38,13 @@ public class GameCameraController : MonoBehaviour
     {
         if (cam == null)
             cam = GetComponent<Camera>();
+
         if (placementController == null)
-            placementController = FindFirstObjectByType<PlacementController>();
+        {
+            Debug.LogError($"[{nameof(GameCameraController)}] PlacementController reference is missing.", this);
+            enabled = false;
+            return;
+        }
 
         hasValidBounds = minBound != null && maxBound != null;
 

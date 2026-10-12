@@ -12,8 +12,11 @@ public class UIDropRouter : MonoBehaviour
 
     private void Awake()
     {
-        if (eventSystem == null) eventSystem = EventSystem.current;
-        if (raycaster == null) raycaster = FindFirstObjectByType<GraphicRaycaster>();
+        if (raycaster != null && eventSystem != null)
+            return;
+
+        Debug.LogError($"[{nameof(UIDropRouter)}] GraphicRaycaster and EventSystem references must be assigned.", this);
+        enabled = false;
     }
 
     public bool TryGetDropAction(Vector2 screenPos, out UnitDropAction action)

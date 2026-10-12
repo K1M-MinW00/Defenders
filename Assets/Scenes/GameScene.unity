@@ -2851,7 +2851,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIDropRouter
   raycaster: {fileID: 277037718}
-  eventSystem: {fileID: 0}
+  eventSystem: {fileID: 1498418697}
 --- !u!114 &277037722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8524,7 +8524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameCameraController
   cam: {fileID: 867324863}
   stageSession: {fileID: 1704192573}
-  placementController: {fileID: 0}
+  placementController: {fileID: 206569086}
   zoomSpeedMouse: 5
   zoomSpeedPinch: 0.01
   minZoom: 10
@@ -22198,6 +22198,7 @@ MonoBehaviour:
   unitHpTracker: {fileID: 888358436}
   monsterHpTracker: {fileID: 646030657}
   preparationService: {fileID: 546958804}
+  gameCameraController: {fileID: 867324866}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
