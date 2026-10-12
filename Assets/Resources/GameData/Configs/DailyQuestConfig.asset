@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c11e44e8392d4f3ba92c6f997269f4dd, type: 3}
+  m_Name: DailyQuestConfig
+  m_EditorClassIdentifier: Assembly-CSharp::DailyQuestConfigSO
+  quests:
+  - id: daily_login
+    eventType: 7
+    displayName: 로그인 1회
+    target: 1
+    score: 10
+  - id: daily_four_star_fusion
+    eventType: 0
+    displayName: 4성 유닛 1회 합성
+    target: 1
+    score: 20
+  - id: daily_recruit
+    eventType: 1
+    displayName: 유닛 1회 모집
+    target: 1
+    score: 20
+  - id: daily_unit_level_up
+    eventType: 2
+    displayName: 유닛 레벨업 1회
+    target: 1
+    score: 10
+  - id: daily_lab_development
+    eventType: 3
+    displayName: 연구소 개발 1회
+    target: 1
+    score: 10
+  - id: daily_wave_clear
+    eventType: 4
+    displayName: 웨이브 10회 클리어
+    target: 10
+    score: 20
+  - id: daily_unit_fusion
+    eventType: 5
+    displayName: 유닛 합성 10회
+    target: 10
+    score: 20
+  - id: daily_fuel_150
+    eventType: 6
+    displayName: 연료 150개 소모
+    target: 150
+    score: 20
+  - id: daily_fuel_50
+    eventType: 6
+    displayName: 연료 50개 소모
+    target: 50
+    score: 20

@@ -65,12 +65,14 @@ public sealed class LabDevelopmentUseCase
 
         UserResourceData nextResources = UserDataCloner.Copy(userData.Resource);
         UserLabData nextLab = UserDataCloner.Copy(userData.Lab);
+        UserQuestData nextQuest = UserDataCloner.Copy(userData.Quest);
         nextResources.ResearchMaterial -= quotedCost;
         nextLab.AcquiredCardIds.Add(selected.CardId);
+        QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.LabDeveloped), DateTimeOffset.UtcNow);
 
         try
         {
-            await repository.SaveSectionsAsync(userId, new UserDataUpdate { Resources = nextResources, Lab = nextLab });
+            await repository.SaveSectionsAsync(userId, new UserDataUpdate { Resources = nextResources, Lab = nextLab, Quest = nextQuest });
         }
         catch
         {
@@ -79,6 +81,7 @@ public sealed class LabDevelopmentUseCase
 
         userData.Resource = nextResources;
         userData.Lab = nextLab;
+        userData.Quest = nextQuest;
         return LabDevelopmentFailure.None;
     }
 

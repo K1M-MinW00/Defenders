@@ -17,7 +17,7 @@ public sealed class StageOutcomeUseCase
         this.userData = userData ?? throw new ArgumentNullException(nameof(userData));
     }
 
-    public Task<StageOutcomeResult> CompleteAsync(StageDataSO stage)
+    public Task<StageOutcomeResult> CompleteAsync(StageDataSO stage, int fusionCount = 0, int fourStarFusionCount = 0)
     {
         if (stage == null)
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
@@ -35,13 +35,15 @@ public sealed class StageOutcomeUseCase
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
         }
 
-        return GrantAndSaveAsync(stage.clearRewards, nextProgress);
+        return GrantAndSaveAsync(stage.clearRewards, nextProgress, stage.waves?.Count ?? 0, fusionCount, fourStarFusionCount);
     }
 
     public Task<StageOutcomeResult> FailAsync(
         StageDataSO stage,
         int clearedWaveCount,
-        int entryFuelCost)
+        int entryFuelCost,
+        int fusionCount = 0,
+        int fourStarFusionCount = 0)
     {
         if (stage == null)
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
@@ -63,16 +65,23 @@ public sealed class StageOutcomeUseCase
         IReadOnlyList<RewardData> rewards = StageFailureRefundPolicy.BuildRewards(
             stage.failureRewards,
             entryFuelCost);
-        return GrantAndSaveAsync(rewards, nextProgress);
+        return GrantAndSaveAsync(rewards, nextProgress, clearedWaveCount, fusionCount, fourStarFusionCount);
     }
 
     private async Task<StageOutcomeResult> GrantAndSaveAsync(
         IReadOnlyList<RewardData> rewards,
-        UserProgressData nextProgress)
+        UserProgressData nextProgress,
+        int clearedWaveCount,
+        int fusionCount,
+        int fourStarFusionCount)
     {
         RewardGrantResult grant = RewardGrantCalculator.Calculate(userData, rewards);
         if (!grant.Succeeded)
             return StageOutcomeResult.Fail(StageOutcomeFailure.InvalidReward);
+        UserQuestData nextQuest = UserDataCloner.Copy(userData.Quest);
+        QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.WaveCleared, clearedWaveCount), DateTimeOffset.UtcNow);
+        QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.UnitFused, fusionCount), DateTimeOffset.UtcNow);
+        QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.UnitReachedFourStar, fourStarFusionCount), DateTimeOffset.UtcNow);
 
         try
         {
@@ -83,6 +92,7 @@ public sealed class StageOutcomeUseCase
                 Roster = grant.Roster,
                 Profile = grant.Profile,
                 Progress = nextProgress,
+                Quest = nextQuest,
             });
         }
         catch
@@ -95,6 +105,7 @@ public sealed class StageOutcomeUseCase
         userData.Roster = grant.Roster;
         userData.Profile = grant.Profile;
         userData.Progress = nextProgress;
+        userData.Quest = nextQuest;
         return StageOutcomeResult.Success(rewards);
     }
 }

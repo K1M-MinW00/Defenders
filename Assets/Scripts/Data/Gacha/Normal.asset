@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GachaDataSO
   recruitType: 0
   bannerName: "\uC77C\uBC18 \uBAA8\uC9D1"
-  bannerImage: {fileID: 1202984965197363600, guid: 25431b7bc0c8a5d47a10821d4223c1ab, type: 3}
+  bannerImage: {fileID: 21300000, guid: 756eef6744cbc8e489ceba0978441634, type: 3}
   pickupUnit: {fileID: 0}
   pickupRateWithinRarity: 50
   normalRate: 0

@@ -22,6 +22,7 @@ internal static class FirestoreDataContract
         public const string Shop = "Shop";
         public const string Lab = "Lab";
         public const string IdleReward = "IdleReward";
+        public const string Quest = "Quest";
     }
 
     public static class MailFields

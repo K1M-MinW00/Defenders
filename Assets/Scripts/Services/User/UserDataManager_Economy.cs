@@ -42,6 +42,7 @@ public partial class UserDataManager
             RaiseResourceUpdated();
             RaiseInventoryUpdated();
             RaiseRosterUpdated();
+            RaiseQuestUpdated();
             return result;
         });
     }

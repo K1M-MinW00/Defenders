@@ -6,6 +6,14 @@ public class StageRewardService : MonoBehaviour
 {
     [SerializeField] private EconomyManager economyManager;
     [SerializeField] private StageCurrencyRewardVFX currencyRewardVfx;
+    private int fusionCount;
+    private int fourStarFusionCount;
+
+    public void SetQuestSessionStats(int fusions, int fourStarFusions)
+    {
+        fusionCount = Mathf.Max(0, fusions);
+        fourStarFusionCount = Mathf.Max(0, fourStarFusions);
+    }
 
     public async Task<bool> GiveWaveRewardAsync(WaveData waveData)
     {
@@ -47,7 +55,7 @@ public class StageRewardService : MonoBehaviour
 
     public Task<StageOutcomeResult> GiveStageClearRewardAsync(StageDataSO stageData)
     {
-        return UserDataManager.Instance.CompleteStageAsync(stageData);
+        return UserDataManager.Instance.CompleteStageAsync(stageData, fusionCount, fourStarFusionCount);
     }
 
     public Task<StageOutcomeResult> GiveStageFailRewardAsync(
@@ -58,6 +66,8 @@ public class StageRewardService : MonoBehaviour
         return UserDataManager.Instance.FailStageAsync(
             stageData,
             clearedWaveCount,
-            entryFuelCost);
+            entryFuelCost,
+            fusionCount,
+            fourStarFusionCount);
     }
 }

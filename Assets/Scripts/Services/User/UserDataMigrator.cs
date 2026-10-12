@@ -39,6 +39,9 @@ public static class UserDataMigrator
                 case 4:
                     MigrateVersion4To5(data);
                     break;
+                case 5:
+                    MigrateVersion5To6(data);
+                    break;
 
                 default:
                     throw new InvalidOperationException(
@@ -79,5 +82,11 @@ public static class UserDataMigrator
     {
         data.IdleReward ??= UserDataFactory.CreateDefaultIdleReward();
         data.SchemaVersion = 5;
+    }
+
+    private static void MigrateVersion5To6(UserDataRoot data)
+    {
+        data.Quest ??= UserDataFactory.CreateDefaultQuest();
+        data.SchemaVersion = 6;
     }
 }

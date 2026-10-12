@@ -26,6 +26,12 @@ public sealed class UIFeedbackToast : MonoBehaviour
         if (string.IsNullOrWhiteSpace(message))
             return;
 
+        if (instance == null)
+        {
+            Debug.LogWarning($"[UIFeedbackToast] Toast UI is not initialized. Message: {message}");
+            return;
+        }
+
         instance.Display(message);
     }
 

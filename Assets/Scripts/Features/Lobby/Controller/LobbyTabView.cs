@@ -53,6 +53,20 @@ public class LobbyTabView : MonoBehaviour
         ApplySelection(tabIndex);
     }
 
+    public bool ShowPanel(string panelName)
+    {
+        if (tabs == null || string.IsNullOrEmpty(panelName)) return false;
+        for (int i = 0; i < tabs.Length; i++)
+        {
+            if (tabs[i]?.panel != null && tabs[i].panel.name == panelName)
+            {
+                ShowTab(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void ApplySelection(int tabIndex)
     {
         for (int i = 0; i < tabs.Length; i++)

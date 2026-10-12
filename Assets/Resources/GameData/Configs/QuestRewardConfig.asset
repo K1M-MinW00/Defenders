@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42ed5c8602f0e004db4e3195d055dcbe, type: 3}
+  m_Name: QuestRewardConfig
+  m_EditorClassIdentifier: Assembly-CSharp::QuestRewardConfigSO
+  DailyClosedIcon: {fileID: 21300000, guid: bfc5979cdb24c944593202fc6175669c, type: 3}
+  DailyOpenIcon: {fileID: 21300000, guid: 6b8cd0d2f8a25fd4a9dc1122342b42d2, type: 3}
+  WeeklyClosedIcon: {fileID: 21300000, guid: 86b5a0e17596883409c63ed5dfc2bfbc, type: 3}
+  WeeklyOpenIcon: {fileID: 21300000, guid: 4d9cc33ac23db15468370b0a97d411af, type: 3}
+  DailyRewards:
+  - RequiredScore: 20
+    Rewards:
+    - type: 0
+      id: 
+      amount: 10000
+  - RequiredScore: 40
+    Rewards:
+    - type: 3
+      id: material_exp_2
+      amount: 10
+  - RequiredScore: 60
+    Rewards:
+    - type: 2
+      id: 
+      amount: 60
+  - RequiredScore: 80
+    Rewards:
+    - type: 1
+      id: 
+      amount: 150
+  - RequiredScore: 100
+    Rewards:
+    - type: 3
+      id: summon_ticket_normal
+      amount: 3
+  WeeklyRewards:
+  - RequiredScore: 120
+    Rewards:
+    - type: 0
+      id: 
+      amount: 100000
+  - RequiredScore: 240
+    Rewards:
+    - type: 3
+      id: material_exp_3
+      amount: 30
+  - RequiredScore: 360
+    Rewards:
+    - type: 2
+      id: 
+      amount: 100
+  - RequiredScore: 480
+    Rewards:
+    - type: 1
+      id: 
+      amount: 1000
+  - RequiredScore: 600
+    Rewards:
+    - type: 3
+      id: summon_ticket_special
+      amount: 5

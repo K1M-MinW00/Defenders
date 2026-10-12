@@ -15,6 +15,8 @@ public class UnitSummoner : MonoBehaviour
 
     public IReadOnlyList<StageUnitInitData> RuntimeCombatFormation =>
         runtimeCombatFormation ?? System.Array.Empty<StageUnitInitData>();
+    public int SessionFusionCount => fusionService?.SessionFusionCount ?? 0;
+    public int SessionFourStarFusionCount => fusionService?.SessionFourStarFusionCount ?? 0;
 
     [Header("Spawn Settings")]
     [SerializeField] private Transform spawnPoint;
@@ -53,6 +55,7 @@ public class UnitSummoner : MonoBehaviour
         }
 
         runtimeCombatFormation = runtimeList.ToArray();
+        fusionService?.ResetSessionStats();
         return runtimeCombatFormation.Length > 0;
     }
 

@@ -38,6 +38,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     public event Action OnProgressUpdated;
     public event Action OnShopUpdated;
     public event Action OnLabUpdated;
+    public event Action OnQuestUpdated;
 
     private IUserDataRepository repository;
     private UserDataLoader userDataLoader;
@@ -90,6 +91,12 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
 
             CurrentUserId = userId;
             UserData = loadedUserData;
+            UserQuestData loginQuest = UserDataCloner.Copy(UserData.Quest);
+            if (QuestProgressService.Apply(loginQuest, new QuestEvent(QuestEventType.Login), DateTimeOffset.UtcNow))
+            {
+                await repository.SaveSectionsAsync(CurrentUserId, new UserDataUpdate { Quest = loginQuest });
+                UserData.Quest = loginQuest;
+            }
             ComposeServices();
             Debug.Log($"[UserDataManager] User data loaded. UID : {userId}");
 
@@ -228,6 +235,8 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         OnShopUpdated?.Invoke();
     }
 
+    private void RaiseQuestUpdated() => OnQuestUpdated?.Invoke();
+
     public int GetNextLabDevelopmentCost() => LabDevelopmentUseCase?.GetNextCost() ?? 0;
     public LabOfferResult CreateLabOffer() => LabDevelopmentUseCase?.CreateOffer() ?? LabOfferResult.Fail(LabDevelopmentFailure.InvalidRequest);
 
@@ -242,6 +251,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
             {
                 RaiseResourceUpdated();
                 OnLabUpdated?.Invoke();
+                RaiseQuestUpdated();
             }
             return result;
         });

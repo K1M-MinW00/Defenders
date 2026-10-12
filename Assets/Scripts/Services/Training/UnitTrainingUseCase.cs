@@ -46,6 +46,7 @@ public sealed class UnitTrainingUseCase
         UserResourceData nextResources = UserDataCloner.Copy(userData.Resource);
         UserInventoryData nextInventory = UserDataCloner.Copy(userData.Inventory);
         UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
+        UserQuestData nextQuest = UserDataCloner.Copy(userData.Quest);
 
         InventoryMutationService inventoryMutations = new(GameConfig.Items);
         if (!inventoryMutations.ConsumeBatch(nextInventory, command.Materials).Succeeded)
@@ -55,7 +56,10 @@ public sealed class UnitTrainingUseCase
             .First(unit => unit != null && unit.UnitId == command.UnitId);
 
         nextResources.Gold -= goldCost;
+        int previousLevel = nextUnit.Level;
         ApplyExp(nextUnit, gainedExp, unitDefinition.maxLevel);
+        if (nextUnit.Level > previousLevel)
+            QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.UnitLevelUp), DateTimeOffset.UtcNow);
         nextRoster.Power = FormationPowerCalculator.Calculate(nextRoster, GameConfig.Units, nextInventory);
 
         isExecuting = true;
@@ -67,6 +71,7 @@ public sealed class UnitTrainingUseCase
                 Resources = nextResources,
                 Inventory = nextInventory,
                 Roster = nextRoster,
+                Quest = nextQuest,
             });
         }
         catch
@@ -81,6 +86,7 @@ public sealed class UnitTrainingUseCase
         userData.Resource = nextResources;
         userData.Inventory = nextInventory;
         userData.Roster = nextRoster;
+        userData.Quest = nextQuest;
 
         return TrainUnitResult.Success(nextUnit.Level, nextUnit.Exp);
     }

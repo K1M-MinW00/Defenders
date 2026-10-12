@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class UserDataNormalizer
 {
+    private const string LegacySpecialSummonTicketId = "summon_ticket_speical";
+    private const string SpecialSummonTicketId = "summon_ticket_special";
     public static bool Normalize(UserDataRoot data, string userId)
     {
         if (data == null)
@@ -134,6 +137,33 @@ public static class UserDataNormalizer
         {
             data.IdleReward = UserDataFactory.CreateDefaultIdleReward();
             changed = true;
+        }
+
+        if (data.Quest == null)
+        {
+            data.Quest = UserDataFactory.CreateDefaultQuest();
+            changed = true;
+        }
+
+        data.Quest.Progress ??= new List<UserQuestProgressData>();
+        data.Quest.ClaimedDailyRewards ??= new List<int>();
+        data.Quest.ClaimedWeeklyRewards ??= new List<int>();
+        data.Quest.DailyScore = Math.Max(0, data.Quest.DailyScore);
+        data.Quest.WeeklyScore = Math.Max(0, data.Quest.WeeklyScore);
+
+        HashSet<string> questIds = new();
+        for (int i = data.Quest.Progress.Count - 1; i >= 0; i--)
+        {
+            UserQuestProgressData progress = data.Quest.Progress[i];
+            QuestDefinition definition = progress == null ? null : DailyQuestCatalog.All.FirstOrDefault(q => q.Id == progress.QuestId);
+            if (definition == null || !questIds.Add(progress.QuestId))
+            {
+                data.Quest.Progress.RemoveAt(i);
+                changed = true;
+                continue;
+            }
+            int normalized = ClampInt(progress.Progress, 0, definition.Target);
+            changed |= SetIfDifferent(progress.Progress, normalized, value => progress.Progress = value);
         }
 
         if (data.IdleReward.LastClaimAt == default)
@@ -330,6 +360,11 @@ public static class UserDataNormalizer
         for (int i = items.Count - 1; i >= 0; i--)
         {
             InventoryStackItem item = items[i];
+            if (item != null && item.ItemId == LegacySpecialSummonTicketId)
+            {
+                item.ItemId = SpecialSummonTicketId;
+                changed = true;
+            }
             if (item == null || string.IsNullOrWhiteSpace(item.ItemId) || item.Count <= 0)
             {
                 items.RemoveAt(i);

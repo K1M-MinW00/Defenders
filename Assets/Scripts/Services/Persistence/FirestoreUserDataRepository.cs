@@ -158,6 +158,7 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository, IIdleRewa
         AddSection(fields, FirestoreDataContract.UserFields.Shop, update.Shop);
         AddSection(fields, FirestoreDataContract.UserFields.Lab, update.Lab);
         AddSection(fields, FirestoreDataContract.UserFields.IdleReward, update.IdleReward);
+        AddSection(fields, FirestoreDataContract.UserFields.Quest, update.Quest);
 
         if (fields.Count == 1)
             throw new ArgumentException("At least one user data section is required.", nameof(update));
@@ -211,6 +212,7 @@ public sealed class FirestoreUserDataRepository : IUserDataRepository, IIdleRewa
             { FirestoreDataContract.UserFields.Shop, data.Shop },
             { FirestoreDataContract.UserFields.Lab, data.Lab },
             { FirestoreDataContract.UserFields.IdleReward, data.IdleReward },
+            { FirestoreDataContract.UserFields.Quest, data.Quest },
             { FirestoreDataContract.UserFields.UpdatedAt, FieldValue.ServerTimestamp },
         };
 

@@ -12,8 +12,10 @@ public static class GameConfig
     public static LabConfigSO Lab { get; private set; }
     public static IdleRewardConfigSO IdleReward { get; private set; }
     public static EquipmentBalanceConfigSO EquipmentBalance { get; private set; }
+    public static QuestRewardConfigSO QuestRewards { get; private set; }
+    public static DailyQuestConfigSO DailyQuests { get; private set; }
     public static bool IsInitialized => NewUserConfig != null && UserLevelProgression != null &&
-        GachaEconomy != null && Icons != null && Units != null && Items != null && Stages != null && Lab != null && IdleReward != null && EquipmentBalance != null;
+        GachaEconomy != null && Icons != null && Units != null && Items != null && Stages != null && Lab != null && IdleReward != null && EquipmentBalance != null && QuestRewards != null && DailyQuests != null;
 
     public static void Initialize()
     {
@@ -30,6 +32,8 @@ public static class GameConfig
         LabConfigSO lab = LoadRequired<LabConfigSO>("GameData/Configs/LabConfig");
         IdleRewardConfigSO idleReward = LoadRequired<IdleRewardConfigSO>("GameData/Configs/IdleRewardConfig");
         EquipmentBalanceConfigSO equipmentBalance = LoadRequired<EquipmentBalanceConfigSO>("GameData/Configs/EquipmentBalanceConfig");
+        QuestRewardConfigSO questRewards = LoadRequired<QuestRewardConfigSO>("GameData/Configs/QuestRewardConfig");
+        DailyQuestConfigSO dailyQuests = LoadRequired<DailyQuestConfigSO>("GameData/Configs/DailyQuestConfig");
         IGameIconProvider icons = new GameIconProvider(iconSet);
 
         Validate(newUserConfig.TryValidate(units, out string newUserError), "NewUserConfig", newUserError);
@@ -38,6 +42,8 @@ public static class GameConfig
         Validate(lab.TryValidate(out string labError), "LabConfig", labError);
         Validate(idleReward.TryValidate(items, out string idleRewardError), "IdleRewardConfig", idleRewardError);
         Validate(equipmentBalance.TryValidate(items, out string equipmentError), "EquipmentBalanceConfig", equipmentError);
+        Validate(questRewards.TryValidate(items, out string questRewardError), "QuestRewardConfig", questRewardError);
+        Validate(dailyQuests.TryValidate(out string dailyQuestError), "DailyQuestConfig", dailyQuestError);
 
         NewUserConfig = newUserConfig;
         UserLevelProgression = levelProgression;
@@ -49,6 +55,8 @@ public static class GameConfig
         Lab = lab;
         IdleReward = idleReward;
         EquipmentBalance = equipmentBalance;
+        QuestRewards = questRewards;
+        DailyQuests = dailyQuests;
     }
 
     private static T LoadRequired<T>(string path) where T : UnityEngine.Object

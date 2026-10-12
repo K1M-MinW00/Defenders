@@ -12,7 +12,10 @@ public partial class UserDataManager
         {
             StageEntryFuelResult result = await StageEntryFuelUseCase.ConsumeAsync(amount);
             if (result.Succeeded)
+            {
                 RaiseResourceUpdated();
+                RaiseQuestUpdated();
+            }
             return result;
         });
     }
@@ -31,14 +34,14 @@ public partial class UserDataManager
         });
     }
 
-    public async Task<StageOutcomeResult> CompleteStageAsync(StageDataSO stage)
+    public async Task<StageOutcomeResult> CompleteStageAsync(StageDataSO stage, int fusionCount = 0, int fourStarFusionCount = 0)
     {
         if (StageOutcomeUseCase == null)
             return StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest);
 
         return await RunSerializedMutationAsync(async () =>
         {
-            StageOutcomeResult result = await StageOutcomeUseCase.CompleteAsync(stage);
+            StageOutcomeResult result = await StageOutcomeUseCase.CompleteAsync(stage, fusionCount, fourStarFusionCount);
             if (result.Succeeded)
                 RaiseStageOutcomeUpdated();
             return result;
@@ -48,7 +51,9 @@ public partial class UserDataManager
     public async Task<StageOutcomeResult> FailStageAsync(
         StageDataSO stage,
         int clearedWaveCount,
-        int entryFuelCost)
+        int entryFuelCost,
+        int fusionCount = 0,
+        int fourStarFusionCount = 0)
     {
         if (StageOutcomeUseCase == null)
             return StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest);
@@ -56,7 +61,7 @@ public partial class UserDataManager
         return await RunSerializedMutationAsync(async () =>
         {
             StageOutcomeResult result =
-                await StageOutcomeUseCase.FailAsync(stage, clearedWaveCount, entryFuelCost);
+                await StageOutcomeUseCase.FailAsync(stage, clearedWaveCount, entryFuelCost, fusionCount, fourStarFusionCount);
             if (result.Succeeded)
                 RaiseStageOutcomeUpdated();
             return result;
@@ -70,5 +75,6 @@ public partial class UserDataManager
         RaiseInventoryUpdated();
         RaiseRosterUpdated();
         RaiseProgressUpdated();
+        RaiseQuestUpdated();
     }
 }

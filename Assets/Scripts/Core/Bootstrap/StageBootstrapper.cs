@@ -10,6 +10,8 @@ public sealed class StageBootstrapper : MonoBehaviour
     [SerializeField] private MonsterSpawner monsterSpawner;
 
     public bool IsInitialized { get; private set; }
+    public int SessionFusionCount => unitSummoner?.SessionFusionCount ?? 0;
+    public int SessionFourStarFusionCount => unitSummoner?.SessionFourStarFusionCount ?? 0;
 
     public bool TryInitializeStage(
         StageDataSO stageData,

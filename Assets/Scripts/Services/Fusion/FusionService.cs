@@ -32,6 +32,8 @@ public class FusionService : MonoBehaviour
 
     private const int MaxStar = 4;
     private readonly HashSet<UnitController> animatingUnits = new();
+    public int SessionFusionCount { get; private set; }
+    public int SessionFourStarFusionCount { get; private set; }
 
     public void BeginAutoFuse(UnitController changedUnit)
     {
@@ -87,6 +89,8 @@ public class FusionService : MonoBehaviour
 
             UnitController consumed = seed;
             target.ApplyStarUp();
+            SessionFusionCount++;
+            if (target.Star == MaxStar) SessionFourStarFusionCount++;
             target.GetComponentInChildren<DropSpawnView>(true)?.PlayFusionUpgrade();
             roster.Unregister(consumed);
             animatingUnits.Remove(consumed);
@@ -175,6 +179,8 @@ public class FusionService : MonoBehaviour
             roster.Unregister(seed);
             seed.ReturnToPool();
             keep.ApplyStarUp();
+            SessionFusionCount++;
+            if (keep.Star == MaxStar) SessionFourStarFusionCount++;
             seed = keep;
             fusionCount++;
         }
@@ -182,5 +188,11 @@ public class FusionService : MonoBehaviour
         return fusionCount > 0
             ? FusionResult.Completed(seed, fusionCount)
             : FusionResult.WithoutFusion(seed);
+    }
+
+    public void ResetSessionStats()
+    {
+        SessionFusionCount = 0;
+        SessionFourStarFusionCount = 0;
     }
 }

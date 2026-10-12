@@ -55,6 +55,7 @@ public sealed class GachaUseCase
         UserInventoryData nextInventory = UserDataCloner.Copy(userData.Inventory);
         UserGachaData nextGacha = UserDataCloner.Copy(userData.Gacha);
         UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
+        UserQuestData nextQuest = UserDataCloner.Copy(userData.Quest);
 
         if (ticketUseCount > 0 &&
             !inventoryMutations.Consume(nextInventory, banner.TicketItemId, ticketUseCount).Succeeded)
@@ -92,6 +93,7 @@ public sealed class GachaUseCase
             return RecruitUnitsResult.Fail(RecruitUnitsFailure.InvalidRequest);
 
         nextResources.Gem += (int)duplicateReward;
+        QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.UnitRecruited, command.Count), DateTimeOffset.UtcNow);
         isExecuting = true;
 
         try
@@ -102,6 +104,7 @@ public sealed class GachaUseCase
                 Inventory = nextInventory,
                 Gacha = nextGacha,
                 Roster = nextRoster,
+                Quest = nextQuest,
             });
         }
         catch
@@ -117,6 +120,7 @@ public sealed class GachaUseCase
         userData.Inventory = nextInventory;
         userData.Gacha = nextGacha;
         userData.Roster = nextRoster;
+        userData.Quest = nextQuest;
 
         return RecruitUnitsResult.Success(results);
     }

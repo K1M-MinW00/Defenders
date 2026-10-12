@@ -45,13 +45,16 @@ public sealed class StageEntryFuelUseCase
             return StageEntryFuelResult.Fail(StageEntryFuelFailure.InvalidRequest);
 
         UserResourceData next = UserDataCloner.Copy(userData.Resource);
+        UserQuestData nextQuest = UserDataCloner.Copy(userData.Quest);
         if (!StaminaService.ConsumeFuel(next, amount))
             return StageEntryFuelResult.Fail(StageEntryFuelFailure.InsufficientFuel);
+        QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.FuelConsumed, amount), DateTimeOffset.UtcNow);
 
-        if (!await TrySaveAsync(next))
+        if (!await TrySaveAsync(next, nextQuest))
             return StageEntryFuelResult.Fail(StageEntryFuelFailure.SaveFailed);
 
         userData.Resource = next;
+        userData.Quest = nextQuest;
         return StageEntryFuelResult.Success();
     }
 
@@ -61,6 +64,7 @@ public sealed class StageEntryFuelUseCase
             return false;
 
         UserResourceData next = UserDataCloner.Copy(userData.Resource);
+        UserQuestData nextQuest = UserDataCloner.Copy(userData.Quest);
         try
         {
             next.Fuel = checked(next.Fuel + amount);
@@ -72,19 +76,21 @@ public sealed class StageEntryFuelUseCase
 
         if (next.Fuel >= next.MaxFuel)
             next.LastFuelUpdateTime = Timestamp.GetCurrentTimestamp();
+        QuestProgressService.Revert(nextQuest, new QuestEvent(QuestEventType.FuelConsumed, amount), DateTimeOffset.UtcNow);
 
-        if (!await TrySaveAsync(next))
+        if (!await TrySaveAsync(next, nextQuest))
             return false;
 
         userData.Resource = next;
+        userData.Quest = nextQuest;
         return true;
     }
 
-    private async Task<bool> TrySaveAsync(UserResourceData resources)
+    private async Task<bool> TrySaveAsync(UserResourceData resources, UserQuestData quest)
     {
         try
         {
-            await repository.SaveResourcesAsync(userId, resources);
+            await repository.SaveSectionsAsync(userId, new UserDataUpdate { Resources = resources, Quest = quest });
             return true;
         }
         catch

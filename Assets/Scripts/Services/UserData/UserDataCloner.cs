@@ -49,6 +49,22 @@ public static class UserDataCloner
         LastClaimAt = source?.LastClaimAt ?? default,
     };
 
+    public static UserQuestData Copy(UserQuestData source) => new()
+    {
+        DailyPeriodKey = source?.DailyPeriodKey,
+        WeeklyPeriodKey = source?.WeeklyPeriodKey,
+        DailyScore = source?.DailyScore ?? 0,
+        WeeklyScore = source?.WeeklyScore ?? 0,
+        Progress = source?.Progress?.Where(p => p != null).Select(p => new UserQuestProgressData
+        {
+            QuestId = p.QuestId,
+            Progress = p.Progress,
+            ScoreGranted = p.ScoreGranted,
+        }).ToList() ?? new List<UserQuestProgressData>(),
+        ClaimedDailyRewards = source?.ClaimedDailyRewards?.Distinct().ToList() ?? new List<int>(),
+        ClaimedWeeklyRewards = source?.ClaimedWeeklyRewards?.Distinct().ToList() ?? new List<int>(),
+    };
+
     public static UserInventoryData Copy(UserInventoryData source)
     {
         return new UserInventoryData

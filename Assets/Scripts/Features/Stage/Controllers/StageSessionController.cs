@@ -378,6 +378,7 @@ public class StageSessionController : MonoBehaviour
         if (isDisposed)
             return StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest);
 
+        rewardService.SetQuestSessionStats(bootstrapper.SessionFusionCount, bootstrapper.SessionFourStarFusionCount);
         StageOutcomeResult result = await outcomeCoordinator.SaveAsync(
             currentStageData,
             isClear,

@@ -18,6 +18,7 @@ public static class UserDataFactory
             Shop = CreateDefaultShop(),
             Lab = CreateDefaultLab(),
             IdleReward = CreateDefaultIdleReward(),
+            Quest = CreateDefaultQuest(),
         };
 
         data.Profile.IconId = ProfileIconResolver.ResolveIconId(data.Profile.IconId, data.Roster);
@@ -104,4 +105,5 @@ public static class UserDataFactory
     {
         LastClaimAt = Timestamp.GetCurrentTimestamp(),
     };
+    public static UserQuestData CreateDefaultQuest() => new();
 }
