@@ -42,7 +42,8 @@ public class StageProgressService : MonoBehaviour
             nextProgress = StageProgressRules.AdvanceAfterStageClear(
                 currentProgress,
                 clearedStage.sector,
-                clearedStage.stage);
+                clearedStage.stage,
+                GameConfig.Stages);
         }
         catch (System.Exception exception)
         {

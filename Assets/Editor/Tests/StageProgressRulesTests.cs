@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEngine;
 
 public sealed class StageProgressRulesTests
 {
@@ -48,6 +49,48 @@ public sealed class StageProgressRulesTests
         Assert.That(result.CurrentSector, Is.EqualTo(2));
         Assert.That(result.CurrentStage, Is.EqualTo(1));
         Assert.That(result.BestWaveCleared, Is.Zero);
+    }
+
+    [Test]
+    public void AdvanceAfterRegisteredSectorFinalStage_UsesNextCatalogStage()
+    {
+        StageDataSO stage15 = ScriptableObject.CreateInstance<StageDataSO>();
+        StageDataSO stage21 = ScriptableObject.CreateInstance<StageDataSO>();
+        stage15.sector = 1; stage15.stage = 5;
+        stage21.sector = 2; stage21.stage = 1;
+        try
+        {
+            StageCatalog catalog = new(new[] { stage15, stage21 });
+            UserProgressData current = CreateProgress(1, 5, 5);
+            UserProgressData result = StageProgressRules.AdvanceAfterStageClear(current, 1, 5, catalog);
+            Assert.That(result.CurrentSector, Is.EqualTo(2));
+            Assert.That(result.CurrentStage, Is.EqualTo(1));
+        }
+        finally
+        {
+            Object.DestroyImmediate(stage15);
+            Object.DestroyImmediate(stage21);
+        }
+    }
+
+    [Test]
+    public void MissingSavedStage_ResolvesToNextRegisteredStage()
+    {
+        StageDataSO stage15 = ScriptableObject.CreateInstance<StageDataSO>();
+        StageDataSO stage21 = ScriptableObject.CreateInstance<StageDataSO>();
+        stage15.sector = 1; stage15.stage = 5;
+        stage21.sector = 2; stage21.stage = 1;
+        try
+        {
+            StageCatalog catalog = new(new[] { stage15, stage21 });
+            StageDataSO resolved = StageProgressRules.ResolveAvailableStage(catalog, 1, 6);
+            Assert.That(resolved, Is.SameAs(stage21));
+        }
+        finally
+        {
+            Object.DestroyImmediate(stage15);
+            Object.DestroyImmediate(stage21);
+        }
     }
 
     [Test]

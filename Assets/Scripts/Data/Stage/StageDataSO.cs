@@ -1,6 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public sealed class WaveMilestoneReward
+{
+    [Min(1)] public int requiredWave = 1;
+    public List<RewardData> rewards = new();
+}
+
 [CreateAssetMenu(menuName = "Game/Stage/Stage Data")]
 public class StageDataSO : ScriptableObject
 {
@@ -26,6 +33,9 @@ public class StageDataSO : ScriptableObject
 
     [Header("Clear Rewards")]
     public List<RewardData> clearRewards = new();
+
+    [Header("Wave Milestone Rewards")]
+    public List<WaveMilestoneReward> milestoneRewards = new();
 
     [Header("Failure Rewards")]
     public List<RewardData> failureRewards = new();
@@ -64,6 +74,8 @@ public class StageDataSO : ScriptableObject
             return Fail("Prepare duration cannot be negative.", out error);
         if (waves[^1] == null || waves[^1].waveType != WaveType.Boss)
             return Fail("The final wave must be a boss wave.", out error);
+        if (!TryValidateMilestoneRewards(out error))
+            return false;
 
         int spawnPointCount = mapContext.MonsterSpawnPoints?.Length ?? 0;
         if (spawnPointCount == 0)
@@ -111,6 +123,33 @@ public class StageDataSO : ScriptableObject
                         return Fail($"{location} has an invalid balance multiplier.", out error);
                 }
             }
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private bool TryValidateMilestoneRewards(out string error)
+    {
+        if (milestoneRewards == null)
+        {
+            error = string.Empty;
+            return true;
+        }
+
+        int previousWave = 0;
+        for (int i = 0; i < milestoneRewards.Count; i++)
+        {
+            WaveMilestoneReward milestone = milestoneRewards[i];
+            if (milestone == null)
+                return Fail($"Milestone reward {i + 1} is null.", out error);
+            if (milestone.requiredWave <= previousWave || milestone.requiredWave > waves.Count)
+                return Fail($"Milestone wave {milestone.requiredWave} must be unique, ascending, and within the stage wave count.", out error);
+            if (milestone.rewards == null || milestone.rewards.Count == 0)
+                return Fail($"Milestone wave {milestone.requiredWave} has no rewards.", out error);
+            if (!TryValidateRewards(milestone.rewards, $"Milestone wave {milestone.requiredWave}", out error))
+                return false;
+            previousWave = milestone.requiredWave;
         }
 
         error = string.Empty;

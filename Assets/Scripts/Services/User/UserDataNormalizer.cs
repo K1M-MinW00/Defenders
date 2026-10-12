@@ -390,6 +390,29 @@ public static class UserDataNormalizer
         changed |= SetIfDifferent(progress.CurrentSector, Math.Max(progress.CurrentSector, 1), value => progress.CurrentSector = value);
         changed |= SetIfDifferent(progress.CurrentStage, Math.Max(progress.CurrentStage, 1), value => progress.CurrentStage = value);
         changed |= SetIfDifferent(progress.BestWaveCleared, Math.Max(progress.BestWaveCleared, 0), value => progress.BestWaveCleared = value);
+        StageDataSO availableStage = StageProgressRules.ResolveAvailableStage(GameConfig.Stages, progress.CurrentSector, progress.CurrentStage);
+        if (availableStage != null && (availableStage.sector != progress.CurrentSector || availableStage.stage != progress.CurrentStage))
+        {
+            progress.CurrentSector = availableStage.sector;
+            progress.CurrentStage = availableStage.stage;
+            progress.BestWaveCleared = 0;
+            changed = true;
+        }
+        if (progress.WaveRewardProgress == null)
+        {
+            progress.WaveRewardProgress = new UserWaveRewardProgressData();
+            changed = true;
+        }
+        UserWaveRewardProgressData rewardProgress = progress.WaveRewardProgress;
+        changed |= SetIfDifferent(rewardProgress.Sector, Math.Max(rewardProgress.Sector, 1), value => rewardProgress.Sector = value);
+        changed |= SetIfDifferent(rewardProgress.Stage, Math.Max(rewardProgress.Stage, 1), value => rewardProgress.Stage = value);
+        rewardProgress.ClaimedWaves ??= new List<int>();
+        List<int> normalizedClaims = rewardProgress.ClaimedWaves.Where(wave => wave > 0).Distinct().OrderBy(wave => wave).ToList();
+        if (!rewardProgress.ClaimedWaves.SequenceEqual(normalizedClaims))
+        {
+            rewardProgress.ClaimedWaves = normalizedClaims;
+            changed = true;
+        }
         return changed;
     }
 

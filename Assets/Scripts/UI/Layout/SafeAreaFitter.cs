@@ -12,6 +12,16 @@ public sealed class SafeAreaFitter : MonoBehaviour
     private Rect appliedSafeArea = new(-1f, -1f, -1f, -1f);
     private Vector2Int appliedScreenSize = new(-1, -1);
 
+#if UNITY_EDITOR
+    public void Configure(RectTransform[] fittedTargets, bool horizontal = true, bool vertical = true)
+    {
+        targets = fittedTargets;
+        applyHorizontal = horizontal;
+        applyVertical = vertical;
+        layouts = null;
+    }
+#endif
+
     private void Awake()
     {
         CaptureLayouts();

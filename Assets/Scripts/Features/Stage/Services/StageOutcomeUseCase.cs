@@ -7,14 +7,16 @@ public sealed class StageOutcomeUseCase
     private readonly IUserDataRepository repository;
     private readonly string userId;
     private readonly UserDataRoot userData;
+    private readonly IStageCatalog stages;
 
-    public StageOutcomeUseCase(IUserDataRepository repository, string userId, UserDataRoot userData)
+    public StageOutcomeUseCase(IUserDataRepository repository, string userId, UserDataRoot userData, IStageCatalog stages = null)
     {
         this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         this.userId = string.IsNullOrWhiteSpace(userId)
             ? throw new ArgumentException("User ID is null or empty.", nameof(userId))
             : userId;
         this.userData = userData ?? throw new ArgumentNullException(nameof(userData));
+        this.stages = stages;
     }
 
     public Task<StageOutcomeResult> CompleteAsync(StageDataSO stage, int fusionCount = 0, int fourStarFusionCount = 0)
@@ -28,7 +30,8 @@ public sealed class StageOutcomeUseCase
             nextProgress = StageProgressRules.AdvanceAfterStageClear(
                 userData.Progress,
                 stage.sector,
-                stage.stage);
+                stage.stage,
+                stages);
         }
         catch
         {

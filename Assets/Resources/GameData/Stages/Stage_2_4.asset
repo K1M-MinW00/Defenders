@@ -204,4 +204,26 @@ MonoBehaviour:
   - type: 6
     id: 
     amount: 225
+  milestoneRewards:
+  - requiredWave: 2
+    rewards:
+    - type: 0
+      id:
+      amount: 700
+  - requiredWave: 4
+    rewards:
+    - type: 0
+      id:
+      amount: 1050
+    - type: 1
+      id:
+      amount: 18
+  - requiredWave: 5
+    rewards:
+    - type: 0
+      id:
+      amount: 1500
+    - type: 1
+      id:
+      amount: 18
   failureRewards: []

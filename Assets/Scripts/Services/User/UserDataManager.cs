@@ -24,6 +24,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
     private LabDevelopmentUseCase LabDevelopmentUseCase { get; set; }
     private IdleRewardUseCase IdleRewardUseCase { get; set; }
     private EquipmentUseCase EquipmentUseCase { get; set; }
+    private WaveMilestoneRewardClaimUseCase WaveMilestoneRewardClaimUseCase { get; set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -135,11 +136,12 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>
         int nicknameCost = GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500;
         ProfileUpdateUseCase = new ProfileUpdateUseCase(repository, CurrentUserId, UserData, nicknameCost);
         GemShopPurchaseUseCase = new GemShopPurchaseUseCase(repository, CurrentUserId, UserData);
-        StageOutcomeUseCase = new StageOutcomeUseCase(repository, CurrentUserId, UserData);
+        StageOutcomeUseCase = new StageOutcomeUseCase(repository, CurrentUserId, UserData, GameConfig.Stages);
         StageEntryFuelUseCase = new StageEntryFuelUseCase(repository, CurrentUserId, UserData);
         LabDevelopmentUseCase = new LabDevelopmentUseCase(repository, CurrentUserId, UserData, GameConfig.Lab);
         IdleRewardUseCase = new IdleRewardUseCase(repository as IIdleRewardRepository, CurrentUserId, UserData, GameConfig.IdleReward);
         EquipmentUseCase = new EquipmentUseCase(repository, CurrentUserId, UserData);
+        WaveMilestoneRewardClaimUseCase = new WaveMilestoneRewardClaimUseCase(repository, CurrentUserId, UserData, GameConfig.Stages);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>

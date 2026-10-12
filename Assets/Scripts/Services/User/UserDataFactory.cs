@@ -81,7 +81,8 @@ public static class UserDataFactory
         {
             CurrentSector = 1,
             CurrentStage = 1,
-            BestWaveCleared = 0
+            BestWaveCleared = 0,
+            WaveRewardProgress = new UserWaveRewardProgressData(),
         };
     }
     public static UserInventoryData CreateDefaultInventory()

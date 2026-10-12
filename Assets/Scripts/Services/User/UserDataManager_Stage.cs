@@ -3,6 +3,31 @@ using System.Threading.Tasks;
 
 public partial class UserDataManager
 {
+    public bool HasClaimableWaveMilestoneReward() =>
+        WaveMilestoneRewardRules.HasClaimableReward(UserData?.Progress, GameConfig.Stages);
+
+    public Task<WaveMilestoneClaimResult> ClaimWaveMilestoneRewardAsync(int requiredWave) =>
+        ClaimWaveMilestoneRewardInternalAsync(requiredWave, false);
+
+    public Task<WaveMilestoneClaimResult> ClaimAllWaveMilestoneRewardsAsync() =>
+        ClaimWaveMilestoneRewardInternalAsync(0, true);
+
+    private async Task<WaveMilestoneClaimResult> ClaimWaveMilestoneRewardInternalAsync(int requiredWave, bool all)
+    {
+        if (WaveMilestoneRewardClaimUseCase == null)
+            return WaveMilestoneClaimResult.Fail(WaveMilestoneClaimFailure.InvalidRequest);
+
+        return await RunSerializedMutationAsync(async () =>
+        {
+            WaveMilestoneClaimResult result = all
+                ? await WaveMilestoneRewardClaimUseCase.ClaimAllAsync()
+                : await WaveMilestoneRewardClaimUseCase.ClaimAsync(requiredWave);
+            if (result.Succeeded)
+                RaiseStageOutcomeUpdated();
+            return result;
+        });
+    }
+
     public async Task<StageEntryFuelResult> ConsumeStageEntryFuelAsync(int amount)
     {
         if (StageEntryFuelUseCase == null)
