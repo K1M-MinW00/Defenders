@@ -2,18 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
 {
     [Serializable] public sealed class PartSlot { public EquipmentType type; public EquipmentSlotView slot; }
     [Header("Loadout")][SerializeField] private PartSlot[] partSlots;
     [SerializeField] private Transform basicStatsRoot;
-    [SerializeField] private TMP_Text basicStatTemplate;
+    [SerializeField] private EquipmentStatRowView basicStatTemplate;
     [SerializeField] private Transform bonusStatsRoot;
-    [SerializeField] private TMP_Text bonusStatTemplate;
-    [SerializeField] private Sprite statRowFrameSprite;
+    [SerializeField] private EquipmentStatRowView bonusStatTemplate;
     [SerializeField] private Sprite mainWeaponEmptyIcon;
     [SerializeField] private Sprite subWeaponEmptyIcon;
     [SerializeField] private Sprite helmetEmptyIcon;
@@ -51,18 +50,18 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
             DataSource,
             GameConfig.EquipmentBalance);
     private EquipmentStatListRenderer BasicStatRenderer =>
-        basicStatRenderer ??= new EquipmentStatListRenderer(basicStatsRoot,basicStatTemplate,statRowFrameSprite);
+        basicStatRenderer ??= new EquipmentStatListRenderer(basicStatsRoot, basicStatTemplate);
     private EquipmentStatListRenderer BonusStatRenderer =>
-        bonusStatRenderer ??= new EquipmentStatListRenderer(bonusStatsRoot,bonusStatTemplate,statRowFrameSprite);
-
-    public void ConfigureLoadout(PartSlot[] slots,Transform basicRoot,TMP_Text basicTemplate,Transform bonusRoot,TMP_Text bonusTemplate)
-    { partSlots=slots;basicStatsRoot=basicRoot;basicStatTemplate=basicTemplate;bonusStatsRoot=bonusRoot;bonusStatTemplate=bonusTemplate; }
-    public void ConfigureChange(EquipmentChangeOverlayView view) => changeView = view;
-    public void ConfigureDetail(EquipmentDetailOverlayView overlay) => detailOverlay = overlay;
-    public void ConfigureEnhancement(EquipmentEnhancementOverlayView view) => enhancementView = view;
+        bonusStatRenderer ??= new EquipmentStatListRenderer(bonusStatsRoot, bonusStatTemplate);
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         _=EnhancementPresenter;
         _=ChangePresenter;
         _=Coordinator;
@@ -235,4 +234,25 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
     private IEnumerable<EquipmentItemData> GetEquippedItems()=>DataSource.GetEquippedItems(unitId,partSlots.Select(slot=>slot.type));
     private Sprite GetEmptySlotIcon(EquipmentType type)=>type switch{EquipmentType.MainWeapon=>mainWeaponEmptyIcon,EquipmentType.SubWeapon=>subWeaponEmptyIcon,EquipmentType.Helmet=>helmetEmptyIcon,EquipmentType.Armor=>armorEmptyIcon,_=>null};
     private void ResetEnhancementSelection(){EnhancementPresenter.ResetSelection();RefreshEnhancement();}
+
+    private bool ValidateReferences()
+    {
+        bool hasPartSlots = partSlots != null && partSlots.Length > 0;
+        if (hasPartSlots)
+        {
+            for (int i = 0; i < partSlots.Length; i++)
+                hasPartSlots &= partSlots[i] != null && partSlots[i].slot != null;
+        }
+
+        bool isValid = hasPartSlots && basicStatsRoot != null && basicStatTemplate != null &&
+                       bonusStatsRoot != null && bonusStatTemplate != null &&
+                       mainWeaponEmptyIcon != null && subWeaponEmptyIcon != null &&
+                       helmetEmptyIcon != null && armorEmptyIcon != null &&
+                       changeView != null && detailOverlay != null && enhancementView != null;
+
+        if (!isValid)
+            Debug.LogError("[UnitEquipmentPanel] One or more required UI references are missing.", this);
+
+        return isValid;
+    }
 }

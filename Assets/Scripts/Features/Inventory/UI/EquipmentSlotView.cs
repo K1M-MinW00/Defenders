@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class EquipmentSlotView : MonoBehaviour
 {
     [SerializeField] private Image frame;
@@ -12,9 +13,6 @@ public sealed class EquipmentSlotView : MonoBehaviour
     [SerializeField] private Image checkImage;
     [SerializeField] private Button button;
     public Sprite FrameSprite => frame != null ? frame.sprite : null;
-
-    public void Configure(Image frameImage, Image iconImage, TMP_Text level, Image overlay, Image check, Button click)
-    { frame = frameImage; icon = iconImage; levelText = level; selectionOverlay = overlay; checkImage = check; button = click; }
 
     public void Bind(EquipmentItemData instance, EquipmentDataSO definition, bool selected, Action onClick)
     {

@@ -1,76 +1,56 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
-/// Renders the repeated framed rows used by equipment base and bonus summaries.
-/// The owning panel supplies data only and no longer constructs UI objects itself.
+/// Reuses preconfigured stat-row views. The owning panel supplies display data only.
 /// </summary>
 public sealed class EquipmentStatListRenderer
 {
     private readonly Transform root;
-    private readonly TMP_Text template;
-    private readonly Sprite frameSprite;
+    private readonly EquipmentStatRowView template;
+    private readonly List<EquipmentStatRowView> rowPool = new();
 
-    public EquipmentStatListRenderer(Transform root, TMP_Text template, Sprite frameSprite)
+    public EquipmentStatListRenderer(Transform root, EquipmentStatRowView template)
     {
         this.root = root;
         this.template = template;
-        this.frameSprite = frameSprite;
+
+        if (template != null)
+            template.gameObject.SetActive(false);
     }
 
     public void Render(IEnumerable<string> values)
     {
-        if (root == null || template == null)
+        HideRows();
+        if (root == null || template == null || values == null)
             return;
 
-        ClearRows();
-        if (values != null)
+        int rowIndex = 0;
+        foreach (string value in values)
         {
-            foreach (string value in values)
-                CreateRow(value);
-        }
-
-        template.gameObject.SetActive(false);
-    }
-
-    private void ClearRows()
-    {
-        for (int index = root.childCount - 1; index >= 0; index--)
-        {
-            Transform child = root.GetChild(index);
-            if (child != template.transform)
-                Object.Destroy(child.gameObject);
+            EquipmentStatRowView row = GetOrCreateRow(rowIndex++);
+            row.SetText(value);
+            row.gameObject.SetActive(true);
         }
     }
 
-    private void CreateRow(string value)
+    private EquipmentStatRowView GetOrCreateRow(int index)
     {
-        GameObject row = new(
-            "EquipmentStatRow",
-            typeof(RectTransform),
-            typeof(CanvasRenderer),
-            typeof(Image),
-            typeof(LayoutElement));
-        row.transform.SetParent(root, false);
+        if (index < rowPool.Count)
+            return rowPool[index];
 
-        Image frame = row.GetComponent<Image>();
-        frame.sprite = frameSprite;
-        frame.type = Image.Type.Sliced;
-        frame.color = Color.white;
+        EquipmentStatRowView row = Object.Instantiate(template, root);
+        row.name = $"EquipmentStatRow_{rowPool.Count + 1}";
+        rowPool.Add(row);
+        return row;
+    }
 
-        LayoutElement layout = row.GetComponent<LayoutElement>();
-        layout.preferredHeight = 55f;
-        layout.minHeight = 55f;
-
-        TMP_Text label = Object.Instantiate(template, row.transform);
-        RectTransform rect = (RectTransform)label.transform;
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = new Vector2(16f, 4f);
-        rect.offsetMax = new Vector2(-16f, -4f);
-        label.text = value;
-        label.gameObject.SetActive(true);
+    private void HideRows()
+    {
+        for (int i = 0; i < rowPool.Count; i++)
+        {
+            if (rowPool[i] != null)
+                rowPool[i].gameObject.SetActive(false);
+        }
     }
 }

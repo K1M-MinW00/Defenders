@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// Owns rendering and input for the equipment replacement overlay.
 /// Equipment mutations remain in UnitEquipmentPanel/EquipmentUseCase.
 /// </summary>
+[DisallowMultipleComponent]
 public sealed class EquipmentChangeOverlayView : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private EquipmentSlotView previewSlot;
@@ -26,20 +27,16 @@ public sealed class EquipmentChangeOverlayView : MonoBehaviour, IModalDismissHan
     public bool IsVisible => Lifecycle.IsVisible;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
-    public void Configure(
-        EquipmentSlotView preview,
-        TMP_Text previewLabel,
-        Transform content,
-        EquipmentSlotView template,
-        Button equip,
-        Button close)
+    private void Awake()
     {
-        previewSlot = preview;
-        previewText = previewLabel;
-        contentRoot = content;
-        slotTemplate = template;
-        equipButton = equip;
-        closeButton = close;
+        if (previewSlot != null && previewText != null && contentRoot != null &&
+            slotTemplate != null && equipButton != null && closeButton != null)
+        {
+            return;
+        }
+
+        Debug.LogError("[EquipmentChangeOverlayView] One or more required UI references are missing.", this);
+        enabled = false;
     }
 
     public void Initialize(Action onEquipRequested, Action onCloseRequested)

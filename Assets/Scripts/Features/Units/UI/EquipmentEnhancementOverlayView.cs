@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// Owns equipment enhancement presentation and material-slot input.
 /// Experience calculation and persistence are supplied by the coordinator.
 /// </summary>
+[DisallowMultipleComponent]
 public sealed class EquipmentEnhancementOverlayView : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private EquipmentSlotView equipmentSlot;
@@ -15,6 +16,7 @@ public sealed class EquipmentEnhancementOverlayView : MonoBehaviour, IModalDismi
     [SerializeField] private TMP_Text nextLevelText;
     [SerializeField] private TMP_Text effectText;
     [SerializeField] private Slider experienceSlider;
+    [SerializeField] private Image experienceBackground;
     [SerializeField] private Image experienceFill;
     [SerializeField] private TMP_Text experienceText;
     [SerializeField] private Transform materialContent;
@@ -35,34 +37,14 @@ public sealed class EquipmentEnhancementOverlayView : MonoBehaviour, IModalDismi
     public bool IsVisible => Lifecycle.IsVisible;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
-    public void Configure(
-        EquipmentSlotView slot,
-        TMP_Text currentLevel,
-        TMP_Text nextLevel,
-        TMP_Text effect,
-        Slider slider,
-        Image fill,
-        TMP_Text expText,
-        Transform content,
-        TrainingMaterialSlot template,
-        Button reset,
-        Button autoSelect,
-        Button confirm,
-        Button close)
+    private void Awake()
     {
-        equipmentSlot = slot;
-        levelText = currentLevel;
-        nextLevelText = nextLevel;
-        effectText = effect;
-        experienceSlider = slider;
-        experienceFill = fill;
-        experienceText = expText;
-        materialContent = content;
-        materialTemplate = template;
-        resetButton = reset;
-        autoSelectButton = autoSelect;
-        confirmButton = confirm;
-        closeButton = close;
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         ConfigureSliderVisuals();
     }
 
@@ -105,10 +87,10 @@ public sealed class EquipmentEnhancementOverlayView : MonoBehaviour, IModalDismi
         if (nextLevelText != null)
         {
             nextLevelText.gameObject.SetActive(ready);
-            nextLevelText.text = ready ? $"▶  LV.{equipment.Level + 1}" : string.Empty;
+            nextLevelText.text = ready ? $"다음 LV.{equipment.Level + 1}" : string.Empty;
         }
         if (effectText != null)
-            effectText.text = ready ? $"{currentEffect}  →  {nextEffect}" : currentEffect;
+            effectText.text = ready ? $"{currentEffect}  >  {nextEffect}" : currentEffect;
 
         if (experienceSlider != null)
             experienceSlider.value = requiredExperience > 0
@@ -158,11 +140,10 @@ public sealed class EquipmentEnhancementOverlayView : MonoBehaviour, IModalDismi
         experienceSlider.transition = Selectable.Transition.None;
         experienceSlider.targetGraphic = null;
 
-        Image background = experienceSlider.transform.Find("Background")?.GetComponent<Image>();
-        if (background != null)
+        if (experienceBackground != null)
         {
-            background.color = new Color32(24, 43, 61, 255);
-            background.raycastTarget = false;
+            experienceBackground.color = new Color32(24, 43, 61, 255);
+            experienceBackground.raycastTarget = false;
         }
         if (experienceFill != null)
             experienceFill.raycastTarget = false;
@@ -174,6 +155,21 @@ public sealed class EquipmentEnhancementOverlayView : MonoBehaviour, IModalDismi
             return;
         while (materialSlots.Count < count)
             materialSlots.Add(Instantiate(materialTemplate, materialContent));
+    }
+
+    private bool ValidateReferences()
+    {
+        bool isValid = equipmentSlot != null && levelText != null && nextLevelText != null &&
+                       effectText != null && experienceSlider != null && experienceBackground != null &&
+                       experienceFill != null && experienceText != null &&
+                       materialContent != null && materialTemplate != null &&
+                       resetButton != null && autoSelectButton != null &&
+                       confirmButton != null && closeButton != null;
+
+        if (!isValid)
+            Debug.LogError("[EquipmentEnhancementOverlayView] One or more required UI references are missing.", this);
+
+        return isValid;
     }
 
     private void HandleResetClicked() => resetRequested?.Invoke();
