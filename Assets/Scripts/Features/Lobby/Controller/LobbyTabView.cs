@@ -1,11 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class LobbyTabView : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class LobbyTabView : MonoBehaviour
 {
-    [System.Serializable]
-    public class TabEntry
+    [Serializable]
+    private sealed class TabEntry
     {
         public Button button;
         public GameObject highlight;
@@ -21,6 +23,12 @@ public class LobbyTabView : MonoBehaviour
     private void Awake()
     {
         int tabCount = tabs?.Length ?? 0;
+        if (!ValidateReferences(tabCount))
+        {
+            enabled = false;
+            return;
+        }
+
         selection = new LobbyTabSelection(tabCount);
         clickHandlers = new UnityAction[tabCount];
         SetAllTabsInactive();
@@ -28,9 +36,6 @@ public class LobbyTabView : MonoBehaviour
         for (int i = 0; i < tabCount; i++)
         {
             TabEntry entry = tabs[i];
-            if (entry?.button == null)
-                continue;
-
             int tabIndex = i;
             clickHandlers[i] = () => ShowTab(tabIndex);
             entry.button.onClick.AddListener(clickHandlers[i]);
@@ -55,16 +60,40 @@ public class LobbyTabView : MonoBehaviour
 
     public bool ShowPanel(string panelName)
     {
-        if (tabs == null || string.IsNullOrEmpty(panelName)) return false;
+        if (tabs == null || string.IsNullOrWhiteSpace(panelName))
+            return false;
+
         for (int i = 0; i < tabs.Length; i++)
         {
-            if (tabs[i]?.panel != null && tabs[i].panel.name == panelName)
+            if (string.Equals(tabs[i].panel.name, panelName, StringComparison.Ordinal))
             {
                 ShowTab(i);
                 return true;
             }
         }
         return false;
+    }
+
+    private bool ValidateReferences(int tabCount)
+    {
+        if (tabCount == 0)
+        {
+            Debug.LogError($"[{nameof(LobbyTabView)}] At least one tab entry is required.", this);
+            return false;
+        }
+
+        bool isValid = true;
+        for (int i = 0; i < tabCount; i++)
+        {
+            TabEntry entry = tabs[i];
+            if (entry != null && entry.button != null && entry.highlight != null && entry.panel != null)
+                continue;
+
+            Debug.LogError($"[{nameof(LobbyTabView)}] Tab entry {i} is missing a button, highlight, or panel reference.", this);
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     private void ApplySelection(int tabIndex)
