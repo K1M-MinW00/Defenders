@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitTrainingPanel : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class UnitTrainingPanel : MonoBehaviour
 {
     [Header("Scroll")]
     [SerializeField] private Transform contentRoot;
@@ -41,6 +41,12 @@ public class UnitTrainingPanel : MonoBehaviour
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         trainButton.onClick.AddListener(OnClickTrain);
         addOneLevelButton.onClick.AddListener(OnClickAddOneLevel);
         maxLevelButton.onClick.AddListener(OnClickMaxLevel);
@@ -86,14 +92,12 @@ public class UnitTrainingPanel : MonoBehaviour
         if (contentRoot == null || slotPrefab == null)
             return;
 
-        foreach (Transform child in contentRoot)
-            Destroy(child.gameObject);
-
-        slots.Clear();
+        HideAllSlots();
 
         if (materials == null)
             return;
 
+        int slotIndex = 0;
         foreach (InventoryStackItem item in materials)
         {
             if (item == null || string.IsNullOrWhiteSpace(item.ItemId) || item.Count <= 0)
@@ -104,14 +108,34 @@ public class UnitTrainingPanel : MonoBehaviour
             if (materialData == null)
                 continue;
 
-            TrainingMaterialSlot slot = Instantiate(slotPrefab, contentRoot);
+            TrainingMaterialSlot slot = GetOrCreateSlot(slotIndex++);
             slot.Setup(
                 materialData,
                 item.Count,
                 () => OnAddMaterial(materialData),
                 () => OnRemoveMaterial(materialData));
 
-            slots.Add(slot);
+            slot.gameObject.SetActive(true);
+        }
+    }
+
+    private TrainingMaterialSlot GetOrCreateSlot(int index)
+    {
+        if (index < slots.Count)
+            return slots[index];
+
+        TrainingMaterialSlot slot = Instantiate(slotPrefab, contentRoot);
+        slot.name = $"TrainingMaterialSlot_{slots.Count + 1}";
+        slots.Add(slot);
+        return slot;
+    }
+
+    private void HideAllSlots()
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (slots[i] != null)
+                slots[i].gameObject.SetActive(false);
         }
     }
 
@@ -341,5 +365,28 @@ public class UnitTrainingPanel : MonoBehaviour
             isTraining = false;
             RefreshUI();
         }
+    }
+
+    private bool ValidateReferences()
+    {
+        bool isValid = contentRoot != null && slotPrefab != null &&
+                       gainedExpText != null && goldCostText != null &&
+                       expSlider != null && currentExpText != null && levelUpDiffText != null &&
+                       addOneLevelButton != null && maxLevelButton != null && trainButton != null;
+
+        if (!isValid)
+            Debug.LogError("[UnitTrainingPanel] One or more required UI references are missing.", this);
+
+        return isValid;
+    }
+
+    private void OnDestroy()
+    {
+        if (trainButton != null)
+            trainButton.onClick.RemoveListener(OnClickTrain);
+        if (addOneLevelButton != null)
+            addOneLevelButton.onClick.RemoveListener(OnClickAddOneLevel);
+        if (maxLevelButton != null)
+            maxLevelButton.onClick.RemoveListener(OnClickMaxLevel);
     }
 }

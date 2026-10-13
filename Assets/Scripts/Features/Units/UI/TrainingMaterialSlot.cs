@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TrainingMaterialSlot : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class TrainingMaterialSlot : MonoBehaviour
 {
     [SerializeField] private Button selectButton;
     [SerializeField] private Button minusButton;
@@ -16,9 +17,6 @@ public class TrainingMaterialSlot : MonoBehaviour
     private Action onRemove;
 
     public string ItemId => materialData?.ItemId;
-
-    public void Configure(Button select, Button minus, CommonSlotUI slot, TMP_Text selectedText)
-    { selectButton = select; minusButton = minus; commonSlot = slot; selectedCountText = selectedText; }
 
     public void Setup(MaterialDataSO data, int owned, Action addHandler, Action removeHandler)
     {

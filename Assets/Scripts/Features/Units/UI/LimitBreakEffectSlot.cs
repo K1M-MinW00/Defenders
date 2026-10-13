@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LimitBreakEffectSlot: MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class LimitBreakEffectSlot : MonoBehaviour
 {
     // [SerializeField] private Image icon;
     [SerializeField] private TMP_Text descriptionText;

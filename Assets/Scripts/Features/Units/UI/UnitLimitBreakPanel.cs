@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitLimitBreakPanel : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class UnitLimitBreakPanel : MonoBehaviour
 {
     [Header("Material")]
     [SerializeField] private Image unitIconImage;
@@ -26,11 +27,17 @@ public class UnitLimitBreakPanel : MonoBehaviour
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
     private bool isLimitBreaking;
+    private readonly List<LimitBreakEffectSlot> effectSlotPool = new();
 
     private void Awake()
     {
-        if (limitBreakButton != null)
-            limitBreakButton.onClick.AddListener(OnClickLimitBreak);
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        limitBreakButton.onClick.AddListener(OnClickLimitBreak);
     }
 
     public void Bind(UnitDataSO unitData)
@@ -132,10 +139,7 @@ public class UnitLimitBreakPanel : MonoBehaviour
         if (effectRoot == null || effectPrefab == null)
             return;
 
-        foreach (Transform child in effectRoot)
-        {
-            Destroy(child.gameObject);
-        }
+        HideEffectSlots();
 
         List<LimitBreakData> datas = currentUnitData.limitBreaks;
 
@@ -144,11 +148,31 @@ public class UnitLimitBreakPanel : MonoBehaviour
 
         for (int i = 0; i < datas.Count; i++)
         {
-            LimitBreakEffectSlot slot = Instantiate(effectPrefab, effectRoot);
-
+            LimitBreakEffectSlot slot = GetOrCreateEffectSlot(i);
             bool unlocked = i < currentUnit.LimitBreak;
 
+            slot.gameObject.SetActive(true);
             slot.Setup(datas[i], unlocked);
+        }
+    }
+
+    private LimitBreakEffectSlot GetOrCreateEffectSlot(int index)
+    {
+        if (index < effectSlotPool.Count)
+            return effectSlotPool[index];
+
+        LimitBreakEffectSlot slot = Instantiate(effectPrefab, effectRoot);
+        slot.name = $"LimitBreakEffectSlot_{effectSlotPool.Count + 1}";
+        effectSlotPool.Add(slot);
+        return slot;
+    }
+
+    private void HideEffectSlots()
+    {
+        for (int i = 0; i < effectSlotPool.Count; i++)
+        {
+            if (effectSlotPool[i] != null)
+                effectSlotPool[i].gameObject.SetActive(false);
         }
     }
 
@@ -181,6 +205,33 @@ public class UnitLimitBreakPanel : MonoBehaviour
             if (limitBreakButton != null && limitBreakButton.gameObject.activeSelf && currentUnit != null)
                 limitBreakButton.interactable = currentUnit.DuplicateCount > 0;
         }
+    }
+
+    private bool ValidateReferences()
+    {
+        bool isValid = unitIconImage != null && materialText != null &&
+                       HasValidStars(currentStars) && nextStarsRoot != null && HasValidStars(nextStars) &&
+                       arrowObject != null && visualConfig != null &&
+                       effectRoot != null && effectPrefab != null && limitBreakButton != null;
+
+        if (!isValid)
+            Debug.LogError("[UnitLimitBreakPanel] One or more required UI references are missing.", this);
+
+        return isValid;
+    }
+
+    private static bool HasValidStars(Image[] stars)
+    {
+        if (stars == null || stars.Length == 0)
+            return false;
+
+        for (int i = 0; i < stars.Length; i++)
+        {
+            if (stars[i] == null)
+                return false;
+        }
+
+        return true;
     }
 
     private void OnDestroy()

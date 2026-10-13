@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UnitPromotionPanel : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class UnitPromotionPanel : MonoBehaviour
 {
     [Header("Promotion")]
     [SerializeField] private Image promotionImage;
@@ -15,8 +15,7 @@ public class UnitPromotionPanel : MonoBehaviour
     [SerializeField] private GameObject[] upgradeLockObjects;
 
     [Header("Materials")]
-    [SerializeField] private Transform materialRoot;
-    [SerializeField] private CommonSlotUI materialSlotPrefab;
+    [SerializeField] private CommonSlotUI materialSlot;
 
     [Header("Button")]
     [SerializeField] private Button promotionButton;
@@ -27,8 +26,13 @@ public class UnitPromotionPanel : MonoBehaviour
 
     private void Awake()
     {
-        if (promotionButton != null)
-            promotionButton.onClick.AddListener(OnClickPromotion);
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        promotionButton.onClick.AddListener(OnClickPromotion);
     }
 
     public void Bind(UnitDataSO unitData)
@@ -87,11 +91,7 @@ public class UnitPromotionPanel : MonoBehaviour
 
     private void RefreshMaterials()
     {
-        if (materialRoot != null)
-        {
-            foreach (Transform child in materialRoot)
-                Destroy(child.gameObject);
-        }
+        materialSlot.gameObject.SetActive(false);
 
         if (currentUnitData.promotionCost == null ||
             currentUnit.Promotion >= currentUnitData.promotionCost.Length)
@@ -99,9 +99,6 @@ public class UnitPromotionPanel : MonoBehaviour
             promotionButton?.gameObject.SetActive(false);
             return;
         }
-
-        if (promotionButton == null || materialRoot == null || materialSlotPrefab == null)
-            return;
 
         promotionButton.gameObject.SetActive(true);
 
@@ -125,8 +122,8 @@ public class UnitPromotionPanel : MonoBehaviour
 
         int owned = UserDataManager.Instance.InventoryService.GetItemCount(material.ItemId);
 
-        CommonSlotUI slot = Instantiate(materialSlotPrefab, materialRoot);
-        slot.SetupRequirement(
+        materialSlot.gameObject.SetActive(true);
+        materialSlot.SetupRequirement(
             material.Icon,
             material.Rarity,
             owned,
@@ -168,6 +165,18 @@ public class UnitPromotionPanel : MonoBehaviour
             if (!promotionSucceeded && promotionButton != null && promotionButton.gameObject.activeSelf)
                 RefreshMaterials();
         }
+    }
+
+    private bool ValidateReferences()
+    {
+        bool hasUpgradeLocks = upgradeLockObjects != null && upgradeLockObjects.Length > 0;
+        bool isValid = promotionImage != null && visualConfig != null && promotionText != null &&
+                       hasUpgradeLocks && materialSlot != null && promotionButton != null;
+
+        if (!isValid)
+            Debug.LogError("[UnitPromotionPanel] One or more required UI references are missing.", this);
+
+        return isValid;
     }
 
     private void OnDestroy()
