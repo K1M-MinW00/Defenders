@@ -2,18 +2,20 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StartupLoadingView : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class StartupLoadingView : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private Slider progressSlider;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private Button startButton;
+    [SerializeField] private TMP_Text actionButtonLabel;
 
     [Header("Animation")]
     [SerializeField] private float smoothSpeed = 3f;
 
     private float targetProgress;
-    private TMP_Text startButtonLabel;
+    public event System.Action ActionRequested;
 
     private void Awake()
     {
@@ -25,12 +27,15 @@ public class StartupLoadingView : MonoBehaviour
         if (statusText != null)
             statusText.text = "Initializing...";
 
-        if (startButton != null)
+        if (!HasRequiredReferences())
         {
-            startButtonLabel = startButton.GetComponentInChildren<TMP_Text>(true);
-            startButton.gameObject.SetActive(false);
-            startButton.interactable = false;
+            enabled = false;
+            return;
         }
+
+        startButton.onClick.AddListener(HandleActionRequested);
+        startButton.gameObject.SetActive(false);
+        startButton.interactable = false;
     }
 
     private void Update()
@@ -69,8 +74,7 @@ public class StartupLoadingView : MonoBehaviour
         if (startButton == null)
             return;
 
-        if (startButtonLabel != null)
-            startButtonLabel.text = label;
+        actionButtonLabel.text = label;
 
         startButton.gameObject.SetActive(visible);
         startButton.interactable = visible;
@@ -82,5 +86,25 @@ public class StartupLoadingView : MonoBehaviour
             return true;
 
         return Mathf.Approximately(progressSlider.value, targetProgress);
+    }
+
+    private bool HasRequiredReferences()
+    {
+        if (progressSlider != null && statusText != null && startButton != null && actionButtonLabel != null)
+            return true;
+
+        Debug.LogError($"[{nameof(StartupLoadingView)}] Required UI references are missing.", this);
+        return false;
+    }
+
+    private void HandleActionRequested()
+    {
+        ActionRequested?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        if (startButton != null)
+            startButton.onClick.RemoveListener(HandleActionRequested);
     }
 }

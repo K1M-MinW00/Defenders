@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class StartupBootstrap : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class StartupBootstrap : MonoBehaviour
 {
     [SerializeField] private string nextSceneName = "LobbyScene";
     [SerializeField] private StartupLoadingView loadingView;
@@ -9,6 +10,18 @@ public class StartupBootstrap : MonoBehaviour
     private bool isReadyToStart;
     private bool isBooting;
     private bool hasFailed;
+
+    private void OnEnable()
+    {
+        if (loadingView != null)
+            loadingView.ActionRequested += StartGame;
+    }
+
+    private void OnDisable()
+    {
+        if (loadingView != null)
+            loadingView.ActionRequested -= StartGame;
+    }
 
     private async void Start()
     {
@@ -51,7 +64,7 @@ public class StartupBootstrap : MonoBehaviour
         }
     }
 
-    public async void StartGame()
+    private async void StartGame()
     {
         if (hasFailed && !isBooting)
         {
