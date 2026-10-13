@@ -3,17 +3,22 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+[DisallowMultipleComponent]
+public sealed class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
 {
     [Header("UI")]
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text levelText;
-    [SerializeField] private GameObject promotionInfoRoot;
-    [SerializeField] private TMP_Text promotionText;
-    [SerializeField] private Image prom_Img;
+    [FormerlySerializedAs("promotionInfoRoot")]
+    [SerializeField] private GameObject limitBreakInfoRoot;
+    [FormerlySerializedAs("promotionText")]
+    [SerializeField] private TMP_Text limitBreakText;
+    [FormerlySerializedAs("prom_Img")]
+    [SerializeField] private Image promotionImage;
     [SerializeField] private UnitVisualConfigSO visualConfig;
     [SerializeField] private CanvasGroup canvasGroup;
 
@@ -52,21 +57,21 @@ public class UnitCardUI : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         if (backgroundImage != null)
             backgroundImage.color = visualConfig != null ? visualConfig.GetRarityColor(vm.Rarity) : Color.white;
 
-        if (promotionInfoRoot != null)
-            promotionInfoRoot.SetActive(isOwned);
+        if (limitBreakInfoRoot != null)
+            limitBreakInfoRoot.SetActive(isOwned);
 
-        if (promotionText != null)
-            promotionText.SetText("{0}", vm.LimitBreak);
+        if (limitBreakText != null)
+            limitBreakText.SetText("{0}", vm.LimitBreak);
 
-        if (prom_Img != null)
+        if (promotionImage != null)
         {
             Sprite promotionSprite = visualConfig?.GetPromotionSprite(vm.Promotion);
             bool hasPromotionSprite = promotionSprite != null;
 
-            prom_Img.enabled = isOwned && hasPromotionSprite;
+            promotionImage.enabled = isOwned && hasPromotionSprite;
 
-            if (prom_Img.enabled)
-                prom_Img.sprite = promotionSprite;
+            if (promotionImage.enabled)
+                promotionImage.sprite = promotionSprite;
         }
 
         if (iconImage != null)

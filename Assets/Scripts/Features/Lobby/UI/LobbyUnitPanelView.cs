@@ -4,7 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyUnitPanelView : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class LobbyUnitPanelView : MonoBehaviour
 {
     [Header("Roots")]
     [SerializeField] private Transform selectedUnitRoot;
@@ -28,8 +29,6 @@ public class LobbyUnitPanelView : MonoBehaviour
     private bool hasCapturedLayout;
 
     private readonly Dictionary<string, UnitCardUI> cardsByUnitId = new();
-    private readonly List<string> staleCardIds = new();
-
     private UserResourceData resource;
     private LobbyUnitPanelPresenter presenter;
 
@@ -37,6 +36,14 @@ public class LobbyUnitPanelView : MonoBehaviour
     private string pendingSwapUnitId;
     private bool isChangingFormation;
     private bool isSubscribed;
+
+    private void Awake()
+    {
+        if (ValidateReferences())
+            return;
+
+        enabled = false;
+    }
 
     private void OnEnable()
     {
@@ -118,7 +125,7 @@ public class LobbyUnitPanelView : MonoBehaviour
 
         ReconcileCardList(selectedUnitRoot, selectedUnits, visibleUnitIds);
         ReconcileCardList(ownedUnitRoot, availableUnits, visibleUnitIds);
-        RemoveStaleCards(visibleUnitIds);
+        HideStaleCards(visibleUnitIds);
         RestorePendingSwapVisual();
     }
 
@@ -141,6 +148,7 @@ public class LobbyUnitPanelView : MonoBehaviour
             if (card.transform.parent != root)
                 card.transform.SetParent(root, false);
 
+            card.gameObject.SetActive(true);
             card.transform.SetSiblingIndex(i);
             card.Bind(vm);
         }
@@ -159,32 +167,13 @@ public class LobbyUnitPanelView : MonoBehaviour
         return card;
     }
 
-    private void RemoveStaleCards(HashSet<string> visibleUnitIds)
+    private void HideStaleCards(HashSet<string> visibleUnitIds)
     {
-        staleCardIds.Clear();
-
         foreach (KeyValuePair<string, UnitCardUI> pair in cardsByUnitId)
         {
-            if (!visibleUnitIds.Contains(pair.Key))
-                staleCardIds.Add(pair.Key);
+            if (!visibleUnitIds.Contains(pair.Key) && pair.Value != null)
+                pair.Value.gameObject.SetActive(false);
         }
-
-        foreach (string unitId in staleCardIds)
-        {
-            UnitCardUI card = cardsByUnitId[unitId];
-
-            if (card != null)
-            {
-                card.OnClicked -= HandleCardClicked;
-                card.OnLongPressed -= HandleCardLongPressed;
-                card.gameObject.SetActive(false);
-                Destroy(card.gameObject);
-            }
-
-            cardsByUnitId.Remove(unitId);
-        }
-
-        staleCardIds.Clear();
     }
 
     private void RestorePendingSwapVisual()
@@ -193,7 +182,8 @@ public class LobbyUnitPanelView : MonoBehaviour
             return;
 
         if (!cardsByUnitId.TryGetValue(pendingSwapUnitId, out UnitCardUI card) ||
-            card == null || card.ViewModel == null || !card.ViewModel.IsSelected)
+            card == null || !card.gameObject.activeSelf ||
+            card.ViewModel == null || !card.ViewModel.IsSelected)
         {
             ClearPendingSwap();
             return;
@@ -389,6 +379,21 @@ public class LobbyUnitPanelView : MonoBehaviour
 
         pendingSwapCard = null;
         pendingSwapUnitId = null;
+    }
+
+    private bool ValidateReferences()
+    {
+        bool hasRoots = selectedUnitRoot != null && ownedUnitRoot != null;
+        bool hasLayouts = hasRoots &&
+                          selectedUnitRoot.TryGetComponent(out HorizontalLayoutGroup _) &&
+                          ownedUnitRoot.TryGetComponent(out GridLayoutGroup _);
+        bool isValid = hasRoots && hasLayouts && unitCardPrefab != null &&
+                       unitDetailPanel != null && goldText != null;
+
+        if (!isValid)
+            Debug.LogError("[LobbyUnitPanelView] Required roots, layouts, prefab, detail view, or gold text are missing.", this);
+
+        return isValid;
     }
 
     private void OnDestroy()

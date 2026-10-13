@@ -1,21 +1,28 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class UnitDetailView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject detailRoot;
 
     [Header("Upper Bar")]
-    [SerializeField] private TMP_Text rarity_text;
-    [SerializeField] private Image rarity_Img;
-    [SerializeField] private Image[] limitBreak_Img;
+    [FormerlySerializedAs("rarity_text")]
+    [SerializeField] private TMP_Text rarityText;
+    [FormerlySerializedAs("rarity_Img")]
+    [SerializeField] private Image rarityBackgroundImage;
+    [FormerlySerializedAs("limitBreak_Img")]
+    [SerializeField] private Image[] limitBreakStarImages;
     [SerializeField] private UnitVisualConfigSO visualConfig;
 
     [Header("Common UIs")]
-    [SerializeField] private Image unitIcon_Img;
-    [SerializeField] private Image prom_Img;
+    [FormerlySerializedAs("unitIcon_Img")]
+    [SerializeField] private Image unitIconImage;
+    [FormerlySerializedAs("prom_Img")]
+    [SerializeField] private Image promotionImage;
     [SerializeField] private TMP_Text unitNameText;
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text attackText;
@@ -48,14 +55,16 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
 
     private void Awake()
     {
-        if (backButton != null)
-            backButton.onClick.AddListener(Dismiss);
+        if (!ValidateReferences())
+        {
+            SetVisibleImmediately(false);
+            enabled = false;
+            return;
+        }
 
-        if (activeSkillButton != null)
-            activeSkillButton.onClick.AddListener(OpenActiveSkillPopup);
-
-        if (passiveSkillButton != null)
-            passiveSkillButton.onClick.AddListener(OpenPassiveSkillPopup);
+        backButton.onClick.AddListener(Dismiss);
+        activeSkillButton.onClick.AddListener(OpenActiveSkillPopup);
+        passiveSkillButton.onClick.AddListener(OpenPassiveSkillPopup);
 
         SetVisibleImmediately(false);
     }
@@ -89,7 +98,11 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
     public void Dismiss()
     {
         GameObject root = detailRoot != null ? detailRoot : gameObject;
-        ModalTransitionUtility.RequestExit(root, () => root.SetActive(false));
+        ModalTransitionUtility.RequestExit(root, () =>
+        {
+            root.SetActive(false);
+            UnsubscribeFromRosterUpdates();
+        });
     }
 
     public void Close() => Dismiss();
@@ -104,11 +117,11 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
     {
         Rarity rarity = currentState.Rarity;
 
-        if (rarity_text != null)
-            rarity_text.text = rarity.ToString();
+        if (rarityText != null)
+            rarityText.text = rarity.ToString();
         
-        if (rarity_Img != null)
-            rarity_Img.color = visualConfig != null ? visualConfig.GetRarityColor(rarity) : Color.white;
+        if (rarityBackgroundImage != null)
+            rarityBackgroundImage.color = visualConfig != null ? visualConfig.GetRarityColor(rarity) : Color.white;
     }
 
     public void Refresh()
@@ -137,12 +150,10 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
         equipmentPanel?.Bind(currentUnitId);
     }
 
-    public void ConfigureEquipmentPanel(UnitEquipmentPanel panel) => equipmentPanel = panel;
-
     private void BindCommonInfo()
     {
-        if (unitIcon_Img != null)
-            unitIcon_Img.sprite = currentState.Icon;
+        if (unitIconImage != null)
+            unitIconImage.sprite = currentState.Icon;
 
         if (unitNameText != null)
             unitNameText.text = currentState.DisplayName;
@@ -158,10 +169,10 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
 
         int limitBreak = currentState.LimitBreak;
 
-        for (int i = 0; i < limitBreak_Img.Length; i++)
+        for (int i = 0; i < limitBreakStarImages.Length; i++)
         {
-            if (limitBreak_Img[i] != null && visualConfig != null)
-                limitBreak_Img[i].sprite = i < limitBreak
+            if (limitBreakStarImages[i] != null && visualConfig != null)
+                limitBreakStarImages[i].sprite = i < limitBreak
                     ? visualConfig.FilledStarSprite
                     : visualConfig.EmptyStarSprite;
         }
@@ -169,8 +180,8 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
         int promotion = currentState.Promotion;
         Sprite promotionSprite = visualConfig?.GetPromotionSprite(promotion);
 
-        if (prom_Img != null && promotionSprite != null)
-            prom_Img.sprite = promotionSprite;
+        if (promotionImage != null && promotionSprite != null)
+            promotionImage.sprite = promotionSprite;
     }
 
     private void BindSkillInfo()
@@ -198,6 +209,15 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
         isRosterSubscribed = true;
     }
 
+    private void UnsubscribeFromRosterUpdates()
+    {
+        if (!isRosterSubscribed || UserDataManager.Instance == null)
+            return;
+
+        UserDataManager.Instance.OnRosterUpdated -= HandleRosterUpdated;
+        isRosterSubscribed = false;
+    }
+
     private void HandleRosterUpdated()
     {
         bool isOpen = detailRoot != null ? detailRoot.activeSelf : gameObject.activeSelf;
@@ -223,6 +243,35 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
         passiveSkillDetailPopup.Open(currentState.PassiveSkill, currentState.Promotion);
     }
 
+    private bool ValidateReferences()
+    {
+        bool hasStars = limitBreakStarImages != null && limitBreakStarImages.Length > 0;
+        if (hasStars)
+        {
+            for (int i = 0; i < limitBreakStarImages.Length; i++)
+                hasStars &= limitBreakStarImages[i] != null;
+        }
+
+        bool isValid = detailRoot != null && rarityText != null && rarityBackgroundImage != null &&
+                       hasStars && visualConfig != null && unitIconImage != null && promotionImage != null &&
+                       unitNameText != null && levelText != null && attackText != null && hpText != null &&
+                       activeSkillButton != null && activeSkillIconImage != null &&
+                       passiveSkillButton != null && passiveSkillIconImage != null &&
+                       trainingPanel != null && promotionPanel != null && limitBreakPanel != null &&
+                       equipmentPanel != null && backButton != null &&
+                       activeSkillDetailPopup != null && passiveSkillDetailPopup != null;
+
+        if (!isValid)
+            Debug.LogError("[UnitDetailView] One or more required scene references are missing.", this);
+
+        return isValid;
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeFromRosterUpdates();
+    }
+
     private void OnDestroy()
     {
         if (backButton != null)
@@ -234,7 +283,6 @@ public class UnitDetailView : MonoBehaviour, IModalDismissHandler
         if (passiveSkillButton != null)
             passiveSkillButton.onClick.RemoveListener(OpenPassiveSkillPopup);
 
-        if (isRosterSubscribed && UserDataManager.Instance != null)
-            UserDataManager.Instance.OnRosterUpdated -= HandleRosterUpdated;
+        UnsubscribeFromRosterUpdates();
     }
 }
