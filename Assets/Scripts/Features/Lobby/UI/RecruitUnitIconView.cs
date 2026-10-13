@@ -2,7 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RecruitUnitIconView : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class RecruitUnitIconView : MonoBehaviour
 {
     [SerializeField] private Image bgImage;
     [SerializeField] private Image iconImage;
@@ -54,6 +55,17 @@ public class RecruitUnitIconView : MonoBehaviour
 
         revealCanvasGroup.alpha = 1f;
         transform.localScale = Vector3.one;
+    }
+
+    public void Hide()
+    {
+        if (revealRoutine != null)
+        {
+            StopCoroutine(revealRoutine);
+            revealRoutine = null;
+        }
+
+        gameObject.SetActive(false);
     }
 
     private IEnumerator RevealRoutine(float duration)

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RecruitResultPopupView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class RecruitResultPopupView : MonoBehaviour, IModalDismissHandler
 {
     [Header("UI")]
     [SerializeField] private Button closeButton;
@@ -12,12 +13,13 @@ public class RecruitResultPopupView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private Transform contentRoot;
     [SerializeField] private RecruitUnitIconView slotPrefab;
 
-    private readonly List<RecruitUnitIconView> slots = new();
+    private readonly List<RecruitUnitIconView> slotPool = new();
+    private int activeResultCount;
     private bool isPresenting;
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
-    public int ResultCount => slots.Count;
+    public int ResultCount => activeResultCount;
     public event Action SkipRequested;
 
     private void Awake()
@@ -25,52 +27,58 @@ public class RecruitResultPopupView : MonoBehaviour, IModalDismissHandler
         closeButton.onClick.AddListener(HandleCloseButton);
     }
 
-    public void Open(List<GachaResult> results)
-    {
-        Prepare(results);
-        RevealAll();
-    }
-
     public void Prepare(IReadOnlyList<GachaResult> results)
     {
         Lifecycle.Show();
-        Clear();
+        HideAllSlots();
         isPresenting = true;
 
         if (results == null)
             return;
 
-        foreach (GachaResult result in results)
+        for (int i = 0; i < results.Count; i++)
         {
-            RecruitUnitIconView slot = Instantiate(slotPrefab, contentRoot);
-            slot.Setup(result);
-            slot.gameObject.SetActive(false);
-            slots.Add(slot);
+            RecruitUnitIconView slot = GetOrCreateSlot(i);
+            slot.Setup(results[i]);
+            slot.Hide();
         }
+
+        activeResultCount = results.Count;
     }
 
     public void Reveal(int index, float duration = 0f)
     {
-        if (index < 0 || index >= slots.Count)
+        if (index < 0 || index >= activeResultCount)
             return;
 
-        slots[index].RevealAnimated(duration);
+        slotPool[index].RevealAnimated(duration);
     }
 
     public void RevealAll()
     {
-        foreach (RecruitUnitIconView slot in slots)
-            slot.ShowImmediately();
+        for (int i = 0; i < activeResultCount; i++)
+            slotPool[i].ShowImmediately();
 
         isPresenting = false;
     }
 
-    private void Clear()
+    private RecruitUnitIconView GetOrCreateSlot(int index)
     {
-        slots.Clear();
+        if (index < slotPool.Count)
+            return slotPool[index];
 
-        for (int i = contentRoot.childCount - 1; i >= 0; i--)
-            Destroy(contentRoot.GetChild(i).gameObject);
+        RecruitUnitIconView slot = Instantiate(slotPrefab, contentRoot);
+        slot.name = $"RecruitResultSlot_{slotPool.Count + 1}";
+        slotPool.Add(slot);
+        return slot;
+    }
+
+    private void HideAllSlots()
+    {
+        for (int i = 0; i < slotPool.Count; i++)
+            slotPool[i].Hide();
+
+        activeResultCount = 0;
     }
 
     public void Close()

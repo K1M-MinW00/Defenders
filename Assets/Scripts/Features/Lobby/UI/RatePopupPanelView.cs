@@ -1,20 +1,21 @@
-﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 {
-    [SerializeField] private RateGroupView legendGroup;
-    [SerializeField] private RateGroupView rareGroup;
-    [SerializeField] private RateGroupView normalGroup;
+    [Tooltip("Pre-placed rate rows in display order. Five rows cover four rarities plus one pickup split row.")]
+    [SerializeField] private List<RateGroupView> groupViews = new();
 
-    private readonly System.Collections.Generic.List<RateGroupView> groupViews = new();
     private Coroutine rebuildRoutine;
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
     private void Awake()
     {
-        InitializeGroupViews();
-        EnsureGroupCapacity(4);
+        ValidateReferences();
     }
 
     public bool Open(GachaDataSO banner)
@@ -25,17 +26,17 @@ public class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
             return false;
         }
 
-        if (legendGroup == null || rareGroup == null || normalGroup == null)
+        if (!ValidateReferences())
+            return false;
+
+        IReadOnlyList<RecruitRatePreviewRow> rows = RecruitRatePreviewBuilder.Build(banner);
+        if (rows.Count > groupViews.Count)
         {
-            Debug.LogError("[RatePopupPanelView] One or more rate groups are not assigned.", this);
+            Debug.LogError($"[RatePopupPanelView] {rows.Count} rows are required, but only {groupViews.Count} are assigned.", this);
             return false;
         }
 
         Lifecycle.Show();
-        InitializeGroupViews();
-
-        System.Collections.Generic.IReadOnlyList<RecruitRatePreviewRow> rows = RecruitRatePreviewBuilder.Build(banner);
-        EnsureGroupCapacity(rows.Count);
         int firstSiblingIndex = GetFirstSiblingIndex();
 
         for (int i = 0; i < groupViews.Count; i++)
@@ -66,7 +67,7 @@ public class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 
     public void Dismiss() => Close();
 
-    private System.Collections.IEnumerator RebuildNextFrame()
+    private IEnumerator RebuildNextFrame()
     {
         yield return null;
         Canvas.ForceUpdateCanvases();
@@ -77,7 +78,7 @@ public class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
         }
 
         if (transform is RectTransform popupRect)
-            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(popupRect);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(popupRect);
 
         rebuildRoutine = null;
     }
@@ -87,29 +88,24 @@ public class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
         rebuildRoutine = null;
     }
 
-    private void InitializeGroupViews()
+    private bool ValidateReferences()
     {
-        if (groupViews.Count > 0 || legendGroup == null || rareGroup == null || normalGroup == null)
-            return;
-
-        groupViews.Add(legendGroup);
-        groupViews.Add(rareGroup);
-        groupViews.Add(normalGroup);
-    }
-
-    private void EnsureGroupCapacity(int requiredCount)
-    {
-        if (groupViews.Count == 0)
-            return;
-
-        while (groupViews.Count < requiredCount)
+        if (groupViews == null || groupViews.Count == 0)
         {
-            RateGroupView template = groupViews[0];
-            RateGroupView clone = Instantiate(template, template.transform.parent);
-            clone.name = $"Rate_Group_Runtime_{groupViews.Count}";
-            clone.gameObject.SetActive(false);
-            groupViews.Add(clone);
+            Debug.LogError("[RatePopupPanelView] Pre-placed rate groups are not assigned.", this);
+            return false;
         }
+
+        for (int i = 0; i < groupViews.Count; i++)
+        {
+            if (groupViews[i] != null)
+                continue;
+
+            Debug.LogError($"[RatePopupPanelView] Rate group {i} is not assigned.", this);
+            return false;
+        }
+
+        return true;
     }
 
     private int GetFirstSiblingIndex()

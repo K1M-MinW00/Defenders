@@ -3,11 +3,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RateGroupView : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class RateGroupView : MonoBehaviour
 {
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform contentRoot;
     [SerializeField] private RecruitUnitIconView slotPrefab;
+
+    private readonly List<RecruitUnitIconView> slotPool = new();
 
     public void Setup(string label, float rate, IReadOnlyList<UnitDataSO> units)
     {
@@ -20,10 +23,7 @@ public class RateGroupView : MonoBehaviour
             return;
         }
 
-        foreach (Transform child in contentRoot)
-        {
-            Destroy(child.gameObject);
-        }
+        HideAllSlots();
 
         if (slotPrefab == null)
         {
@@ -34,17 +34,35 @@ public class RateGroupView : MonoBehaviour
         if (units == null)
             return;
 
+        int slotIndex = 0;
         foreach (UnitDataSO unit in units)
         {
             if (unit == null)
                 continue;
 
-            RecruitUnitIconView slot = Instantiate(slotPrefab, contentRoot);
-
+            RecruitUnitIconView slot = GetOrCreateSlot(slotIndex++);
             slot.Setup(unit);
+            slot.ShowImmediately();
         }
 
         RebuildLayout();
+    }
+
+    private RecruitUnitIconView GetOrCreateSlot(int index)
+    {
+        if (index < slotPool.Count)
+            return slotPool[index];
+
+        RecruitUnitIconView slot = Instantiate(slotPrefab, contentRoot);
+        slot.name = $"RateUnitSlot_{slotPool.Count + 1}";
+        slotPool.Add(slot);
+        return slot;
+    }
+
+    private void HideAllSlots()
+    {
+        for (int i = 0; i < slotPool.Count; i++)
+            slotPool[i].Hide();
     }
 
     public void RebuildLayout()

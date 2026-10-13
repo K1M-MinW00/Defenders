@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyRecruitPanelView : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class LobbyRecruitPanelView : MonoBehaviour
 {
     [Header("Currency")]
     [SerializeField] private TMP_Text gemText;
@@ -45,6 +46,12 @@ public class LobbyRecruitPanelView : MonoBehaviour
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         presentationController.Initialize(resultPopup, presentationConfig);
         presentationController.PresentationCompleted += Refresh;
 
@@ -54,6 +61,22 @@ public class LobbyRecruitPanelView : MonoBehaviour
         recruitOneButton.onClick.AddListener(RecruitOne);
         recruitTenButton.onClick.AddListener(RecruitTen);
         rateButton.onClick.AddListener(OpenRatePopup);
+    }
+
+    private bool ValidateReferences()
+    {
+        bool isValid = gemText != null && ticketText != null && ticketImage != null &&
+                       bannerImage != null && pityText != null &&
+                       normalButton != null && specialButton != null &&
+                       recruitOneButton != null && recruitTenButton != null && rateButton != null &&
+                       normalBanner != null && specialBanner != null &&
+                       ratePopup != null && resultPopup != null && gemConfirmPopup != null &&
+                       presentationController != null;
+
+        if (!isValid)
+            Debug.LogError("[LobbyRecruitPanelView] One or more required scene references are missing.", this);
+
+        return isValid;
     }
 
     private void OnEnable()
