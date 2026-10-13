@@ -70,9 +70,11 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
     private const string ConfigResourcePath = "GameData/Configs/GameAudioConfig";
     private const string SoundPreferenceKey = "Setting_Sound";
 
+    [Header("Preconfigured Audio Sources")]
+    [SerializeField] private AudioSource bgmSource;
+    [SerializeField] private List<AudioSource> sfxSources = new();
+
     private GameAudioConfigSO config;
-    private AudioSource bgmSource;
-    private Transform sfxPoolRoot;
     private GameSettingsManager subscribedSettings;
     private Button pressedButton;
     private readonly List<RaycastResult> raycastResults = new();
@@ -81,21 +83,14 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
     private readonly List<SfxVoice> sfxVoices = new();
     private bool bgmPausedBySetting;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void CreateRuntimeInstance()
-    {
-        if (Instance != null)
-            return;
-
-        GameObject root = new("GameAudioManager");
-        root.AddComponent<GameAudioManager>();
-    }
-
     protected override void OnSingletonAwake()
     {
         config = Resources.Load<GameAudioConfigSO>(ConfigResourcePath);
-        bgmSource = CreateSource("BGM", true);
-        CreateSfxPool();
+        if (!InitializeAudioSources())
+        {
+            enabled = false;
+            return;
+        }
         SceneManager.sceneLoaded += HandleSceneLoaded;
 
         ApplySoundEnabled(ReadSoundPreference());
@@ -227,40 +222,28 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
         bgmSource.clip = null;
     }
 
-    private AudioSource CreateSource(string sourceName, bool loop)
+    private bool InitializeAudioSources()
     {
-        GameObject sourceObject = new(sourceName);
-        sourceObject.transform.SetParent(transform, false);
-        AudioSource source = sourceObject.AddComponent<AudioSource>();
-        source.playOnAwake = false;
-        source.loop = loop;
-        return source;
-    }
-
-    private void CreateSfxPool()
-    {
-        GameObject poolObject = new("SFX Pool");
-        poolObject.transform.SetParent(transform, false);
-        sfxPoolRoot = poolObject.transform;
-
-        int initialSize = config != null ? config.InitialSfxPoolSize : 8;
-        for (int i = 0; i < initialSize; i++)
-            CreateSfxVoice();
-    }
-
-    private SfxVoice CreateSfxVoice()
-    {
-        int voiceNumber = sfxVoices.Count + 1;
-        GameObject voiceObject = new($"SFX Voice {voiceNumber:00}");
-        voiceObject.transform.SetParent(sfxPoolRoot, false);
-
-        AudioSource source = voiceObject.AddComponent<AudioSource>();
-        source.playOnAwake = false;
-        source.loop = false;
-
-        SfxVoice voice = new(source);
-        sfxVoices.Add(voice);
-        return voice;
+        if (bgmSource == null)
+        {
+            Debug.LogError($"[{nameof(GameAudioManager)}] BGM AudioSource is not assigned.", this);
+            return false;
+        }
+        bgmSource.playOnAwake = false;
+        bgmSource.loop = true;
+        sfxVoices.Clear();
+        foreach (AudioSource source in sfxSources)
+        {
+            if (source == null)
+                continue;
+            source.playOnAwake = false;
+            source.loop = false;
+            sfxVoices.Add(new SfxVoice(source));
+        }
+        if (sfxVoices.Count > 0)
+            return true;
+        Debug.LogError($"[{nameof(GameAudioManager)}] At least one SFX AudioSource must be assigned.", this);
+        return false;
     }
 
     private SfxVoice AcquireSfxVoice(GameAudioPriority requestedPriority)
@@ -270,10 +253,6 @@ public sealed class GameAudioManager : PersistentSingleton<GameAudioManager>
             if (voice.IsAvailable)
                 return voice;
         }
-
-        int maxPoolSize = config != null ? config.MaxSfxPoolSize : 16;
-        if (sfxVoices.Count < maxPoolSize)
-            return CreateSfxVoice();
 
         SfxVoice replacement = null;
         foreach (SfxVoice voice in sfxVoices)
