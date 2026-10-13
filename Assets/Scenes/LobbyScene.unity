@@ -25271,6 +25271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eab80fbc129f6243972352aff8f74e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RatePopupPanelView
+  closeButton: {fileID: 633390094}
   groupViews:
   - {fileID: 645744183}
   - {fileID: 2116868936}

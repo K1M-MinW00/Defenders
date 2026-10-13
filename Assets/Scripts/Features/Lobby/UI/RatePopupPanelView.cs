@@ -6,6 +6,10 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 {
+    [Header("Controls")]
+    [SerializeField] private Button closeButton;
+
+    [Header("Rate Rows")]
     [Tooltip("Pre-placed rate rows in display order. Five rows cover four rarities plus one pickup split row.")]
     [SerializeField] private List<RateGroupView> groupViews = new();
 
@@ -15,7 +19,13 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 
     private void Awake()
     {
-        ValidateReferences();
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        closeButton.onClick.AddListener(Close);
     }
 
     public bool Open(GachaDataSO banner)
@@ -90,6 +100,12 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool ValidateReferences()
     {
+        if (closeButton == null)
+        {
+            Debug.LogError("[RatePopupPanelView] Close button is not assigned.", this);
+            return false;
+        }
+
         if (groupViews == null || groupViews.Count == 0)
         {
             Debug.LogError("[RatePopupPanelView] Pre-placed rate groups are not assigned.", this);
@@ -106,6 +122,12 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
         }
 
         return true;
+    }
+
+    private void OnDestroy()
+    {
+        if (closeButton != null)
+            closeButton.onClick.RemoveListener(Close);
     }
 
     private int GetFirstSiblingIndex()
