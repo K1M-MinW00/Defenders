@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject panelRoot;
@@ -28,6 +29,8 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private TMP_Dropdown languageDropdown;
 
     private SettingsPanelPresenter presenter;
+    private UserDataManager userDataManager;
+    private GameSettingsManager gameSettingsManager;
     private bool isRefreshingUI;
     private bool isSubscribed;
     private ModalOverlayLifecycle lifecycle;
@@ -36,14 +39,20 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         ConfigureLanguageOptions();
 
-        editProfileButton?.onClick.AddListener(OpenProfileEditor);
-        editNicknameButton?.onClick.AddListener(OpenNicknameEditor);
-        copyUidButton?.onClick.AddListener(CopyUserId);
-        linkAccountButton?.onClick.AddListener(OpenAccountLinkPopup);
-        soundToggle?.onValueChanged.AddListener(HandleSoundToggleChanged);
-        languageDropdown?.onValueChanged.AddListener(HandleLanguageDropdownChanged);
+        editProfileButton.onClick.AddListener(OpenProfileEditor);
+        editNicknameButton.onClick.AddListener(OpenNicknameEditor);
+        copyUidButton.onClick.AddListener(CopyUserId);
+        linkAccountButton.onClick.AddListener(OpenAccountLinkPopup);
+        soundToggle.onValueChanged.AddListener(HandleSoundToggleChanged);
+        languageDropdown.onValueChanged.AddListener(HandleLanguageDropdownChanged);
     }
 
     public void Open()
@@ -53,10 +62,9 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
-        if (UserDataManager.Instance?.UserData == null || GameSettingsManager.Instance == null)
+        if (!TryInitialize())
             return;
 
-        presenter ??= new SettingsPanelPresenter(UserDataManager.Instance.UserData, GameSettingsManager.Instance);
         SubscribeEvents();
         Refresh();
     }
@@ -64,6 +72,7 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
     private void OnDisable()
     {
         UnsubscribeEvents();
+        CleanupChildPopups();
     }
 
     public void Dismiss()
@@ -80,20 +89,18 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
             return;
 
         isRefreshingUI = true;
-        if (iconImage != null) iconImage.sprite = state.ProfileIcon;
-        if (nicknameText != null) nicknameText.text = state.Nickname;
-        if (uidText != null) uidText.text = state.UserId;
-        if (levelText != null) levelText.text = state.Level.ToString();
-        soundToggle?.SetIsOnWithoutNotify(state.SoundEnabled);
-        languageDropdown?.SetValueWithoutNotify(state.LanguageIndex);
+        iconImage.sprite = state.ProfileIcon;
+        iconImage.enabled = state.ProfileIcon != null;
+        nicknameText.text = state.Nickname;
+        uidText.text = state.UserId;
+        levelText.text = state.Level.ToString();
+        soundToggle.SetIsOnWithoutNotify(state.SoundEnabled);
+        languageDropdown.SetValueWithoutNotify(state.LanguageIndex);
         isRefreshingUI = false;
     }
 
     private void ConfigureLanguageOptions()
     {
-        if (languageDropdown == null)
-            return;
-
         languageDropdown.ClearOptions();
         List<TMP_Dropdown.OptionData> options = new();
         foreach (string label in SettingsPanelPresenter.LanguageLabels)
@@ -103,17 +110,17 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OpenProfileEditor()
     {
-        editProfilePopup?.Open();
+        editProfilePopup.Open();
     }
 
     private void OpenNicknameEditor()
     {
-        editNicknamePopup?.Open();
+        editNicknamePopup.Open();
     }
 
     private void CopyUserId()
     {
-        string userId = UserDataManager.Instance?.UserData?.Profile?.UserId;
+        string userId = userDataManager?.UserData?.Profile?.UserId;
         if (string.IsNullOrWhiteSpace(userId))
         {
             UIFeedbackToast.Show("사용자 ID를 확인할 수 없습니다.");
@@ -126,14 +133,14 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OpenAccountLinkPopup()
     {
-        accountLinkPopup?.Open();
+        accountLinkPopup.Open();
     }
 
     private void CleanupChildPopups()
     {
-        editProfilePopup?.HideImmediately();
-        editNicknamePopup?.HideImmediately();
-        accountLinkPopup?.HideImmediately();
+        editProfilePopup.HideImmediately();
+        editNicknamePopup.HideImmediately();
+        accountLinkPopup.HideImmediately();
     }
 
     private void HandleSoundToggleChanged(bool enabled)
@@ -153,9 +160,9 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
         if (isSubscribed)
             return;
 
-        UserDataManager.Instance.OnProfileUpdated += Refresh;
-        GameSettingsManager.Instance.OnSoundChanged += HandleSoundChanged;
-        GameSettingsManager.Instance.OnLanguageChanged += HandleLanguageChanged;
+        userDataManager.OnProfileUpdated += Refresh;
+        gameSettingsManager.OnSoundChanged += HandleSoundChanged;
+        gameSettingsManager.OnLanguageChanged += HandleLanguageChanged;
         isSubscribed = true;
     }
 
@@ -164,13 +171,13 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
         if (!isSubscribed)
             return;
 
-        if (UserDataManager.Instance != null)
-            UserDataManager.Instance.OnProfileUpdated -= Refresh;
+        if (userDataManager != null)
+            userDataManager.OnProfileUpdated -= Refresh;
 
-        if (GameSettingsManager.Instance != null)
+        if (gameSettingsManager != null)
         {
-            GameSettingsManager.Instance.OnSoundChanged -= HandleSoundChanged;
-            GameSettingsManager.Instance.OnLanguageChanged -= HandleLanguageChanged;
+            gameSettingsManager.OnSoundChanged -= HandleSoundChanged;
+            gameSettingsManager.OnLanguageChanged -= HandleLanguageChanged;
         }
 
         isSubscribed = false;
@@ -178,21 +185,58 @@ public class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 
     private void HandleSoundChanged(bool enabled)
     {
-        soundToggle?.SetIsOnWithoutNotify(enabled);
+        soundToggle.SetIsOnWithoutNotify(enabled);
     }
 
     private void HandleLanguageChanged(string languageCode)
     {
-        languageDropdown?.SetValueWithoutNotify(SettingsPanelPresenter.GetLanguageIndex(languageCode));
+        languageDropdown.SetValueWithoutNotify(SettingsPanelPresenter.GetLanguageIndex(languageCode));
     }
 
     private void OnDestroy()
     {
+        UnsubscribeEvents();
         editProfileButton?.onClick.RemoveListener(OpenProfileEditor);
         editNicknameButton?.onClick.RemoveListener(OpenNicknameEditor);
         copyUidButton?.onClick.RemoveListener(CopyUserId);
         linkAccountButton?.onClick.RemoveListener(OpenAccountLinkPopup);
         soundToggle?.onValueChanged.RemoveListener(HandleSoundToggleChanged);
         languageDropdown?.onValueChanged.RemoveListener(HandleLanguageDropdownChanged);
+    }
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        gameSettingsManager ??= GameSettingsManager.Instance;
+        if (userDataManager?.UserData == null || gameSettingsManager == null)
+        {
+            SetInteraction(false);
+            return false;
+        }
+
+        presenter ??= new SettingsPanelPresenter(userDataManager.UserData, gameSettingsManager);
+        SetInteraction(true);
+        return true;
+    }
+
+    private void SetInteraction(bool interactable)
+    {
+        editProfileButton.interactable = interactable;
+        editNicknameButton.interactable = interactable;
+        copyUidButton.interactable = interactable;
+        linkAccountButton.interactable = interactable;
+        soundToggle.interactable = interactable;
+        languageDropdown.interactable = interactable;
+    }
+
+    private bool ValidateReferences()
+    {
+        bool valid = editProfilePopup != null && editNicknamePopup != null && accountLinkPopup != null &&
+                     iconImage != null && nicknameText != null && levelText != null && uidText != null &&
+                     editProfileButton != null && editNicknameButton != null && copyUidButton != null &&
+                     linkAccountButton != null && soundToggle != null && languageDropdown != null;
+        if (!valid)
+            Debug.LogError("[SettingsPanelView] Required UI references are not assigned.", this);
+        return valid;
     }
 }
