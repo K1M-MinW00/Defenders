@@ -77,20 +77,16 @@ public sealed class QuestRewardDisplay : MonoBehaviour
 
     private void PositionNear(RectTransform anchor)
     {
-        Canvas canvas = GetComponentInParent<Canvas>()?.rootCanvas;
-        RectTransform canvasRect = canvas?.transform as RectTransform;
+        RectTransform canvasRect = transform as RectTransform;
         panel.anchorMin = panel.anchorMax = panel.pivot = new Vector2(.5f, .5f);
         if (anchor == null || canvasRect == null) { panel.anchoredPosition = Vector2.zero; return; }
-        Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
-        Vector2 screen = RectTransformUtility.WorldToScreenPoint(camera, anchor.position);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screen, camera, out Vector2 local);
+        Vector2 local = canvasRect.InverseTransformPoint(anchor.position);
         panel.anchoredPosition = local + Vector2.down * 170f;
     }
 
     private void ClampToCanvas()
     {
-        Canvas canvas = GetComponentInParent<Canvas>()?.rootCanvas;
-        RectTransform canvasRect = canvas?.transform as RectTransform;
+        RectTransform canvasRect = transform as RectTransform;
         if (canvasRect == null) return;
 
         Canvas.ForceUpdateCanvases();
@@ -110,16 +106,4 @@ public sealed class QuestRewardDisplay : MonoBehaviour
 
         panel.anchoredPosition += correction;
     }
-
-#if UNITY_EDITOR
-    public void SetReferences(RectTransform contentPanel, Transform rewardSlots, TMP_Text heading,
-        Button backdrop, CommonSlotUI rewardSlotPrefab)
-    {
-        panel = contentPanel;
-        slotsRoot = rewardSlots;
-        title = heading;
-        backdropButton = backdrop;
-        slotPrefab = rewardSlotPrefab;
-    }
-#endif
 }

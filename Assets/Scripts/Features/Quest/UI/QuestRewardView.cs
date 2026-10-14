@@ -14,8 +14,11 @@ public sealed class QuestRewardView : MonoBehaviour
     public int Threshold => threshold;
     public QuestRewardPeriod Period { get; private set; }
 
-    public void Configure(int threshold, bool reached)
-        => Configure(QuestRewardPeriod.Daily, threshold, reached, false);
+    private void Awake()
+    {
+        if (button != null)
+            button.onClick.AddListener(HandleClick);
+    }
 
     public void Configure(QuestRewardPeriod period, int threshold, bool reached, bool claimed)
     {
@@ -36,9 +39,7 @@ public sealed class QuestRewardView : MonoBehaviour
 
     public void SetClickHandler(Action handler)
     {
-        if (button != null && clickHandler != null) button.onClick.RemoveListener(HandleClick);
         clickHandler = handler;
-        if (button != null && clickHandler != null) button.onClick.AddListener(HandleClick);
     }
 
     private void HandleClick() => clickHandler?.Invoke();

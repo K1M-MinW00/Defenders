@@ -18,15 +18,10 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
     [SerializeField] private QuestItemView[] questItems = Array.Empty<QuestItemView>();
     [SerializeField] private TMP_Text timerText;
     private Coroutine timerRoutine;
+    private bool questActionBusy;
     private bool rewardClaimBusy;
+    private int openVersion;
     private readonly List<QuestDefinition> orderedQuests = new(16);
-
-    public void Configure(Button open, Button close, GameObject target)
-    {
-        openButton = open;
-        closeButton = close;
-        overlay = target;
-    }
 
     private void Awake()
     {
@@ -45,12 +40,25 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         if (overlay == null)
             return;
 
-        UserDataManager manager = UserDataManager.Instance;
-        if (manager?.IsLoaded == true)
-            await manager.RefreshQuestPeriodsAsync();
-
+        int currentOpen = ++openVersion;
         overlay.SetActive(true);
         overlay.transform.SetAsLastSibling();
+
+        UserDataManager manager = UserDataManager.Instance;
+        try
+        {
+            if (manager?.IsLoaded == true)
+                await manager.RefreshQuestPeriodsAsync();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[QuestController] Period refresh failed: {exception}");
+            UIFeedbackToast.Show("퀘스트 정보를 갱신하지 못했습니다.");
+        }
+
+        if (currentOpen != openVersion || !overlay.activeSelf)
+            return;
+
         Refresh();
         if (timerRoutine != null) StopCoroutine(timerRoutine);
         timerRoutine = StartCoroutine(UpdateTimer());
@@ -58,6 +66,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
 
     public void Dismiss()
     {
+        openVersion++;
         rewardDisplay?.Hide();
         if (timerRoutine != null)
         {
@@ -77,8 +86,19 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         dailyRewardTrack?.SetState(data.DailyScore, data.ClaimedDailyRewards);
 
         BuildOrderedQuestList(data);
-        for (int i = 0; i < Math.Min(questItems.Length, orderedQuests.Count); i++)
+        for (int i = 0; i < questItems.Length; i++)
         {
+            bool visible = i < orderedQuests.Count;
+            if (questItems[i] == null)
+                continue;
+
+            questItems[i].gameObject.SetActive(visible);
+            if (!visible)
+            {
+                questItems[i].Clear();
+                continue;
+            }
+
             QuestDefinition definition = orderedQuests[i];
             int progress = QuestProgressService.GetProgress(data, definition.Id);
             bool claimed = QuestProgressService.IsScoreClaimed(data, definition.Id);
@@ -114,6 +134,9 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
 
     private async void HandleQuestAction(QuestDefinition definition)
     {
+        if (questActionBusy)
+            return;
+
         UserQuestData data = UserDataManager.Instance?.UserData?.Quest;
         if (data == null) return;
         if (QuestProgressService.GetProgress(data, definition.Id) < definition.Target)
@@ -122,7 +145,22 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
             return;
         }
 
-        QuestScoreClaimResult result = await UserDataManager.Instance.ClaimQuestScoreAsync(definition.Id);
+        questActionBusy = true;
+        QuestScoreClaimResult result;
+        try
+        {
+            result = await UserDataManager.Instance.ClaimQuestScoreAsync(definition.Id);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[QuestController] Score claim failed: {exception}");
+            UIFeedbackToast.Show("퀘스트 점수를 획득하지 못했습니다.");
+            return;
+        }
+        finally
+        {
+            questActionBusy = false;
+        }
         if (result.Succeeded)
         {
             UIFeedbackToast.Show($"퀘스트 점수 {definition.Score}점을 획득했습니다.");
@@ -156,8 +194,21 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         }
 
         rewardClaimBusy = true;
-        QuestRewardClaimResult result = await UserDataManager.Instance.ClaimQuestRewardAsync(period, threshold);
-        rewardClaimBusy = false;
+        QuestRewardClaimResult result;
+        try
+        {
+            result = await UserDataManager.Instance.ClaimQuestRewardAsync(period, threshold);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[QuestController] Reward claim failed: {exception}");
+            UIFeedbackToast.Show("퀘스트 보상을 받을 수 없습니다.");
+            return;
+        }
+        finally
+        {
+            rewardClaimBusy = false;
+        }
         if (result.Succeeded)
         {
             Refresh();
@@ -181,20 +232,6 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
                 return true;
         return false;
     }
-
-#if UNITY_EDITOR
-    public void SetRewardDisplay(QuestRewardDisplay display) => rewardDisplay = display;
-
-    public void SetViewReferences(QuestRewardTrackView dailyTrack, QuestRewardTrackView weeklyTrack,
-        QuestRewardView[] rewards, QuestItemView[] items, TMP_Text timer)
-    {
-        dailyRewardTrack = dailyTrack;
-        weeklyRewardTrack = weeklyTrack;
-        rewardViews = rewards ?? Array.Empty<QuestRewardView>();
-        questItems = items ?? Array.Empty<QuestItemView>();
-        timerText = timer;
-    }
-#endif
 
     private void NavigateToQuest(QuestEventType eventType)
     {

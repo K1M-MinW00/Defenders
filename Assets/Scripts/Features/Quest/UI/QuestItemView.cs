@@ -13,6 +13,12 @@ public sealed class QuestItemView : MonoBehaviour
     [SerializeField] private TMP_Text actionText;
     private Action action;
 
+    private void Awake()
+    {
+        if (actionButton != null)
+            actionButton.onClick.AddListener(HandleAction);
+    }
+
     public void Configure(int points, string description, int progress, int target, bool scoreClaimed, Action onAction)
     {
         target = Mathf.Max(1, target);
@@ -30,11 +36,6 @@ public sealed class QuestItemView : MonoBehaviour
             progressSlider.SetValueWithoutNotify(progress);
         }
         action = onAction;
-        if (actionButton != null)
-        {
-            actionButton.onClick.RemoveListener(HandleAction);
-            actionButton.onClick.AddListener(HandleAction);
-        }
         if (actionText != null) actionText.text = scoreClaimed ? "획득함" : completed ? "획득" : "이동";
         if (actionButton != null)
         {
@@ -50,21 +51,16 @@ public sealed class QuestItemView : MonoBehaviour
 
     private void HandleAction() => action?.Invoke();
 
+    public void Clear()
+    {
+        action = null;
+        if (actionButton != null)
+            actionButton.interactable = false;
+    }
+
     private void OnDestroy()
     {
         if (actionButton != null)
             actionButton.onClick.RemoveListener(HandleAction);
     }
-
-#if UNITY_EDITOR
-    public void SetReferences(TMP_Text points, TMP_Text description, Slider slider, TMP_Text progressLabel, Button action, TMP_Text actionLabel)
-    {
-        pointText = points;
-        descriptionText = description;
-        progressSlider = slider;
-        progressText = progressLabel;
-        actionButton = action;
-        actionText = actionLabel;
-    }
-#endif
 }
