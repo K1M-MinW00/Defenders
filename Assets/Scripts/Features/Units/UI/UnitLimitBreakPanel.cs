@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,7 +27,9 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
 
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
+    private UserDataManager userDataManager;
     private bool isLimitBreaking;
+    private int operationVersion;
     private readonly List<LimitBreakEffectSlot> effectSlotPool = new();
 
     private void Awake()
@@ -40,23 +43,45 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
         limitBreakButton.onClick.AddListener(OnClickLimitBreak);
     }
 
-    public void Bind(UnitDataSO unitData)
+    private void OnEnable()
     {
+        if (currentUnitData != null && userDataManager != null)
+            Refresh();
+    }
+
+    private void OnDisable()
+    {
+        operationVersion++;
+    }
+
+    public bool Bind(UnitDataSO unitData, UserDataManager manager)
+    {
+        if (unitData == null || manager?.UserData == null || !manager.IsLoaded || manager.RosterService == null)
+        {
+            Debug.LogError("[UnitLimitBreakPanel] Loaded user data and unit definition are required.", this);
+            limitBreakButton.interactable = false;
+            return false;
+        }
+
         currentUnitData = unitData;
+        userDataManager = manager;
 
         Refresh();
+        return currentUnit != null;
     }
 
     private void Refresh()
     {
-        if (currentUnitData == null || UserDataManager.Instance == null)
+        if (currentUnitData == null || userDataManager == null)
             return;
 
-        currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
+        currentUnit = userDataManager.RosterService.GetUnit(currentUnitData.unitId);
 
         if (currentUnit == null)
         {
             Debug.LogWarning($"[UnitLimitBreakPanel] Owned unit data not found: {currentUnitData.unitId}");
+            limitBreakButton.interactable = false;
+            HideEffectSlots();
             return;
         }
 
@@ -94,7 +119,7 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
         if (materialText != null)
             materialText.text = $"{currentUnit.DuplicateCount} / 1";
         if (limitBreakButton != null)
-            limitBreakButton.interactable = currentUnit.DuplicateCount >= 1;
+            limitBreakButton.interactable = !isLimitBreaking && currentUnit.DuplicateCount >= 1;
     }
 
     private void RefreshStars()
@@ -146,9 +171,13 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
         if (datas == null)
             return;
 
+        int slotIndex = 0;
         for (int i = 0; i < datas.Count; i++)
         {
-            LimitBreakEffectSlot slot = GetOrCreateEffectSlot(i);
+            if (datas[i] == null)
+                continue;
+
+            LimitBreakEffectSlot slot = GetOrCreateEffectSlot(slotIndex++);
             bool unlocked = i < currentUnit.LimitBreak;
 
             slot.gameObject.SetActive(true);
@@ -182,13 +211,17 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
             return;
 
         isLimitBreaking = true;
+        int currentOperation = ++operationVersion;
         if (limitBreakButton != null)
             limitBreakButton.interactable = false;
 
         try
         {
-            LimitBreakUnitResult result = await UserDataManager.Instance.LimitBreakUnitAsync(
+            LimitBreakUnitResult result = await userDataManager.LimitBreakUnitAsync(
                 new LimitBreakUnitCommand(currentUnitData.unitId));
+
+            if (!isActiveAndEnabled || currentOperation != operationVersion)
+                return;
 
             if (!result.Succeeded)
             {
@@ -196,14 +229,19 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
                 UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
                 return;
             }
-
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (isActiveAndEnabled && currentOperation == operationVersion)
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(LimitBreakUnitFailure.SaveFailed));
         }
         finally
         {
             isLimitBreaking = false;
 
-            if (limitBreakButton != null && limitBreakButton.gameObject.activeSelf && currentUnit != null)
-                limitBreakButton.interactable = currentUnit.DuplicateCount > 0;
+            if (isActiveAndEnabled && currentOperation == operationVersion)
+                Refresh();
         }
     }
 
