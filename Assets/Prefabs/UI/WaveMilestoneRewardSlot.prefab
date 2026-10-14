@@ -114,7 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveMilestoneRewardSlotView
   waveText: {fileID: 3510068849543312172}
   rewardContent: {fileID: 2832813930444237540}
-  rewardItemPrefab: {fileID: 3524038780547402489, guid: f4f243ebd3038ec45bec9a1a5660291b, type: 3}
+  rewardItemPrefab: {fileID: 2878806649800900299, guid: f4f243ebd3038ec45bec9a1a5660291b, type: 3}
   stateText: {fileID: 6818272108026011344}
   claimButton: {fileID: 6970127182096695861}
   claimButtonBackground: {fileID: 913696007613675074}

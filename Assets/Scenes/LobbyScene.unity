@@ -42561,7 +42561,7 @@ MonoBehaviour:
   overlay: {fileID: 1134084920}
   titleText: {fileID: 1470164311}
   rewardContent: {fileID: 1134084917}
-  rewardSlotPrefab: {fileID: 774325875311766923, guid: f7d409974dc8ec843a9c6824b80d08ec, type: 3}
+  rewardSlotPrefab: {fileID: 8114909905789824370, guid: f7d409974dc8ec843a9c6824b80d08ec, type: 3}
   claimAllButton: {fileID: 1134084915}
   claimAllButtonBackground: {fileID: 1134084916}
   closeButton: {fileID: 1134084918}

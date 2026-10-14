@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +15,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
     [SerializeField] private GameObject overlay;
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Transform rewardContent;
-    [SerializeField] private GameObject rewardSlotPrefab;
+    [SerializeField] private WaveMilestoneRewardSlotView rewardSlotPrefab;
     [SerializeField] private Button claimAllButton;
     [SerializeField] private Image claimAllButtonBackground;
     [SerializeField] private Button closeButton;
@@ -20,31 +23,8 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
     private readonly List<WaveMilestoneRewardSlotView> slots = new();
     private ModalOverlayLifecycle lifecycle;
     private bool claimBusy;
+    private int operationVersion;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(overlay);
-
-#if UNITY_EDITOR
-    public void Configure(
-        Button entryButton,
-        GameObject badge,
-        GameObject overlayObject,
-        TMP_Text title,
-        Transform content,
-        GameObject slotPrefab,
-        Button claimAll,
-        Image claimAllBackground,
-        Button close)
-    {
-        openButton = entryButton;
-        notificationBadge = badge;
-        overlay = overlayObject;
-        titleText = title;
-        rewardContent = content;
-        rewardSlotPrefab = slotPrefab;
-        claimAllButton = claimAll;
-        claimAllButtonBackground = claimAllBackground;
-        closeButton = close;
-    }
-#endif
 
     private void Awake()
     {
@@ -61,6 +41,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private void OnDisable()
     {
+        operationVersion++;
         if (UserDataManager.Instance != null) UserDataManager.Instance.OnProgressUpdated -= HandleDataUpdated;
     }
 
@@ -77,7 +58,11 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
         Lifecycle.Show();
     }
 
-    public void Dismiss() => Lifecycle.Close();
+    public void Dismiss()
+    {
+        if (!claimBusy)
+            Lifecycle.Close();
+    }
 
     private void HandleDataUpdated()
     {
@@ -97,15 +82,22 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
         StageDataSO stage = WaveMilestoneRewardRules.ResolveRewardStage(progress, GameConfig.Stages);
         if (titleText != null) titleText.text = stage == null ? "웨이브 달성 보상" : $"스테이지\n{stage.StageKey}";
 
-        int requiredCount = stage?.milestoneRewards?.Count ?? 0;
+        IReadOnlyList<WaveMilestoneReward> milestones = stage?.milestoneRewards?
+            .Where(milestone => milestone != null)
+            .ToList() ?? new List<WaveMilestoneReward>();
+        int requiredCount = milestones.Count;
         EnsureSlotCount(requiredCount);
         bool anyClaimable = false;
         for (int i = 0; i < slots.Count; i++)
         {
             bool visible = i < requiredCount;
             slots[i].gameObject.SetActive(visible);
-            if (!visible) continue;
-            WaveMilestoneReward milestone = stage.milestoneRewards[i];
+            if (!visible)
+            {
+                slots[i].Clear();
+                continue;
+            }
+            WaveMilestoneReward milestone = milestones[i];
             bool unlocked = WaveMilestoneRewardRules.IsUnlocked(progress, stage.sector, stage.stage, milestone.requiredWave);
             bool claimed = WaveMilestoneRewardRules.IsClaimed(progress.WaveRewardProgress, milestone.requiredWave);
             anyClaimable |= unlocked && !claimed;
@@ -120,6 +112,9 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
                     ? new Color(0.91f, 0.15f, 0.24f, 1f)
                     : new Color(0.32f, 0.34f, 0.38f, 1f);
         }
+
+        if (closeButton != null)
+            closeButton.interactable = !claimBusy;
     }
 
     private void EnsureSlotCount(int count)
@@ -127,37 +122,44 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
         if (rewardContent == null || rewardSlotPrefab == null) return;
         while (slots.Count < count)
         {
-            GameObject instance = Instantiate(rewardSlotPrefab, rewardContent);
-            WaveMilestoneRewardSlotView view = instance.GetComponent<WaveMilestoneRewardSlotView>();
-            if (view == null)
-            {
-                Destroy(instance);
-                Debug.LogError("Wave milestone reward slot prefab is missing its view component.", this);
-                return;
-            }
+            WaveMilestoneRewardSlotView view = Instantiate(rewardSlotPrefab, rewardContent);
             slots.Add(view);
         }
     }
 
     private async void Claim(int requiredWave)
     {
-        if (claimBusy) return;
-        claimBusy = true;
-        RefreshPopup();
-        WaveMilestoneClaimResult result = await UserDataManager.Instance.ClaimWaveMilestoneRewardAsync(requiredWave);
-        claimBusy = false;
-        ShowResult(result);
-        RefreshPopup();
-        RefreshBadge();
+        await ExecuteClaimAsync(manager => manager.ClaimWaveMilestoneRewardAsync(requiredWave));
     }
 
     private async void ClaimAll()
     {
-        if (claimBusy) return;
+        await ExecuteClaimAsync(manager => manager.ClaimAllWaveMilestoneRewardsAsync());
+    }
+
+    private async Task ExecuteClaimAsync(Func<UserDataManager, Task<WaveMilestoneClaimResult>> claimOperation)
+    {
+        UserDataManager manager = UserDataManager.Instance;
+        if (claimBusy || manager == null || claimOperation == null) return;
         claimBusy = true;
+        int currentOperation = ++operationVersion;
         RefreshPopup();
-        WaveMilestoneClaimResult result = await UserDataManager.Instance.ClaimAllWaveMilestoneRewardsAsync();
+
+        WaveMilestoneClaimResult result;
+        try
+        {
+            result = await claimOperation(manager);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[WaveMilestoneRewardController] Claim failed: {exception}");
+            result = WaveMilestoneClaimResult.Fail(WaveMilestoneClaimFailure.SaveFailed);
+        }
+
         claimBusy = false;
+        if (!isActiveAndEnabled || currentOperation != operationVersion)
+            return;
+
         ShowResult(result);
         RefreshPopup();
         RefreshBadge();

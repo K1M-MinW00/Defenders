@@ -11,7 +11,7 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
 
     [SerializeField] private TMP_Text waveText;
     [SerializeField] private Transform rewardContent;
-    [SerializeField] private GameObject rewardItemPrefab;
+    [SerializeField] private ShopRewardSlotView rewardItemPrefab;
     [SerializeField] private TMP_Text stateText;
     [SerializeField] private Button claimButton;
     [SerializeField] private Image claimButtonBackground;
@@ -22,24 +22,6 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
 
     private void Awake() => claimButton?.onClick.AddListener(HandleClick);
     private void OnDestroy() => claimButton?.onClick.RemoveListener(HandleClick);
-
-#if UNITY_EDITOR
-    public void Configure(
-        TMP_Text waveLabel,
-        Transform itemContent,
-        GameObject itemPrefab,
-        TMP_Text buttonLabel,
-        Button button,
-        Image buttonBackground)
-    {
-        waveText = waveLabel;
-        rewardContent = itemContent;
-        rewardItemPrefab = itemPrefab;
-        stateText = buttonLabel;
-        claimButton = button;
-        claimButtonBackground = buttonBackground;
-    }
-#endif
 
     public void Bind(WaveMilestoneReward milestone, bool unlocked, bool claimed, bool busy, Action<int> onClaimRequested)
     {
@@ -55,19 +37,23 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
             claimButtonBackground.color = claimable ? ClaimableColor : DisabledColor;
     }
 
+    public void Clear()
+    {
+        requiredWave = 0;
+        claimRequested = null;
+        if (waveText != null) waveText.text = string.Empty;
+        if (stateText != null) stateText.text = string.Empty;
+        if (claimButton != null) claimButton.interactable = false;
+        if (claimButtonBackground != null) claimButtonBackground.color = DisabledColor;
+        HideRewardSlotsFrom(0);
+    }
+
     private void BindRewards(IReadOnlyList<RewardData> rewards)
     {
         int count = rewards?.Count ?? 0;
         while (rewardSlots.Count < count)
         {
-            GameObject instance = Instantiate(rewardItemPrefab, rewardContent);
-            ShopRewardSlotView view = instance.GetComponent<ShopRewardSlotView>();
-            if (view == null)
-            {
-                Destroy(instance);
-                Debug.LogError("Wave reward item prefab is missing ShopRewardSlotView.", this);
-                return;
-            }
+            ShopRewardSlotView view = Instantiate(rewardItemPrefab, rewardContent);
             rewardSlots.Add(view);
         }
 
@@ -77,6 +63,17 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
             rewardSlots[i].gameObject.SetActive(visible);
             if (visible)
                 rewardSlots[i].Bind(rewards[i]);
+            else
+                rewardSlots[i].Clear();
+        }
+    }
+
+    private void HideRewardSlotsFrom(int firstHiddenIndex)
+    {
+        for (int i = firstHiddenIndex; i < rewardSlots.Count; i++)
+        {
+            rewardSlots[i].Clear();
+            rewardSlots[i].gameObject.SetActive(false);
         }
     }
 
