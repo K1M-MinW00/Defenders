@@ -1,13 +1,24 @@
 using System.Collections;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public sealed class ShopMainNotificationBadgeView : MonoBehaviour
 {
     [SerializeField] private ShopProductGroup shopProductGroup;
     [SerializeField] private GameObject badge;
 
-    private UserDataManager subscribedManager;
+    private UserDataManager userDataManager;
+    private bool isSubscribed;
     private Coroutine refreshRoutine;
+
+    private void Awake()
+    {
+        if (shopProductGroup == null || badge == null)
+        {
+            Debug.LogError("[ShopMainNotificationBadgeView] Required references are not assigned.", this);
+            enabled = false;
+        }
+    }
 
     private void OnEnable()
     {
@@ -40,37 +51,30 @@ public sealed class ShopMainNotificationBadgeView : MonoBehaviour
 
     private void Subscribe()
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (manager == null || manager == subscribedManager)
+        userDataManager ??= UserDataManager.Instance;
+        if (isSubscribed || userDataManager == null)
             return;
 
-        Unsubscribe();
-        subscribedManager = manager;
-        subscribedManager.OnShopUpdated += Refresh;
+        userDataManager.OnShopUpdated += Refresh;
+        isSubscribed = true;
     }
 
     private void Unsubscribe()
     {
-        if (subscribedManager == null)
+        if (!isSubscribed || userDataManager == null)
             return;
 
-        subscribedManager.OnShopUpdated -= Refresh;
-        subscribedManager = null;
+        userDataManager.OnShopUpdated -= Refresh;
+        isSubscribed = false;
     }
 
     private void Refresh()
     {
-        if (badge == null)
-            return;
-
-        UserDataManager manager = subscribedManager != null
-            ? subscribedManager
-            : UserDataManager.Instance;
-        bool visible = manager != null && shopProductGroup != null &&
-                       (manager.HasShopNotification(ShopTabType.Limited, shopProductGroup) ||
-                        manager.HasShopNotification(ShopTabType.Package, shopProductGroup) ||
-                        manager.HasShopNotification(ShopTabType.Recharge, shopProductGroup) ||
-                        manager.HasShopNotification(ShopTabType.Exchange, shopProductGroup));
+        bool visible = userDataManager != null &&
+                       (userDataManager.HasShopNotification(ShopTabType.Limited, shopProductGroup) ||
+                        userDataManager.HasShopNotification(ShopTabType.Package, shopProductGroup) ||
+                        userDataManager.HasShopNotification(ShopTabType.Recharge, shopProductGroup) ||
+                        userDataManager.HasShopNotification(ShopTabType.Exchange, shopProductGroup));
         badge.SetActive(visible);
     }
 }

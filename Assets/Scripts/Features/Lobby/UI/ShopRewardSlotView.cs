@@ -1,23 +1,36 @@
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public sealed class ShopRewardSlotView : MonoBehaviour
 {
     [SerializeField] private CommonSlotUI commonSlot;
 
+    private void Awake()
+    {
+        if (commonSlot == null)
+        {
+            Debug.LogError("[ShopRewardSlotView] Common slot is not assigned.", this);
+            enabled = false;
+        }
+    }
+
     public void Bind(RewardData reward)
     {
-        bool resolved = RewardPresentationResolver.TryResolve(reward,GameConfig.Icons,out RewardPresentation presentation);
+        if (commonSlot == null)
+            return;
 
-        if (commonSlot != null)
-        {
-            if (resolved)
-                commonSlot.SetupPresentation(
-                    presentation,
-                    reward.Amount,
-                    () => ItemTooltipUI.Show(presentation.DisplayName, transform as RectTransform));
-            else
-                commonSlot.Clear();
-        }
+        bool resolved = RewardPresentationResolver.TryResolve(
+            reward,
+            GameConfig.Icons,
+            out RewardPresentation presentation);
+
+        if (resolved)
+            commonSlot.SetupPresentation(
+                presentation,
+                reward.Amount,
+                () => ItemTooltipUI.Show(presentation.DisplayName, transform as RectTransform));
+        else
+            commonSlot.Clear();
     }
 
     public void Clear()

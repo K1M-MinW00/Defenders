@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private TMP_Text resultTitleText;
@@ -18,8 +19,13 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
 
     private void Awake()
     {
-        if (closeButton != null)
-            closeButton.onClick.AddListener(Dismiss);
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        closeButton.onClick.AddListener(Dismiss);
     }
 
     public void Show(ShopProductData product, ShopPurchaseResult result)
@@ -105,5 +111,14 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
     {
         if (closeButton != null)
             closeButton.onClick.RemoveListener(Dismiss);
+    }
+
+    private bool ValidateReferences()
+    {
+        bool valid = resultTitleText != null && productNameText != null && messageText != null &&
+                     rewardContainer != null && rewardSlotPrefab != null && closeButton != null;
+        if (!valid)
+            Debug.LogError("[ShopPurchaseResultPopup] Required UI references are not assigned.", this);
+        return valid;
     }
 }

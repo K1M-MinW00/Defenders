@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private TMP_Text titleText;
@@ -20,17 +21,21 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
     private UnityAction onConfirm;
     private UnityAction onRecharge;
     private readonly List<ShopRewardSlotView> rewardSlots = new();
+    private bool isBusy;
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
     private void Awake()
     {
-        if (confirmButton != null)
-            confirmButton.onClick.AddListener(Confirm);
-        if (cancelButton != null)
-            cancelButton.onClick.AddListener(Dismiss);
-        if (rechargeButton != null)
-            rechargeButton.onClick.AddListener(OpenRecharge);
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        confirmButton.onClick.AddListener(Confirm);
+        cancelButton.onClick.AddListener(Dismiss);
+        rechargeButton.onClick.AddListener(OpenRecharge);
     }
 
     public void Show(
@@ -44,6 +49,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
 
         onConfirm = confirm;
         onRecharge = recharge;
+        isBusy = false;
 
         if (titleText != null)
             titleText.text = product.DisplayName;
@@ -87,6 +93,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
 
     public void SetBusy(bool busy)
     {
+        isBusy = busy;
         if (confirmButton != null)
             confirmButton.interactable = !busy;
         if (cancelButton != null)
@@ -100,10 +107,13 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
 
     public void Dismiss()
     {
+        if (isBusy)
+            return;
+
         Lifecycle.Close(ClearActions);
     }
 
-    public void Hide() => Dismiss();
+    public void Hide() => Lifecycle.Close(ClearActions);
 
     public void HideImmediately()
     {
@@ -179,6 +189,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
 
     private void ClearActions()
     {
+        isBusy = false;
         onConfirm = null;
         onRecharge = null;
     }
@@ -191,6 +202,16 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
             cancelButton.onClick.RemoveListener(Dismiss);
         if (rechargeButton != null)
             rechargeButton.onClick.RemoveListener(OpenRecharge);
+    }
+
+    private bool ValidateReferences()
+    {
+        bool valid = titleText != null && rewardContainer != null && rewardSlotPrefab != null &&
+                     currentGemText != null && costText != null && remainingGemText != null && warningText != null &&
+                     confirmButton != null && cancelButton != null && rechargeButton != null;
+        if (!valid)
+            Debug.LogError("[ShopPurchaseConfirmPopup] Required UI references are not assigned.", this);
+        return valid;
     }
 }
 
