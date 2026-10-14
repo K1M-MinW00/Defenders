@@ -1,8 +1,10 @@
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyBattlePanelView : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class LobbyBattlePanelView : MonoBehaviour
 {
     [Header("Profile")]
     [SerializeField] private Image profileIconImage;
@@ -25,51 +27,60 @@ public class LobbyBattlePanelView : MonoBehaviour
     [SerializeField] private Button startButton;
 
     private LobbyBattlePresenter presenter;
+    private UserDataManager userDataManager;
     private bool isSubscribed;
     private bool isStartingBattle;
+    private int operationVersion;
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         startButton.onClick.AddListener(HandleStartButtonClicked);
     }
 
     private void OnEnable()
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (manager?.UserData == null)
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
             return;
 
-        presenter ??= new LobbyBattlePresenter(manager.UserData, GameConfig.UserLevelProgression);
+        presenter ??= new LobbyBattlePresenter(userDataManager.UserData, GameConfig.UserLevelProgression);
         SubscribeEvents();
         Refresh();
     }
 
     private void OnDisable()
     {
+        operationVersion++;
         UnsubscribeEvents();
     }
 
     private void SubscribeEvents()
     {
-        if (isSubscribed || UserDataManager.Instance == null)
+        if (isSubscribed || userDataManager == null)
             return;
 
-        UserDataManager.Instance.OnProfileUpdated += Refresh;
-        UserDataManager.Instance.OnProgressUpdated += Refresh;
-        UserDataManager.Instance.OnResourceUpdated += Refresh;
-        UserDataManager.Instance.OnRosterUpdated += Refresh;
+        userDataManager.OnProfileUpdated += Refresh;
+        userDataManager.OnProgressUpdated += Refresh;
+        userDataManager.OnResourceUpdated += Refresh;
+        userDataManager.OnRosterUpdated += Refresh;
         isSubscribed = true;
     }
 
     private void UnsubscribeEvents()
     {
-        if (!isSubscribed || UserDataManager.Instance == null)
+        if (!isSubscribed || userDataManager == null)
             return;
 
-        UserDataManager.Instance.OnProfileUpdated -= Refresh;
-        UserDataManager.Instance.OnProgressUpdated -= Refresh;
-        UserDataManager.Instance.OnResourceUpdated -= Refresh;
-        UserDataManager.Instance.OnRosterUpdated -= Refresh;
+        userDataManager.OnProfileUpdated -= Refresh;
+        userDataManager.OnProgressUpdated -= Refresh;
+        userDataManager.OnResourceUpdated -= Refresh;
+        userDataManager.OnRosterUpdated -= Refresh;
         isSubscribed = false;
     }
 
@@ -91,7 +102,7 @@ public class LobbyBattlePanelView : MonoBehaviour
         goldText.text = state.Gold.ToString("N0");
         gemText.text = state.Gem.ToString("N0");
         fuelText.text = $"{state.Fuel} / {state.MaxFuel}";
-        startButton.interactable = state.CanStartBattle && state.Fuel >= stageFuelCost;
+        startButton.interactable = !isStartingBattle && state.CanStartBattle && state.Fuel >= stageFuelCost;
     }
 
     private async void HandleStartButtonClicked()
@@ -109,32 +120,85 @@ public class LobbyBattlePanelView : MonoBehaviour
         }
 
         isStartingBattle = true;
+        int currentOperation = ++operationVersion;
         startButton.interactable = false;
+        bool fuelConsumed = false;
 
-        StageEntryFuelResult fuelResult =
-            await UserDataManager.Instance.ConsumeStageEntryFuelAsync(stageFuelCost);
-        if (!fuelResult.Succeeded)
+        try
         {
+            StageEntryFuelResult fuelResult =
+                await userDataManager.ConsumeStageEntryFuelAsync(stageFuelCost);
+            if (!fuelResult.Succeeded)
+            {
+                isStartingBattle = false;
+                if (CanApplyOperationResult(currentOperation))
+                {
+                    Refresh();
+                    UIFeedbackToast.Show(GetFuelFailureMessage(fuelResult.Failure, stageFuelCost));
+                }
+                return;
+            }
+
+            fuelConsumed = true;
+            StageEnterHolder.Set(enterData.WithEntryFuelCost(stageFuelCost));
+
+            SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(gameSceneName);
+            if (result == SceneTransitionResult.Succeeded)
+                return;
+
+            StageEnterHolder.Clear();
+            bool refunded = await userDataManager.RefundStageEntryFuelAsync(stageFuelCost);
+            fuelConsumed = false;
+            if (this == null)
+                return;
+
             isStartingBattle = false;
+
+            if (!CanApplyOperationResult(currentOperation))
+                return;
+
             Refresh();
-            UIFeedbackToast.Show(GetFuelFailureMessage(fuelResult.Failure, stageFuelCost));
-            return;
+            string message = GetSceneTransitionFailureMessage(result);
+            if (!refunded)
+                message += " 연료 반환에 실패했습니다.";
+            UIFeedbackToast.Show(message);
         }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            StageEnterHolder.Clear();
 
-        StageEnterHolder.Set(enterData.WithEntryFuelCost(stageFuelCost));
+            bool refunded = !fuelConsumed ||
+                            await userDataManager.RefundStageEntryFuelAsync(stageFuelCost);
+            if (this == null)
+                return;
 
-        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(gameSceneName);
-        if (result == SceneTransitionResult.Succeeded || this == null)
-            return;
+            isStartingBattle = false;
 
-        StageEnterHolder.Clear();
-        bool refunded = await UserDataManager.Instance.RefundStageEntryFuelAsync(stageFuelCost);
-        isStartingBattle = false;
-        Refresh();
-        string message = GetSceneTransitionFailureMessage(result);
-        if (!refunded)
-            message += " 연료 반환에 실패했습니다.";
-        UIFeedbackToast.Show(message);
+            if (CanApplyOperationResult(currentOperation))
+            {
+                Refresh();
+                UIFeedbackToast.Show(refunded
+                    ? "전투 화면을 불러오지 못해 사용한 연료를 반환했습니다."
+                    : "전투 화면을 불러오지 못했으며 연료 반환에도 실패했습니다.");
+            }
+        }
+    }
+
+    private bool CanApplyOperationResult(int version) =>
+        this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool ValidateReferences()
+    {
+        bool isValid = profileIconImage != null && levelText != null && powerText != null &&
+                       expSlider != null && sectorStageText != null && bestWaveText != null &&
+                       goldText != null && gemText != null && fuelText != null && startButton != null &&
+                       !string.IsNullOrWhiteSpace(gameSceneName) && stageFuelCost > 0;
+
+        if (!isValid)
+            Debug.LogError("[LobbyBattlePanelView] One or more required references or battle settings are invalid.", this);
+
+        return isValid;
     }
 
     private static string GetStartFailureMessage(LobbyBattleStartFailure failure)
@@ -170,6 +234,8 @@ public class LobbyBattlePanelView : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnsubscribeEvents();
+
         if (startButton != null)
             startButton.onClick.RemoveListener(HandleStartButtonClicked);
     }
