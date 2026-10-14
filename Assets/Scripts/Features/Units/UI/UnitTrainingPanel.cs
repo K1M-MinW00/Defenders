@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +28,7 @@ public sealed class UnitTrainingPanel : MonoBehaviour
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
     private UserResourceData resource;
+    private UserDataManager userDataManager;
 
     private IReadOnlyList<InventoryStackItem> materials;
     private readonly Dictionary<string, int> selectedMaterials = new();
@@ -38,6 +40,7 @@ public sealed class UnitTrainingPanel : MonoBehaviour
     private int previewTotalExp;
     private int previewTotalGold;
     private bool isTraining;
+    private int operationVersion;
 
     private void Awake()
     {
@@ -54,24 +57,49 @@ public sealed class UnitTrainingPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        if (currentUnitData != null)
+        if (currentUnitData != null && TryRefreshBoundData())
             ResetSelection();
     }
 
     private void OnDisable()
     {
+        operationVersion++;
         selectedMaterials.Clear();
     }
 
-    public void Bind(UnitDataSO unitData)
+    public bool Bind(UnitDataSO unitData, UserDataManager manager)
     {
-        currentUnitData = unitData;
-        currentUnit = UserDataManager.Instance.RosterService.GetUnit(unitData.unitId);
-        resource = UserDataManager.Instance.UserData.Resource;
+        if (unitData == null || manager?.UserData == null || !manager.IsLoaded)
+        {
+            Debug.LogError("[UnitTrainingPanel] Loaded user data and unit definition are required.", this);
+            SetControlsInteractable(false);
+            return false;
+        }
 
-        materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
+        currentUnitData = unitData;
+        userDataManager = manager;
+        if (!TryRefreshBoundData())
+        {
+            SetControlsInteractable(false);
+            return false;
+        }
 
         ResetSelection();
+        return true;
+    }
+
+    private bool TryRefreshBoundData()
+    {
+        if (userDataManager?.UserData == null || currentUnitData == null ||
+            userDataManager.RosterService == null || userDataManager.InventoryService == null)
+        {
+            return false;
+        }
+
+        currentUnit = userDataManager.RosterService.GetUnit(currentUnitData.unitId);
+        resource = userDataManager.UserData.Resource;
+        materials = userDataManager.InventoryService.GetMaterials(MaterialType.Training);
+        return currentUnit != null && resource != null && materials != null;
     }
 
     private void ResetSelection()
@@ -339,12 +367,16 @@ public sealed class UnitTrainingPanel : MonoBehaviour
             return;
 
         isTraining = true;
+        int currentOperation = ++operationVersion;
         RefreshUI();
 
         try
         {
-            TrainUnitResult result = await UserDataManager.Instance.TrainUnitAsync(
+            TrainUnitResult result = await userDataManager.TrainUnitAsync(
                 new TrainUnitCommand(currentUnitData.unitId, selectedMaterials));
+
+            if (!isActiveAndEnabled || currentOperation != operationVersion)
+                return;
 
             if (!result.Succeeded)
             {
@@ -354,17 +386,31 @@ public sealed class UnitTrainingPanel : MonoBehaviour
                 return;
             }
 
-            currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
-            resource = UserDataManager.Instance.UserData.Resource;
-            materials = UserDataManager.Instance.InventoryService.GetMaterials(MaterialType.Training);
-
-            ResetSelection();
+            if (TryRefreshBoundData())
+                ResetSelection();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (isActiveAndEnabled && currentOperation == operationVersion)
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(TrainUnitFailure.SaveFailed));
         }
         finally
         {
             isTraining = false;
-            RefreshUI();
+            if (isActiveAndEnabled && currentOperation == operationVersion)
+                RefreshUI();
         }
+    }
+
+    private void SetControlsInteractable(bool interactable)
+    {
+        if (trainButton != null)
+            trainButton.interactable = interactable;
+        if (addOneLevelButton != null)
+            addOneLevelButton.interactable = interactable;
+        if (maxLevelButton != null)
+            maxLevelButton.interactable = interactable;
     }
 
     private bool ValidateReferences()

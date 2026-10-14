@@ -51,6 +51,7 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
     private UnitDetailPresenter presenter;
     private UnitDetailViewState currentState;
     private string currentUnitId;
+    private UserDataManager userDataManager;
     private bool isRosterSubscribed;
 
     private void Awake()
@@ -75,10 +76,16 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
             return;
 
         currentUnitId = vm.UnitId;
-        UserDataManager manager = UserDataManager.Instance;
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
+        {
+            Debug.LogError("[UnitDetailView] Loaded user data is required.", this);
+            return;
+        }
+
         presenter ??= new UnitDetailPresenter(
-            manager.RosterService,
-            LabBonusProvider.CreateSnapshot(manager.UserData, GameConfig.Lab));
+            userDataManager.RosterService,
+            LabBonusProvider.CreateSnapshot(userDataManager.UserData, GameConfig.Lab));
         SubscribeToRosterUpdates();
         currentState = presenter.Build(currentUnitId);
 
@@ -147,7 +154,7 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
 
     private void BindTabPanels()
     {
-        trainingPanel?.Bind(currentState.Definition);
+        trainingPanel?.Bind(currentState.Definition, userDataManager);
         promotionPanel?.Bind(currentState.Definition);
         limitBreakPanel?.Bind(currentState.Definition);
         equipmentPanel?.Bind(currentUnitId);
@@ -205,19 +212,19 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
 
     private void SubscribeToRosterUpdates()
     {
-        if (isRosterSubscribed || UserDataManager.Instance == null)
+        if (isRosterSubscribed || userDataManager == null)
             return;
 
-        UserDataManager.Instance.OnRosterUpdated += HandleRosterUpdated;
+        userDataManager.OnRosterUpdated += HandleRosterUpdated;
         isRosterSubscribed = true;
     }
 
     private void UnsubscribeFromRosterUpdates()
     {
-        if (!isRosterSubscribed || UserDataManager.Instance == null)
+        if (!isRosterSubscribed || userDataManager == null)
             return;
 
-        UserDataManager.Instance.OnRosterUpdated -= HandleRosterUpdated;
+        userDataManager.OnRosterUpdated -= HandleRosterUpdated;
         isRosterSubscribed = false;
     }
 
