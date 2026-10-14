@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public sealed class LobbyModalStack : MonoBehaviour
 {
     private static readonly List<ModalBackdropDismiss> Entries = new();
-
-    public static event Action EmptyBackRequested;
-    [SerializeField] private LobbyExitConfirmationView exitConfirmation;
 
     public static void Register(ModalBackdropDismiss entry)
     {
@@ -21,32 +18,6 @@ public sealed class LobbyModalStack : MonoBehaviour
     {
         if (entry != null) Entries.Remove(entry);
         RefreshInputState();
-    }
-
-    private void Update()
-    {
-        if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-        for (int i = Entries.Count - 1; i >= 0; i--)
-        {
-            ModalBackdropDismiss entry = Entries[i];
-            if (entry == null || !entry.isActiveAndEnabled)
-            {
-                Entries.RemoveAt(i);
-                continue;
-            }
-
-            entry.DismissFromSystemBack();
-            return;
-        }
-
-        if (EmptyBackRequested != null)
-        {
-            EmptyBackRequested.Invoke();
-            return;
-        }
-
-        exitConfirmation.Show();
     }
 
     private static void RefreshInputState()
@@ -70,6 +41,5 @@ public sealed class LobbyModalStack : MonoBehaviour
     private void OnDestroy()
     {
         Entries.Clear();
-        EmptyBackRequested = null;
     }
 }

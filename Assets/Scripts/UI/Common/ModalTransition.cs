@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(CanvasGroup))]
+[DisallowMultipleComponent]
 public sealed class ModalTransition : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private RectTransform modalCard;
@@ -23,12 +24,15 @@ public sealed class ModalTransition : MonoBehaviour, IPointerDownHandler
     public bool IsTransitioning => transitioning;
     public bool IsInvokingExitCallback => invokingExitCallback;
 
-    public void Configure(RectTransform card)
+    private void Awake()
     {
-        modalCard = card;
+        canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            Debug.LogError("[ModalTransition] CanvasGroup is required.", this);
+            enabled = false;
+        }
     }
-
-    private void Awake() => canvasGroup = GetComponent<CanvasGroup>();
 
     private void OnEnable()
     {

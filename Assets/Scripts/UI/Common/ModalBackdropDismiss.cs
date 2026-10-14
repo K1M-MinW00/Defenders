@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(CanvasGroup))]
+[DisallowMultipleComponent]
 public sealed class ModalBackdropDismiss : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private RectTransform modalContent;
@@ -11,14 +12,20 @@ public sealed class ModalBackdropDismiss : MonoBehaviour, IPointerClickHandler
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private ModalTransition transition;
 
-    public void Configure(RectTransform content, GameObject dismissTarget = null, MonoBehaviour handler = null, bool allowBackdropDismiss = true)
+    private void Awake()
     {
-        modalContent = content;
-        target = dismissTarget != null ? dismissTarget : gameObject;
-        dismissHandler = handler;
-        dismissOnBackdropClick = allowBackdropDismiss;
-        canvasGroup = GetComponent<CanvasGroup>();
-        transition = GetComponent<ModalTransition>();
+        target ??= gameObject;
+        canvasGroup ??= GetComponent<CanvasGroup>();
+        transition ??= GetComponent<ModalTransition>();
+
+        if (dismissOnBackdropClick && modalContent == null)
+        {
+            Debug.LogWarning("[ModalBackdropDismiss] Backdrop dismissal requires a modal content reference and has been disabled.", this);
+            dismissOnBackdropClick = false;
+        }
+
+        if (dismissHandler != null && dismissHandler is not IModalDismissHandler)
+            Debug.LogWarning("[ModalBackdropDismiss] The assigned handler does not implement IModalDismissHandler.", this);
     }
 
     private void OnEnable() => LobbyModalStack.Register(this);
@@ -31,8 +38,6 @@ public sealed class ModalBackdropDismiss : MonoBehaviour, IPointerClickHandler
                 modalContent, eventData.position, eventData.pressEventCamera)) return;
         Dismiss();
     }
-
-    public void DismissFromSystemBack() => Dismiss();
 
     public void SetStackInteraction(bool enabled)
     {
