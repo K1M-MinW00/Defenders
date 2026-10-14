@@ -19,20 +19,15 @@ public sealed class StartupLoadingView : MonoBehaviour
 
     private void Awake()
     {
-        targetProgress = 0f;
-
-        if (progressSlider != null)
-            progressSlider.value = 0f;
-
-        if (statusText != null)
-            statusText.text = "Initializing...";
-
         if (!HasRequiredReferences())
         {
             enabled = false;
             return;
         }
 
+        targetProgress = 0f;
+        progressSlider.value = 0f;
+        statusText.text = "Initializing...";
         startButton.onClick.AddListener(HandleActionRequested);
         startButton.gameObject.SetActive(false);
         startButton.interactable = false;
@@ -49,7 +44,7 @@ public sealed class StartupLoadingView : MonoBehaviour
         progressSlider.value = Mathf.MoveTowards(
             progressSlider.value,
             targetProgress,
-            smoothSpeed * Time.deltaTime
+            smoothSpeed * Time.unscaledDeltaTime
         );
     }
 
@@ -60,8 +55,7 @@ public sealed class StartupLoadingView : MonoBehaviour
 
     public void SetStatus(string message)
     {
-        if (statusText != null)
-            statusText.text = message;
+        statusText.text = message ?? string.Empty;
     }
 
     public void SetStartButtonVisible(bool visible)
@@ -71,9 +65,6 @@ public sealed class StartupLoadingView : MonoBehaviour
 
     public void SetActionButton(string label, bool visible)
     {
-        if (startButton == null)
-            return;
-
         actionButtonLabel.text = label;
 
         startButton.gameObject.SetActive(visible);
@@ -82,9 +73,6 @@ public sealed class StartupLoadingView : MonoBehaviour
 
     public bool IsProgressCompleted()
     {
-        if (progressSlider == null)
-            return true;
-
         return Mathf.Approximately(progressSlider.value, targetProgress);
     }
 

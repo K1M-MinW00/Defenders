@@ -10,6 +10,18 @@ public sealed class StartupBootstrap : MonoBehaviour
     private bool isReadyToStart;
     private bool isBooting;
     private bool hasFailed;
+    private int operationVersion;
+    private AuthService authService;
+    private UserDataManager userDataManager;
+
+    private void Awake()
+    {
+        if (loadingView == null || string.IsNullOrWhiteSpace(nextSceneName))
+        {
+            Debug.LogError("[StartupBootstrap] Required startup references are not assigned.", this);
+            enabled = false;
+        }
+    }
 
     private void OnEnable()
     {
@@ -19,6 +31,7 @@ public sealed class StartupBootstrap : MonoBehaviour
 
     private void OnDisable()
     {
+        operationVersion++;
         if (loadingView != null)
             loadingView.ActionRequested -= StartGame;
     }
@@ -36,6 +49,7 @@ public sealed class StartupBootstrap : MonoBehaviour
         isBooting = true;
         isReadyToStart = false;
         hasFailed = false;
+        int currentOperation = ++operationVersion;
 
         try
         {
@@ -46,7 +60,14 @@ public sealed class StartupBootstrap : MonoBehaviour
             }
 
             loadingView.SetActionButton("Start", false);
-            StartupBootResult result = await flow.RunAsync(HandleStageChanged);
+            StartupBootResult result = await flow.RunAsync(stage =>
+            {
+                if (IsCurrentOperation(currentOperation))
+                    HandleStageChanged(stage);
+            });
+            if (!IsCurrentOperation(currentOperation))
+                return;
+
             if (!result.Succeeded)
             {
                 Debug.LogError($"[StartupBootstrap] Boot failed ({result.Failure}): {result.ErrorMessage}");
@@ -54,9 +75,18 @@ public sealed class StartupBootstrap : MonoBehaviour
                 return;
             }
 
-            await WaitUntilProgressCompleted();
+            await WaitUntilProgressCompleted(currentOperation);
+            if (!IsCurrentOperation(currentOperation))
+                return;
+
             loadingView.SetActionButton("Start", true);
             isReadyToStart = true;
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[StartupBootstrap] Unexpected boot failure: {exception}");
+            if (IsCurrentOperation(currentOperation))
+                SetFailed("Boot Failed");
         }
         finally
         {
@@ -81,7 +111,7 @@ public sealed class StartupBootstrap : MonoBehaviour
 
         SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(nextSceneName);
 
-        if (result != SceneTransitionResult.Succeeded && this != null)
+        if (result != SceneTransitionResult.Succeeded && this != null && isActiveAndEnabled)
             SetFailed(GetSceneTransitionFailureMessage(result));
     }
 
@@ -96,19 +126,21 @@ public sealed class StartupBootstrap : MonoBehaviour
             return false;
         }
 
-        if (AuthService.Instance == null)
+        authService ??= AuthService.Instance;
+        if (authService == null)
         {
             errorMessage = "Authentication service is missing.";
             return false;
         }
 
-        if (UserDataManager.Instance == null)
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager == null)
         {
             errorMessage = "User data service is missing.";
             return false;
         }
 
-        flow = new StartupFlow(InitializeLocalData, AuthService.Instance.SignInAsync, UserDataManager.Instance.LoadOrCreateAsync);
+        flow = new StartupFlow(InitializeLocalData, authService.SignInAsync, userDataManager.LoadOrCreateAsync);
         return true;
     }
 
@@ -174,9 +206,12 @@ public sealed class StartupBootstrap : MonoBehaviour
         };
     }
 
-    private async Task WaitUntilProgressCompleted()
+    private async Task WaitUntilProgressCompleted(int version)
     {
-        while (!loadingView.IsProgressCompleted())
+        while (IsCurrentOperation(version) && !loadingView.IsProgressCompleted())
             await Task.Yield();
     }
+
+    private bool IsCurrentOperation(int version) =>
+        this != null && isActiveAndEnabled && version == operationVersion;
 }
