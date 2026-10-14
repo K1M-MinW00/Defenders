@@ -51120,6 +51120,7 @@ MonoBehaviour:
   gemPurchaseProductId: fuel_by_gem
   rewardAdRewardSlot: {fileID: 2100000102}
   gemPurchaseRewardSlot: {fileID: 2100000100}
+  gemPurchaseButton: {fileID: 1359677431}
   gemPurchaseButtonText: {fileID: 125917256}
 --- !u!114 &1102741576
 MonoBehaviour:

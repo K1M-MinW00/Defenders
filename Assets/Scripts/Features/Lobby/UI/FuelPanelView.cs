@@ -3,7 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FuelPanelView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 {
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
@@ -29,10 +30,12 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
     [Header("Product Slots")]
     [SerializeField] private CommonSlotUI rewardAdRewardSlot;
     [SerializeField] private CommonSlotUI gemPurchaseRewardSlot;
+    [SerializeField] private Button gemPurchaseButton;
     [SerializeField] private TMP_Text gemPurchaseButtonText;
 
     private FuelPanelPresenter presenter;
     private UserDataManager userDataManager;
+    private AdManager subscribedAdManager;
     private float refreshTimer;
     private bool isSubscribed;
     private bool isAdRequestPending;
@@ -55,7 +58,7 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
         SubscribeEvents();
         SubscribeAdEvents();
-        AdManager.Instance?.EnsureRewardedAdLoading();
+        subscribedAdManager?.EnsureRewardedAdLoading();
         refreshTimer = 0f;
         Refresh();
     }
@@ -117,7 +120,10 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
     private static void BindFuelReward(CommonSlotUI slot, ShopProductData product)
     {
         if (slot == null || !TryGetFuelReward(product, out RewardData reward))
+        {
+            slot?.Clear();
             return;
+        }
 
         if (RewardPresentationResolver.TryResolve(reward, GameConfig.Icons, out RewardPresentation presentation))
             slot.SetupPresentation(
@@ -159,19 +165,27 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private void SubscribeAdEvents()
     {
-        if (AdManager.Instance != null)
-            AdManager.Instance.RewardedStateChanged += HandleRewardedAdStateChanged;
+        if (subscribedAdManager != null)
+            return;
+
+        subscribedAdManager = AdManager.Instance;
+        if (subscribedAdManager != null)
+            subscribedAdManager.RewardedStateChanged += HandleRewardedAdStateChanged;
     }
 
     private void UnsubscribeAdEvents()
     {
-        if (AdManager.Instance != null)
-            AdManager.Instance.RewardedStateChanged -= HandleRewardedAdStateChanged;
+        if (subscribedAdManager == null)
+            return;
+
+        subscribedAdManager.RewardedStateChanged -= HandleRewardedAdStateChanged;
+        subscribedAdManager = null;
     }
 
     private void HandleRewardedAdStateChanged(RewardedAdState state)
     {
-        Refresh();
+        if (isActiveAndEnabled)
+            Refresh();
     }
 
     private void Refresh()
@@ -181,6 +195,8 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
         if (state == null)
         {
             rewardAdButton.interactable = false;
+            if (gemPurchaseButton != null)
+                gemPurchaseButton.interactable = false;
             return;
         }
 
@@ -189,6 +205,8 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
         fullRecoverText.text = $"최대 충전까지 {FormatDuration(state.FullRecoverSeconds)}";
         dailyAdText.text = $"일일 광고 시청 ({state.DailyAdWatchCount}/{state.DailyAdLimit})";
         rewardAdButton.interactable = state.CanRequestRewardAd;
+        if (gemPurchaseButton != null)
+            gemPurchaseButton.interactable = !isPurchasingFuel && gemPurchaseProduct != null;
     }
 
     private static string FormatDuration(int seconds)
@@ -209,7 +227,8 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
             return;
         }
 
-        if (AdManager.Instance == null)
+        AdManager adManager = AdManager.Instance;
+        if (adManager == null)
         {
             UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
             return;
@@ -219,13 +238,13 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
         hasAdClosed = false;
         Refresh();
 
-        RewardedAdShowResult showResult = AdManager.Instance.ShowRewardedAd(HandleAdRewardEarned, HandleAdCompleted);
+        RewardedAdShowResult showResult = adManager.ShowRewardedAd(HandleAdRewardEarned, HandleAdCompleted);
         if (showResult == RewardedAdShowResult.Started)
             return;
 
         isAdRequestPending = false;
         UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
-        Refresh();
+        RefreshIfVisible();
     }
 
     private void HandleAdCompleted(RewardedAdCompletion completion)
@@ -248,7 +267,7 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
         {
             if (!TryGetFuelRewardAmount(rewardAdProduct, out int fuelAmount))
             {
-                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
+                ShowFeedbackIfVisible(LobbyOperationFeedbackMessages.AdUnavailable);
                 return;
             }
 
@@ -256,10 +275,14 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Ad fuel reward failed: {result.Failure}");
-                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+                ShowFeedbackIfVisible(LobbyOperationFeedbackMessages.Get(result.Failure));
                 return;
             }
-
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            ShowFeedbackIfVisible(LobbyOperationFeedbackMessages.Get(ClaimAdFuelRewardFailure.SaveFailed));
         }
         finally
         {
@@ -267,7 +290,7 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
             if (hasAdClosed)
                 isAdRequestPending = false;
 
-            Refresh();
+            RefreshIfVisible();
         }
     }
 
@@ -277,12 +300,13 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
             return;
 
         isPurchasingFuel = true;
+        RefreshIfVisible();
 
         try
         {
             if (!TryGetFuelRewardAmount(gemPurchaseProduct, out int fuelAmount))
             {
-                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
+                ShowFeedbackIfVisible(LobbyOperationFeedbackMessages.AdUnavailable);
                 return;
             }
 
@@ -290,16 +314,32 @@ public class FuelPanelView : MonoBehaviour, IModalDismissHandler
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[FuelPanelView] Fuel purchase failed: {result.Failure}");
-                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+                ShowFeedbackIfVisible(LobbyOperationFeedbackMessages.Get(result.Failure));
                 return;
             }
-
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            ShowFeedbackIfVisible(LobbyOperationFeedbackMessages.Get(PurchaseFuelFailure.SaveFailed));
         }
         finally
         {
             isPurchasingFuel = false;
-            Refresh();
+            RefreshIfVisible();
         }
+    }
+
+    private void RefreshIfVisible()
+    {
+        if (isActiveAndEnabled)
+            Refresh();
+    }
+
+    private void ShowFeedbackIfVisible(string message)
+    {
+        if (isActiveAndEnabled)
+            UIFeedbackToast.Show(message);
     }
 
     private void OnDestroy()
