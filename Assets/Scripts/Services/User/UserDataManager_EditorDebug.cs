@@ -5,58 +5,52 @@ using UnityEngine;
 
 public partial class UserDataManager
 {
-    public async Task<bool> GrantEditorTestItemsAsync(IReadOnlyDictionary<string, int> grants, bool persistToFirebase = false)
+    public async Task<RewardGrantResult> GrantEditorTestRewardsAsync(
+        IReadOnlyCollection<RewardData> rewards,
+        bool persistToFirebase = false)
     {
-        if (!IsLoaded || grants == null || grants.Count == 0 || UserData?.Inventory == null)
-            return false;
+        if (!IsLoaded || rewards == null || rewards.Count == 0)
+            return RewardGrantResult.Fail(RewardGrantFailure.InvalidData);
 
         return await RunSerializedMutationAsync(async () =>
         {
-            UserInventoryData next = UserDataCloner.Copy(UserData.Inventory);
-            InventoryMutationService mutations = new(GameConfig.Items);
-            EquipmentInventoryIndex index = new(next, UserData.Roster);
-            int remainingEquipmentSlots = EquipmentInventoryIndex.UnequippedCapacity - index.UnequippedCount;
-
-            foreach (KeyValuePair<string, int> grant in grants)
-            {
-                ItemDataSO definition = GameConfig.Items.Get(grant.Key);
-                if (definition == null || grant.Value <= 0)
-                {
-                    Debug.LogError($"[Test Item Grant] Invalid item: {grant.Key} x{grant.Value}");
-                    return false;
-                }
-
-                if (definition.Category == ItemCategory.Equipment)
-                {
-                    if (grant.Value > remainingEquipmentSlots)
-                    {
-                        Debug.LogError($"[Test Item Grant] Equipment capacity exceeded: {grant.Key} x{grant.Value}");
-                        return false;
-                    }
-                    remainingEquipmentSlots -= grant.Value;
-                }
-
-                if (!mutations.Add(next, grant.Key, grant.Value).Succeeded)
-                    return false;
-            }
+            RewardGrantResult result = RewardGrantCalculator.Calculate(UserData, rewards);
+            if (!result.Succeeded)
+                return result;
 
             if (persistToFirebase)
             {
-                try { await repository.SaveSectionsAsync(CurrentUserId, new UserDataUpdate { Inventory = next }); }
+                try
+                {
+                    await repository.SaveSectionsAsync(CurrentUserId, new UserDataUpdate
+                    {
+                        Resources = result.Resources,
+                        Inventory = result.Inventory,
+                        Roster = result.Roster,
+                        Profile = result.Profile,
+                    });
+                }
                 catch (System.Exception exception)
                 {
                     Debug.LogException(exception);
-                    return false;
+                    return RewardGrantResult.Fail(RewardGrantFailure.InvalidData);
                 }
             }
 
-            UserData.Inventory = next;
+            UserData.Resource = result.Resources;
+            UserData.Inventory = result.Inventory;
+            UserData.Roster = result.Roster;
+            UserData.Profile = result.Profile;
+            RaiseResourceUpdated();
             RaiseInventoryUpdated();
+            RaiseRosterUpdated();
+            RaiseProfileUpdated();
             Debug.Log(persistToFirebase
-                ? "[Test Item Grant] Applied and saved to Firebase."
-                : "[Test Item Grant] Applied to this Play Mode session only.");
-            return true;
+                ? "[Test Reward Grant] Applied and saved to Firebase."
+                : "[Test Reward Grant] Applied to this Play Mode session only.");
+            return result;
         });
     }
+
 }
 #endif
