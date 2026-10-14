@@ -57,7 +57,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
         developButton.onClick.AddListener(HandleDevelop);
         offerDismissButton.onClick.AddListener(DismissOffer);
-        detailDismissButton.onClick.AddListener(DismissDetail);
+        detailDismissButton?.onClick.AddListener(DismissDetail);
         OfferLifecycle.HideImmediately();
         DetailLifecycle.HideImmediately();
     }
@@ -311,13 +311,30 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool ValidateReferences()
     {
-        bool valid = currencyText != null && priceText != null && limitText != null && developButton != null &&
-                     cardContent != null && cardGrid != null && cardPrefab != null && offerOverlay != null &&
-                     offerContent != null && offerCardPrefab != null && offerDismissButton != null &&
-                     detailPopup != null && detailBackground != null && detailGradient != null && detailIcon != null &&
-                     detailName != null && detailDescription != null && detailValue != null && detailDismissButton != null;
-        if (!valid)
-            Debug.LogError("[LabPanelView] Required UI references are not assigned.", this);
-        return valid;
+        List<string> missing = new();
+        if (currencyText == null) missing.Add(nameof(currencyText));
+        if (priceText == null) missing.Add(nameof(priceText));
+        if (limitText == null) missing.Add(nameof(limitText));
+        if (developButton == null) missing.Add(nameof(developButton));
+        if (cardContent == null) missing.Add(nameof(cardContent));
+        if (cardGrid == null) missing.Add(nameof(cardGrid));
+        if (cardPrefab == null) missing.Add(nameof(cardPrefab));
+        if (offerOverlay == null) missing.Add(nameof(offerOverlay));
+        if (offerContent == null) missing.Add(nameof(offerContent));
+        if (offerCardPrefab == null) missing.Add(nameof(offerCardPrefab));
+        if (offerDismissButton == null) missing.Add(nameof(offerDismissButton));
+        if (detailPopup == null) missing.Add(nameof(detailPopup));
+        if (detailBackground == null) missing.Add(nameof(detailBackground));
+        if (detailGradient == null) missing.Add(nameof(detailGradient));
+        if (detailIcon == null) missing.Add(nameof(detailIcon));
+        if (detailName == null) missing.Add(nameof(detailName));
+        if (detailDescription == null) missing.Add(nameof(detailDescription));
+        if (detailValue == null) missing.Add(nameof(detailValue));
+
+        if (missing.Count == 0)
+            return true;
+
+        Debug.LogError($"[LabPanelView] Required UI references are not assigned: {string.Join(", ", missing)}", this);
+        return false;
     }
 }
