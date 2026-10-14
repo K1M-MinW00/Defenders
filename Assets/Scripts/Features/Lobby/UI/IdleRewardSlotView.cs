@@ -19,4 +19,9 @@ public sealed class IdleRewardSlotView : MonoBehaviour
             commonSlot?.Clear();
         }
     }
+
+    public void Clear()
+    {
+        commonSlot?.Clear();
+    }
 }

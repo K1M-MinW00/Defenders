@@ -17,7 +17,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private TMP_Text accumulatedTimeText;
     [SerializeField] private Transform rewardContent;
     [SerializeField] private GridLayoutGroup rewardGrid;
-    [SerializeField] private GameObject rewardSlotPrefab;
+    [SerializeField] private IdleRewardSlotView rewardSlotPrefab;
 
     private readonly List<IdleRewardSlotView> slots = new();
     private Coroutine refreshRoutine;
@@ -26,10 +26,6 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
     private ModalOverlayLifecycle popupLifecycle;
     private ModalOverlayLifecycle PopupLifecycle =>
         popupLifecycle ??= new ModalOverlayLifecycle(popup);
-
-#if UNITY_EDITOR
-    public void SetRewardSlotPrefabEditor(GameObject value) => rewardSlotPrefab = value;
-#endif
 
     private void Awake()
     {
@@ -54,6 +50,9 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     public void Dismiss()
     {
+        if (claiming)
+            return;
+
         if (refreshRoutine != null) StopCoroutine(refreshRoutine);
         refreshRoutine = null;
         PopupLifecycle.Close();
@@ -78,20 +77,44 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
         researchHourlyText.text = FormatRate(preview.HourlyRates.FirstOrDefault(x => x.Type == RewardType.ResearchMaterial));
         accumulatedTimeText.text = $"{preview.AccumulatedMinutes / 60}시간 {preview.AccumulatedMinutes % 60}분 / 최대 {preview.MaxMinutes / 60}시간";
         claimButton.interactable = preview.CanClaim && !claiming;
-        RebuildSlots(preview.AccumulatedRewards);
+        ReconcileSlots(preview.AccumulatedRewards);
     }
 
-    private void RebuildSlots(IReadOnlyList<IdleRewardEntry> rewards)
+    private void ReconcileSlots(IReadOnlyList<IdleRewardEntry> rewards)
     {
-        foreach (IdleRewardSlotView slot in slots) if (slot != null) Destroy(slot.gameObject);
-        slots.Clear();
-        foreach (IdleRewardEntry reward in rewards)
+        int visibleCount = 0;
+        if (rewards != null)
         {
-            GameObject instance = Instantiate(rewardSlotPrefab, rewardContent);
-            IdleRewardSlotView slot = instance.GetComponent<IdleRewardSlotView>();
-            instance.SetActive(true);
-            slot.Bind(reward);
-            slots.Add(slot);
+            foreach (IdleRewardEntry reward in rewards)
+            {
+                if (reward == null)
+                    continue;
+
+                IdleRewardSlotView slot = GetOrCreateSlot(visibleCount++);
+                slot.gameObject.SetActive(true);
+                slot.Bind(reward);
+            }
+        }
+
+        HideSlotsFrom(visibleCount);
+    }
+
+    private IdleRewardSlotView GetOrCreateSlot(int index)
+    {
+        if (index < slots.Count)
+            return slots[index];
+
+        IdleRewardSlotView slot = Instantiate(rewardSlotPrefab, rewardContent);
+        slots.Add(slot);
+        return slot;
+    }
+
+    private void HideSlotsFrom(int firstHiddenIndex)
+    {
+        for (int i = firstHiddenIndex; i < slots.Count; i++)
+        {
+            slots[i].Clear();
+            slots[i].gameObject.SetActive(false);
         }
     }
 
@@ -104,8 +127,27 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
         if (claiming) return;
         claiming = true;
         claimButton.interactable = false;
-        IdleRewardClaimFailure failure = await UserDataManager.Instance.ClaimIdleRewardAsync();
+        closeButton.interactable = false;
+
+        IdleRewardClaimFailure failure;
+        try
+        {
+            UserDataManager manager = UserDataManager.Instance;
+            failure = manager != null
+                ? await manager.ClaimIdleRewardAsync()
+                : IdleRewardClaimFailure.InvalidData;
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[IdleRewardPanelView] Claim failed: {exception}");
+            failure = IdleRewardClaimFailure.SaveFailed;
+        }
+
+        if (this == null)
+            return;
+
         claiming = false;
+        closeButton.interactable = true;
         if (failure != IdleRewardClaimFailure.None)
         {
             UIFeedbackToast.Show(failure == IdleRewardClaimFailure.NotReady ? "수령할 보상이 없습니다." : "보상 수령에 실패했습니다.");

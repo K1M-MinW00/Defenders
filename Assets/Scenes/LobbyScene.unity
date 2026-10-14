@@ -42543,7 +42543,7 @@ MonoBehaviour:
   accumulatedTimeText: {fileID: 1555332595}
   rewardContent: {fileID: 982838230}
   rewardGrid: {fileID: 982838232}
-  rewardSlotPrefab: {fileID: 4407138074435672567, guid: 27fa1243733d5a54aa051b6f48e29c2f, type: 3}
+  rewardSlotPrefab: {fileID: 2277973828139237014, guid: 27fa1243733d5a54aa051b6f48e29c2f, type: 3}
 --- !u!114 &930730960
 MonoBehaviour:
   m_ObjectHideFlags: 0
