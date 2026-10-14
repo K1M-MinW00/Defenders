@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class UIFeedbackToast : MonoBehaviour
 {
     private const float VisibleSeconds = 2f;
@@ -15,6 +16,16 @@ public sealed class UIFeedbackToast : MonoBehaviour
 
     private void Awake()
     {
+        if (canvasGroup == null || messageText == null)
+        {
+            Debug.LogError("[UIFeedbackToast] Required UI references are not assigned.", this);
+            enabled = false;
+            return;
+        }
+
+        if (instance != null && instance != this)
+            Debug.LogWarning("[UIFeedbackToast] Multiple toast views are active. The latest view will be used.", this);
+
         instance = this;
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
@@ -62,6 +73,16 @@ public sealed class UIFeedbackToast : MonoBehaviour
 
         hideRoutine = null;
         canvasGroup.alpha = 0f;
+    }
+
+    private void OnDisable()
+    {
+        if (hideRoutine != null)
+            StopCoroutine(hideRoutine);
+
+        hideRoutine = null;
+        if (canvasGroup != null)
+            canvasGroup.alpha = 0f;
     }
 
     private void OnDestroy()

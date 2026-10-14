@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public sealed class SimplePopupView : MonoBehaviour, IModalDismissHandler
 {
     private ModalOverlayLifecycle lifecycle;

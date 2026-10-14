@@ -1,30 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class LobbyExitConfirmationView : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private Button cancelButton;
     [SerializeField] private Button confirmButton;
 
-    public void Configure(Button cancel, Button confirm)
-    {
-        cancelButton = cancel;
-        confirmButton = confirm;
-    }
+    private ModalOverlayLifecycle lifecycle;
+    private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
     private void Awake()
     {
-        cancelButton?.onClick.AddListener(Dismiss);
-        confirmButton?.onClick.AddListener(QuitGame);
+        if (cancelButton == null || confirmButton == null)
+        {
+            Debug.LogError("[LobbyExitConfirmationView] Required UI references are not assigned.", this);
+            enabled = false;
+            return;
+        }
+
+        cancelButton.onClick.AddListener(Dismiss);
+        confirmButton.onClick.AddListener(QuitGame);
     }
 
     public void Show()
     {
-        gameObject.SetActive(true);
-        transform.SetAsLastSibling();
+        Lifecycle.Show();
     }
 
-    public void Dismiss() => ModalTransitionUtility.RequestExit(gameObject, () => gameObject.SetActive(false));
+    public void Dismiss() => Lifecycle.Close();
 
     private static void QuitGame()
     {
