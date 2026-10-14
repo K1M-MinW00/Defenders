@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Main")]
@@ -37,6 +38,8 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
     private int quotedCost;
     private bool resolving;
     private int operationVersion;
+    private UserDataManager userDataManager;
+    private bool isSubscribed;
     private ModalOverlayLifecycle offerLifecycle;
     private ModalOverlayLifecycle detailLifecycle;
     private ModalOverlayLifecycle OfferLifecycle =>
@@ -46,20 +49,25 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        developButton.onClick.AddListener(HandleDevelop);
+        offerDismissButton.onClick.AddListener(DismissOffer);
+        detailDismissButton.onClick.AddListener(DismissDetail);
         OfferLifecycle.HideImmediately();
         DetailLifecycle.HideImmediately();
     }
 
     private void OnEnable()
     {
-        developButton?.onClick.AddListener(HandleDevelop);
-        offerDismissButton?.onClick.AddListener(DismissOffer);
-        detailDismissButton?.onClick.AddListener(DismissDetail);
-        if (UserDataManager.Instance != null)
-        {
-            UserDataManager.Instance.OnResourceUpdated += Refresh;
-            UserDataManager.Instance.OnLabUpdated += Refresh;
-        }
+        if (!TryInitialize())
+            return;
+
+        Subscribe();
         BuildCards();
         ConfigureGrid();
         Refresh();
@@ -68,18 +76,17 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
     private void OnDisable()
     {
         operationVersion++;
-        resolving = false;
         currentOffer = null;
+        Unsubscribe();
+        OfferLifecycle.HideImmediately();
+        DetailLifecycle.HideImmediately();
+    }
+
+    private void OnDestroy()
+    {
         developButton?.onClick.RemoveListener(HandleDevelop);
         offerDismissButton?.onClick.RemoveListener(DismissOffer);
         detailDismissButton?.onClick.RemoveListener(DismissDetail);
-        if (UserDataManager.Instance != null)
-        {
-            UserDataManager.Instance.OnResourceUpdated -= Refresh;
-            UserDataManager.Instance.OnLabUpdated -= Refresh;
-        }
-        OfferLifecycle.HideImmediately();
-        DetailLifecycle.HideImmediately();
     }
 
     private void BuildCards()
@@ -104,13 +111,19 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void Refresh()
     {
-        UserDataRoot data = UserDataManager.Instance?.UserData;
-        if (data == null || GameConfig.Lab == null) return;
-        currencyText?.SetText(data.Resource.ResearchMaterial.ToString("N0"));
-        priceText?.SetText(UserDataManager.Instance.GetNextLabDevelopmentCost().ToString("N0"));
+        UserDataRoot data = userDataManager?.UserData;
+        if (data?.Resource == null || data.Profile == null || data.Lab == null || GameConfig.Lab == null)
+        {
+            developButton.interactable = false;
+            return;
+        }
+
+        currencyText.SetText(data.Resource.ResearchMaterial.ToString("N0"));
+        priceText.SetText(userDataManager.GetNextLabDevelopmentCost().ToString("N0"));
         int capacity = LabDevelopmentUseCase.GetCardCapacity(data.Profile.Level);
         int owned = data.Lab.AcquiredCardIds.Count;
-        limitText?.SetText("보유 {0}/{1}  다음 슬롯 레벨 {2}", owned, capacity, ((data.Profile.Level / 5) + 1) * 5);
+        limitText.SetText("보유 {0}/{1}  다음 슬롯 레벨 {2}", owned, capacity, ((data.Profile.Level / 5) + 1) * 5);
+        developButton.interactable = !resolving;
         HashSet<string> acquired = new(data.Lab.AcquiredCardIds);
         LabCardDataSO[] sortedCards = GameConfig.Lab.Cards.Where(card => card != null).OrderBy(card => card.Rarity).ToArray();
         for (int i = 0; i < cards.Count && i < sortedCards.Length; i++)
@@ -131,9 +144,8 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void HandleDevelop()
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (resolving || manager == null) return;
-        LabOfferResult result = manager.CreateLabOffer();
+        if (resolving || userDataManager == null) return;
+        LabOfferResult result = userDataManager.CreateLabOffer();
         if (!result.Succeeded)
         {
             UIFeedbackToast.Show(FailureMessage(result.Failure));
@@ -162,51 +174,60 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private async void HandleOfferSelected(LabCardDataSO selected)
     {
-        if (resolving || selected == null || currentOffer == null) return;
+        if (resolving || selected == null || currentOffer == null || userDataManager == null) return;
+
+        IReadOnlyList<LabCardDataSO> offerSnapshot = currentOffer;
+        int selectedIndex = offerSnapshot.ToList().IndexOf(selected);
+        if (selectedIndex < 0 || selectedIndex >= offerViews.Count)
+            return;
+
         resolving = true;
+        developButton.interactable = false;
         int currentOperation = ++operationVersion;
-        LabDevelopmentFailure failure;
         try
         {
-            failure = await UserDataManager.Instance.AcquireLabCardAsync(selected, quotedCost, currentOffer);
-        }
-        catch (System.Exception exception)
-        {
-            Debug.LogError($"[LabPanelView] Development failed: {exception}");
-            failure = LabDevelopmentFailure.SaveFailed;
-        }
+            LabDevelopmentFailure failure;
+            try
+            {
+                failure = await userDataManager.AcquireLabCardAsync(selected, quotedCost, offerSnapshot);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"[LabPanelView] Development failed: {exception}");
+                failure = LabDevelopmentFailure.SaveFailed;
+            }
 
-        if (!IsCurrentOperation(currentOperation))
-            return;
-        if (failure != LabDevelopmentFailure.None)
+            if (!IsCurrentOperation(currentOperation))
+                return;
+            if (failure != LabDevelopmentFailure.None)
+            {
+                UIFeedbackToast.Show(FailureMessage(failure));
+                return;
+            }
+
+            offerViews[selectedIndex].PlayReveal(selected, true);
+            float selectedRevealWait = offerViews[selectedIndex].RevealDuration + revealDelay;
+            await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(selectedRevealWait * 1000f));
+            if (!IsCurrentOperation(currentOperation))
+                return;
+            for (int i = 0; i < offerSnapshot.Count; i++)
+            {
+                if (i != selectedIndex)
+                    offerViews[i].PlayReveal(offerSnapshot[i], false);
+            }
+            float revealDuration = offerViews.Count > 0 ? offerViews[0].RevealDuration : 0f;
+            await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(revealDuration * 1000f));
+            if (!IsCurrentOperation(currentOperation))
+                return;
+            offerDismissButton.interactable = true;
+            ShowDetail(selected);
+        }
+        finally
         {
             resolving = false;
-            UIFeedbackToast.Show(FailureMessage(failure));
-            return;
+            if (isActiveAndEnabled)
+                Refresh();
         }
-        int selectedIndex = currentOffer.ToList().IndexOf(selected);
-        if (selectedIndex < 0 || selectedIndex >= offerViews.Count)
-        {
-            resolving = false;
-            return;
-        }
-        offerViews[selectedIndex].PlayReveal(selected, true);
-        float selectedRevealWait = offerViews[selectedIndex].RevealDuration + revealDelay;
-        await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(selectedRevealWait * 1000f));
-        if (!IsCurrentOperation(currentOperation))
-            return;
-        for (int i = 0; i < currentOffer.Count; i++)
-        {
-            if (i != selectedIndex)
-                offerViews[i].PlayReveal(currentOffer[i], false);
-        }
-        float revealDuration = offerViews.Count > 0 ? offerViews[0].RevealDuration : 0f;
-        await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(revealDuration * 1000f));
-        if (!IsCurrentOperation(currentOperation))
-            return;
-        offerDismissButton.interactable = true;
-        resolving = false;
-        ShowDetail(selected);
     }
 
     private bool IsCurrentOperation(int version) =>
@@ -255,4 +276,48 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
         LabDevelopmentFailure.SaveFailed => "저장에 실패했습니다. 잠시 후 다시 시도해 주세요.",
         _ => "기술 개발을 진행할 수 없습니다.",
     };
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData == null || GameConfig.Lab == null)
+        {
+            developButton.interactable = false;
+            return false;
+        }
+
+        return true;
+    }
+
+    private void Subscribe()
+    {
+        if (isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnResourceUpdated += Refresh;
+        userDataManager.OnLabUpdated += Refresh;
+        isSubscribed = true;
+    }
+
+    private void Unsubscribe()
+    {
+        if (!isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnResourceUpdated -= Refresh;
+        userDataManager.OnLabUpdated -= Refresh;
+        isSubscribed = false;
+    }
+
+    private bool ValidateReferences()
+    {
+        bool valid = currencyText != null && priceText != null && limitText != null && developButton != null &&
+                     cardContent != null && cardGrid != null && cardPrefab != null && offerOverlay != null &&
+                     offerContent != null && offerCardPrefab != null && offerDismissButton != null &&
+                     detailPopup != null && detailBackground != null && detailGradient != null && detailIcon != null &&
+                     detailName != null && detailDescription != null && detailValue != null && detailDismissButton != null;
+        if (!valid)
+            Debug.LogError("[LabPanelView] Required UI references are not assigned.", this);
+        return valid;
+    }
 }
