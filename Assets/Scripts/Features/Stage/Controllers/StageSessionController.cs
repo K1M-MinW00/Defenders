@@ -162,7 +162,9 @@ public sealed class StageSessionController : MonoBehaviour
             return false;
         }
 
-        if (!rewardService.Configure(userDataManager) || !progressService.Configure(userDataManager))
+        if (!rewardService.Configure(userDataManager) ||
+            !progressService.Configure(userDataManager) ||
+            !bootstrapper.Configure(userDataManager.RosterService, userDataManager.UserData.Inventory))
         {
             error = "Stage data services could not be configured.";
             return false;

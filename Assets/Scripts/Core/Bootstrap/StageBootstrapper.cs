@@ -9,9 +9,25 @@ public sealed class StageBootstrapper : MonoBehaviour
     [SerializeField] private UnitSummoner unitSummoner;
     [SerializeField] private MonsterSpawner monsterSpawner;
 
+    private RosterService rosterService;
+    private UserInventoryData userInventory;
+
     public bool IsInitialized { get; private set; }
     public int SessionFusionCount => unitSummoner?.SessionFusionCount ?? 0;
     public int SessionFourStarFusionCount => unitSummoner?.SessionFourStarFusionCount ?? 0;
+
+    public bool Configure(RosterService roster, UserInventoryData inventory)
+    {
+        if (roster == null || inventory == null)
+        {
+            Debug.LogError("[StageBootstrapper] Roster and inventory are required.", this);
+            return false;
+        }
+
+        rosterService = roster;
+        userInventory = inventory;
+        return true;
+    }
 
     public bool TryInitializeStage(
         StageDataSO stageData,
@@ -99,13 +115,12 @@ public sealed class StageBootstrapper : MonoBehaviour
         IsInitialized = false;
     }
 
-    private static bool TryBuildUnitPool(
+    private bool TryBuildUnitPool(
         System.Collections.Generic.IReadOnlyList<string> selectedUnitIds,
         out System.Collections.Generic.List<StageUnitInitData> definitions,
         out string error)
     {
         definitions = new System.Collections.Generic.List<StageUnitInitData>(selectedUnitIds.Count);
-        RosterService rosterService = UserDataManager.Instance?.RosterService;
         if (rosterService == null)
         {
             error = "User roster service is not ready.";
@@ -122,7 +137,7 @@ public sealed class StageBootstrapper : MonoBehaviour
                 return false;
             }
 
-            definitions.Add(new StageUnitInitData(data, userData, 1, UserDataManager.Instance.UserData.Inventory));
+            definitions.Add(new StageUnitInitData(data, userData, 1, userInventory));
         }
 
         error = string.Empty;
