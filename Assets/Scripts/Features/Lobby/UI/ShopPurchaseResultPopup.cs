@@ -54,6 +54,8 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
 
     public void Hide() => Dismiss();
 
+    public void HideImmediately() => Lifecycle.HideImmediately();
+
     private void RebuildRewards(ShopProductData product)
     {
         if (rewardContainer == null || rewardSlotPrefab == null)

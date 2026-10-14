@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using System.Threading.Tasks;
 
+[DisallowMultipleComponent]
 public sealed class LobbyShopPanelView : MonoBehaviour
 {
     [System.Serializable]
@@ -46,14 +47,22 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
     private readonly List<ShopProductView> itemViews = new();
     private UnityAction[] tabHandlers;
-    private UserDataManager subscribedManager;
+    private UserDataManager userDataManager;
+    private bool isSubscribed;
     private Coroutine timerRoutine;
     private Coroutine gemAnimationRoutine;
     private bool itemsCreated;
     private bool purchaseInProgress;
+    private int operationVersion;
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         BindTabs();
         EnsureItemsCreated();
     }
@@ -61,6 +70,7 @@ public sealed class LobbyShopPanelView : MonoBehaviour
     private void OnEnable()
     {
         EnsureItemsCreated();
+        TryInitialize();
         Subscribe();
         RefreshBadges();
         ShowTab(defaultTab);
@@ -71,6 +81,7 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
     private void OnDisable()
     {
+        operationVersion++;
         if (timerRoutine != null)
         {
             StopCoroutine(timerRoutine);
@@ -84,6 +95,8 @@ public sealed class LobbyShopPanelView : MonoBehaviour
         }
 
         Unsubscribe();
+        purchaseConfirmPopup.HideImmediately();
+        purchaseResultPopup.HideImmediately();
     }
 
     public void ShowTab(ShopTabType tab)
@@ -138,7 +151,7 @@ public sealed class LobbyShopPanelView : MonoBehaviour
             if (item == null)
                 continue;
 
-            item.Initialize(product, HandlePurchaseRequested);
+            item.Initialize(product, GetProductState, HandlePurchaseRequested);
             itemViews.Add(item);
         }
     }
@@ -162,62 +175,70 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
     private async void ConfirmPurchase(ShopProductData product)
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (manager == null || product == null || purchaseInProgress)
+        if (userDataManager == null || product == null || purchaseInProgress)
             return;
 
         purchaseInProgress = true;
+        int currentOperation = ++operationVersion;
         int gemBeforePurchase = GetCurrentGem();
 
         if (purchaseConfirmPopup != null)
             purchaseConfirmPopup.SetBusy(true);
 
-        ShopPurchaseResult result;
         try
         {
-            result = await manager.PurchaseShopProductAsync(product);
-        }
-        catch (System.Exception exception)
-        {
-            Debug.LogError($"[LobbyShopPanelView] Purchase failed: {exception}");
-            result = ShopPurchaseResult.Fail(ShopPurchaseFailure.SaveFailed);
+            ShopPurchaseResult result;
+            try
+            {
+                result = await userDataManager.PurchaseShopProductAsync(product);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"[LobbyShopPanelView] Purchase failed: {exception}");
+                result = ShopPurchaseResult.Fail(ShopPurchaseFailure.SaveFailed);
+            }
+
+            if (!IsCurrentOperation(currentOperation))
+                return;
+
+            feedbackText.text = ShopFeedbackMessages.Get(result);
+
+            int gemAfterPurchase = GetCurrentGem();
+            if (result != null && result.Succeeded)
+                AnimateGemBalance(gemBeforePurchase, gemAfterPurchase);
+            else
+                RefreshGemBalance();
+
+            RefreshItemStates();
+            purchaseConfirmPopup.Hide(() =>
+            {
+                if (IsCurrentOperation(currentOperation))
+                    purchaseResultPopup.Show(product, result);
+            });
         }
         finally
         {
-            purchaseInProgress = false;
+            if (this != null)
+            {
+                purchaseInProgress = false;
+                if (isActiveAndEnabled)
+                {
+                    purchaseConfirmPopup.SetBusy(false);
+                    RefreshItemStates();
+                }
+            }
         }
-
-        if (feedbackText != null)
-            feedbackText.text = ShopFeedbackMessages.Get(result);
-
-        int gemAfterPurchase = GetCurrentGem();
-        if (result != null && result.Succeeded)
-            AnimateGemBalance(gemBeforePurchase, gemAfterPurchase);
-        else
-            RefreshGemBalance();
-
-        RefreshItemStates();
-
-        if (purchaseConfirmPopup != null)
-            purchaseConfirmPopup.Hide(() => purchaseResultPopup?.Show(product, result));
-        else
-            purchaseResultPopup?.Show(product, result);
     }
 
     private int GetCurrentGem()
     {
-        UserDataManager manager = subscribedManager != null
-            ? subscribedManager
-            : UserDataManager.Instance;
-        return manager != null && manager.UserData != null && manager.UserData.Resource != null
-            ? manager.UserData.Resource.Gem
+        return userDataManager?.UserData?.Resource != null
+            ? userDataManager.UserData.Resource.Gem
             : 0;
     }
     private void RefreshGemBalance()
     {
-        if (gemText != null)
-            gemText.text = (subscribedManager?.UserData?.Resource?.Gem ??
-                            UserDataManager.Instance?.UserData?.Resource?.Gem ?? 0).ToString("N0");
+        gemText.text = (userDataManager?.UserData?.Resource?.Gem ?? 0).ToString("N0");
     }
 
     private void AnimateGemBalance(int from, int to)
@@ -259,9 +280,6 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
     private void RefreshBadges()
     {
-        UserDataManager manager = subscribedManager != null
-            ? subscribedManager
-            : UserDataManager.Instance;
         if (tabs != null)
         {
             foreach (ShopTabEntry entry in tabs)
@@ -269,8 +287,8 @@ public sealed class LobbyShopPanelView : MonoBehaviour
                 if (entry == null)
                     continue;
 
-                bool visible = manager != null &&
-                               manager.HasShopNotification(entry.Type, shopProductGroup);
+                bool visible = userDataManager != null &&
+                               userDataManager.HasShopNotification(entry.Type, shopProductGroup);
                 if (entry.Badge != null)
                     entry.Badge.SetActive(visible);
             }
@@ -279,15 +297,19 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
     private async Task MarkTabSeenAndRefreshAsync(ShopTabType tab)
     {
-        UserDataManager manager = subscribedManager != null
-            ? subscribedManager
-            : UserDataManager.Instance;
-        if (manager == null || shopProductGroup == null)
+        if (userDataManager == null || shopProductGroup == null)
             return;
 
-        await manager.MarkShopTabSeenAsync(tab, shopProductGroup);
-        if (this != null && isActiveAndEnabled)
-            RefreshBadges();
+        try
+        {
+            await userDataManager.MarkShopTabSeenAsync(tab, shopProductGroup);
+            if (this != null && isActiveAndEnabled)
+                RefreshBadges();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[LobbyShopPanelView] Failed to mark tab as seen: {exception}");
+        }
     }
 
     private IEnumerator RefreshTimers()
@@ -296,8 +318,9 @@ public sealed class LobbyShopPanelView : MonoBehaviour
         while (true)
         {
             yield return delay;
-            if (subscribedManager == null)
+            if (userDataManager == null)
             {
+                TryInitialize();
                 Subscribe();
                 RefreshGemBalance();
                 RefreshItemStates();
@@ -330,24 +353,22 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
     private void Subscribe()
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (manager == null || manager == subscribedManager)
+        if (isSubscribed || userDataManager == null)
             return;
 
-        Unsubscribe();
-        subscribedManager = manager;
-        subscribedManager.OnResourceUpdated += HandleResourceUpdated;
-        subscribedManager.OnShopUpdated += HandleShopUpdated;
+        userDataManager.OnResourceUpdated += HandleResourceUpdated;
+        userDataManager.OnShopUpdated += HandleShopUpdated;
+        isSubscribed = true;
     }
 
     private void Unsubscribe()
     {
-        if (subscribedManager == null)
+        if (!isSubscribed || userDataManager == null)
             return;
 
-        subscribedManager.OnResourceUpdated -= HandleResourceUpdated;
-        subscribedManager.OnShopUpdated -= HandleShopUpdated;
-        subscribedManager = null;
+        userDataManager.OnResourceUpdated -= HandleResourceUpdated;
+        userDataManager.OnShopUpdated -= HandleShopUpdated;
+        isSubscribed = false;
     }
 
     private void HandleResourceUpdated()
@@ -374,5 +395,43 @@ public sealed class LobbyShopPanelView : MonoBehaviour
             if (tabs[i]?.Button != null && tabHandlers[i] != null)
                 tabs[i].Button.onClick.RemoveListener(tabHandlers[i]);
         }
+    }
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        return userDataManager?.UserData != null;
+    }
+
+    private ShopProductState GetProductState(ShopProductData product) =>
+        userDataManager?.GetShopProductState(product)
+        ?? new ShopProductState(false, false, 0, 0, null);
+
+    private bool IsCurrentOperation(int version) =>
+        this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool ValidateReferences()
+    {
+        bool valid = shopProductGroup != null && limitedItemPrefab != null && packageItemPrefab != null &&
+                     rechargeItemPrefab != null && exchangeItemPrefab != null && dailyPackageContent != null &&
+                     weeklyPackageContent != null && monthlyPackageContent != null && tabs != null && tabs.Length > 0 &&
+                     gemText != null && feedbackText != null && purchaseConfirmPopup != null && purchaseResultPopup != null;
+
+        if (valid)
+        {
+            foreach (ShopTabEntry entry in tabs)
+            {
+                if (entry == null || entry.Button == null || entry.Selected == null || entry.Badge == null ||
+                    entry.Panel == null || (entry.Type != ShopTabType.Package && entry.Content == null))
+                {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+
+        if (!valid)
+            Debug.LogError("[LobbyShopPanelView] Required shop references are not assigned.", this);
+        return valid;
     }
 }

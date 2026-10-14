@@ -19,11 +19,16 @@ public abstract class ShopProductView : MonoBehaviour
     public ShopProductData ProductData => Product;
 
     private UnityAction<ShopProductView> onPurchaseRequested;
+    private Func<ShopProductData, ShopProductState> stateProvider;
     private readonly List<ShopRewardSlotView> rewardSlots = new();
 
-    public void Initialize(ShopProductData product, UnityAction<ShopProductView> purchaseRequested = null)
+    public void Initialize(
+        ShopProductData product,
+        Func<ShopProductData, ShopProductState> productStateProvider,
+        UnityAction<ShopProductView> purchaseRequested = null)
     {
         Product = product;
+        stateProvider = productStateProvider;
         onPurchaseRequested = purchaseRequested;
 
         if (titleText != null)
@@ -146,9 +151,8 @@ public abstract class ShopProductView : MonoBehaviour
 
     private ShopProductState GetState()
     {
-        return UserDataManager.Instance != null
-            ? UserDataManager.Instance.GetShopProductState(Product)
-            : new ShopProductState(false, false, 0, 0, null);
+        return stateProvider?.Invoke(Product)
+               ?? new ShopProductState(false, false, 0, 0, null);
     }
 
     private string BuildCostText()

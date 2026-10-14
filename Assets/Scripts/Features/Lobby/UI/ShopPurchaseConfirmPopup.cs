@@ -105,6 +105,12 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
 
     public void Hide() => Dismiss();
 
+    public void HideImmediately()
+    {
+        ClearActions();
+        Lifecycle.HideImmediately();
+    }
+
     public void Hide(UnityAction onHidden)
     {
         Lifecycle.Close(() =>
