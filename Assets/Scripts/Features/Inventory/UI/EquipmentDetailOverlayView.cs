@@ -27,8 +27,11 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
 
     [Header("Actions")]
     [SerializeField] private Button leftButton;
+    [SerializeField] private TMP_Text leftButtonLabel;
     [SerializeField] private Button primaryButton;
+    [SerializeField] private TMP_Text primaryButtonLabel;
     [SerializeField] private Button rightButton;
+    [SerializeField] private TMP_Text rightButtonLabel;
     [SerializeField] private Button closeButton;
 
     [Header("Stat Icons")]
@@ -43,29 +46,6 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
     public DisplayMode CurrentMode { get; private set; }
     public bool IsVisible => Lifecycle.IsVisible;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
-
-    public void Configure(
-        TMP_Text header, Image rarityBackground, TMP_Text rarity, TMP_Text itemName,
-        EquipmentSlotView slot, Image effectIcon, TMP_Text effect, TMP_Text description,
-        GameObject bonusRoot, Image bonusIcon, TMP_Text bonusText,
-        Button left, Button primary, Button right, Button close)
-    {
-        headerLabel = header;
-        rarityHeader = rarityBackground;
-        rarityText = rarity;
-        itemNameText = itemName;
-        equipmentSlot = slot;
-        baseEffectIcon = effectIcon;
-        baseEffectText = effect;
-        descriptionText = description;
-        bonusEffectRoot = bonusRoot;
-        bonusEffectIcon = bonusIcon;
-        bonusEffectText = bonusText;
-        leftButton = left;
-        primaryButton = primary;
-        rightButton = right;
-        closeButton = close;
-    }
 
     private void Awake()
     {
@@ -82,9 +62,9 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
     {
         if (!ShowContent(item, definition, DisplayMode.Inventory, onDismissed))
             return;
-        BindButton(leftButton, "취소", Dismiss, true);
-        BindButton(primaryButton, "분해", onDismantle, canDismantle);
-        BindButton(rightButton, null, null, false);
+        BindButton(leftButton, leftButtonLabel, "취소", Dismiss, true);
+        BindButton(primaryButton, primaryButtonLabel, "분해", onDismantle, canDismantle);
+        BindButton(rightButton, rightButtonLabel, null, null, false);
     }
 
     public void ShowEquipped(
@@ -99,13 +79,14 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
     {
         if (!ShowContent(item, definition, DisplayMode.Equipped, onDismissed))
             return;
-        BindButton(leftButton, "해제", onUnequip, actionsEnabled);
+        BindButton(leftButton, leftButtonLabel, "해제", onUnequip, actionsEnabled);
         BindButton(
             primaryButton,
+            primaryButtonLabel,
             isMaxLevel ? "최대" : "강화",
             isMaxLevel ? null : onEnhance,
             actionsEnabled && !isMaxLevel);
-        BindButton(rightButton, "장비 교체", onReplace, actionsEnabled);
+        BindButton(rightButton, rightButtonLabel, "장비 교체", onReplace, actionsEnabled);
     }
 
     public void ShowPreview(
@@ -115,9 +96,9 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
     {
         if (!ShowContent(item, definition, DisplayMode.Preview, onDismissed))
             return;
-        BindButton(leftButton, "확인", Dismiss, true);
-        BindButton(primaryButton, null, null, false);
-        BindButton(rightButton, null, null, false);
+        BindButton(leftButton, leftButtonLabel, "확인", Dismiss, true);
+        BindButton(primaryButton, primaryButtonLabel, null, null, false);
+        BindButton(rightButton, rightButtonLabel, null, null, false);
     }
 
     private bool ShowContent(
@@ -177,15 +158,14 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
         Lifecycle.HideImmediately();
     }
 
-    private static void BindButton(Button button, string label, Action action, bool interactable)
+    private static void BindButton(Button button, TMP_Text buttonLabel, string label, Action action, bool interactable)
     {
         if (button == null) return;
         bool visible = !string.IsNullOrWhiteSpace(label);
         button.gameObject.SetActive(visible);
         button.onClick.RemoveAllListeners();
         button.interactable = visible && interactable;
-        TMP_Text text = button.GetComponentInChildren<TMP_Text>(true);
-        if (text != null) text.text = label ?? string.Empty;
+        if (buttonLabel != null) buttonLabel.text = label ?? string.Empty;
         if (visible && action != null) button.onClick.AddListener(() => action());
     }
 

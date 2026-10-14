@@ -18735,8 +18735,11 @@ MonoBehaviour:
   bonusEffectIcon: {fileID: 1309159836}
   bonusEffectText: {fileID: 1774992185}
   leftButton: {fileID: 956140617}
+  leftButtonLabel: {fileID: 140703558}
   primaryButton: {fileID: 1811188906}
+  primaryButtonLabel: {fileID: 1682346699}
   rightButton: {fileID: 478516572}
+  rightButtonLabel: {fileID: 137198369}
   closeButton: {fileID: 281280473}
   attackStatIcon: {fileID: -3314360207756121320, guid: 499a9d5dd1bd940479535cdaec819a8c, type: 3}
   criticalStatIcon: {fileID: -542116143212680911, guid: 9ab3c4dd6e8298746a897bb4c223fe66, type: 3}
@@ -75975,6 +75978,7 @@ MonoBehaviour:
   dismantleContentRoot: {fileID: 710903272}
   dismantleFilterButton: {fileID: 585298882}
   rewardRoot: {fileID: 911750277}
+  rewardSlotPrefab: {fileID: 1185242590003644129, guid: dafd29809587c6f43a0f548f831d2a68, type: 3}
   totalExpText: {fileID: 1797296895}
   confirmDismantleButton: {fileID: 713174457}
   closeDismantleButton: {fileID: 462965319}

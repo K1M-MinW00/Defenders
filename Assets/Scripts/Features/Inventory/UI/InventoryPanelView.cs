@@ -2,7 +2,8 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class InventoryPanelView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 {
     private enum InventoryTab
     {
@@ -30,7 +31,6 @@ public class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 
     private InventoryService inventoryService;
     private readonly Dictionary<string, CommonSlotUI> slotsByKey = new();
-    private readonly List<string> staleSlotKeys = new();
     private InventoryTab currentTab;
     private Transform currentContentRoot;
     private ModalOverlayLifecycle lifecycle;
@@ -136,18 +136,7 @@ public class InventoryPanelView : MonoBehaviour, IModalDismissHandler
                 break;
         }
 
-        RemoveStaleSlots(visibleKeys);
-    }
-
-    public void ConfigureEquipmentPanel(EquipmentInventoryPanelView panel) => equipmentPanel = panel;
-
-    public void ConfigureInventoryBodies(GameObject consumablePanel, Transform consumableContent,
-        GameObject materialPanel, Transform materialContent)
-    {
-        consumableInventoryPanel = consumablePanel;
-        consumableContentRoot = consumableContent;
-        materialInventoryPanel = materialPanel;
-        materialContentRoot = materialContent;
+        HideUnusedSlots(visibleKeys);
     }
 
     private void SetInventoryBody(GameObject active)
@@ -158,7 +147,7 @@ public class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 
     private void ClearStandardSlots()
     {
-        RemoveStaleSlots(new HashSet<string>());
+        HideUnusedSlots(new HashSet<string>());
     }
 
     private void CleanupTransientUi()
@@ -197,34 +186,22 @@ public class InventoryPanelView : MonoBehaviour, IModalDismissHandler
             slotsByKey[key] = slot;
         }
 
+        slot.transform.SetParent(currentContentRoot, false);
         slot.gameObject.SetActive(true);
         slot.transform.SetSiblingIndex(siblingIndex++);
         slot.SetupItem(itemData, count, () => detailPopup?.Show(itemData, count));
     }
 
-    private void RemoveStaleSlots(HashSet<string> visibleKeys)
+    private void HideUnusedSlots(HashSet<string> visibleKeys)
     {
-        staleSlotKeys.Clear();
-
-        foreach (string key in slotsByKey.Keys)
+        foreach (KeyValuePair<string, CommonSlotUI> pair in slotsByKey)
         {
-            if (!visibleKeys.Contains(key))
-                staleSlotKeys.Add(key);
-        }
-
-        foreach (string key in staleSlotKeys)
-        {
-            CommonSlotUI slot = slotsByKey[key];
-            if (slot != null)
+            if (!visibleKeys.Contains(pair.Key) && pair.Value != null)
             {
-                slot.gameObject.SetActive(false);
-                Destroy(slot.gameObject);
+                pair.Value.Clear();
+                pair.Value.gameObject.SetActive(false);
             }
-
-            slotsByKey.Remove(key);
         }
-
-        staleSlotKeys.Clear();
     }
 
     private void OnDestroy()

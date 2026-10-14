@@ -12,8 +12,6 @@ public sealed class EquipmentSlotView : MonoBehaviour
     [SerializeField] private Image selectionOverlay;
     [SerializeField] private Image checkImage;
     [SerializeField] private Button button;
-    public Sprite FrameSprite => frame != null ? frame.sprite : null;
-
     public void Bind(EquipmentItemData instance, EquipmentDataSO definition, bool selected, Action onClick)
     {
         frame.color = RarityPalette.Get(definition.Rarity);

@@ -23,6 +23,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
     [SerializeField] private Transform dismantleContentRoot;
     [SerializeField] private Button dismantleFilterButton;
     [SerializeField] private Transform rewardRoot;
+    [SerializeField] private CommonSlotUI rewardSlotPrefab;
     [SerializeField] private TMP_Text totalExpText;
     [SerializeField] private Button confirmDismantleButton;
     [SerializeField] private Button closeDismantleButton;
@@ -59,16 +60,6 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
         filterLifecycle ??= new ModalOverlayLifecycle(filterPanel);
     private ModalOverlayLifecycle RewardLifecycle =>
         rewardLifecycle ??= new ModalOverlayLifecycle(rewardOverlay);
-
-    public void ConfigureMain(TMP_Text capacity, Button dismantle, Button filter, Transform content, EquipmentSlotView prefab)
-    { capacityText = capacity; dismantleModeButton = dismantle; filterButton = filter; contentRoot = content; slotPrefab = prefab; }
-    public void ConfigureDetail(EquipmentDetailOverlayView overlay) => detailOverlay = overlay;
-    public void ConfigureDismantle(GameObject panel, Transform content, Button filter, Transform rewards, TMP_Text exp, Button confirm, Button close)
-    { dismantlePanel=panel; dismantleContentRoot=content; dismantleFilterButton=filter; rewardRoot=rewards; totalExpText=exp; confirmDismantleButton=confirm; closeDismantleButton=close; }
-    public void ConfigureFilter(GameObject panel, Button all, Button main, Button sub, Button helmet, Button armor, Button reset, Button close)
-    { filterPanel=panel; allFilterButton=all; mainWeaponFilterButton=main; subWeaponFilterButton=sub; helmetFilterButton=helmet; armorFilterButton=armor; resetFilterButton=reset; closeFilterButton=close; }
-    public void ConfigureReward(GameObject overlay, Transform root)
-    { rewardOverlay=overlay; acquiredRewardRoot=root; }
 
     private void Awake()
     {
@@ -216,18 +207,11 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
     private void BindRewardSlots(Transform root,List<CommonSlotUI> pool,IReadOnlyDictionary<string,int> rewards)
     {
         var values=rewards?.Where(x=>x.Value>0).ToList()??new List<KeyValuePair<string,int>>();
-        while(pool.Count<values.Count){CommonSlotUI slot=CreateRewardSlot(root);pool.Add(slot);}
-        for(int i=0;i<pool.Count;i++){bool show=i<values.Count;pool[i].gameObject.SetActive(show);if(show)pool[i].SetupItem(GameConfig.Items.Get(values[i].Key),values[i].Value,null);}
-    }
+        if (rewardSlotPrefab == null)
+            return;
 
-    private CommonSlotUI CreateRewardSlot(Transform parent)
-    {
-        GameObject go=new("RewardSlot",typeof(RectTransform),typeof(Image),typeof(Button),typeof(CommonSlotUI)); go.transform.SetParent(parent,false);
-        ((RectTransform)go.transform).sizeDelta=new Vector2(150,150); Image frame=go.GetComponent<Image>(); frame.color=Color.white;
-        Image icon=CreateImage("Icon",go.transform,Color.white); Stretch(icon.rectTransform,12); TMP_Text count=CreateText("Count",go.transform,"",32,TextAlignmentOptions.BottomRight); Stretch(count.rectTransform,8);
-        frame.sprite=slotPrefab != null ? slotPrefab.FrameSprite : null;
-        frame.type=Image.Type.Sliced;
-        CommonSlotUI slot=go.GetComponent<CommonSlotUI>();slot.Configure(icon,frame,count,go.GetComponent<Button>());return slot;
+        while(pool.Count<values.Count){CommonSlotUI slot=Instantiate(rewardSlotPrefab,root);pool.Add(slot);}
+        for(int i=0;i<pool.Count;i++){bool show=i<values.Count;pool[i].gameObject.SetActive(show);if(show)pool[i].SetupItem(GameConfig.Items.Get(values[i].Key),values[i].Value,null);}
     }
 
     private void OpenFilter(){FilterLifecycle.Show();RefreshFilterVisuals();}
@@ -239,7 +223,4 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
         SetFilter(allFilterButton,filters.Count==0);SetFilter(mainWeaponFilterButton,filters.Contains(EquipmentType.MainWeapon));SetFilter(subWeaponFilterButton,filters.Contains(EquipmentType.SubWeapon));SetFilter(helmetFilterButton,filters.Contains(EquipmentType.Helmet));SetFilter(armorFilterButton,filters.Contains(EquipmentType.Armor));
     }
     private static void SetFilter(Button button,bool selected){if(button?.targetGraphic!=null)button.targetGraphic.color=selected?new Color(.2f,.65f,1f):new Color(.75f,.82f,.86f);}
-    private static Image CreateImage(string name,Transform parent,Color color){GameObject go=new(name,typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));go.transform.SetParent(parent,false);Image image=go.GetComponent<Image>();image.color=color;return image;}
-    private static TMP_Text CreateText(string name,Transform parent,string value,float size,TextAlignmentOptions alignment){GameObject go=new(name,typeof(RectTransform),typeof(CanvasRenderer),typeof(TextMeshProUGUI));go.transform.SetParent(parent,false);TMP_Text text=go.GetComponent<TMP_Text>();text.text=value;text.fontSize=size;text.alignment=alignment;text.color=Color.white;text.fontStyle=FontStyles.Bold;return text;}
-    private static void Stretch(RectTransform rect,float inset){rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=new Vector2(inset,inset);rect.offsetMax=new Vector2(-inset,-inset);}
 }
