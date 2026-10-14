@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +23,9 @@ public sealed class UnitPromotionPanel : MonoBehaviour
 
     private UnitDataSO currentUnitData;
     private UserUnitData currentUnit;
+    private UserDataManager userDataManager;
     private bool isPromoting;
+    private int operationVersion;
 
     private void Awake()
     {
@@ -35,19 +38,40 @@ public sealed class UnitPromotionPanel : MonoBehaviour
         promotionButton.onClick.AddListener(OnClickPromotion);
     }
 
-    public void Bind(UnitDataSO unitData)
+    private void OnEnable()
     {
+        if (currentUnitData != null && userDataManager != null)
+            Refresh();
+    }
+
+    private void OnDisable()
+    {
+        operationVersion++;
+    }
+
+    public bool Bind(UnitDataSO unitData, UserDataManager manager)
+    {
+        if (unitData == null || manager?.UserData == null || !manager.IsLoaded ||
+            manager.RosterService == null || manager.InventoryService == null)
+        {
+            Debug.LogError("[UnitPromotionPanel] Loaded user data and unit definition are required.", this);
+            promotionButton.interactable = false;
+            return false;
+        }
+
         currentUnitData = unitData;
+        userDataManager = manager;
 
         Refresh();
+        return currentUnit != null;
     }
 
     private void Refresh()
     {
-        if (currentUnitData == null || UserDataManager.Instance == null)
+        if (currentUnitData == null || userDataManager == null)
             return;
 
-        currentUnit = UserDataManager.Instance.RosterService.GetUnit(currentUnitData.unitId);
+        currentUnit = userDataManager.RosterService.GetUnit(currentUnitData.unitId);
 
         if (currentUnit == null)
         {
@@ -120,7 +144,7 @@ public sealed class UnitPromotionPanel : MonoBehaviour
             return;
         }
 
-        int owned = UserDataManager.Instance.InventoryService.GetItemCount(material.ItemId);
+        int owned = userDataManager.InventoryService.GetItemCount(material.ItemId);
 
         materialSlot.gameObject.SetActive(true);
         materialSlot.SetupRequirement(
@@ -130,7 +154,7 @@ public sealed class UnitPromotionPanel : MonoBehaviour
             cost.Count,
             null);
 
-        promotionButton.interactable = owned >= cost.Count;
+        promotionButton.interactable = !isPromoting && owned >= cost.Count;
     }
 
     private async void OnClickPromotion()
@@ -139,15 +163,18 @@ public sealed class UnitPromotionPanel : MonoBehaviour
             return;
 
         isPromoting = true;
-        bool promotionSucceeded = false;
+        int currentOperation = ++operationVersion;
 
         if (promotionButton != null)
             promotionButton.interactable = false;
 
         try
         {
-            PromoteUnitResult result = await UserDataManager.Instance.PromoteUnitAsync(
+            PromoteUnitResult result = await userDataManager.PromoteUnitAsync(
                 new PromoteUnitCommand(currentUnitData.unitId));
+
+            if (!isActiveAndEnabled || currentOperation != operationVersion)
+                return;
 
             if (!result.Succeeded)
             {
@@ -156,14 +183,19 @@ public sealed class UnitPromotionPanel : MonoBehaviour
                 return;
             }
 
-            promotionSucceeded = true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (isActiveAndEnabled && currentOperation == operationVersion)
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(PromoteUnitFailure.SaveFailed));
         }
         finally
         {
             isPromoting = false;
 
-            if (!promotionSucceeded && promotionButton != null && promotionButton.gameObject.activeSelf)
-                RefreshMaterials();
+            if (isActiveAndEnabled && currentOperation == operationVersion)
+                Refresh();
         }
     }
 
