@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -5,7 +6,14 @@ using System.Threading.Tasks;
 /// </summary>
 public sealed class UnitEquipmentCoordinator
 {
+    private readonly UserDataManager userDataManager;
+
     public bool IsBusy { get; private set; }
+
+    public UnitEquipmentCoordinator(UserDataManager userDataManager)
+    {
+        this.userDataManager = userDataManager ?? throw new ArgumentNullException(nameof(userDataManager));
+    }
 
     public async Task<EquipmentOperationFailure> EquipAsync(
         string unitId,
@@ -17,7 +25,7 @@ public sealed class UnitEquipmentCoordinator
         IsBusy = true;
         try
         {
-            return await UserDataManager.Instance.EquipAsync(unitId, equipmentUniqueId);
+            return await userDataManager.EquipAsync(unitId, equipmentUniqueId);
         }
         finally
         {
@@ -35,7 +43,7 @@ public sealed class UnitEquipmentCoordinator
         IsBusy = true;
         try
         {
-            return await UserDataManager.Instance.UnequipAsync(unitId, equipmentType);
+            return await userDataManager.UnequipAsync(unitId, equipmentType);
         }
         finally
         {
@@ -53,7 +61,7 @@ public sealed class UnitEquipmentCoordinator
         IsBusy = true;
         try
         {
-            return await UserDataManager.Instance.EnhanceEquipmentAsync(
+            return await userDataManager.EnhanceEquipmentAsync(
                 equipmentUniqueId,
                 materials);
         }

@@ -157,7 +157,7 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
         trainingPanel?.Bind(currentState.Definition, userDataManager);
         promotionPanel?.Bind(currentState.Definition, userDataManager);
         limitBreakPanel?.Bind(currentState.Definition, userDataManager);
-        equipmentPanel?.Bind(currentUnitId);
+        equipmentPanel?.Bind(currentUnitId, userDataManager);
     }
 
     private void BindCommonInfo()

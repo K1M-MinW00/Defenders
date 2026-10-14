@@ -30,25 +30,17 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
     private UnitEquipmentDataSource dataSource;
     private EquipmentStatListRenderer basicStatRenderer;
     private EquipmentStatListRenderer bonusStatRenderer;
+    private UserDataManager userDataManager;
     private string unitId;
     private EquipmentType activeType;
     private EquipmentItemData selectedEquipment;
     private bool changeReturnsToDetail;
     private bool enhancementReturnsToDetail;
-    private UnitEquipmentCoordinator Coordinator => coordinator ??= new UnitEquipmentCoordinator();
-    private UnitEquipmentDataSource DataSource =>
-        dataSource ??= new UnitEquipmentDataSource(
-            () => UserDataManager.Instance?.UserData,
-            GameConfig.Items);
-    private EquipmentEnhancementPresenter EnhancementPresenter =>
-        enhancementPresenter ??= new EquipmentEnhancementPresenter(
-            DataSource,
-            GameConfig.Items,
-            GameConfig.EquipmentBalance);
-    private EquipmentChangePresenter ChangePresenter =>
-        changePresenter ??= new EquipmentChangePresenter(
-            DataSource,
-            GameConfig.EquipmentBalance);
+    private int operationVersion;
+    private UnitEquipmentCoordinator Coordinator => coordinator;
+    private UnitEquipmentDataSource DataSource => dataSource;
+    private EquipmentEnhancementPresenter EnhancementPresenter => enhancementPresenter;
+    private EquipmentChangePresenter ChangePresenter => changePresenter;
     private EquipmentStatListRenderer BasicStatRenderer =>
         basicStatRenderer ??= new EquipmentStatListRenderer(basicStatsRoot, basicStatTemplate);
     private EquipmentStatListRenderer BonusStatRenderer =>
@@ -62,9 +54,6 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
             return;
         }
 
-        _=EnhancementPresenter;
-        _=ChangePresenter;
-        _=Coordinator;
         _=BasicStatRenderer;
         _=BonusStatRenderer;
         foreach(PartSlot part in partSlots) { EquipmentType type=part.type; part.slot.BindEmpty(GetEmptySlotIcon(type),string.Empty,()=>OpenPart(type)); }
@@ -77,10 +66,34 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
-        if(!string.IsNullOrWhiteSpace(unitId))Refresh();
+        if(!string.IsNullOrWhiteSpace(unitId) && userDataManager != null)Refresh();
     }
 
-    public void Bind(string targetUnitId) { unitId=targetUnitId; Refresh(); }
+    private void OnDisable()
+    {
+        operationVersion++;
+    }
+
+    public bool Bind(string targetUnitId, UserDataManager manager)
+    {
+        if (string.IsNullOrWhiteSpace(targetUnitId) || manager?.UserData == null || !manager.IsLoaded)
+        {
+            Debug.LogError("[UnitEquipmentPanel] Loaded user data and unit ID are required.", this);
+            return false;
+        }
+
+        userDataManager = manager;
+        coordinator ??= new UnitEquipmentCoordinator(userDataManager);
+        dataSource ??= new UnitEquipmentDataSource(() => userDataManager.UserData, GameConfig.Items);
+        enhancementPresenter ??= new EquipmentEnhancementPresenter(
+            dataSource,
+            GameConfig.Items,
+            GameConfig.EquipmentBalance);
+        changePresenter ??= new EquipmentChangePresenter(dataSource, GameConfig.EquipmentBalance);
+        unitId = targetUnitId;
+        Refresh();
+        return DataSource.GetUnit(unitId) != null;
+    }
     public void Dismiss()
     {
         if(enhancementView!=null&&enhancementView.IsVisible)CloseEnhancement();
@@ -88,7 +101,7 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
     }
     private void Refresh()
     {
-        UserDataRoot data=UserDataManager.Instance?.UserData; UserUnitData unit=DataSource.GetUnit(unitId); if(data?.Inventory==null||unit==null)return;
+        UserDataRoot data=userDataManager?.UserData; UserUnitData unit=DataSource?.GetUnit(unitId); if(data?.Inventory==null||unit==null)return;
         foreach(PartSlot part in partSlots)
         {
             EquipmentItemData item=GetEquipped(part.type); EquipmentDataSO definition=DataSource.GetDefinition(item);
@@ -145,10 +158,25 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
     {
         EquipmentItemData selected=ChangePresenter.Selected;
         if(Coordinator.IsBusy||selected==null)return;
-        Task<EquipmentOperationFailure> operation=Coordinator.EquipAsync(unitId,selected.UniqueId);RefreshChange();
-        EquipmentOperationFailure result=await operation;
-        if(result==EquipmentOperationFailure.None)CloseChange();
-        else{UIFeedbackToast.Show("장비를 장착할 수 없습니다.");Refresh();}
+        int currentOperation = ++operationVersion;
+
+        try
+        {
+            Task<EquipmentOperationFailure> operation=Coordinator.EquipAsync(unitId,selected.UniqueId);
+            RefreshChange();
+            EquipmentOperationFailure result=await operation;
+            if (!CanApplyOperationResult(currentOperation))
+                return;
+
+            if(result==EquipmentOperationFailure.None)CloseChange();
+            else{UIFeedbackToast.Show("장비를 장착할 수 없습니다.");Refresh();}
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (CanApplyOperationResult(currentOperation))
+                UIFeedbackToast.Show("장비를 장착할 수 없습니다.");
+        }
     }
 
     private void OpenDetail(){RefreshDetail();}
@@ -167,7 +195,30 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
             !Coordinator.IsBusy,
             () => selectedEquipment=null);
     }
-    private async Task UnequipAsync(){if(Coordinator.IsBusy)return;Task<EquipmentOperationFailure> operation=Coordinator.UnequipAsync(unitId,activeType);RefreshDetail();EquipmentOperationFailure result=await operation;if(result==EquipmentOperationFailure.None)CloseDetail();else UIFeedbackToast.Show("장비를 해제할 수 없습니다.");Refresh();}
+    private async Task UnequipAsync()
+    {
+        if(Coordinator.IsBusy)return;
+        int currentOperation = ++operationVersion;
+
+        try
+        {
+            Task<EquipmentOperationFailure> operation=Coordinator.UnequipAsync(unitId,activeType);
+            RefreshDetail();
+            EquipmentOperationFailure result=await operation;
+            if (!CanApplyOperationResult(currentOperation))
+                return;
+
+            if(result==EquipmentOperationFailure.None)CloseDetail();
+            else UIFeedbackToast.Show("장비를 해제할 수 없습니다.");
+            Refresh();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (CanApplyOperationResult(currentOperation))
+                UIFeedbackToast.Show("장비를 해제할 수 없습니다.");
+        }
+    }
 
     private void OpenEnhancement()
     {
@@ -208,27 +259,45 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
     private async Task EnhanceAsync()
     {
         if(Coordinator.IsBusy||!EnhancementPresenter.HasSelection)return;
-        Task<EquipmentOperationFailure> operation=Coordinator.EnhanceAsync(selectedEquipment.UniqueId,EnhancementPresenter.CreateSelectionSnapshot());RefreshEnhancement();
-        EquipmentOperationFailure result=await operation;
-        if(result==EquipmentOperationFailure.None)
+        int currentOperation = ++operationVersion;
+
+        try
         {
-            selectedEquipment=DataSource.FindEquipment(selectedEquipment.UniqueId);
-            EnhancementPresenter.Bind(selectedEquipment);
-            if(selectedEquipment!=null&&selectedEquipment.Level>=EquipmentBalanceConfigSO.MaxLevel)
-            {
-                enhancementReturnsToDetail=false;
-                enhancementView.Close(() =>
-                {
-                    EnhancementPresenter.Clear();
-                    Refresh();
-                    RefreshDetail();
-                });
+            Task<EquipmentOperationFailure> operation=Coordinator.EnhanceAsync(selectedEquipment.UniqueId,EnhancementPresenter.CreateSelectionSnapshot());
+            RefreshEnhancement();
+            EquipmentOperationFailure result=await operation;
+            if (!CanApplyOperationResult(currentOperation))
                 return;
+
+            if(result==EquipmentOperationFailure.None)
+            {
+                selectedEquipment=DataSource.FindEquipment(selectedEquipment.UniqueId);
+                EnhancementPresenter.Bind(selectedEquipment);
+                if(selectedEquipment!=null&&selectedEquipment.Level>=EquipmentBalanceConfigSO.MaxLevel)
+                {
+                    enhancementReturnsToDetail=false;
+                    enhancementView.Close(() =>
+                    {
+                        EnhancementPresenter.Clear();
+                        Refresh();
+                        RefreshDetail();
+                    });
+                    return;
+                }
             }
+            else UIFeedbackToast.Show("장비 강화에 실패했습니다.");
+            Refresh();
         }
-        else UIFeedbackToast.Show("장비 강화에 실패했습니다.");
-        Refresh();
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (CanApplyOperationResult(currentOperation))
+                UIFeedbackToast.Show("장비 강화에 실패했습니다.");
+        }
     }
+
+    private bool CanApplyOperationResult(int version) =>
+        isActiveAndEnabled && version == operationVersion;
 
     private EquipmentItemData GetEquipped(EquipmentType type)=>DataSource.GetEquipped(unitId,type);
     private IEnumerable<EquipmentItemData> GetEquippedItems()=>DataSource.GetEquippedItems(unitId,partSlots.Select(slot=>slot.type));
