@@ -2,9 +2,10 @@
 using TMPro;
 using UnityEngine;
 
-public class GemConfirmPopupView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class GemConfirmPopupView : MonoBehaviour, IModalDismissHandler
 {
-    [SerializeField] TMP_Text messageText;
+    [SerializeField] private TMP_Text messageText;
 
     private readonly OneShotConfirmation confirmation = new();
     private bool isConfirming;

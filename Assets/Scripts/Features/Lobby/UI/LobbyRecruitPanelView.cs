@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -41,8 +42,11 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
     private GachaDataSO currentBanner;
     private LobbyRecruitPresenter presenter;
     private RecruitPanelViewState currentState;
+    private UserDataManager userDataManager;
+    private IReadOnlyList<GachaResult> pendingPresentationResults;
     private bool isRecruiting;
     private bool isSubscribed;
+    private int operationVersion;
 
     private void Awake()
     {
@@ -53,7 +57,7 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
         }
 
         presentationController.Initialize(resultPopup, presentationConfig);
-        presentationController.PresentationCompleted += Refresh;
+        presentationController.PresentationCompleted += HandlePresentationCompleted;
 
         normalButton.onClick.AddListener(SelectNormalBanner);
         specialButton.onClick.AddListener(SelectSpecialBanner);
@@ -86,23 +90,30 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
         SubscribeEvents();
         SelectBanner(normalBanner);
+        PresentPendingResults();
     }
 
     private void OnDisable()
     {
+        operationVersion++;
+        gemConfirmPopup?.Dismiss();
         UnsubscribeEvents();
     }
 
     private bool TryInitialize()
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (manager?.UserData == null || manager.InventoryService == null || manager.GachaService == null)
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData == null || !userDataManager.IsLoaded ||
+            userDataManager.InventoryService == null || userDataManager.GachaService == null)
         {
             Debug.LogError("[LobbyRecruitPanelView] User data services are not ready.");
             return false;
         }
 
-        presenter ??= new LobbyRecruitPresenter(manager.UserData, manager.InventoryService, manager.GachaService);
+        presenter ??= new LobbyRecruitPresenter(
+            userDataManager.UserData,
+            userDataManager.InventoryService,
+            userDataManager.GachaService);
         return true;
     }
 
@@ -111,18 +122,18 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
         if (isSubscribed)
             return;
 
-        UserDataManager.Instance.OnResourceUpdated += Refresh;
-        UserDataManager.Instance.OnInventoryUpdated += Refresh;
+        userDataManager.OnResourceUpdated += Refresh;
+        userDataManager.OnInventoryUpdated += Refresh;
         isSubscribed = true;
     }
 
     private void UnsubscribeEvents()
     {
-        if (!isSubscribed || UserDataManager.Instance == null)
+        if (!isSubscribed || userDataManager == null)
             return;
 
-        UserDataManager.Instance.OnResourceUpdated -= Refresh;
-        UserDataManager.Instance.OnInventoryUpdated -= Refresh;
+        userDataManager.OnResourceUpdated -= Refresh;
+        userDataManager.OnInventoryUpdated -= Refresh;
         isSubscribed = false;
     }
 
@@ -182,7 +193,7 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
     private void TryRecruit(int count)
     {
-        if (isRecruiting || presentationController.IsPresenting)
+        if (isRecruiting || presenter == null || presentationController.IsPresenting)
             return;
 
         GachaDataSO banner = currentBanner;
@@ -203,37 +214,77 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
             return;
 
         isRecruiting = true;
+        int currentOperation = ++operationVersion;
         recruitOneButton.interactable = false;
         recruitTenButton.interactable = false;
 
         try
         {
-            RecruitUnitsResult result = await UserDataManager.Instance.RecruitUnitsAsync(
+            RecruitUnitsResult result = await userDataManager.RecruitUnitsAsync(
                 new RecruitUnitsCommand(banner, count));
 
             if (!result.Succeeded)
             {
                 Debug.LogWarning($"[LobbyRecruitPanelView] Recruit failed: {result.Failure}");
-                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
+                if (CanApplyOperationResult(currentOperation))
+                    UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(result.Failure));
                 return;
             }
 
-            presentationController.Present(result.Results);
-            Refresh();
+            if (CanApplyOperationResult(currentOperation))
+                presentationController.Present(result.Results);
+            else
+            {
+                pendingPresentationResults = result.Results != null
+                    ? new List<GachaResult>(result.Results)
+                    : new List<GachaResult>();
+
+                if (isActiveAndEnabled)
+                    PresentPendingResults();
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (CanApplyOperationResult(currentOperation))
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.Get(RecruitUnitsFailure.SaveFailed));
         }
         finally
         {
             isRecruiting = false;
-            Refresh();
+            if (CanApplyOperationResult(currentOperation))
+                Refresh();
         }
     }
+
+    private void PresentPendingResults()
+    {
+        if (pendingPresentationResults == null || pendingPresentationResults.Count == 0 ||
+            presentationController.IsPresenting)
+        {
+            return;
+        }
+
+        IReadOnlyList<GachaResult> results = pendingPresentationResults;
+        pendingPresentationResults = null;
+        presentationController.Present(results);
+    }
+
+    private void HandlePresentationCompleted()
+    {
+        if (isActiveAndEnabled)
+            Refresh();
+    }
+
+    private bool CanApplyOperationResult(int version) =>
+        this != null && isActiveAndEnabled && version == operationVersion;
 
     private void OnDestroy()
     {
         UnsubscribeEvents();
 
         if (presentationController != null)
-            presentationController.PresentationCompleted -= Refresh;
+            presentationController.PresentationCompleted -= HandlePresentationCompleted;
 
         if (normalButton != null)
             normalButton.onClick.RemoveListener(SelectNormalBanner);
