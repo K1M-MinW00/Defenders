@@ -4,11 +4,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class RecruitPresentationOverlayView : MonoBehaviour
 {
     [SerializeField] private List<Image> rays = new();
     [SerializeField] private List<Image> stars = new();
-    [SerializeField] private List<RectTransform> bands = new();
+    [SerializeField] private List<Image> bands = new();
     [SerializeField] private List<Vector2> bandPositions = new();
 
     [SerializeField] private Image rootBlocker;
@@ -22,17 +23,22 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
     [SerializeField] private Button skipButton;
     private Color rarityColor;
     private float effectStrength;
+    private bool referencesValid;
 
     public event Action SkipRequested;
 
     private void Awake()
     {
+        referencesValid = ValidateReferences();
+        if (!referencesValid)
+            return;
+
         skipButton.onClick.AddListener(HandleSkip);
     }
 
     public void ShowUnitIntro(UnitDataSO unit, Color color)
     {
-        if (unit == null)
+        if (!referencesValid || unit == null)
             return;
 
         rarityColor = color;
@@ -50,6 +56,9 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
 
     public void SetIntroProgress(float progress)
     {
+        if (!referencesValid)
+            return;
+
         progress = Mathf.Clamp01(progress);
         float eased = 1f - Mathf.Pow(1f - progress, 3f);
         float pulse = Mathf.Sin(progress * Mathf.PI);
@@ -66,7 +75,7 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
         for (int i = 0; i < bands.Count; i++)
         {
             float direction = i % 2 == 0 ? -1f : 1f;
-            bands[i].anchoredPosition = bandPositions[i] + new Vector2(direction * Mathf.Lerp(700f, 0f, eased), 0f);
+            bands[i].rectTransform.anchoredPosition = bandPositions[i] + new Vector2(direction * Mathf.Lerp(700f, 0f, eased), 0f);
         }
 
         for (int i = 0; i < rays.Count; i++)
@@ -91,6 +100,9 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
 
     public void ShowRevealMode()
     {
+        if (!referencesValid)
+            return;
+
         introContent.SetActive(false);
         rootBlocker.color = Color.clear;
         rootBlocker.raycastTarget = false;
@@ -140,7 +152,7 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
 
         for (int i = 0; i < bands.Count; i++)
         {
-            Image bandImage = bands[i].GetComponent<Image>();
+            Image bandImage = bands[i];
             float brightness = i == 1 ? 1.15f : 0.72f;
             bandImage.color = new Color(
                 Mathf.Clamp01(rarityColor.r * brightness),
@@ -164,9 +176,38 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
         SkipRequested?.Invoke();
     }
 
+    private bool ValidateReferences()
+    {
+        bool hasCoreReferences = rootBlocker != null && introContent != null && backdropImage != null &&
+                                 unitIconImage != null && namePanelImage != null && newUnitText != null &&
+                                 unitNameText != null && rarityText != null && skipButton != null;
+        bool hasEffectReferences = HasNoMissingEntries(rays) && HasNoMissingEntries(stars) &&
+                                   HasNoMissingEntries(bands) && bands.Count == bandPositions.Count;
+
+        if (hasCoreReferences && hasEffectReferences)
+            return true;
+
+        Debug.LogError("[RecruitPresentationOverlayView] Required scene references are missing or band positions do not match.", this);
+        return false;
+    }
+
+    private static bool HasNoMissingEntries<T>(List<T> entries) where T : UnityEngine.Object
+    {
+        if (entries == null)
+            return false;
+
+        for (int i = 0; i < entries.Count; i++)
+        {
+            if (entries[i] == null)
+                return false;
+        }
+
+        return true;
+    }
+
     private void OnDestroy()
     {
-        if (skipButton != null)
+        if (referencesValid && skipButton != null)
             skipButton.onClick.RemoveListener(HandleSkip);
     }
 }

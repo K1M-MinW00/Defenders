@@ -12896,9 +12896,9 @@ MonoBehaviour:
   - {fileID: 541707764}
   - {fileID: 989854899}
   bands:
-  - {fileID: 738031115}
-  - {fileID: 48144621}
-  - {fileID: 1385805491}
+  - {fileID: 738031116}
+  - {fileID: 48144622}
+  - {fileID: 1385805492}
   bandPositions:
   - {x: 0, y: 360}
   - {x: 0, y: -60}
