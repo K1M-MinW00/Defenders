@@ -1,8 +1,23 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
 
-public class StageProgressService : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class StageProgressService : MonoBehaviour
 {
+    private UserDataManager userDataManager;
+
+    public bool Configure(UserDataManager manager)
+    {
+        if (manager?.UserData?.Progress == null || !manager.IsLoaded)
+        {
+            Debug.LogError("[StageProgressService] Loaded user progress is required.", this);
+            return false;
+        }
+
+        userDataManager = manager;
+        return true;
+    }
+
     public async Task<bool> RecordWaveClearAsync(StageDataSO stage, int clearedWaveCount)
     {
         if (!TryGetCurrentProgress(stage, out UserProgressData currentProgress))
@@ -27,7 +42,7 @@ public class StageProgressService : MonoBehaviour
         if (nextProgress.BestWaveCleared == currentProgress.BestWaveCleared)
             return true;
 
-        return await UserDataManager.Instance.SaveUserProgressAsync(nextProgress);
+        return await userDataManager.SaveUserProgressAsync(nextProgress);
     }
 
     public async Task<bool> ApplyStageClearAsync(StageDataSO clearedStage)
@@ -51,7 +66,7 @@ public class StageProgressService : MonoBehaviour
             return false;
         }
 
-        return await UserDataManager.Instance.SaveUserProgressAsync(nextProgress);
+        return await userDataManager.SaveUserProgressAsync(nextProgress);
     }
 
     public Task<bool> ApplyStageFailAsync(StageDataSO failedStage, int clearedWaveCount)
@@ -59,7 +74,7 @@ public class StageProgressService : MonoBehaviour
         return RecordWaveClearAsync(failedStage, clearedWaveCount);
     }
 
-    private static bool TryGetCurrentProgress(StageDataSO stage, out UserProgressData progress)
+    private bool TryGetCurrentProgress(StageDataSO stage, out UserProgressData progress)
     {
         progress = null;
 
@@ -69,9 +84,7 @@ public class StageProgressService : MonoBehaviour
             return false;
         }
 
-        UserDataManager manager = UserDataManager.Instance;
-        UserDataRoot userData = manager != null ? manager.UserData : null;
-        progress = userData?.Progress;
+        progress = userDataManager?.UserData?.Progress;
 
         if (progress == null)
         {

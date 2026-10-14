@@ -2,7 +2,8 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class StageSessionController : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class StageSessionController : MonoBehaviour
 {
     [Header("Controllers")]
     [SerializeField] private StagePhaseRuntimeController phaseRuntimeController;
@@ -23,6 +24,7 @@ public class StageSessionController : MonoBehaviour
     private StageWaveSequence waveSequence;
     private readonly StagePhaseMachine phaseMachine = new();
     private StageOutcomeCoordinator outcomeCoordinator;
+    private UserDataManager userDataManager;
     private bool isHandlingInitializationFailure;
     private bool isDisposed;
 
@@ -52,6 +54,7 @@ public class StageSessionController : MonoBehaviour
             return;
 
         enterData = StageEnterHolder.Consume();
+        userDataManager = UserDataManager.Instance;
 
         try
         {
@@ -64,6 +67,12 @@ public class StageSessionController : MonoBehaviour
             if (enterData == null)
             {
                 await HandleInitializationFailureAsync("Stage entry data is missing.");
+                return;
+            }
+
+            if (!TryConfigureUserDataServices(out string userDataError))
+            {
+                await HandleInitializationFailureAsync(userDataError);
                 return;
             }
 
@@ -145,6 +154,24 @@ public class StageSessionController : MonoBehaviour
         return valid;
     }
 
+    private bool TryConfigureUserDataServices(out string error)
+    {
+        if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
+        {
+            error = "Loaded user data is unavailable.";
+            return false;
+        }
+
+        if (!rewardService.Configure(userDataManager) || !progressService.Configure(userDataManager))
+        {
+            error = "Stage data services could not be configured.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
     private async Task HandleInitializationFailureAsync(string reason, Exception exception = null)
     {
         if (isDisposed || isHandlingInitializationFailure)
@@ -164,9 +191,8 @@ public class StageSessionController : MonoBehaviour
         bool refundSucceeded = refundAmount <= 0;
         if (refundAmount > 0)
         {
-            UserDataManager manager = UserDataManager.Instance;
-            refundSucceeded = manager != null &&
-                              await manager.RefundStageEntryFuelAsync(refundAmount);
+            refundSucceeded = userDataManager != null &&
+                              await userDataManager.RefundStageEntryFuelAsync(refundAmount);
             if (!refundSucceeded)
                 Debug.LogError($"[{nameof(StageSessionController)}] Failed to refund {refundAmount} entry fuel.", this);
         }

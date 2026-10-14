@@ -1,13 +1,26 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class StageRewardService : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class StageRewardService : MonoBehaviour
 {
     [SerializeField] private EconomyManager economyManager;
     [SerializeField] private StageCurrencyRewardVFX currencyRewardVfx;
     private int fusionCount;
     private int fourStarFusionCount;
+    private UserDataManager userDataManager;
+
+    public bool Configure(UserDataManager manager)
+    {
+        if (manager?.UserData == null || !manager.IsLoaded)
+        {
+            Debug.LogError("[StageRewardService] Loaded user data manager is required.", this);
+            return false;
+        }
+
+        userDataManager = manager;
+        return true;
+    }
 
     public void SetQuestSessionStats(int fusions, int fourStarFusions)
     {
@@ -55,7 +68,9 @@ public class StageRewardService : MonoBehaviour
 
     public Task<StageOutcomeResult> GiveStageClearRewardAsync(StageDataSO stageData)
     {
-        return UserDataManager.Instance.CompleteStageAsync(stageData, fusionCount, fourStarFusionCount);
+        return userDataManager != null
+            ? userDataManager.CompleteStageAsync(stageData, fusionCount, fourStarFusionCount)
+            : Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
     }
 
     public Task<StageOutcomeResult> GiveStageFailRewardAsync(
@@ -63,11 +78,13 @@ public class StageRewardService : MonoBehaviour
         int clearedWaveCount,
         int entryFuelCost)
     {
-        return UserDataManager.Instance.FailStageAsync(
-            stageData,
-            clearedWaveCount,
-            entryFuelCost,
-            fusionCount,
-            fourStarFusionCount);
+        return userDataManager != null
+            ? userDataManager.FailStageAsync(
+                stageData,
+                clearedWaveCount,
+                entryFuelCost,
+                fusionCount,
+                fourStarFusionCount)
+            : Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
     }
 }
