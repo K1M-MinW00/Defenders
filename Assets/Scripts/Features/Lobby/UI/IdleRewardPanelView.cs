@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 {
     [SerializeField] private Button supplyButton;
@@ -23,28 +24,54 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
     private Coroutine refreshRoutine;
     private bool claiming;
     private int lastDisplayedMinute = -1;
+    private int claimOperationVersion;
+    private UserDataManager userDataManager;
+    private bool isSubscribed;
     private ModalOverlayLifecycle popupLifecycle;
     private ModalOverlayLifecycle PopupLifecycle =>
         popupLifecycle ??= new ModalOverlayLifecycle(popup);
 
     private void Awake()
     {
-        supplyButton?.onClick.AddListener(Open);
-        closeButton?.onClick.AddListener(Dismiss);
-        claimButton?.onClick.AddListener(Claim);
-        if (rewardGrid != null)
+        if (!ValidateReferences())
         {
-            rewardGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            rewardGrid.constraintCount = 5;
+            enabled = false;
+            return;
         }
+
+        supplyButton.onClick.AddListener(Open);
+        closeButton.onClick.AddListener(Dismiss);
+        claimButton.onClick.AddListener(Claim);
+        rewardGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        rewardGrid.constraintCount = 5;
+        PopupLifecycle.HideImmediately();
+    }
+
+    private void OnEnable()
+    {
+        TryInitialize();
+        Subscribe();
+    }
+
+    private void OnDisable()
+    {
+        claimOperationVersion++;
+        StopRefreshRoutine();
+        Unsubscribe();
         PopupLifecycle.HideImmediately();
     }
 
     private void Open()
     {
+        if (!TryInitialize())
+        {
+            UIFeedbackToast.Show("유저 데이터를 불러오는 중입니다.");
+            return;
+        }
+
         PopupLifecycle.Show();
         Refresh(true);
-        if (refreshRoutine != null) StopCoroutine(refreshRoutine);
+        StopRefreshRoutine();
         refreshRoutine = StartCoroutine(RefreshEachMinute());
     }
 
@@ -53,8 +80,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
         if (claiming)
             return;
 
-        if (refreshRoutine != null) StopCoroutine(refreshRoutine);
-        refreshRoutine = null;
+        StopRefreshRoutine();
         PopupLifecycle.Close();
     }
 
@@ -69,7 +95,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     private void Refresh(bool force)
     {
-        IdleRewardPreview preview = UserDataManager.Instance?.GetIdleRewardPreview();
+        IdleRewardPreview preview = userDataManager?.GetIdleRewardPreview();
         if (preview == null || (!force && preview.AccumulatedMinutes == lastDisplayedMinute)) return;
         lastDisplayedMinute = preview.AccumulatedMinutes;
         sectorDescriptionText.text = $"섹터 {preview.Sector} 기준 시간당 보상";
@@ -124,44 +150,114 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     private async void Claim()
     {
-        if (claiming) return;
+        if (claiming || !TryInitialize()) return;
+
         claiming = true;
         claimButton.interactable = false;
         closeButton.interactable = false;
+        int operationVersion = ++claimOperationVersion;
 
-        IdleRewardClaimFailure failure;
         try
         {
-            UserDataManager manager = UserDataManager.Instance;
-            failure = manager != null
-                ? await manager.ClaimIdleRewardAsync()
-                : IdleRewardClaimFailure.InvalidData;
-        }
-        catch (System.Exception exception)
-        {
-            Debug.LogError($"[IdleRewardPanelView] Claim failed: {exception}");
-            failure = IdleRewardClaimFailure.SaveFailed;
-        }
+            IdleRewardClaimFailure failure;
+            try
+            {
+                failure = await userDataManager.ClaimIdleRewardAsync();
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"[IdleRewardPanelView] Claim failed: {exception}");
+                failure = IdleRewardClaimFailure.SaveFailed;
+            }
 
-        if (this == null)
-            return;
+            if (!IsCurrentOperation(operationVersion))
+                return;
 
-        claiming = false;
-        closeButton.interactable = true;
-        if (failure != IdleRewardClaimFailure.None)
-        {
-            UIFeedbackToast.Show(failure == IdleRewardClaimFailure.NotReady ? "수령할 보상이 없습니다." : "보상 수령에 실패했습니다.");
-            Refresh(true);
-            return;
+            if (failure != IdleRewardClaimFailure.None)
+            {
+                UIFeedbackToast.Show(failure == IdleRewardClaimFailure.NotReady ? "수령할 보상이 없습니다." : "보상 수령에 실패했습니다.");
+                Refresh(true);
+                return;
+            }
+
+            UIFeedbackToast.Show("방치형 보상을 획득했습니다.");
+            StopRefreshRoutine();
+            PopupLifecycle.Close();
         }
-        UIFeedbackToast.Show("방치형 보상을 획득했습니다.");
-        Dismiss();
+        finally
+        {
+            if (this != null)
+            {
+                claiming = false;
+                if (isActiveAndEnabled)
+                {
+                    closeButton.interactable = true;
+                    if (PopupLifecycle.IsVisible)
+                        Refresh(true);
+                }
+            }
+        }
     }
 
     private void OnDestroy()
     {
+        Unsubscribe();
         supplyButton?.onClick.RemoveListener(Open);
         closeButton?.onClick.RemoveListener(Dismiss);
         claimButton?.onClick.RemoveListener(Claim);
+    }
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        bool initialized = userDataManager?.UserData != null;
+        supplyButton.interactable = initialized;
+        return initialized;
+    }
+
+    private void Subscribe()
+    {
+        if (isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnIdleRewardUpdated += HandleIdleRewardUpdated;
+        isSubscribed = true;
+    }
+
+    private void Unsubscribe()
+    {
+        if (!isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnIdleRewardUpdated -= HandleIdleRewardUpdated;
+        isSubscribed = false;
+    }
+
+    private void HandleIdleRewardUpdated()
+    {
+        if (PopupLifecycle.IsVisible)
+            Refresh(true);
+    }
+
+    private bool IsCurrentOperation(int version) =>
+        this != null && isActiveAndEnabled && version == claimOperationVersion;
+
+    private void StopRefreshRoutine()
+    {
+        if (refreshRoutine == null)
+            return;
+
+        StopCoroutine(refreshRoutine);
+        refreshRoutine = null;
+    }
+
+    private bool ValidateReferences()
+    {
+        bool valid = supplyButton != null && closeButton != null && claimButton != null && popup != null &&
+                     sectorDescriptionText != null && goldHourlyText != null && researchHourlyText != null &&
+                     accumulatedTimeText != null && rewardContent != null && rewardGrid != null && rewardSlotPrefab != null;
+        if (!valid)
+            Debug.LogError("[IdleRewardPanelView] Required UI references are not assigned.", this);
+        return valid;
     }
 }
