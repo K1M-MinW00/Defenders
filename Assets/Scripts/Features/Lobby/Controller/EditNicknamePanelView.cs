@@ -17,6 +17,7 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private TMP_Text confirmButtonLabel;
 
     private NicknameEditPresenter presenter;
+    private UserDataManager userDataManager;
     private bool isSaving;
     private int operationVersion;
     private ModalOverlayLifecycle lifecycle;
@@ -25,6 +26,12 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         nicknameInput.characterLimit = NicknamePolicy.MaxLength;
 
         cancelButton.onClick.AddListener(Dismiss);
@@ -40,7 +47,8 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
-        UserDataRoot userData = UserDataManager.Instance?.UserData;
+        userDataManager ??= UserDataManager.Instance;
+        UserDataRoot userData = userDataManager?.UserData;
         if (userData?.Profile == null)
         {
             Debug.LogError("[EditNicknamePanelView] User profile is not ready.");
@@ -90,7 +98,7 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     private async void HandleConfirmButtonClicked()
     {
-        if (isSaving)
+        if (isSaving || userDataManager == null)
             return;
 
         NicknameEditState state = presenter?.Build(nicknameInput.text, false);
@@ -103,30 +111,40 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
         int currentOperation = ++operationVersion;
         RefreshButton();
 
-        NicknameChangeResult result;
         try
         {
-            result = await UserDataManager.Instance.UpdateNicknameAsync(nickname);
+            NicknameChangeResult result;
+            try
+            {
+                result = await userDataManager.UpdateNicknameAsync(nickname);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"[EditNicknamePanelView] Save failed: {exception}");
+                result = NicknameChangeResult.Fail(NicknameChangeFailure.SaveFailed);
+            }
+
+            if (!IsCurrentOperation(currentOperation))
+                return;
+
+            if (!result.Succeeded)
+            {
+                UIFeedbackToast.Show(GetFailureMessage(result.Failure));
+                return;
+            }
+
+            presenter.MarkSaved(nickname);
+            Lifecycle.Close();
         }
-        catch (System.Exception exception)
+        finally
         {
-            Debug.LogError($"[EditNicknamePanelView] Save failed: {exception}");
-            result = NicknameChangeResult.Fail(NicknameChangeFailure.SaveFailed);
+            if (this != null)
+            {
+                isSaving = false;
+                if (isActiveAndEnabled)
+                    RefreshButton();
+            }
         }
-
-        isSaving = false;
-        if (!isActiveAndEnabled || currentOperation != operationVersion)
-            return;
-
-        if (!result.Succeeded)
-        {
-            UIFeedbackToast.Show(GetFailureMessage(result.Failure));
-            RefreshButton();
-            return;
-        }
-
-        presenter.MarkSaved(nickname);
-        Dismiss();
     }
 
     private static string GetFailureMessage(NicknameChangeFailure failure)
@@ -151,5 +169,16 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
         if (nicknameInput != null)
             nicknameInput.onValueChanged.RemoveListener(HandleNicknameInputChanged);
+    }
+
+    private bool IsCurrentOperation(int version) =>
+        this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool ValidateReferences()
+    {
+        bool valid = nicknameInput != null && cancelButton != null && confirmButton != null;
+        if (!valid)
+            Debug.LogError("[EditNicknamePanelView] Required UI references are not assigned.", this);
+        return valid;
     }
 }

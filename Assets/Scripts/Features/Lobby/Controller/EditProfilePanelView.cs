@@ -21,6 +21,7 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
     private readonly List<ProfileIconSlotUI> slots = new();
     private ProfileIconEditPresenter presenter;
+    private UserDataManager userDataManager;
     private bool isSaving;
     private int operationVersion;
     private ModalOverlayLifecycle lifecycle;
@@ -29,6 +30,12 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
     private void Awake()
     {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
         cancelButton.onClick.AddListener(Dismiss);
         confirmButton.onClick.AddListener(HandleConfirmButtonClicked);
     }
@@ -41,7 +48,8 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
-        UserDataRoot userData = UserDataManager.Instance?.UserData;
+        userDataManager ??= UserDataManager.Instance;
+        UserDataRoot userData = userDataManager?.UserData;
         if (userData == null)
         {
             Debug.LogError("[EditProfilePanelView] User data is not ready.");
@@ -127,7 +135,7 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
     private async void HandleConfirmButtonClicked()
     {
-        if (isSaving || presenter == null)
+        if (isSaving || presenter == null || userDataManager == null)
             return;
 
         ProfileIconEditState state = presenter.Build(false);
@@ -138,30 +146,40 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
         int currentOperation = ++operationVersion;
         ApplyState(presenter.Build(true));
 
-        bool succeeded;
         try
         {
-            succeeded = await UserDataManager.Instance.UpdateProfileIconAsync(presenter.SelectedIconId);
+            bool succeeded;
+            try
+            {
+                succeeded = await userDataManager.UpdateProfileIconAsync(presenter.SelectedIconId);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"[EditProfilePanelView] Save failed: {exception}");
+                succeeded = false;
+            }
+
+            if (!IsCurrentOperation(currentOperation))
+                return;
+
+            if (!succeeded)
+            {
+                UIFeedbackToast.Show("프로필 아이콘 저장에 실패했습니다.");
+                return;
+            }
+
+            presenter.MarkSaved();
+            Lifecycle.Close();
         }
-        catch (System.Exception exception)
+        finally
         {
-            Debug.LogError($"[EditProfilePanelView] Save failed: {exception}");
-            succeeded = false;
+            if (this != null)
+            {
+                isSaving = false;
+                if (isActiveAndEnabled && presenter != null)
+                    ApplyState(presenter.Build(false));
+            }
         }
-
-        isSaving = false;
-        if (!isActiveAndEnabled || currentOperation != operationVersion)
-            return;
-
-        if (!succeeded)
-        {
-            UIFeedbackToast.Show("프로필 아이콘 저장에 실패했습니다.");
-            ApplyState(presenter.Build(false));
-            return;
-        }
-
-        presenter.MarkSaved();
-        Dismiss();
     }
 
     private void OnDestroy()
@@ -171,5 +189,17 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
         if (confirmButton != null)
             confirmButton.onClick.RemoveListener(HandleConfirmButtonClicked);
+    }
+
+    private bool IsCurrentOperation(int version) =>
+        this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool ValidateReferences()
+    {
+        bool valid = previewIconImage != null && contentRoot != null && slotPrefab != null &&
+                     cancelButton != null && confirmButton != null;
+        if (!valid)
+            Debug.LogError("[EditProfilePanelView] Required UI references are not assigned.", this);
+        return valid;
     }
 }
