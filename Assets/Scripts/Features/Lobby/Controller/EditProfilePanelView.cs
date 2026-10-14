@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject panelRoot;
@@ -21,6 +22,7 @@ public class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
     private readonly List<ProfileIconSlotUI> slots = new();
     private ProfileIconEditPresenter presenter;
     private bool isSaving;
+    private int operationVersion;
     private ModalOverlayLifecycle lifecycle;
     private GameObject Root => panelRoot != null ? panelRoot : gameObject;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(Root);
@@ -50,12 +52,13 @@ public class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
         presenter ??= new ProfileIconEditPresenter(userData);
         ProfileIconEditState state = presenter.Open(isSaving);
         ApplyState(state);
-        CreateIconSlots(state.Options);
+        ReconcileIconSlots(state.Options);
     }
 
     private void OnDisable()
     {
-        ClearSlots();
+        operationVersion++;
+        HideSlotsFrom(0);
     }
 
     public void Dismiss()
@@ -69,30 +72,39 @@ public class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
     // Inspector compatibility for scenes created before the modal convention.
     public void Close() => Dismiss();
 
-    private void CreateIconSlots(IReadOnlyList<ProfileIconOption> options)
+    private void ReconcileIconSlots(IReadOnlyList<ProfileIconOption> options)
     {
-        ClearSlots();
-
-        if (options == null)
-            return;
-
-        foreach (ProfileIconOption option in options)
+        int visibleCount = 0;
+        if (options != null)
         {
-            ProfileIconSlotUI slot = Instantiate(slotPrefab, contentRoot);
-            slot.Initialize(option.IconId, option.Icon, HandleIconSelected);
-            slots.Add(slot);
+            foreach (ProfileIconOption option in options)
+            {
+                ProfileIconSlotUI slot = GetOrCreateSlot(visibleCount++);
+                slot.gameObject.SetActive(true);
+                slot.Initialize(option.IconId, option.Icon, HandleIconSelected);
+            }
         }
+
+        HideSlotsFrom(visibleCount);
     }
 
-    private void ClearSlots()
+    private ProfileIconSlotUI GetOrCreateSlot(int index)
     {
-        foreach (ProfileIconSlotUI slot in slots)
-        {
-            if (slot != null)
-                Destroy(slot.gameObject);
-        }
+        if (index < slots.Count)
+            return slots[index];
 
-        slots.Clear();
+        ProfileIconSlotUI slot = Instantiate(slotPrefab, contentRoot);
+        slots.Add(slot);
+        return slot;
+    }
+
+    private void HideSlotsFrom(int firstHiddenIndex)
+    {
+        for (int i = firstHiddenIndex; i < slots.Count; i++)
+        {
+            slots[i].Clear();
+            slots[i].gameObject.SetActive(false);
+        }
     }
 
     private void HandleIconSelected(string iconId)
@@ -123,11 +135,24 @@ public class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
             return;
 
         isSaving = true;
+        int currentOperation = ++operationVersion;
         ApplyState(presenter.Build(true));
 
-        bool succeeded = await UserDataManager.Instance.UpdateProfileIconAsync(presenter.SelectedIconId);
+        bool succeeded;
+        try
+        {
+            succeeded = await UserDataManager.Instance.UpdateProfileIconAsync(presenter.SelectedIconId);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[EditProfilePanelView] Save failed: {exception}");
+            succeeded = false;
+        }
 
         isSaving = false;
+        if (!isActiveAndEnabled || currentOperation != operationVersion)
+            return;
+
         if (!succeeded)
         {
             UIFeedbackToast.Show("프로필 아이콘 저장에 실패했습니다.");

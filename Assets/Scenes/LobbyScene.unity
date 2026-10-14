@@ -30661,7 +30661,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestRewardTrackView
   scoreText: {fileID: 1228895366}
   scoreSlider: {fileID: 1812659545}
-  markerLayer: {fileID: 1864957645}
   period: 1
   maximumScore: 600
   currentScore: 120
@@ -45317,7 +45316,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestRewardTrackView
   scoreText: {fileID: 1069515092}
   scoreSlider: {fileID: 60988115}
-  markerLayer: {fileID: 423338450}
   period: 0
   maximumScore: 100
   currentScore: 60
@@ -91089,6 +91087,7 @@ MonoBehaviour:
   nicknameInput: {fileID: 1255787243}
   cancelButton: {fileID: 2002292818}
   confirmButton: {fileID: 519796812}
+  confirmButtonLabel: {fileID: 1688468208}
 --- !u!222 &1907200042
 CanvasRenderer:
   m_ObjectHideFlags: 0

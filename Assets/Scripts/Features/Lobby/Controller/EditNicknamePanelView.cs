@@ -2,7 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 {
     [Header("Root")]
     [SerializeField] private GameObject panelRoot;
@@ -13,10 +14,11 @@ public class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
     [Header("Button")]
     [SerializeField] private Button cancelButton;
     [SerializeField] private Button confirmButton;
+    [SerializeField] private TMP_Text confirmButtonLabel;
 
-    private TMP_Text confirmButtonLabel;
     private NicknameEditPresenter presenter;
     private bool isSaving;
+    private int operationVersion;
     private ModalOverlayLifecycle lifecycle;
     private GameObject Root => panelRoot != null ? panelRoot : gameObject;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(Root);
@@ -24,7 +26,6 @@ public class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
     private void Awake()
     {
         nicknameInput.characterLimit = NicknamePolicy.MaxLength;
-        confirmButtonLabel = confirmButton.GetComponentInChildren<TMP_Text>(true);
 
         cancelButton.onClick.AddListener(Dismiss);
         confirmButton.onClick.AddListener(HandleConfirmButtonClicked);
@@ -64,6 +65,11 @@ public class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     public void HideImmediately() => Lifecycle.HideImmediately();
 
+    private void OnDisable()
+    {
+        operationVersion++;
+    }
+
     // Inspector compatibility for scenes created before the modal convention.
     public void Close() => Dismiss();
 
@@ -94,11 +100,24 @@ public class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
         string nickname = state.NormalizedNickname;
 
         isSaving = true;
+        int currentOperation = ++operationVersion;
         RefreshButton();
 
-        NicknameChangeResult result = await UserDataManager.Instance.UpdateNicknameAsync(nickname);
+        NicknameChangeResult result;
+        try
+        {
+            result = await UserDataManager.Instance.UpdateNicknameAsync(nickname);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[EditNicknamePanelView] Save failed: {exception}");
+            result = NicknameChangeResult.Fail(NicknameChangeFailure.SaveFailed);
+        }
 
         isSaving = false;
+        if (!isActiveAndEnabled || currentOperation != operationVersion)
+            return;
+
         if (!result.Succeeded)
         {
             UIFeedbackToast.Show(GetFailureMessage(result.Failure));
