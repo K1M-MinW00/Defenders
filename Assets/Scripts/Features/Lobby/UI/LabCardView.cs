@@ -22,6 +22,7 @@ public sealed class LabCardView : MonoBehaviour
 
     public void Bind(LabCardDataSO value, bool acquired, System.Action<LabCardDataSO> clicked)
     {
+        TweenLifecycle.Kill(ref revealTween);
         card = value;
         onClick = clicked;
         bool faceUp = acquired && card != null;
@@ -72,6 +73,22 @@ public sealed class LabCardView : MonoBehaviour
 
     public void HandleClick() => onClick?.Invoke(card);
 
+    public void Clear()
+    {
+        TweenLifecycle.Kill(ref revealTween);
+        card = null;
+        onClick = null;
+        transform.localScale = Vector3.one;
+        ApplyCardColors(false, Rarity.Normal);
+        SetSelectionVisible(false);
+        icon.sprite = null;
+        icon.enabled = false;
+        if (lockedIcon != null) lockedIcon.enabled = true;
+        nameText.text = string.Empty;
+        valueText.text = string.Empty;
+        button.interactable = false;
+    }
+
     private void SetSelectionVisible(bool visible)
     {
         if (selectionFrame != null)
@@ -81,8 +98,6 @@ public sealed class LabCardView : MonoBehaviour
     private void ApplyCardColors(bool faceUp, Rarity rarity)
     {
         background.color = Color.white;
-        if (gradient == null)
-            gradient = GetComponent<LabCardGradient>();
         if (gradient == null)
             return;
 

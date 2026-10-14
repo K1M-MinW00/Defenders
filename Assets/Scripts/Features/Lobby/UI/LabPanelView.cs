@@ -36,51 +36,13 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
     private IReadOnlyList<LabCardDataSO> currentOffer;
     private int quotedCost;
     private bool resolving;
+    private int operationVersion;
     private ModalOverlayLifecycle offerLifecycle;
     private ModalOverlayLifecycle detailLifecycle;
     private ModalOverlayLifecycle OfferLifecycle =>
         offerLifecycle ??= new ModalOverlayLifecycle(offerOverlay);
     private ModalOverlayLifecycle DetailLifecycle =>
         detailLifecycle ??= new ModalOverlayLifecycle(detailPopup);
-
-#if UNITY_EDITOR
-    private void Reset() => AutoWireEditorReferences();
-
-    private void OnValidate()
-    {
-        if (!Application.isPlaying)
-            AutoWireEditorReferences();
-    }
-
-    private void AutoWireEditorReferences()
-    {
-        Transform panel = transform.Find("Panel");
-        Transform upperBar = transform.Find("Upper_Bar");
-        Transform goldPanel = upperBar?.Find("Gold_Panel");
-        if (currencyText == null)
-            currencyText = goldPanel?.GetComponentInChildren<TMP_Text>(true);
-        if (developButton == null)
-            developButton = panel?.Find("Upgrade_Button")?.GetComponent<Button>();
-        if (priceText == null && developButton != null)
-            priceText = developButton.GetComponentInChildren<TMP_Text>(true);
-        if (limitText == null)
-            limitText = panel?.Find("LimitText")?.GetComponent<TMP_Text>();
-        if (cardContent == null)
-            cardContent = panel?.Find("Scroll View/Viewport/Content");
-        if (cardGrid == null && cardContent != null)
-            cardGrid = cardContent.GetComponent<GridLayoutGroup>();
-        if (cardPrefab == null)
-        {
-            GameObject asset = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Lab/LabCard.prefab");
-            cardPrefab = asset?.GetComponent<LabCardView>();
-        }
-        if (offerCardPrefab == null)
-        {
-            GameObject asset = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Lab/LabOfferCard.prefab");
-            offerCardPrefab = asset?.GetComponent<LabCardView>();
-        }
-    }
-#endif
 
     private void Awake()
     {
@@ -105,6 +67,9 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable()
     {
+        operationVersion++;
+        resolving = false;
+        currentOffer = null;
         developButton?.onClick.RemoveListener(HandleDevelop);
         offerDismissButton?.onClick.RemoveListener(DismissOffer);
         detailDismissButton?.onClick.RemoveListener(DismissDetail);
@@ -119,14 +84,21 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void BuildCards()
     {
-        foreach (LabCardView item in cards) if (item != null) Destroy(item.gameObject);
-        cards.Clear();
         if (cardPrefab == null || cardContent == null || GameConfig.Lab == null) return;
-        foreach (LabCardDataSO card in GameConfig.Lab.Cards.Where(card => card != null).OrderBy(card => card.Rarity))
+
+        int requiredCount = GameConfig.Lab.Cards.Count(card => card != null);
+        while (cards.Count < requiredCount)
         {
             LabCardView view = Instantiate(cardPrefab, cardContent);
-            view.gameObject.SetActive(true);
             cards.Add(view);
+        }
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            bool visible = i < requiredCount;
+            cards[i].gameObject.SetActive(visible);
+            if (!visible)
+                cards[i].Clear();
         }
     }
 
@@ -138,7 +110,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
         priceText?.SetText(UserDataManager.Instance.GetNextLabDevelopmentCost().ToString("N0"));
         int capacity = LabDevelopmentUseCase.GetCardCapacity(data.Profile.Level);
         int owned = data.Lab.AcquiredCardIds.Count;
-        limitText?.SetText("보유 {0}/{1} · 다음 슬롯 레벨 {2}", owned, capacity, ((data.Profile.Level / 5) + 1) * 5);
+        limitText?.SetText("보유 {0}/{1}  다음 슬롯 레벨 {2}", owned, capacity, ((data.Profile.Level / 5) + 1) * 5);
         HashSet<string> acquired = new(data.Lab.AcquiredCardIds);
         LabCardDataSO[] sortedCards = GameConfig.Lab.Cards.Where(card => card != null).OrderBy(card => card.Rarity).ToArray();
         for (int i = 0; i < cards.Count && i < sortedCards.Length; i++)
@@ -150,8 +122,6 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void ConfigureGrid()
     {
-        if (cardGrid == null && cardContent != null)
-            cardGrid = cardContent.GetComponent<GridLayoutGroup>();
         if (cardGrid == null)
             return;
 
@@ -161,8 +131,9 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void HandleDevelop()
     {
-        if (resolving) return;
-        LabOfferResult result = UserDataManager.Instance.CreateLabOffer();
+        UserDataManager manager = UserDataManager.Instance;
+        if (resolving || manager == null) return;
+        LabOfferResult result = manager.CreateLabOffer();
         if (!result.Succeeded)
         {
             UIFeedbackToast.Show(FailureMessage(result.Failure));
@@ -170,14 +141,20 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
         }
         currentOffer = result.Cards;
         quotedCost = result.Cost;
-        foreach (LabCardView item in offerViews) if (item != null) Destroy(item.gameObject);
-        offerViews.Clear();
-        foreach (LabCardDataSO card in currentOffer)
+        while (offerViews.Count < currentOffer.Count)
         {
             LabCardView view = Instantiate(offerCardPrefab, offerContent);
-            view.gameObject.SetActive(true);
-            view.ShowOffer(card, false, false, HandleOfferSelected);
             offerViews.Add(view);
+        }
+
+        for (int i = 0; i < offerViews.Count; i++)
+        {
+            bool visible = i < currentOffer.Count;
+            offerViews[i].gameObject.SetActive(visible);
+            if (visible)
+                offerViews[i].ShowOffer(currentOffer[i], false, false, HandleOfferSelected);
+            else
+                offerViews[i].Clear();
         }
         OfferLifecycle.Show();
         offerDismissButton.interactable = false;
@@ -185,14 +162,22 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private async void HandleOfferSelected(LabCardDataSO selected)
     {
-        if (resolving) return;
+        if (resolving || selected == null || currentOffer == null) return;
         resolving = true;
-        LabDevelopmentFailure failure = await UserDataManager.Instance.AcquireLabCardAsync(selected, quotedCost, currentOffer);
-        if (!isActiveAndEnabled)
+        int currentOperation = ++operationVersion;
+        LabDevelopmentFailure failure;
+        try
         {
-            resolving = false;
-            return;
+            failure = await UserDataManager.Instance.AcquireLabCardAsync(selected, quotedCost, currentOffer);
         }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[LabPanelView] Development failed: {exception}");
+            failure = LabDevelopmentFailure.SaveFailed;
+        }
+
+        if (!IsCurrentOperation(currentOperation))
+            return;
         if (failure != LabDevelopmentFailure.None)
         {
             resolving = false;
@@ -200,29 +185,32 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
             return;
         }
         int selectedIndex = currentOffer.ToList().IndexOf(selected);
-        offerViews[selectedIndex].PlayReveal(selected, true);
-        float selectedRevealWait = offerViews[selectedIndex].RevealDuration + revealDelay;
-        await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(selectedRevealWait * 1000f));
-        if (!isActiveAndEnabled)
+        if (selectedIndex < 0 || selectedIndex >= offerViews.Count)
         {
             resolving = false;
             return;
         }
-        for (int i = 0; i < offerViews.Count; i++)
+        offerViews[selectedIndex].PlayReveal(selected, true);
+        float selectedRevealWait = offerViews[selectedIndex].RevealDuration + revealDelay;
+        await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(selectedRevealWait * 1000f));
+        if (!IsCurrentOperation(currentOperation))
+            return;
+        for (int i = 0; i < currentOffer.Count; i++)
         {
             if (i != selectedIndex)
                 offerViews[i].PlayReveal(currentOffer[i], false);
         }
-        await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(offerViews[0].RevealDuration * 1000f));
-        if (!isActiveAndEnabled)
-        {
-            resolving = false;
+        float revealDuration = offerViews.Count > 0 ? offerViews[0].RevealDuration : 0f;
+        await System.Threading.Tasks.Task.Delay(Mathf.RoundToInt(revealDuration * 1000f));
+        if (!IsCurrentOperation(currentOperation))
             return;
-        }
         offerDismissButton.interactable = true;
         resolving = false;
         ShowDetail(selected);
     }
+
+    private bool IsCurrentOperation(int version) =>
+        isActiveAndEnabled && version == operationVersion;
 
     private void ShowDetail(LabCardDataSO card)
     {
