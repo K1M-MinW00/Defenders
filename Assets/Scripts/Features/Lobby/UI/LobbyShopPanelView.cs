@@ -50,6 +50,7 @@ public sealed class LobbyShopPanelView : MonoBehaviour
     private Coroutine timerRoutine;
     private Coroutine gemAnimationRoutine;
     private bool itemsCreated;
+    private bool purchaseInProgress;
 
     private void Awake()
     {
@@ -162,16 +163,29 @@ public sealed class LobbyShopPanelView : MonoBehaviour
     private async void ConfirmPurchase(ShopProductData product)
     {
         UserDataManager manager = UserDataManager.Instance;
-        if (manager == null || product == null)
+        if (manager == null || product == null || purchaseInProgress)
             return;
 
+        purchaseInProgress = true;
         int gemBeforePurchase = GetCurrentGem();
 
         if (purchaseConfirmPopup != null)
             purchaseConfirmPopup.SetBusy(true);
 
-        ShopPurchaseResult result =
-            await manager.PurchaseShopProductAsync(product);
+        ShopPurchaseResult result;
+        try
+        {
+            result = await manager.PurchaseShopProductAsync(product);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError($"[LobbyShopPanelView] Purchase failed: {exception}");
+            result = ShopPurchaseResult.Fail(ShopPurchaseFailure.SaveFailed);
+        }
+        finally
+        {
+            purchaseInProgress = false;
+        }
 
         if (feedbackText != null)
             feedbackText.text = ShopFeedbackMessages.Get(result);

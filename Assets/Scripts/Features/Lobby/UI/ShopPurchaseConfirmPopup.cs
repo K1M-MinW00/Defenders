@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,6 +19,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
 
     private UnityAction onConfirm;
     private UnityAction onRecharge;
+    private readonly List<ShopRewardSlotView> rewardSlots = new();
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
@@ -46,16 +48,16 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
         if (titleText != null)
             titleText.text = product.DisplayName;
         if (currentGemText != null)
-            currentGemText.text = "보유  ◆ " + currentGem.ToString("N0");
+            currentGemText.text = "보유 Gem " + currentGem.ToString("N0");
         if (costText != null)
-            costText.text = "가격  ◆ " + product.CostAmount.ToString("N0");
+            costText.text = "가격 Gem " + product.CostAmount.ToString("N0");
 
         long remaining = (long)currentGem - product.CostAmount;
         bool affordable = remaining >= 0;
 
         if (remainingGemText != null)
             remainingGemText.text = affordable
-                ? "구매 후  ◆ " + remaining.ToString("N0")
+                ? "구매 후 Gem " + remaining.ToString("N0")
                 : "구매 후  Gem 부족";
         if (warningText != null)
             warningText.text = affordable ? "이 상품을 구매하시겠습니까?" : "Gem이 부족합니다.";
@@ -93,7 +95,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
             rechargeButton.interactable = !busy;
 
         if (warningText != null && busy)
-            warningText.text = "구매 처리 중...";
+            warningText.text = "구매 처리 중";
     }
 
     public void Dismiss()
@@ -117,16 +119,39 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
         if (rewardContainer == null || rewardSlotPrefab == null)
             return;
 
-        for (int i = rewardContainer.childCount - 1; i >= 0; i--)
-            Destroy(rewardContainer.GetChild(i).gameObject);
-
-        if (product.Rewards == null)
-            return;
-
-        foreach (RewardData reward in product.Rewards)
+        int visibleCount = 0;
+        if (product.Rewards != null)
         {
-            if (reward != null)
-                Instantiate(rewardSlotPrefab, rewardContainer).Bind(reward);
+            foreach (RewardData reward in product.Rewards)
+            {
+                if (reward == null)
+                    continue;
+
+                ShopRewardSlotView slot = GetOrCreateRewardSlot(visibleCount++);
+                slot.gameObject.SetActive(true);
+                slot.Bind(reward);
+            }
+        }
+
+        HideRewardSlotsFrom(visibleCount);
+    }
+
+    private ShopRewardSlotView GetOrCreateRewardSlot(int index)
+    {
+        if (index < rewardSlots.Count)
+            return rewardSlots[index];
+
+        ShopRewardSlotView slot = Instantiate(rewardSlotPrefab, rewardContainer);
+        rewardSlots.Add(slot);
+        return slot;
+    }
+
+    private void HideRewardSlotsFrom(int firstHiddenIndex)
+    {
+        for (int i = firstHiddenIndex; i < rewardSlots.Count; i++)
+        {
+            rewardSlots[i].Clear();
+            rewardSlots[i].gameObject.SetActive(false);
         }
     }
 

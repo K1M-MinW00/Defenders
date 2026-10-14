@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
     [SerializeField] private Transform rewardContainer;
     [SerializeField] private ShopRewardSlotView rewardSlotPrefab;
     [SerializeField] private Button closeButton;
+    private readonly List<ShopRewardSlotView> rewardSlots = new();
 
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
@@ -57,20 +59,43 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
         if (rewardContainer == null || rewardSlotPrefab == null)
             return;
 
-        for (int i = rewardContainer.childCount - 1; i >= 0; i--)
-            Destroy(rewardContainer.GetChild(i).gameObject);
-
         if (product == null || product.Rewards == null)
         {
+            HideRewardSlotsFrom(0);
             rewardContainer.gameObject.SetActive(false);
             return;
         }
 
         rewardContainer.gameObject.SetActive(true);
+        int visibleCount = 0;
         foreach (RewardData reward in product.Rewards)
         {
-            if (reward != null)
-                Instantiate(rewardSlotPrefab, rewardContainer).Bind(reward);
+            if (reward == null)
+                continue;
+
+            ShopRewardSlotView slot = GetOrCreateRewardSlot(visibleCount++);
+            slot.gameObject.SetActive(true);
+            slot.Bind(reward);
+        }
+        HideRewardSlotsFrom(visibleCount);
+    }
+
+    private ShopRewardSlotView GetOrCreateRewardSlot(int index)
+    {
+        if (index < rewardSlots.Count)
+            return rewardSlots[index];
+
+        ShopRewardSlotView slot = Instantiate(rewardSlotPrefab, rewardContainer);
+        rewardSlots.Add(slot);
+        return slot;
+    }
+
+    private void HideRewardSlotsFrom(int firstHiddenIndex)
+    {
+        for (int i = firstHiddenIndex; i < rewardSlots.Count; i++)
+        {
+            rewardSlots[i].Clear();
+            rewardSlots[i].gameObject.SetActive(false);
         }
     }
 

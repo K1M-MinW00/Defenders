@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,7 +19,7 @@ public abstract class ShopProductView : MonoBehaviour
     public ShopProductData ProductData => Product;
 
     private UnityAction<ShopProductView> onPurchaseRequested;
-    private bool isPurchasing;
+    private readonly List<ShopRewardSlotView> rewardSlots = new();
 
     public void Initialize(ShopProductData product, UnityAction<ShopProductView> purchaseRequested = null)
     {
@@ -96,7 +97,7 @@ public abstract class ShopProductView : MonoBehaviour
             : null;
     }
 
-    protected static void RebuildRewardSlots(
+    protected void RebuildRewardSlots(
         ShopProductData product,
         Transform container,
         ShopRewardSlotView prefab)
@@ -104,16 +105,42 @@ public abstract class ShopProductView : MonoBehaviour
         if (container == null || prefab == null)
             return;
 
-        for (int i = container.childCount - 1; i >= 0; i--)
-            Destroy(container.GetChild(i).gameObject);
-
-        if (product == null || product.Rewards == null)
-            return;
-
-        foreach (RewardData reward in product.Rewards)
+        int visibleCount = 0;
+        if (product?.Rewards != null)
         {
-            if (reward != null)
-                Instantiate(prefab, container).Bind(reward);
+            foreach (RewardData reward in product.Rewards)
+            {
+                if (reward == null)
+                    continue;
+
+                ShopRewardSlotView slot = GetOrCreateRewardSlot(visibleCount++, container, prefab);
+                slot.gameObject.SetActive(true);
+                slot.Bind(reward);
+            }
+        }
+
+        HideRewardSlotsFrom(visibleCount);
+    }
+
+    private ShopRewardSlotView GetOrCreateRewardSlot(
+        int index,
+        Transform container,
+        ShopRewardSlotView prefab)
+    {
+        if (index < rewardSlots.Count)
+            return rewardSlots[index];
+
+        ShopRewardSlotView slot = Instantiate(prefab, container);
+        rewardSlots.Add(slot);
+        return slot;
+    }
+
+    private void HideRewardSlotsFrom(int firstHiddenIndex)
+    {
+        for (int i = firstHiddenIndex; i < rewardSlots.Count; i++)
+        {
+            rewardSlots[i].Clear();
+            rewardSlots[i].gameObject.SetActive(false);
         }
     }
 
@@ -131,8 +158,8 @@ public abstract class ShopProductView : MonoBehaviour
 
         return Product.PurchaseType switch
         {
-            ShopPurchaseType.Gem => $"◆ {Product.CostAmount:N0}",
-            ShopPurchaseType.InAppPurchase => $"₩{Product.Price:N0}",
+            ShopPurchaseType.Gem => $"Gem {Product.CostAmount:N0}",
+            ShopPurchaseType.InAppPurchase => $"{Product.Price:N0}원",
             ShopPurchaseType.Advertisement => "광고 보기",
             ShopPurchaseType.Gold => $"골드 {Product.CostAmount:N0}",
             _ => string.Empty,

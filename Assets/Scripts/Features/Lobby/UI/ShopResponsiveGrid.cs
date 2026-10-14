@@ -16,16 +16,6 @@ public sealed class ShopResponsiveGrid : MonoBehaviour
     private GridLayoutGroup grid;
     private float appliedWidth = -1f;
 
-    public void Configure(int columnCount, float aspectRatio, float spacing, float padding, float maximumCellWidth)
-    {
-        columns = Mathf.Max(1, columnCount);
-        cardAspectRatio = Mathf.Max(0.1f, aspectRatio);
-        horizontalSpacing = verticalSpacing = Mathf.Max(0f, spacing);
-        horizontalPadding = Mathf.Max(0f, padding);
-        maxCellWidth = Mathf.Max(1f, maximumCellWidth);
-        ApplyLayout(true);
-    }
-
     private void Awake()
     {
         CacheComponents();

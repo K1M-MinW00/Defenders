@@ -18,6 +18,11 @@ public sealed class ShopRewardSlotView : MonoBehaviour
             else
                 commonSlot.Clear();
         }
-  }
+    }
+
+    public void Clear()
+    {
+        commonSlot?.Clear();
+    }
 }
 
