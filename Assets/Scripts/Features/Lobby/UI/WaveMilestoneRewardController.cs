@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismissHandler
 {
     [Header("Entry")]
@@ -24,29 +25,41 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
     private ModalOverlayLifecycle lifecycle;
     private bool claimBusy;
     private int operationVersion;
+    private UserDataManager userDataManager;
+    private bool isSubscribed;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(overlay);
 
     private void Awake()
     {
-        openButton?.onClick.AddListener(Open);
-        claimAllButton?.onClick.AddListener(ClaimAll);
-        closeButton?.onClick.AddListener(Dismiss);
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        openButton.onClick.AddListener(Open);
+        claimAllButton.onClick.AddListener(ClaimAll);
+        closeButton.onClick.AddListener(Dismiss);
+        Lifecycle.HideImmediately();
     }
 
     private void OnEnable()
     {
-        if (UserDataManager.Instance != null) UserDataManager.Instance.OnProgressUpdated += HandleDataUpdated;
+        TryInitialize();
+        Subscribe();
         RefreshBadge();
     }
 
     private void OnDisable()
     {
         operationVersion++;
-        if (UserDataManager.Instance != null) UserDataManager.Instance.OnProgressUpdated -= HandleDataUpdated;
+        Unsubscribe();
+        Lifecycle.HideImmediately();
     }
 
     private void OnDestroy()
     {
+        Unsubscribe();
         openButton?.onClick.RemoveListener(Open);
         claimAllButton?.onClick.RemoveListener(ClaimAll);
         closeButton?.onClick.RemoveListener(Dismiss);
@@ -54,6 +67,12 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     public void Open()
     {
+        if (!TryInitialize())
+        {
+            UIFeedbackToast.Show("유저 데이터를 불러오는 중입니다.");
+            return;
+        }
+
         RefreshPopup();
         Lifecycle.Show();
     }
@@ -72,13 +91,12 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     public void RefreshBadge()
     {
-        if (notificationBadge != null)
-            notificationBadge.SetActive(UserDataManager.Instance?.HasClaimableWaveMilestoneReward() == true);
+        notificationBadge.SetActive(userDataManager?.HasClaimableWaveMilestoneReward() == true);
     }
 
     private void RefreshPopup()
     {
-        UserProgressData progress = UserDataManager.Instance?.UserData?.Progress;
+        UserProgressData progress = userDataManager?.UserData?.Progress;
         StageDataSO stage = WaveMilestoneRewardRules.ResolveRewardStage(progress, GameConfig.Stages);
         if (titleText != null) titleText.text = stage == null ? "웨이브 달성 보상" : $"스테이지\n{stage.StageKey}";
 
@@ -139,30 +157,43 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private async Task ExecuteClaimAsync(Func<UserDataManager, Task<WaveMilestoneClaimResult>> claimOperation)
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (claimBusy || manager == null || claimOperation == null) return;
+        if (claimBusy || userDataManager == null || claimOperation == null) return;
         claimBusy = true;
         int currentOperation = ++operationVersion;
         RefreshPopup();
 
-        WaveMilestoneClaimResult result;
         try
         {
-            result = await claimOperation(manager);
+            WaveMilestoneClaimResult result;
+            try
+            {
+                result = await claimOperation(userDataManager);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[WaveMilestoneRewardController] Claim failed: {exception}");
+                result = WaveMilestoneClaimResult.Fail(WaveMilestoneClaimFailure.SaveFailed);
+            }
+
+            if (!IsCurrentOperation(currentOperation))
+                return;
+
+            ShowResult(result);
+            RefreshPopup();
+            RefreshBadge();
         }
-        catch (Exception exception)
+        finally
         {
-            Debug.LogError($"[WaveMilestoneRewardController] Claim failed: {exception}");
-            result = WaveMilestoneClaimResult.Fail(WaveMilestoneClaimFailure.SaveFailed);
+            if (this != null)
+            {
+                claimBusy = false;
+                if (isActiveAndEnabled)
+                {
+                    RefreshPopup();
+                    RefreshBadge();
+                }
+            }
         }
-
-        claimBusy = false;
-        if (!isActiveAndEnabled || currentOperation != operationVersion)
-            return;
-
-        ShowResult(result);
-        RefreshPopup();
-        RefreshBadge();
     }
 
     private static void ShowResult(WaveMilestoneClaimResult result)
@@ -174,5 +205,44 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
             WaveMilestoneClaimFailure.SaveFailed => "보상 저장에 실패했습니다.",
             _ => "보상을 받을 수 없습니다.",
         });
+    }
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        bool initialized = userDataManager?.UserData?.Progress != null;
+        openButton.interactable = initialized;
+        return initialized;
+    }
+
+    private void Subscribe()
+    {
+        if (isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnProgressUpdated += HandleDataUpdated;
+        isSubscribed = true;
+    }
+
+    private void Unsubscribe()
+    {
+        if (!isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnProgressUpdated -= HandleDataUpdated;
+        isSubscribed = false;
+    }
+
+    private bool IsCurrentOperation(int version) =>
+        this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool ValidateReferences()
+    {
+        bool valid = openButton != null && notificationBadge != null && overlay != null && titleText != null &&
+                     rewardContent != null && rewardSlotPrefab != null && claimAllButton != null &&
+                     claimAllButtonBackground != null && closeButton != null;
+        if (!valid)
+            Debug.LogError("[WaveMilestoneRewardController] Required UI references are not assigned.", this);
+        return valid;
     }
 }

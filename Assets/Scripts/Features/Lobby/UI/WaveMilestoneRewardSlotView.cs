@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
 {
     private static readonly Color ClaimableColor = new(0.91f, 0.15f, 0.24f, 1f);
@@ -20,7 +21,16 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
     private int requiredWave;
     private Action<int> claimRequested;
 
-    private void Awake() => claimButton?.onClick.AddListener(HandleClick);
+    private void Awake()
+    {
+        if (!ValidateReferences())
+        {
+            enabled = false;
+            return;
+        }
+
+        claimButton.onClick.AddListener(HandleClick);
+    }
     private void OnDestroy() => claimButton?.onClick.RemoveListener(HandleClick);
 
     public void Bind(WaveMilestoneReward milestone, bool unlocked, bool claimed, bool busy, Action<int> onClaimRequested)
@@ -50,22 +60,27 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
 
     private void BindRewards(IReadOnlyList<RewardData> rewards)
     {
-        int count = rewards?.Count ?? 0;
-        while (rewardSlots.Count < count)
+        int visibleCount = 0;
+        if (rewards != null)
         {
-            ShopRewardSlotView view = Instantiate(rewardItemPrefab, rewardContent);
-            rewardSlots.Add(view);
+            foreach (RewardData reward in rewards)
+            {
+                if (reward == null)
+                    continue;
+
+                while (rewardSlots.Count <= visibleCount)
+                {
+                    ShopRewardSlotView view = Instantiate(rewardItemPrefab, rewardContent);
+                    rewardSlots.Add(view);
+                }
+
+                ShopRewardSlotView slot = rewardSlots[visibleCount++];
+                slot.gameObject.SetActive(true);
+                slot.Bind(reward);
+            }
         }
 
-        for (int i = 0; i < rewardSlots.Count; i++)
-        {
-            bool visible = i < count;
-            rewardSlots[i].gameObject.SetActive(visible);
-            if (visible)
-                rewardSlots[i].Bind(rewards[i]);
-            else
-                rewardSlots[i].Clear();
-        }
+        HideRewardSlotsFrom(visibleCount);
     }
 
     private void HideRewardSlotsFrom(int firstHiddenIndex)
@@ -78,4 +93,13 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
     }
 
     private void HandleClick() => claimRequested?.Invoke(requiredWave);
+
+    private bool ValidateReferences()
+    {
+        bool valid = waveText != null && rewardContent != null && rewardItemPrefab != null && stateText != null &&
+                     claimButton != null && claimButtonBackground != null;
+        if (!valid)
+            Debug.LogError("[WaveMilestoneRewardSlotView] Required UI references are not assigned.", this);
+        return valid;
+    }
 }
