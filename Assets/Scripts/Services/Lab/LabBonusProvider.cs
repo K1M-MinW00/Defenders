@@ -2,25 +2,27 @@ using System.Collections.Generic;
 
 public static class LabBonusProvider
 {
-    public static float GetTotal(LabEffectType effectType)
+    public static LabBonusSnapshot CreateSnapshot(UserDataRoot data, LabConfigSO config)
     {
-        UserDataRoot data = UserDataManager.Instance?.UserData;
-        return GetTotal(data, effectType);
+        Dictionary<LabEffectType, float> totals = new();
+        if (data?.Lab?.AcquiredCardIds == null || config?.Cards == null)
+            return new LabBonusSnapshot(totals);
+
+        HashSet<string> owned = new(data.Lab.AcquiredCardIds);
+        foreach (LabCardDataSO card in config.Cards)
+        {
+            if (card == null || !owned.Contains(card.CardId))
+                continue;
+
+            totals.TryGetValue(card.EffectType, out float current);
+            totals[card.EffectType] = current + card.Value;
+        }
+
+        return new LabBonusSnapshot(totals);
     }
 
     public static float GetTotal(UserDataRoot data, LabEffectType effectType)
     {
-        LabConfigSO config = GameConfig.Lab;
-        if (data?.Lab?.AcquiredCardIds == null || config?.Cards == null)
-            return 0f;
-
-        HashSet<string> owned = new(data.Lab.AcquiredCardIds);
-        float total = 0f;
-        foreach (LabCardDataSO card in config.Cards)
-            if (card != null && card.EffectType == effectType && owned.Contains(card.CardId))
-                total += card.Value;
-        return total;
+        return CreateSnapshot(data, GameConfig.Lab).GetTotal(effectType);
     }
-
-    public static float ApplyPercent(float value, LabEffectType type) => value * (1f + GetTotal(type) / 100f);
 }

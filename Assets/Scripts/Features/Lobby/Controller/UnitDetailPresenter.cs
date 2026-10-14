@@ -3,10 +3,12 @@ using System;
 public sealed class UnitDetailPresenter
 {
     private readonly RosterService rosterService;
+    private readonly LabBonusSnapshot labBonuses;
 
-    public UnitDetailPresenter(RosterService rosterService)
+    public UnitDetailPresenter(RosterService rosterService, LabBonusSnapshot labBonuses)
     {
         this.rosterService = rosterService ?? throw new ArgumentNullException(nameof(rosterService));
+        this.labBonuses = labBonuses ?? LabBonusSnapshot.Empty;
     }
 
     public UnitDetailViewState Build(string unitId)
@@ -20,7 +22,11 @@ public sealed class UnitDetailPresenter
         if (definition == null || userUnit == null)
             return null;
 
-        UnitStats stats = UnitStatCalculator.Calculate(definition, userUnit, rosterService.GetInventory());
+        UnitStats stats = UnitStatCalculator.Calculate(
+            definition,
+            userUnit,
+            rosterService.GetInventory(),
+            labBonuses: labBonuses);
 
         return new UnitDetailViewState
         {

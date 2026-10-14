@@ -14,6 +14,10 @@ public static class FormationPowerCalculator
         => Calculate(roster, catalog, null);
 
     public static int Calculate(UserRosterData roster, IUnitCatalog catalog, UserInventoryData inventory)
+        => Calculate(roster, catalog, inventory, LabBonusSnapshot.Empty);
+
+    public static int Calculate(UserRosterData roster, IUnitCatalog catalog, UserInventoryData inventory,
+        LabBonusSnapshot labBonuses)
     {
         if (roster?.SelectedUnitIds == null || roster.OwnedUnits == null || catalog == null)
             return 0;
@@ -39,7 +43,7 @@ public static class FormationPowerCalculator
             if (definition == null)
                 continue;
 
-            total += CalculateUnit(definition, userUnit, inventory);
+            total += CalculateUnit(definition, userUnit, inventory, labBonuses);
             if (total >= int.MaxValue)
                 return int.MaxValue;
         }
@@ -51,11 +55,19 @@ public static class FormationPowerCalculator
         => CalculateUnit(definition, userUnit, null);
 
     public static int CalculateUnit(UnitDataSO definition, UserUnitData userUnit, UserInventoryData inventory)
+        => CalculateUnit(definition, userUnit, inventory, LabBonusSnapshot.Empty);
+
+    public static int CalculateUnit(UnitDataSO definition, UserUnitData userUnit, UserInventoryData inventory,
+        LabBonusSnapshot labBonuses)
     {
         if (definition == null || userUnit == null)
             return 0;
 
-        UnitStats stats = UnitStatCalculator.Calculate(definition, userUnit, inventory);
+        UnitStats stats = UnitStatCalculator.Calculate(
+            definition,
+            userUnit,
+            inventory,
+            labBonuses: labBonuses);
         float hp = Math.Max(1f, stats.MaxHp);
         float attack = Math.Max(0f, stats.Attack);
         float attacksPerSecond = Math.Max(0.01f, stats.AttackPerSec);

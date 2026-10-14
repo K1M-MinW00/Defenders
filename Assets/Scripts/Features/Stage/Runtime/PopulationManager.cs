@@ -69,7 +69,7 @@ public class PopulationManager : MonoBehaviour
             return -1;
 
         float reduction = Mathf.Clamp(
-            LabBonusProvider.GetTotal(LabEffectType.PopulationUpgradeCostReductionPercent),
+            economyManager.LabBonuses.GetTotal(LabEffectType.PopulationUpgradeCostReductionPercent),
             0f,
             90f);
         return baseCost == 0
@@ -99,7 +99,7 @@ public class PopulationManager : MonoBehaviour
         config = economyConfig;
         IsInitialized = config != null && unitRoster != null && economyManager != null;
         MaxPopulation = IsInitialized
-            ? Mathf.Min(config.maximumPopulationLimit, config.initialPopulationLimit + Mathf.RoundToInt(LabBonusProvider.GetTotal(LabEffectType.MaxUnitCount)))
+            ? Mathf.Min(config.maximumPopulationLimit, config.initialPopulationLimit + Mathf.RoundToInt(economyManager.LabBonuses.GetTotal(LabEffectType.MaxUnitCount)))
             : 0;
         Notify();
     }

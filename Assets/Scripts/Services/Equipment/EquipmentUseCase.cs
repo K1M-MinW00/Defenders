@@ -43,7 +43,11 @@ public sealed class EquipmentUseCase
         UserInventoryData nextInventory = UserDataCloner.Copy(userData.Inventory);
         UserRosterData nextRoster = UserDataCloner.Copy(userData.Roster);
         if (!mutation(nextInventory, nextRoster)) return EquipmentOperationFailure.ValidationFailed;
-        nextRoster.Power = FormationPowerCalculator.Calculate(nextRoster, GameConfig.Units, nextInventory);
+        nextRoster.Power = FormationPowerCalculator.Calculate(
+            nextRoster,
+            GameConfig.Units,
+            nextInventory,
+            LabBonusProvider.CreateSnapshot(userData, GameConfig.Lab));
         isExecuting = true;
         try
         {

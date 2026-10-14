@@ -60,7 +60,11 @@ public sealed class UnitTrainingUseCase
         ApplyExp(nextUnit, gainedExp, unitDefinition.maxLevel);
         if (nextUnit.Level > previousLevel)
             QuestProgressService.Apply(nextQuest, new QuestEvent(QuestEventType.UnitLevelUp), DateTimeOffset.UtcNow);
-        nextRoster.Power = FormationPowerCalculator.Calculate(nextRoster, GameConfig.Units, nextInventory);
+        nextRoster.Power = FormationPowerCalculator.Calculate(
+            nextRoster,
+            GameConfig.Units,
+            nextInventory,
+            LabBonusProvider.CreateSnapshot(userData, GameConfig.Lab));
 
         isExecuting = true;
 

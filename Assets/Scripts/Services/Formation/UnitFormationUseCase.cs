@@ -48,7 +48,11 @@ public sealed class UnitFormationUseCase
         if (failure != FormationChangeFailure.None)
             return FormationChangeResult.Fail(failure);
 
-        nextRoster.Power = FormationPowerCalculator.Calculate(nextRoster, GameConfig.Units, userData.Inventory);
+        nextRoster.Power = FormationPowerCalculator.Calculate(
+            nextRoster,
+            GameConfig.Units,
+            userData.Inventory,
+            LabBonusProvider.CreateSnapshot(userData, GameConfig.Lab));
 
         isExecuting = true;
 

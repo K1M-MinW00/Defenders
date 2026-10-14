@@ -75,7 +75,10 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
             return;
 
         currentUnitId = vm.UnitId;
-        presenter ??= new UnitDetailPresenter(UserDataManager.Instance.RosterService);
+        UserDataManager manager = UserDataManager.Instance;
+        presenter ??= new UnitDetailPresenter(
+            manager.RosterService,
+            LabBonusProvider.CreateSnapshot(manager.UserData, GameConfig.Lab));
         SubscribeToRosterUpdates();
         currentState = presenter.Build(currentUnitId);
 

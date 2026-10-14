@@ -106,7 +106,12 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
-        StageUnitInitData initData = new StageUnitInitData(data, definition.UserData, initialStar, definition.Inventory);
+        StageUnitInitData initData = new StageUnitInitData(
+            data,
+            definition.UserData,
+            initialStar,
+            definition.Inventory,
+            definition.LabBonuses);
 
         unit.BindCombatContext(monsterSpawner, unitRoster, poolManager);
         if (!unit.Initialize(initData))

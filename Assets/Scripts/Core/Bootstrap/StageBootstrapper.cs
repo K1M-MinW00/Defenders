@@ -11,12 +11,13 @@ public sealed class StageBootstrapper : MonoBehaviour
 
     private RosterService rosterService;
     private UserInventoryData userInventory;
+    private LabBonusSnapshot labBonuses = LabBonusSnapshot.Empty;
 
     public bool IsInitialized { get; private set; }
     public int SessionFusionCount => unitSummoner?.SessionFusionCount ?? 0;
     public int SessionFourStarFusionCount => unitSummoner?.SessionFourStarFusionCount ?? 0;
 
-    public bool Configure(RosterService roster, UserInventoryData inventory)
+    public bool Configure(RosterService roster, UserInventoryData inventory, LabBonusSnapshot bonuses)
     {
         if (roster == null || inventory == null)
         {
@@ -26,6 +27,7 @@ public sealed class StageBootstrapper : MonoBehaviour
 
         rosterService = roster;
         userInventory = inventory;
+        labBonuses = bonuses ?? LabBonusSnapshot.Empty;
         return true;
     }
 
@@ -71,7 +73,7 @@ public sealed class StageBootstrapper : MonoBehaviour
         if (!TryCreateMap(stageData, out mapContext, out error))
             return false;
 
-        if (!economyManager.Init(stageData.economyConfig))
+        if (!economyManager.Init(stageData.economyConfig, labBonuses))
         {
             RollbackInitialization(ref mapContext);
             error = "Stage economy initialization failed.";
@@ -137,7 +139,7 @@ public sealed class StageBootstrapper : MonoBehaviour
                 return false;
             }
 
-            definitions.Add(new StageUnitInitData(data, userData, 1, userInventory));
+            definitions.Add(new StageUnitInitData(data, userData, 1, userInventory, labBonuses));
         }
 
         error = string.Empty;

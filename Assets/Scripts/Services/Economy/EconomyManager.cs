@@ -7,6 +7,7 @@ public class EconomyManager : MonoBehaviour
 
     public int CurrentGold { get; private set; }
     public EconomyConfig Config => config;
+    public LabBonusSnapshot LabBonuses { get; private set; } = LabBonusSnapshot.Empty;
     public int CurrentInterestBonus =>
         IsInitialized ? config.CalculateInterestBonus(CurrentGold) : 0;
 
@@ -14,7 +15,7 @@ public class EconomyManager : MonoBehaviour
     public event Action<EconomyConfig> OnInitialized;
     public bool IsInitialized { get; private set; }
 
-    public bool Init(EconomyConfig config)
+    public bool Init(EconomyConfig config, LabBonusSnapshot labBonuses = null)
     {
         IsInitialized = false;
 
@@ -25,7 +26,8 @@ public class EconomyManager : MonoBehaviour
         }
 
         this.config = config;
-        CurrentGold = Mathf.Max(0, config.initialGold + Mathf.RoundToInt(LabBonusProvider.GetTotal(LabEffectType.StartingMinerals)));
+        LabBonuses = labBonuses ?? LabBonusSnapshot.Empty;
+        CurrentGold = Mathf.Max(0, config.initialGold + Mathf.RoundToInt(LabBonuses.GetTotal(LabEffectType.StartingMinerals)));
         IsInitialized = true;
 
         NotifyGoldChanged();
@@ -36,6 +38,7 @@ public class EconomyManager : MonoBehaviour
     public void ResetRuntime()
     {
         config = null;
+        LabBonuses = LabBonusSnapshot.Empty;
         CurrentGold = 0;
         IsInitialized = false;
         OnInitialized?.Invoke(null);
@@ -72,7 +75,7 @@ public class EconomyManager : MonoBehaviour
             return false;
 
         waveReward = Mathf.Max(0, Mathf.RoundToInt(
-            LabBonusProvider.ApplyPercent(config.GetWaveReward(waveType), LabEffectType.WaveRewardPercent)));
+            LabBonuses.ApplyPercent(config.GetWaveReward(waveType), LabEffectType.WaveRewardPercent)));
         bonusReward = CurrentInterestBonus;
         long totalAfterReward = (long)CurrentGold + waveReward + bonusReward;
         return waveReward >= 0 && bonusReward >= 0 && totalAfterReward <= int.MaxValue;
@@ -123,7 +126,7 @@ public class EconomyManager : MonoBehaviour
     public int GetRerollCost() => IsInitialized
         ? ApplyDiscountWithMinimumCost(
             config.reRollUnit,
-            LabBonusProvider.GetTotal(LabEffectType.RerollCostReductionPercent))
+            LabBonuses.GetTotal(LabEffectType.RerollCostReductionPercent))
         : -1;
     public int GetSellCost(int star)
     {
@@ -134,7 +137,7 @@ public class EconomyManager : MonoBehaviour
         return basePrice < 0
             ? -1
             : Mathf.Max(0, Mathf.RoundToInt(
-                LabBonusProvider.ApplyPercent(basePrice, LabEffectType.SellPricePercent)));
+                LabBonuses.ApplyPercent(basePrice, LabEffectType.SellPricePercent)));
     }
 
     public bool SellUnit(int star)

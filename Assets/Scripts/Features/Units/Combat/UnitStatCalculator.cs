@@ -1,10 +1,11 @@
 ﻿public static class UnitStatCalculator
 {
     public static UnitStats Calculate(UnitDataSO unitData, UserUnitData userUnit)
-        => Calculate(unitData, userUnit, null, null, null);
+        => Calculate(unitData, userUnit, null, null, null, LabBonusSnapshot.Empty);
 
     public static UnitStats Calculate(UnitDataSO unitData, UserUnitData userUnit, UserInventoryData inventory,
-        IItemCatalog itemCatalog = null, EquipmentBalanceConfigSO equipmentConfig = null)
+        IItemCatalog itemCatalog = null, EquipmentBalanceConfigSO equipmentConfig = null,
+        LabBonusSnapshot labBonuses = null)
     {
         if (unitData == null || userUnit == null)
             return default;
@@ -22,14 +23,16 @@
 
         ApplyModifier(ref stats, modifier);
 
-        stats.Attack = LabBonusProvider.ApplyPercent(stats.Attack, LabEffectType.AttackPercent);
-        stats.MaxHp = LabBonusProvider.ApplyPercent(stats.MaxHp, LabEffectType.MaxHpPercent);
+        LabBonusSnapshot bonuses = labBonuses ?? LabBonusSnapshot.Empty;
+        stats.Attack = bonuses.ApplyPercent(stats.Attack, LabEffectType.AttackPercent);
+        stats.MaxHp = bonuses.ApplyPercent(stats.MaxHp, LabEffectType.MaxHpPercent);
         stats.CritChance = UnityEngine.Mathf.Clamp01(
-            stats.CritChance + LabBonusProvider.GetTotal(LabEffectType.CriticalChance) / 100f);
-        stats.CritDamage = LabBonusProvider.ApplyPercent(stats.CritDamage, LabEffectType.CriticalDamagePercent);
-        stats.AttackPerSec = LabBonusProvider.ApplyPercent(stats.AttackPerSec, LabEffectType.AttackSpeedPercent);
-        stats.DetectRange = LabBonusProvider.ApplyPercent(stats.DetectRange, LabEffectType.DetectionRangePercent);
-        stats.EnergyRecovery = LabBonusProvider.ApplyPercent(stats.EnergyRecovery, LabEffectType.EnergyRecoveryPercent);
+            stats.CritChance + bonuses.GetTotal(LabEffectType.CriticalChance) / 100f);
+        stats.CritDamage = bonuses.ApplyPercent(stats.CritDamage, LabEffectType.CriticalDamagePercent);
+        stats.AttackPerSec = bonuses.ApplyPercent(stats.AttackPerSec, LabEffectType.AttackSpeedPercent);
+        stats.DetectRange = bonuses.ApplyPercent(stats.DetectRange, LabEffectType.DetectionRangePercent);
+        stats.EnergyRecovery = bonuses.ApplyPercent(stats.EnergyRecovery, LabEffectType.EnergyRecoveryPercent);
+        stats.DamageReduction += bonuses.GetTotal(LabEffectType.DamageReduction);
 
         return stats;
     }
