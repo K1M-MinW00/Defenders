@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -30,12 +31,14 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
 
     private readonly Dictionary<string, UnitCardUI> cardsByUnitId = new();
     private UserResourceData resource;
+    private UserDataManager userDataManager;
     private LobbyUnitPanelPresenter presenter;
 
     private UnitCardUI pendingSwapCard;
     private string pendingSwapUnitId;
     private bool isChangingFormation;
     private bool isSubscribed;
+    private int operationVersion;
 
     private void Awake()
     {
@@ -56,6 +59,7 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
 
     private void OnDisable()
     {
+        operationVersion++;
         ClearPendingSwap();
 
         UnsubscribeEvents();
@@ -63,15 +67,15 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
 
     private bool TryInitialize()
     {
-        UserDataManager manager = UserDataManager.Instance;
-        if (manager?.UserData?.Resource == null || manager.RosterService == null)
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData?.Resource == null || userDataManager.RosterService == null)
         {
             Debug.LogError("[LobbyUnitPanelView] User data services are not ready.");
             return false;
         }
 
-        resource = manager.UserData.Resource;
-        presenter ??= new LobbyUnitPanelPresenter(manager.RosterService);
+        resource = userDataManager.UserData.Resource;
+        presenter ??= new LobbyUnitPanelPresenter(userDataManager.RosterService);
         return true;
     }
 
@@ -80,29 +84,31 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
         if (isSubscribed)
             return;
 
-        UserDataManager.Instance.OnResourceUpdated += RefreshGold;
-        UserDataManager.Instance.OnRosterUpdated += RefreshView;
+        userDataManager.OnResourceUpdated += RefreshGold;
+        userDataManager.OnRosterUpdated += RefreshView;
         isSubscribed = true;
     }
 
     private void UnsubscribeEvents()
     {
-        if (!isSubscribed || UserDataManager.Instance == null)
+        if (!isSubscribed || userDataManager == null)
             return;
 
-        UserDataManager.Instance.OnResourceUpdated -= RefreshGold;
-        UserDataManager.Instance.OnRosterUpdated -= RefreshView;
+        userDataManager.OnResourceUpdated -= RefreshGold;
+        userDataManager.OnRosterUpdated -= RefreshView;
         isSubscribed = false;
     }
 
     private void RefreshGold()
     {
-        goldText.text = resource.Gold.ToString("N0");
+        resource = userDataManager?.UserData?.Resource;
+        if (resource != null)
+            goldText.text = resource.Gold.ToString("N0");
     }
 
     private void RefreshView()
     {
-        resource = UserDataManager.Instance.UserData.Resource;
+        resource = userDataManager?.UserData?.Resource;
 
         if (resource == null || presenter == null)
             return;
@@ -287,19 +293,36 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
             return;
 
         isChangingFormation = true;
+        int currentOperation = ++operationVersion;
 
         try
         {
+            FormationChangeResult result;
             if (vm.IsSelected)
             {
                 // 전투 명단 내부 위치 교환
-                await SwapSelectedUnitPositionAsync(pendingSwapUnitId, vm.UnitId);
+                result = await SwapSelectedUnitPositionAsync(pendingSwapUnitId, vm.UnitId);
             }
             else
             {
                 // 전투 명단 유닛 ↔ 대기 명단 유닛 교체
-                await ReplaceSelectedUnitAsync(pendingSwapUnitId, vm.UnitId);
+                result = await ReplaceSelectedUnitAsync(pendingSwapUnitId, vm.UnitId);
             }
+
+            if (!CanApplyOperationResult(currentOperation))
+                return;
+
+            if (!result.Succeeded)
+            {
+                Debug.LogWarning($"[LobbyUnitPanelView] Formation change failed: {result.Failure}");
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
+            }
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            if (CanApplyOperationResult(currentOperation))
+                UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(FormationChangeFailure.SaveFailed));
         }
         finally
         {
@@ -316,7 +339,7 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
             return;
         }
 
-        unitDetailPanel.Open(vm);
+        unitDetailPanel.Open(vm, userDataManager);
     }
     private void HandleCardLongPressed(UnitCardUI card, LobbyUnitViewModel vm)
     {
@@ -340,37 +363,26 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
         Debug.Log($"[LobbyUnitTabUI] Swap mode started: {pendingSwapUnitId}");
     }
 
-    private async Task SwapSelectedUnitPositionAsync(string firstUnitId, string secondUnitId)
+    private Task<FormationChangeResult> SwapSelectedUnitPositionAsync(string firstUnitId, string secondUnitId)
     {
-        FormationChangeResult result = await UserDataManager.Instance.ChangeFormationAsync(
+        return userDataManager.ChangeFormationAsync(
             new FormationChangeCommand(
                 FormationChangeType.SwapPositions,
                 firstUnitId,
                 secondUnitId));
-
-        if (!result.Succeeded)
-        {
-            Debug.LogWarning($"[LobbyUnitPanelView] Swap formation failed: {result.Failure}");
-            UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
-        }
-
     }
 
-    private async Task ReplaceSelectedUnitAsync(string oldUnitId, string newUnitId)
+    private Task<FormationChangeResult> ReplaceSelectedUnitAsync(string oldUnitId, string newUnitId)
     {
-        FormationChangeResult result = await UserDataManager.Instance.ChangeFormationAsync(
+        return userDataManager.ChangeFormationAsync(
             new FormationChangeCommand(
                 FormationChangeType.ReplaceUnit,
                 oldUnitId,
                 newUnitId));
-
-        if (!result.Succeeded)
-        {
-            Debug.LogWarning($"[LobbyUnitPanelView] Replace formation failed: {result.Failure}");
-            UIFeedbackToast.Show(UnitOperationFeedbackMessages.Get(result.Failure));
-        }
-
     }
+
+    private bool CanApplyOperationResult(int version) =>
+        isActiveAndEnabled && version == operationVersion;
 
     private void ClearPendingSwap()
     {

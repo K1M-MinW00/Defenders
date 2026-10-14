@@ -70,13 +70,13 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
         SetVisibleImmediately(false);
     }
 
-    public void Open(LobbyUnitViewModel vm)
+    public void Open(LobbyUnitViewModel vm, UserDataManager manager)
     {
-        if (vm == null)
+        if (vm == null || manager?.UserData == null || !manager.IsLoaded)
             return;
 
         currentUnitId = vm.UnitId;
-        userDataManager ??= UserDataManager.Instance;
+        userDataManager ??= manager;
         if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
         {
             Debug.LogError("[UnitDetailView] Loaded user data is required.", this);
