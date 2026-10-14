@@ -4,7 +4,8 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
-public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
+[DisallowMultipleComponent]
+public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
 {
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
@@ -24,7 +25,9 @@ public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
     private MailboxService mailboxService;
     private readonly Dictionary<string, MailSlotUI> slotsByMailId = new();
     private readonly List<string> staleMailIds = new();
+    private readonly Queue<MailSlotUI> availableSlots = new();
     private bool isProcessing;
+    private int activationVersion;
 
     private void Awake()
     {
@@ -34,13 +37,20 @@ public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
 
     private async void OnEnable()
     {
-        mailboxService = UserDataManager.Instance.MailboxService;
+        int currentActivation = ++activationVersion;
+        UserDataManager userDataManager = UserDataManager.Instance;
+        mailboxService = userDataManager != null ? userDataManager.MailboxService : null;
+        if (mailboxService == null)
+        {
+            Debug.LogError("[MailboxPanelView] MailboxService is not ready.");
+            return;
+        }
 
         SetProcessing(true);
 
         try
         {
-            await RefreshAsync();
+            await RefreshAsync(currentActivation);
         }
         catch (Exception exception)
         {
@@ -49,13 +59,31 @@ public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
         }
         finally
         {
-            SetProcessing(false);
+            if (currentActivation == activationVersion && isActiveAndEnabled)
+                SetProcessing(false);
         }
+    }
+
+    private void OnDisable()
+    {
+        activationVersion++;
+        isProcessing = false;
     }
 
     public async Task RefreshAsync()
     {
+        await RefreshAsync(activationVersion);
+    }
+
+    private async Task RefreshAsync(int expectedActivation)
+    {
+        if (mailboxService == null)
+            return;
+
         await mailboxService.LoadMailsAsync();
+        if (!isActiveAndEnabled || expectedActivation != activationVersion)
+            return;
+
         ReconcileSlots(mailboxService.CachedMails);
         RefreshButtonStates();
     }
@@ -71,12 +99,13 @@ public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
                 continue;
 
             MailSlotUI slot = GetOrCreateSlot(mail.MailId);
+            slot.gameObject.SetActive(true);
             slot.transform.SetSiblingIndex(i);
             slot.Setup(mail, HandleMailClicked, GameConfig.Icons);
             slot.SetInteractionEnabled(!isProcessing);
         }
 
-        RemoveStaleSlots(visibleMailIds);
+        ReleaseStaleSlots(visibleMailIds);
     }
 
     private MailSlotUI GetOrCreateSlot(string mailId)
@@ -84,12 +113,18 @@ public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
         if (slotsByMailId.TryGetValue(mailId, out MailSlotUI slot) && slot != null)
             return slot;
 
-        slot = Instantiate(mailSlotPrefab, contentRoot);
+        while (availableSlots.Count > 0 && slot == null)
+            slot = availableSlots.Dequeue();
+
+        if (slot == null)
+            slot = Instantiate(mailSlotPrefab, contentRoot);
+
+        slot.transform.SetParent(contentRoot, false);
         slotsByMailId[mailId] = slot;
         return slot;
     }
 
-    private void RemoveStaleSlots(HashSet<string> visibleMailIds)
+    private void ReleaseStaleSlots(HashSet<string> visibleMailIds)
     {
         staleMailIds.Clear();
 
@@ -104,8 +139,9 @@ public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
             MailSlotUI slot = slotsByMailId[mailId];
             if (slot != null)
             {
+                slot.Clear();
                 slot.gameObject.SetActive(false);
-                Destroy(slot.gameObject);
+                availableSlots.Enqueue(slot);
             }
 
             slotsByMailId.Remove(mailId);
@@ -245,5 +281,6 @@ public class MailboxPanelView : MonoBehaviour, IModalDismissHandler
             deleteAllButton.onClick.RemoveListener(HandleDeleteAllButtonClicked);
 
         slotsByMailId.Clear();
+        availableSlots.Clear();
     }
 }
