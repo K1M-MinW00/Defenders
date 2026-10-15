@@ -107,8 +107,9 @@ public sealed class GachaDataSOTests
     {
         GachaDataSO banner = CreateBanner();
         SetField(banner, "recruitType", RecruitType.Special);
-        SetField(banner, "normalRate", 96f);
-        SetField(banner, "rareRate", 3f);
+        SetField(banner, "normalRate", 0f);
+        SetField(banner, "rareRate", 80f);
+        SetField(banner, "epicRate", 19f);
         SetField(banner, "legendRate", 1f);
 
         UnitDataSO pickup = banner.LegendPool[0];
@@ -126,8 +127,10 @@ public sealed class GachaDataSOTests
             Assert(Math.Abs(rows[0].TotalRate - 0.5f) < 0.001f, "Pickup absolute rate should be 50% of its 1% rarity rate.");
             Assert(rows[1].Units.Count == 2 && Math.Abs(rows[1].TotalRate - 0.5f) < 0.001f,
                 "Other legend units should share the remaining 0.5% rate.");
-            Assert(Math.Abs(rows[2].TotalRate - 3f) < 0.001f, "Rare row should retain its configured rate.");
-            Assert(Math.Abs(rows[3].TotalRate - 96f) < 0.001f, "Normal row should retain its configured rate.");
+            Assert(rows[2].Label == "에픽 유닛" && Math.Abs(rows[2].TotalRate - 19f) < 0.001f,
+                "Epic row should retain its configured rate.");
+            Assert(rows[3].Label == "희귀 유닛" && Math.Abs(rows[3].TotalRate - 80f) < 0.001f,
+                "Rare row should retain its configured rate.");
         }
         finally
         {

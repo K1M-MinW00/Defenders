@@ -10,7 +10,7 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private Button closeButton;
 
     [Header("Rate Rows")]
-    [Tooltip("Pre-placed rate rows in display order. Five rows cover four rarities plus one pickup split row.")]
+    [Tooltip("Pre-placed rate rows in display order. Four rows cover Rare, Epic, Legend, plus one pickup split row.")]
     [SerializeField] private List<RateGroupView> groupViews = new();
 
     private Coroutine rebuildRoutine;
