@@ -36,7 +36,7 @@ public class StageUIController : MonoBehaviour
     private StageOverlayController overlayController;
     public StageRelicUI RelicUI => relicUI;
 
-    public void Initialize()
+    public void Initialize(GameSettingsManager settingsManager, SceneFlowService sceneFlowService)
     {
         Dispose();
 
@@ -63,7 +63,7 @@ public class StageUIController : MonoBehaviour
         unitDragActionUI?.Initialize(economy, preparationService);
 
         hpSummaryUI?.Initialize(monsterHpTracker, unitHpTracker);
-        resultUI?.Initialize(session);
+        resultUI?.Initialize(session, sceneFlowService);
         relicUI?.Initialize();
         monsterInfoUI?.Initialize(session);
         waveTrackUI?.Initialize(session.CurrentStageData);
@@ -74,7 +74,8 @@ public class StageUIController : MonoBehaviour
         pausePanelUI?.Initialize(
             timeController,
             session,
-            preparationService?.UnitSummoner?.RuntimeCombatFormation);
+            preparationService?.UnitSummoner?.RuntimeCombatFormation,
+            settingsManager);
 
         overlayController = new StageOverlayController(
             gameCameraController,

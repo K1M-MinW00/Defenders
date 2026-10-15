@@ -29,6 +29,7 @@ public sealed class StageResultUI : MonoBehaviour
     [SerializeField] private string lobbySceneName = "LobbyScene";
 
     private StageSessionController session;
+    private SceneFlowService sceneFlowService;
     private StageResultPresentation currentPresentation;
     private bool isReturningToLobby;
 
@@ -44,9 +45,10 @@ public sealed class StageResultUI : MonoBehaviour
         failReturnButton.onClick.RemoveListener(OnClickReturnToLobby);
     }
 
-    public void Initialize(StageSessionController stageSession)
+    public void Initialize(StageSessionController stageSession, SceneFlowService sceneFlow)
     {
         session = stageSession;
+        sceneFlowService = sceneFlow;
         isReturningToLobby = false;
         HideAll();
     }
@@ -152,7 +154,15 @@ public sealed class StageResultUI : MonoBehaviour
             return;
         }
 
-        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
+        if (sceneFlowService == null)
+        {
+            isReturningToLobby = false;
+            SetReturnButtons(true, "돌아가기");
+            UIFeedbackToast.Show("씬 전환 서비스를 사용할 수 없습니다.");
+            return;
+        }
+
+        SceneTransitionResult result = await sceneFlowService.LoadAsync(lobbySceneName);
         if (result != SceneTransitionResult.Succeeded && this != null)
         {
             isReturningToLobby = false;

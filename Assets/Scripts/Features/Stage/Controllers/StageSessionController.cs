@@ -25,6 +25,8 @@ public sealed class StageSessionController : MonoBehaviour
     private readonly StagePhaseMachine phaseMachine = new();
     private StageOutcomeCoordinator outcomeCoordinator;
     private UserDataManager userDataManager;
+    private SceneFlowService sceneFlowService;
+    private GameSettingsManager settingsManager;
     private bool isHandlingInitializationFailure;
     private bool isDisposed;
 
@@ -40,6 +42,16 @@ public sealed class StageSessionController : MonoBehaviour
 
     public WaveData CurrentWave => waveSequence?.Current;
 
+    public void Initialize(
+        UserDataManager userData,
+        SceneFlowService sceneFlow,
+        GameSettingsManager gameSettings)
+    {
+        userDataManager = userData;
+        sceneFlowService = sceneFlow;
+        settingsManager = gameSettings;
+    }
+
     private void Start()
     {
         _ = InitializeStageAsync();
@@ -54,8 +66,6 @@ public sealed class StageSessionController : MonoBehaviour
             return;
 
         enterData = StageEnterHolder.Consume();
-        userDataManager = UserDataManager.Instance;
-
         try
         {
             if (!TryValidateSceneReferences(out string referenceError))
@@ -124,7 +134,7 @@ public sealed class StageSessionController : MonoBehaviour
             return false;
         }
 
-        stageUI.Initialize();
+        stageUI.Initialize(settingsManager, sceneFlowService);
         relicService.Initialize(
             phaseRuntimeController.PreparationService,
             phaseRuntimeController.MonsterSpawner,
@@ -205,7 +215,14 @@ public sealed class StageSessionController : MonoBehaviour
         if (isDisposed)
             return;
 
-        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(lobbySceneName);
+        if (sceneFlowService == null)
+        {
+            isHandlingInitializationFailure = false;
+            Debug.LogError($"[{nameof(StageSessionController)}] Scene flow service is unavailable.", this);
+            return;
+        }
+
+        SceneTransitionResult result = await sceneFlowService.LoadAsync(lobbySceneName);
         if (isDisposed)
             return;
 

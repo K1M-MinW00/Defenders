@@ -18181,6 +18181,7 @@ GameObject:
   - component: {fileID: 1704192573}
   - component: {fileID: 1704192574}
   - component: {fileID: 1704192575}
+  - component: {fileID: 1704192576}
   m_Layer: 0
   m_Name: StageSessionController
   m_TagString: Untagged
@@ -18224,6 +18225,19 @@ MonoBehaviour:
   lobbySceneName: LobbyScene
   resultPresentationDelay: 2
   currentStageData: {fileID: 0}
+--- !u!114 &1704192576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704192571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e646d6dc1cc40b5a14f86dc8c804ce6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GameSceneCompositionRoot
+  stageSessionController: {fileID: 1704192573}
 --- !u!114 &1704192574
 MonoBehaviour:
   m_ObjectHideFlags: 0

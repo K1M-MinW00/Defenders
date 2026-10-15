@@ -31,7 +31,8 @@ public class StagePauseUI : MonoBehaviour
     public void Initialize(
         StageTimeController timeController,
         StageSessionController session,
-        IReadOnlyList<StageUnitInitData> combatFormation)
+        IReadOnlyList<StageUnitInitData> combatFormation,
+        GameSettingsManager settingsManager)
     {
         Dispose();
 
@@ -43,6 +44,7 @@ public class StagePauseUI : MonoBehaviour
 
         this.timeController = timeController;
         this.session = session;
+        this.settingsManager = settingsManager;
 
         BindCombatFormation(combatFormation);
 
@@ -57,7 +59,6 @@ public class StagePauseUI : MonoBehaviour
 
         timeController.OnPauseChanged += HandlePauseChanged;
 
-        settingsManager = GameSettingsManager.Instance;
         if (settingsManager != null)
             settingsManager.OnSoundChanged += HandleExternalSoundChanged;
 
