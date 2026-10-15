@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 public sealed class StartupFlowTests
 {
+    [Test]
     public async Task RunAsync_CompletesStagesInOrder()
     {
         bool initialized = false;
@@ -27,6 +29,7 @@ public sealed class StartupFlowTests
         Assert(stages[0] == StartupBootStage.Initializing && stages[3] == StartupBootStage.Ready, "Startup stages are out of order.");
     }
 
+    [Test]
     public async Task RunAsync_StopsWhenLoginFails()
     {
         bool loadCalled = false;
@@ -45,6 +48,7 @@ public sealed class StartupFlowTests
         Assert(!loadCalled, "User data load must not run after login failure.");
     }
 
+    [Test]
     public async Task RunAsync_ReturnsUnexpectedError()
     {
         StartupFlow flow = new(

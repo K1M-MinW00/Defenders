@@ -13,6 +13,17 @@ public sealed class StartupBootstrap : MonoBehaviour
     private int operationVersion;
     private AuthService authService;
     private UserDataManager userDataManager;
+    private SceneFlowService sceneFlowService;
+
+    public void Initialize(
+        AuthService authentication,
+        UserDataManager userData,
+        SceneFlowService sceneFlow)
+    {
+        authService = authentication;
+        userDataManager = userData;
+        sceneFlowService = sceneFlow;
+    }
 
     private void Awake()
     {
@@ -109,7 +120,13 @@ public sealed class StartupBootstrap : MonoBehaviour
         loadingView.SetActionButton("Start", false);
         loadingView.SetStatus("Loading Lobby...");
 
-        SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(nextSceneName);
+        if (sceneFlowService == null)
+        {
+            SetFailed("Required Service Missing");
+            return;
+        }
+
+        SceneTransitionResult result = await sceneFlowService.LoadAsync(nextSceneName);
 
         if (result != SceneTransitionResult.Succeeded && this != null && isActiveAndEnabled)
             SetFailed(GetSceneTransitionFailureMessage(result));
@@ -126,14 +143,12 @@ public sealed class StartupBootstrap : MonoBehaviour
             return false;
         }
 
-        authService ??= AuthService.Instance;
         if (authService == null)
         {
             errorMessage = "Authentication service is missing.";
             return false;
         }
 
-        userDataManager ??= UserDataManager.Instance;
         if (userDataManager == null)
         {
             errorMessage = "User data service is missing.";
