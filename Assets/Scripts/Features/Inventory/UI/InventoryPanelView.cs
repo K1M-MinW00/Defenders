@@ -30,6 +30,8 @@ public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private Button equipmentTabButton;
 
     private InventoryService inventoryService;
+    private UserDataManager userDataManager;
+    private bool isSubscribed;
     private readonly Dictionary<string, CommonSlotUI> slotsByKey = new();
     private InventoryTab currentTab;
     private Transform currentContentRoot;
@@ -55,19 +57,14 @@ public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
-        if (UserDataManager.Instance == null)
+        if (!TryInitialize())
             return;
 
-        inventoryService = UserDataManager.Instance.InventoryService;
-        UserDataManager.Instance.OnInventoryUpdated += RefreshCurrentTab;
+        Subscribe();
         ShowConsumables();
     }
 
-    private void OnDisable()
-    {
-        if (UserDataManager.Instance != null)
-            UserDataManager.Instance.OnInventoryUpdated -= RefreshCurrentTab;
-    }
+    private void OnDisable() => Unsubscribe();
 
     public void ShowConsumables()
     {
@@ -206,6 +203,8 @@ public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDestroy()
     {
+        Unsubscribe();
+
         if (consumableTabButton != null)
             consumableTabButton.onClick.RemoveListener(ShowConsumables);
 
@@ -216,5 +215,34 @@ public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
             equipmentTabButton.onClick.RemoveListener(ShowEquipments);
 
         slotsByKey.Clear();
+    }
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData == null || userDataManager.InventoryService == null)
+            return false;
+
+        inventoryService = userDataManager.InventoryService;
+        equipmentPanel?.Initialize(userDataManager);
+        return true;
+    }
+
+    private void Subscribe()
+    {
+        if (isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnInventoryUpdated += RefreshCurrentTab;
+        isSubscribed = true;
+    }
+
+    private void Unsubscribe()
+    {
+        if (!isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnInventoryUpdated -= RefreshCurrentTab;
+        isSubscribed = false;
     }
 }

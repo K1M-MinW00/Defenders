@@ -50,6 +50,9 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
     private readonly HashSet<EquipmentType> filters = new();
     private EquipmentItemData detailItem;
     private bool busy;
+    private bool isSubscribed;
+    private int dismantleOperationVersion;
+    private UserDataManager userDataManager;
     private ModalOverlayLifecycle dismantleLifecycle;
     private ModalOverlayLifecycle filterLifecycle;
     private ModalOverlayLifecycle rewardLifecycle;
@@ -83,27 +86,42 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
 
     private void OnEnable()
     {
-        if (UserDataManager.Instance != null) UserDataManager.Instance.OnInventoryUpdated += Refresh;
+        TryInitialize();
+        Subscribe();
         Refresh();
     }
+
     private void OnDisable()
     {
-        if (UserDataManager.Instance != null) UserDataManager.Instance.OnInventoryUpdated -= Refresh;
+        dismantleOperationVersion++;
+        busy = false;
+        Unsubscribe();
+        HideTransientUi();
+    }
+
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null || userDataManager == manager)
+            return;
+
+        Unsubscribe();
+        userDataManager = manager;
+        Subscribe();
     }
 
     public void Show() { gameObject.SetActive(true); Refresh(); }
     public void Hide()
     {
-        detailItem = null;
-        detailOverlay?.HideImmediately();
-        selectedIds.Clear();
-        DismantleLifecycle.HideImmediately();
-        FilterLifecycle.HideImmediately();
-        RewardLifecycle.HideImmediately();
+        dismantleOperationVersion++;
+        busy = false;
+        HideTransientUi();
         gameObject.SetActive(false);
     }
     public void Dismiss()
     {
+        if (busy)
+            return;
+
         if (RewardLifecycle.IsVisible) CloseRewardOverlay();
         else if (FilterLifecycle.IsVisible) CloseFilter();
         else if (DismantleLifecycle.IsVisible) CloseDismantle();
@@ -111,7 +129,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
 
     private IEnumerable<EquipmentItemData> GetVisibleEquipment()
     {
-        UserDataRoot data = UserDataManager.Instance?.UserData;
+        UserDataRoot data = userDataManager?.UserData;
         if (data?.Inventory == null || data.Roster == null) return Enumerable.Empty<EquipmentItemData>();
         EquipmentInventoryIndex index = new(data.Inventory, data.Roster);
         return index.GetUnequipped()
@@ -125,8 +143,8 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
 
     private void Refresh()
     {
-        if (!isActiveAndEnabled || UserDataManager.Instance?.UserData == null) return;
-        EquipmentInventoryIndex index = new(UserDataManager.Instance.UserData.Inventory, UserDataManager.Instance.UserData.Roster);
+        if (!isActiveAndEnabled || userDataManager?.UserData == null) return;
+        EquipmentInventoryIndex index = new(userDataManager.UserData.Inventory, userDataManager.UserData.Roster);
         capacityText.text = $"{index.UnequippedCount} / {EquipmentInventoryIndex.UnequippedCapacity}";
         RebuildSlots(contentRoot, mainSlots, false);
         if (DismantleLifecycle.IsVisible) { RemoveMissingSelections(); RebuildSlots(dismantleContentRoot, dismantleSlots, true); RefreshRewards(); }
@@ -177,7 +195,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
     private EquipmentDismantleResult GetPreview()
     {
         if(selectedIds.Count==0)return EquipmentDismantleResult.Fail(EquipmentDismantleFailure.InvalidData);
-        UserDataRoot data=UserDataManager.Instance.UserData;
+        UserDataRoot data=userDataManager.UserData;
         return new EquipmentDismantleService(GameConfig.Items,GameConfig.EquipmentBalance)
             .Dismantle(UserDataCloner.Copy(data.Inventory),UserDataCloner.Copy(data.Roster),selectedIds.ToArray());
     }
@@ -185,21 +203,75 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
     {
         EquipmentDismantleResult preview=GetPreview(); totalExpText.text=$"합산 경험치 : {(preview.Succeeded?preview.RefundedExp:0):N0}";
         confirmDismantleButton.interactable=preview.Succeeded&&!busy;
+        closeDismantleButton.interactable=!busy;
         BindRewardSlots(rewardRoot,rewardSlots,preview.Succeeded?preview.Rewards:null);
     }
 
     private async Task DismantleSelectedAsync()
     {
-        if(busy)return; EquipmentDismantleResult preview=GetPreview(); if(!preview.Succeeded)return;
-        busy=true; RefreshRewards(); EquipmentOperationFailure result=await UserDataManager.Instance.DismantleEquipmentAsync(selectedIds.ToArray()); busy=false;
-        if(result!=EquipmentOperationFailure.None){RefreshRewards();return;}
-        CloseDismantle(() => ShowRewards(preview.Rewards)); Refresh();
+        if (busy || !TryInitialize()) return;
+        EquipmentDismantleResult preview = GetPreview();
+        if (!preview.Succeeded) return;
+
+        busy = true;
+        int operationVersion = ++dismantleOperationVersion;
+        RefreshRewards();
+
+        EquipmentOperationFailure result;
+        try
+        {
+            result = await userDataManager.DismantleEquipmentAsync(selectedIds.ToArray());
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[EquipmentInventoryPanelView] Dismantle failed: {exception}", this);
+            result = EquipmentOperationFailure.SaveFailed;
+        }
+
+        if (!IsCurrentOperation(operationVersion)) return;
+        busy = false;
+        if (result != EquipmentOperationFailure.None)
+        {
+            RefreshRewards();
+            UIFeedbackToast.Show("장비 분해에 실패했습니다.");
+            return;
+        }
+
+        CloseDismantle(() => ShowRewards(preview.Rewards));
+        Refresh();
     }
     private async Task DismantleDetailAsync()
     {
-        if(busy||detailItem==null)return; selectedIds.Clear();selectedIds.Add(detailItem.UniqueId); EquipmentDismantleResult preview=GetPreview(); if(!preview.Succeeded)return;
-        busy=true; EquipmentOperationFailure result=await UserDataManager.Instance.DismantleEquipmentAsync(selectedIds.ToArray()); busy=false;
-        if(result!=EquipmentOperationFailure.None)return; CloseDetail(() => ShowRewards(preview.Rewards)); selectedIds.Clear(); Refresh();
+        if (busy || detailItem == null || !TryInitialize()) return;
+        selectedIds.Clear();
+        selectedIds.Add(detailItem.UniqueId);
+        EquipmentDismantleResult preview = GetPreview();
+        if (!preview.Succeeded) return;
+
+        busy = true;
+        int operationVersion = ++dismantleOperationVersion;
+        EquipmentOperationFailure result;
+        try
+        {
+            result = await userDataManager.DismantleEquipmentAsync(selectedIds.ToArray());
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[EquipmentInventoryPanelView] Detail dismantle failed: {exception}", this);
+            result = EquipmentOperationFailure.SaveFailed;
+        }
+
+        if (!IsCurrentOperation(operationVersion)) return;
+        busy = false;
+        if (result != EquipmentOperationFailure.None)
+        {
+            UIFeedbackToast.Show("장비 분해에 실패했습니다.");
+            return;
+        }
+
+        CloseDetail(() => ShowRewards(preview.Rewards));
+        selectedIds.Clear();
+        Refresh();
     }
 
     private void ShowRewards(IReadOnlyDictionary<string,int> rewards) { BindRewardSlots(acquiredRewardRoot,acquiredSlots,rewards); RewardLifecycle.Show(); }
@@ -223,4 +295,52 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
         SetFilter(allFilterButton,filters.Count==0);SetFilter(mainWeaponFilterButton,filters.Contains(EquipmentType.MainWeapon));SetFilter(subWeaponFilterButton,filters.Contains(EquipmentType.SubWeapon));SetFilter(helmetFilterButton,filters.Contains(EquipmentType.Helmet));SetFilter(armorFilterButton,filters.Contains(EquipmentType.Armor));
     }
     private static void SetFilter(Button button,bool selected){if(button?.targetGraphic!=null)button.targetGraphic.color=selected?new Color(.2f,.65f,1f):new Color(.75f,.82f,.86f);}
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        return userDataManager?.UserData != null;
+    }
+
+    private void Subscribe()
+    {
+        if (isSubscribed || userDataManager == null || !isActiveAndEnabled)
+            return;
+
+        userDataManager.OnInventoryUpdated += Refresh;
+        isSubscribed = true;
+    }
+
+    private void Unsubscribe()
+    {
+        if (!isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnInventoryUpdated -= Refresh;
+        isSubscribed = false;
+    }
+
+    private bool IsCurrentOperation(int version) =>
+        this != null && isActiveAndEnabled && version == dismantleOperationVersion;
+
+    private void HideTransientUi()
+    {
+        detailItem = null;
+        detailOverlay?.HideImmediately();
+        selectedIds.Clear();
+        DismantleLifecycle.HideImmediately();
+        FilterLifecycle.HideImmediately();
+        RewardLifecycle.HideImmediately();
+    }
+
+    private void OnDestroy()
+    {
+        Unsubscribe();
+        dismantleModeButton?.onClick.RemoveListener(OpenDismantle);
+        filterButton?.onClick.RemoveListener(OpenFilter);
+        dismantleFilterButton?.onClick.RemoveListener(OpenFilter);
+        allFilterButton?.onClick.RemoveListener(ResetFilters);
+        resetFilterButton?.onClick.RemoveListener(ResetFilters);
+        closeFilterButton?.onClick.RemoveListener(CloseFilter);
+    }
 }
