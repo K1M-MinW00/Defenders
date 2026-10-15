@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public sealed class StageRelicUI : MonoBehaviour
 {
     [Header("Owned relics")]
     [SerializeField] private RectTransform ownedList;
+    [SerializeField] private StageRelicIconView ownedIconPrefab;
     [SerializeField] private GameObject tooltip;
     [SerializeField] private TMP_Text tooltipName;
     [SerializeField] private TMP_Text tooltipDescription;
@@ -32,7 +32,10 @@ public sealed class StageRelicUI : MonoBehaviour
     private StageRelicDefinition secondChoice;
     private TaskCompletionSource<StageRelicDefinition> choiceCompletion;
     private Transform tooltipHomeParent;
+    private readonly List<StageRelicIconView> ownedIconPool = new();
     public event Action<bool> ChoiceVisibilityChanged;
+    public bool IsConfigured => ownedList != null && ownedIconPrefab != null &&
+                                choiceOverlay != null && firstChoiceButton != null && secondChoiceButton != null;
 
     public void Initialize()
     {
@@ -66,14 +69,23 @@ public sealed class StageRelicUI : MonoBehaviour
             return;
 
         HideTooltip();
-        for (int i = ownedList.childCount - 1; i >= 0; i--)
-            Destroy(ownedList.GetChild(i).gameObject);
+        HideOwnedIcons();
 
         if (relics == null)
             return;
 
-        foreach (StageRelicDefinition relic in relics)
-            CreateOwnedIcon(relic);
+        for (int index = 0; index < relics.Count; index++)
+        {
+            StageRelicDefinition relic = relics[index];
+            if (relic == null)
+                continue;
+
+            StageRelicIconView icon = GetOrCreateOwnedIcon(index);
+            icon.Bind(
+                relic,
+                () => ShowTooltip(relic, icon.transform as RectTransform),
+                HideTooltip);
+        }
     }
 
     public Task<StageRelicDefinition> ShowChoiceAsync(
@@ -93,41 +105,15 @@ public sealed class StageRelicUI : MonoBehaviour
         return choiceCompletion.Task;
     }
 
-    private void CreateOwnedIcon(StageRelicDefinition relic)
+    private StageRelicIconView GetOrCreateOwnedIcon(int index)
     {
-        if (relic == null)
-            return;
+        if (index < ownedIconPool.Count)
+            return ownedIconPool[index];
 
-        var icon = new GameObject($"Relic_{relic.Id}", typeof(RectTransform), typeof(Image), typeof(LayoutElement), typeof(RelicTooltipPressHandler));
-        icon.layer = gameObject.layer;
-        icon.transform.SetParent(ownedList, false);
-
-        var image = icon.GetComponent<Image>();
-        image.sprite = relic.Icon;
-        image.color = relic.Icon != null
-            ? Color.white
-            : new Color(0.04f, 0.24f, 0.26f, 0.96f);
-        image.preserveAspect = true;
-        var layout = icon.GetComponent<LayoutElement>();
-        layout.preferredWidth = 64f;
-        layout.preferredHeight = 64f;
-
-        if (relic.Icon == null)
-        {
-            var labelObject = new GameObject("Symbol", typeof(RectTransform), typeof(TextMeshProUGUI));
-            labelObject.layer = gameObject.layer;
-            labelObject.transform.SetParent(icon.transform, false);
-            Stretch(labelObject.GetComponent<RectTransform>());
-            var label = labelObject.GetComponent<TextMeshProUGUI>();
-            label.text = relic.Symbol;
-            label.fontSize = 30f;
-            label.alignment = TextAlignmentOptions.Center;
-            label.raycastTarget = false;
-        }
-
-        icon.GetComponent<RelicTooltipPressHandler>().Initialize(
-            () => ShowTooltip(relic, icon.GetComponent<RectTransform>()),
-            HideTooltip);
+        StageRelicIconView icon = Instantiate(ownedIconPrefab, ownedList);
+        icon.name = $"OwnedRelic_{ownedIconPool.Count + 1}";
+        ownedIconPool.Add(icon);
+        return icon;
     }
 
     private void ShowTooltip(StageRelicDefinition relic, RectTransform icon)
@@ -231,12 +217,10 @@ public sealed class StageRelicUI : MonoBehaviour
         completion.TrySetResult(selected);
     }
 
-    private static void Stretch(RectTransform rect)
+    private void HideOwnedIcons()
     {
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
+        foreach (StageRelicIconView icon in ownedIconPool)
+            icon?.Clear();
     }
 
     private void OnDestroy()
@@ -252,22 +236,4 @@ public sealed class StageRelicUI : MonoBehaviour
         ChoiceVisibilityChanged?.Invoke(false);
         HideTooltip();
     }
-}
-
-public sealed class RelicTooltipPressHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
-{
-    private System.Action onPressed;
-    private System.Action onReleased;
-
-    public void Initialize(System.Action pressed, System.Action released)
-    {
-        onPressed = pressed;
-        onReleased = released;
-    }
-
-    public void OnPointerDown(PointerEventData eventData) => onPressed?.Invoke();
-
-    public void OnPointerUp(PointerEventData eventData) => onReleased?.Invoke();
-
-    private void OnDisable() => onReleased?.Invoke();
 }

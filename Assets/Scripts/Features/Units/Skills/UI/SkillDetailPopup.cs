@@ -13,6 +13,7 @@ public class SkillDetailPopup : MonoBehaviour
     [Header("Content")]
     [SerializeField] private Transform contentRoot;
     [SerializeField] private SkillUpgradeSlot slotPrefab;
+    private readonly System.Collections.Generic.List<SkillUpgradeSlot> slotPool = new();
 
     private void Awake()
     {
@@ -35,19 +36,37 @@ public class SkillDetailPopup : MonoBehaviour
         if (skillNameText != null)
             skillNameText.text = skill.skillName;
 
-        foreach (Transform child in contentRoot)
-            Destroy(child.gameObject);
+        HideSlots();
 
+        int index = 0;
         foreach (SkillUpgradeData data in skill.upgrades)
         {
-            SkillUpgradeSlot slot = Instantiate(slotPrefab, contentRoot);
-
+            SkillUpgradeSlot slot = GetOrCreateSlot(index++);
             slot.Setup(promotion, data);
+            slot.gameObject.SetActive(true);
         }
     }
 
     public void Close()
     {
         gameObject.SetActive(false);
+    }
+
+    private SkillUpgradeSlot GetOrCreateSlot(int index)
+    {
+        if (index < slotPool.Count)
+            return slotPool[index];
+
+        SkillUpgradeSlot slot = Instantiate(slotPrefab, contentRoot);
+        slot.name = $"SkillUpgradeSlot_{slotPool.Count + 1}";
+        slotPool.Add(slot);
+        return slot;
+    }
+
+    private void HideSlots()
+    {
+        foreach (SkillUpgradeSlot slot in slotPool)
+            if (slot != null)
+                slot.gameObject.SetActive(false);
     }
 }

@@ -17,7 +17,7 @@ public sealed class StageMonsterInfoUI : MonoBehaviour
     [SerializeField] private StageMonsterInfoItemUI itemTemplate;
     [SerializeField] private TMP_Text emptyText;
 
-    private readonly List<StageMonsterInfoItemUI> spawnedItems = new();
+    private readonly List<StageMonsterInfoItemUI> itemPool = new();
     private StageSessionController session;
     public event Action<bool> VisibilityChanged;
 
@@ -35,7 +35,7 @@ public sealed class StageMonsterInfoUI : MonoBehaviour
     {
         openButton?.onClick.RemoveListener(Open);
         closeBlockerButton?.onClick.RemoveListener(Close);
-        ClearItems();
+        HideItems();
         session = null;
     }
 
@@ -65,9 +65,10 @@ public sealed class StageMonsterInfoUI : MonoBehaviour
 
     private void Populate(WaveData wave)
     {
-        ClearItems();
+        HideItems();
 
         HashSet<MonsterDataSO> added = new();
+        int visibleCount = 0;
         if (wave?.subWaves != null)
         {
             foreach (SubWaveData subWave in wave.subWaves)
@@ -81,30 +82,32 @@ public sealed class StageMonsterInfoUI : MonoBehaviour
                     if (data == null || !added.Add(data))
                         continue;
 
-                    StageMonsterInfoItemUI item = Instantiate(itemTemplate, contentRoot);
+                    StageMonsterInfoItemUI item = GetOrCreateItem(visibleCount++);
                     item.name = $"Monster Info - {data.name}";
                     item.gameObject.SetActive(true);
                     item.Bind(data);
-                    spawnedItems.Add(item);
                 }
             }
         }
 
         if (emptyText != null)
-            emptyText.gameObject.SetActive(spawnedItems.Count == 0);
+            emptyText.gameObject.SetActive(visibleCount == 0);
     }
 
-    private void ClearItems()
+    private StageMonsterInfoItemUI GetOrCreateItem(int index)
     {
-        foreach (StageMonsterInfoItemUI item in spawnedItems)
-        {
-            if (item != null)
-            {
-                item.gameObject.SetActive(false);
-                Destroy(item.gameObject);
-            }
-        }
+        if (index < itemPool.Count)
+            return itemPool[index];
 
-        spawnedItems.Clear();
+        StageMonsterInfoItemUI item = Instantiate(itemTemplate, contentRoot);
+        itemPool.Add(item);
+        return item;
+    }
+
+    private void HideItems()
+    {
+        foreach (StageMonsterInfoItemUI item in itemPool)
+            if (item != null)
+                item.gameObject.SetActive(false);
     }
 }

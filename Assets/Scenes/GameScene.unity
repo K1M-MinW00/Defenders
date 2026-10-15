@@ -1012,6 +1012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageRelicUI
   ownedList: {fileID: 677217751}
+  ownedIconPrefab: {fileID: 5553945621752764634, guid: 4a7d3f540f109904b95672b9e5863ad7, type: 3}
   tooltip: {fileID: 1085266859}
   tooltipName: {fileID: 1333232623}
   tooltipDescription: {fileID: 382089557}

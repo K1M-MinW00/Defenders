@@ -23,7 +23,7 @@ public sealed class StageRelicService : MonoBehaviour
     {
         UnsubscribeRosterChanged();
 
-        if (preparation?.UnitRoster == null || spawner == null || relicUI == null)
+        if (preparation?.UnitRoster == null || spawner == null || relicUI == null || !relicUI.IsConfigured)
         {
             preparationService = null;
             monsterSpawner = null;
