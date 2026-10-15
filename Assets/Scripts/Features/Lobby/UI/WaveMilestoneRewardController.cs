@@ -45,9 +45,30 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private void OnEnable()
     {
-        TryInitialize();
+        if (TryInitialize())
+            Subscribe();
+
+        RefreshBadge();
+    }
+
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null)
+            return;
+
+        if (userDataManager != manager)
+        {
+            Unsubscribe();
+            userDataManager = manager;
+        }
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
         Subscribe();
         RefreshBadge();
+        if (Lifecycle.IsVisible)
+            RefreshPopup();
     }
 
     private void OnDisable()
@@ -97,6 +118,13 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
     private void RefreshPopup()
     {
         UserProgressData progress = userDataManager?.UserData?.Progress;
+        if (progress == null)
+        {
+            ClearRewardSlots();
+            SetPopupInteraction(false);
+            return;
+        }
+
         StageDataSO stage = WaveMilestoneRewardRules.ResolveRewardStage(progress, GameConfig.Stages);
         if (titleText != null) titleText.text = stage == null ? "웨이브 달성 보상" : $"스테이지\n{stage.StageKey}";
 
@@ -121,18 +149,25 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
             anyClaimable |= unlocked && !claimed;
             slots[i].Bind(milestone, unlocked, claimed, claimBusy, Claim);
         }
-        if (claimAllButton != null)
-        {
-            bool claimAllEnabled = anyClaimable && !claimBusy;
-            claimAllButton.interactable = claimAllEnabled;
-            if (claimAllButtonBackground != null)
-                claimAllButtonBackground.color = claimAllEnabled
-                    ? new Color(0.91f, 0.15f, 0.24f, 1f)
-                    : new Color(0.32f, 0.34f, 0.38f, 1f);
-        }
+        SetPopupInteraction(anyClaimable && !claimBusy);
+    }
 
-        if (closeButton != null)
-            closeButton.interactable = !claimBusy;
+    private void ClearRewardSlots()
+    {
+        foreach (WaveMilestoneRewardSlotView slot in slots)
+        {
+            slot.Clear();
+            slot.gameObject.SetActive(false);
+        }
+    }
+
+    private void SetPopupInteraction(bool canClaimAll)
+    {
+        claimAllButton.interactable = canClaimAll;
+        claimAllButtonBackground.color = canClaimAll
+            ? new Color(0.91f, 0.15f, 0.24f, 1f)
+            : new Color(0.32f, 0.34f, 0.38f, 1f);
+        closeButton.interactable = !claimBusy;
     }
 
     private void EnsureSlotCount(int count)
@@ -157,7 +192,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private async Task ExecuteClaimAsync(Func<UserDataManager, Task<WaveMilestoneClaimResult>> claimOperation)
     {
-        if (claimBusy || userDataManager == null || claimOperation == null) return;
+        if (claimBusy || claimOperation == null || !TryInitialize()) return;
         claimBusy = true;
         int currentOperation = ++operationVersion;
         RefreshPopup();

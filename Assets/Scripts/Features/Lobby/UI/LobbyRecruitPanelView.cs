@@ -89,7 +89,29 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
             return;
 
         SubscribeEvents();
-        SelectBanner(normalBanner);
+        currentBanner ??= normalBanner;
+        Refresh();
+        PresentPendingResults();
+    }
+
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null)
+            return;
+
+        if (userDataManager != manager)
+        {
+            UnsubscribeEvents();
+            userDataManager = manager;
+            presenter = null;
+        }
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
+        SubscribeEvents();
+        currentBanner ??= normalBanner;
+        Refresh();
         PresentPendingResults();
     }
 
@@ -178,6 +200,9 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
     private void OpenRatePopup()
     {
+        if (currentBanner == null)
+            return;
+
         ratePopup.Open(currentBanner);
     }
 
@@ -193,10 +218,13 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
     private void TryRecruit(int count)
     {
-        if (isRecruiting || presenter == null || presentationController.IsPresenting)
+        if (count <= 0 || isRecruiting || presentationController.IsPresenting || !TryInitialize())
             return;
 
         GachaDataSO banner = currentBanner;
+        if (banner == null)
+            return;
+
         RecruitCostModel cost = presenter.CalculateCost(banner, count);
 
         if (cost.NeedGem == false)
@@ -210,7 +238,7 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
     private async void ExecuteRecruit(GachaDataSO banner, int count)
     {
-        if (isRecruiting)
+        if (isRecruiting || banner == null || count <= 0 || !TryInitialize())
             return;
 
         isRecruiting = true;
