@@ -45,19 +45,32 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
             Lifecycle.Show();
     }
 
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null || userDataManager == manager)
+            return;
+
+        userDataManager = manager;
+        presenter = CreatePresenter(manager.UserData);
+
+        if (isActiveAndEnabled)
+            RefreshEditor();
+    }
+
     private void OnEnable()
     {
-        userDataManager ??= UserDataManager.Instance;
-        UserDataRoot userData = userDataManager?.UserData;
-        if (userData?.Profile == null)
+        if (!TryInitialize())
         {
             Debug.LogError("[EditNicknamePanelView] User profile is not ready.");
             confirmButton.interactable = false;
             return;
         }
 
-        int paidChangeCost = GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500;
-        presenter ??= new NicknameEditPresenter(userData, paidChangeCost);
+        RefreshEditor();
+    }
+
+    private void RefreshEditor()
+    {
         string currentNickname = presenter.Open();
 
         nicknameInput.SetTextWithoutNotify(currentNickname);
@@ -173,6 +186,25 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     private bool IsCurrentOperation(int version) =>
         this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData?.Profile == null)
+            return false;
+
+        presenter ??= CreatePresenter(userDataManager.UserData);
+        return true;
+    }
+
+    private static NicknameEditPresenter CreatePresenter(UserDataRoot userData)
+    {
+        if (userData?.Profile == null)
+            return null;
+
+        int paidChangeCost = GameConfig.NewUserConfig?.NicknameChangeGemCost ?? 500;
+        return new NicknameEditPresenter(userData, paidChangeCost);
+    }
 
     private bool ValidateReferences()
     {

@@ -46,18 +46,32 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
             Lifecycle.Show();
     }
 
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null || userDataManager == manager)
+            return;
+
+        userDataManager = manager;
+        presenter = manager.UserData != null ? new ProfileIconEditPresenter(manager.UserData) : null;
+
+        if (isActiveAndEnabled)
+            RefreshEditor();
+    }
+
     private void OnEnable()
     {
-        userDataManager ??= UserDataManager.Instance;
-        UserDataRoot userData = userDataManager?.UserData;
-        if (userData == null)
+        if (!TryInitialize())
         {
             Debug.LogError("[EditProfilePanelView] User data is not ready.");
             confirmButton.interactable = false;
             return;
         }
 
-        presenter ??= new ProfileIconEditPresenter(userData);
+        RefreshEditor();
+    }
+
+    private void RefreshEditor()
+    {
         ProfileIconEditState state = presenter.Open(isSaving);
         ApplyState(state);
         ReconcileIconSlots(state.Options);
@@ -193,6 +207,16 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
     private bool IsCurrentOperation(int version) =>
         this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        if (userDataManager?.UserData == null)
+            return false;
+
+        presenter ??= new ProfileIconEditPresenter(userDataManager.UserData);
+        return true;
+    }
 
     private bool ValidateReferences()
     {

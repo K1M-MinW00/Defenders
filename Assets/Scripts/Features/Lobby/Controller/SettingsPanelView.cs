@@ -60,6 +60,33 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
         Lifecycle.Show();
     }
 
+    public void Initialize(UserDataManager manager, GameSettingsManager settings)
+    {
+        if (manager != null && userDataManager != manager)
+        {
+            UnsubscribeEvents();
+            userDataManager = manager;
+            presenter = null;
+        }
+
+        if (settings != null && gameSettingsManager != settings)
+        {
+            UnsubscribeEvents();
+            gameSettingsManager = settings;
+            presenter = null;
+        }
+
+        if (!TryInitialize())
+            return;
+
+        ConfigureChildEditors();
+        if (isActiveAndEnabled)
+        {
+            SubscribeEvents();
+            Refresh();
+        }
+    }
+
     private void OnEnable()
     {
         if (!TryInitialize())
@@ -215,8 +242,15 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
         }
 
         presenter ??= new SettingsPanelPresenter(userDataManager.UserData, gameSettingsManager);
+        ConfigureChildEditors();
         SetInteraction(true);
         return true;
+    }
+
+    private void ConfigureChildEditors()
+    {
+        editProfilePopup?.Initialize(userDataManager);
+        editNicknamePopup?.Initialize(userDataManager);
     }
 
     private void SetInteraction(bool interactable)
