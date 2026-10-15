@@ -8,6 +8,14 @@ public sealed class EquipmentStatRowView : MonoBehaviour
 
     public void SetText(string value)
     {
+        if (label == null)
+        {
+            Debug.LogError("[EquipmentStatRowView] Label is not assigned.", this);
+            return;
+        }
+
+        label.gameObject.SetActive(true);
+        label.enabled = true;
         label.text = value ?? string.Empty;
     }
 }
