@@ -18,12 +18,6 @@ public sealed class ModalBackdropDismiss : MonoBehaviour, IPointerClickHandler
         canvasGroup ??= GetComponent<CanvasGroup>();
         transition ??= GetComponent<ModalTransition>();
 
-        if (dismissOnBackdropClick && modalContent == null)
-        {
-            Debug.LogWarning("[ModalBackdropDismiss] Backdrop dismissal requires a modal content reference and has been disabled.", this);
-            dismissOnBackdropClick = false;
-        }
-
         if (dismissHandler != null && dismissHandler is not IModalDismissHandler)
             Debug.LogWarning("[ModalBackdropDismiss] The assigned handler does not implement IModalDismissHandler.", this);
     }
@@ -54,7 +48,7 @@ public sealed class ModalBackdropDismiss : MonoBehaviour, IPointerClickHandler
     private void Dismiss()
     {
         // A modal view owns its cleanup and exit transition. Routing through the
-        // handler first keeps X, cancel, backdrop, and system-back on one path.
+        // handler first keeps explicit close buttons and backdrop taps on one path.
         if (dismissHandler is IModalDismissHandler handler)
         {
             handler.Dismiss();
