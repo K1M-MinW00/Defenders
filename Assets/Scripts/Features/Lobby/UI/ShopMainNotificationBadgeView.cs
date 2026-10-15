@@ -4,6 +4,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class ShopMainNotificationBadgeView : MonoBehaviour
 {
+    private const float RefreshIntervalSeconds = 30f;
+
     [SerializeField] private ShopProductGroup shopProductGroup;
     [SerializeField] private GameObject badge;
 
@@ -22,9 +24,28 @@ public sealed class ShopMainNotificationBadgeView : MonoBehaviour
 
     private void OnEnable()
     {
-        Subscribe();
+        if (TryInitialize())
+            Subscribe();
         Refresh();
         refreshRoutine = StartCoroutine(RefreshPeriodically());
+    }
+
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null)
+            return;
+
+        if (userDataManager != manager)
+        {
+            Unsubscribe();
+            userDataManager = manager;
+        }
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
+        Subscribe();
+        Refresh();
     }
 
     private void OnDisable()
@@ -40,18 +61,24 @@ public sealed class ShopMainNotificationBadgeView : MonoBehaviour
 
     private IEnumerator RefreshPeriodically()
     {
-        WaitForSecondsRealtime delay = new(1f);
+        WaitForSecondsRealtime delay = new(RefreshIntervalSeconds);
         while (true)
         {
             yield return delay;
-            Subscribe();
+            if (TryInitialize())
+                Subscribe();
             Refresh();
         }
     }
 
-    private void Subscribe()
+    private bool TryInitialize()
     {
         userDataManager ??= UserDataManager.Instance;
+        return userDataManager?.UserData != null;
+    }
+
+    private void Subscribe()
+    {
         if (isSubscribed || userDataManager == null)
             return;
 
@@ -76,5 +103,12 @@ public sealed class ShopMainNotificationBadgeView : MonoBehaviour
                         userDataManager.HasShopNotification(ShopTabType.Recharge, shopProductGroup) ||
                         userDataManager.HasShopNotification(ShopTabType.Exchange, shopProductGroup));
         badge.SetActive(visible);
+    }
+
+    private void OnDestroy()
+    {
+        Unsubscribe();
+        if (refreshRoutine != null)
+            StopCoroutine(refreshRoutine);
     }
 }

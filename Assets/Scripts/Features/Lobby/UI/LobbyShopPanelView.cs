@@ -70,13 +70,33 @@ public sealed class LobbyShopPanelView : MonoBehaviour
     private void OnEnable()
     {
         EnsureItemsCreated();
-        TryInitialize();
-        Subscribe();
+        if (TryInitialize())
+            Subscribe();
         RefreshBadges();
         ShowTab(defaultTab);
         RefreshGemBalance();
         RefreshItemStates();
         timerRoutine = StartCoroutine(RefreshTimers());
+    }
+
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null)
+            return;
+
+        if (userDataManager != manager)
+        {
+            Unsubscribe();
+            userDataManager = manager;
+        }
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
+        Subscribe();
+        RefreshBadges();
+        RefreshGemBalance();
+        RefreshItemStates();
     }
 
     private void OnDisable()
@@ -318,12 +338,15 @@ public sealed class LobbyShopPanelView : MonoBehaviour
         while (true)
         {
             yield return delay;
-            if (userDataManager == null)
+            if (userDataManager?.UserData == null)
             {
-                TryInitialize();
-                Subscribe();
-                RefreshGemBalance();
-                RefreshItemStates();
+                if (TryInitialize())
+                {
+                    Subscribe();
+                    RefreshBadges();
+                    RefreshGemBalance();
+                    RefreshItemStates();
+                }
             }
 
             foreach (ShopProductView item in itemViews)
