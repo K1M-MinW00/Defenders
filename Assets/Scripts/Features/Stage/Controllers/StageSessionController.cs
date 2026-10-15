@@ -27,6 +27,7 @@ public sealed class StageSessionController : MonoBehaviour
     private UserDataManager userDataManager;
     private SceneFlowService sceneFlowService;
     private GameSettingsManager settingsManager;
+    private Task<bool> exitPreparationTask;
     private bool isHandlingInitializationFailure;
     private bool isDisposed;
 
@@ -464,26 +465,42 @@ public sealed class StageSessionController : MonoBehaviour
         return result;
     }
 
-    public async Task<bool> TryPrepareExitAsync()
+    public Task<bool> TryPrepareExitAsync()
     {
         if (isDisposed)
-            return false;
+            return Task.FromResult(false);
 
-        if (outcomeCoordinator?.HasPendingOutcome == true)
+        if (exitPreparationTask != null)
+            return exitPreparationTask;
+
+        exitPreparationTask = PrepareExitCoreAsync();
+        return exitPreparationTask;
+    }
+
+    private async Task<bool> PrepareExitCoreAsync()
+    {
+        // Ensure TryPrepareExitAsync stores the shared task before this method can clear it.
+        await Task.Yield();
+
+        try
         {
-            bool isClear = outcomeCoordinator.PendingIsClear;
-            StageOutcomeResult result = await outcomeCoordinator.RetryPendingAsync();
-            if (isDisposed || !result.Succeeded)
-                return false;
+            if (outcomeCoordinator?.HasPendingOutcome == true)
+            {
+                bool isClear = outcomeCoordinator.PendingIsClear;
+                StageOutcomeResult result = await outcomeCoordinator.RetryPendingAsync();
+                if (isDisposed || !result.Succeeded)
+                    return false;
 
-            if (isClear && CurrentState != StageState.StageClear && !TransitionTo(StageState.StageClear))
-                return false;
+                if (isClear && CurrentState != StageState.StageClear && !TransitionTo(StageState.StageClear))
+                    return false;
+            }
+
+            return CurrentState == StageState.StageClear || CurrentState == StageState.StageFail;
         }
-
-        if (CurrentState != StageState.StageClear && CurrentState != StageState.StageFail)
-            return false;
-
-        return true;
+        finally
+        {
+            exitPreparationTask = null;
+        }
     }
 
     public void RequestStageFail()

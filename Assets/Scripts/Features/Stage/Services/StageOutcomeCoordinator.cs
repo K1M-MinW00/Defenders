@@ -28,8 +28,12 @@ public sealed class StageOutcomeCoordinator
         if (stage == null)
             return Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
 
-        if (saveTask != null)
-            return saveTask;
+        if (HasPendingOutcome)
+        {
+            return IsSamePendingOutcome(stage, isClear, clearedWaveCount, entryFuelCost)
+                ? saveTask ?? StartPendingSaveAsync()
+                : Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
+        }
 
         pendingStage = stage;
         pendingIsClear = isClear;
@@ -46,13 +50,16 @@ public sealed class StageOutcomeCoordinator
         return saveTask ?? StartPendingSaveAsync();
     }
 
-    public void Reset()
+    private bool IsSamePendingOutcome(
+        StageDataSO stage,
+        bool isClear,
+        int clearedWaveCount,
+        int entryFuelCost)
     {
-        pendingStage = null;
-        pendingIsClear = false;
-        pendingClearedWaveCount = 0;
-        pendingEntryFuelCost = 0;
-        saveTask = null;
+        return ReferenceEquals(pendingStage, stage) &&
+               pendingIsClear == isClear &&
+               pendingClearedWaveCount == clearedWaveCount &&
+               pendingEntryFuelCost == entryFuelCost;
     }
 
     private async Task<StageOutcomeResult> StartPendingSaveAsync()
@@ -65,6 +72,7 @@ public sealed class StageOutcomeCoordinator
             if (result.Succeeded)
             {
                 pendingStage = null;
+                pendingIsClear = false;
                 pendingClearedWaveCount = 0;
                 pendingEntryFuelCost = 0;
             }
