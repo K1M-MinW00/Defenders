@@ -54,6 +54,12 @@ public sealed class LabDevelopmentUseCase
 
     public async Task<LabDevelopmentFailure> AcquireAsync(LabCardDataSO selected, int quotedCost, IReadOnlyList<LabCardDataSO> offeredCards)
     {
+        if (userData?.Profile == null || userData.Resource == null || userData.Lab == null ||
+            userData.Quest == null || config == null)
+        {
+            return LabDevelopmentFailure.InvalidRequest;
+        }
+
         if (selected == null || offeredCards == null || !offeredCards.Contains(selected) || quotedCost != GetNextCost())
             return LabDevelopmentFailure.InvalidRequest;
         if (userData.Lab.AcquiredCardIds.Contains(selected.CardId))

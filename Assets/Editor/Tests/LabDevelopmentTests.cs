@@ -6,6 +6,12 @@ using UnityEngine;
 
 public sealed class LabDevelopmentTests
 {
+    [OneTimeSetUp]
+    public void InitializeGameConfig()
+    {
+        GameConfig.Initialize();
+    }
+
     [TestCase(1, 0)]
     [TestCase(4, 0)]
     [TestCase(5, 5)]
@@ -58,6 +64,7 @@ public sealed class LabDevelopmentTests
         Profile = new UserProfileData { UserId = "u", Level = level },
         Resource = new UserResourceData { ResearchMaterial = researchMaterial },
         Lab = new UserLabData(),
+        Quest = new UserQuestData(),
     };
 
     private sealed class FakeRepository : IUserDataRepository

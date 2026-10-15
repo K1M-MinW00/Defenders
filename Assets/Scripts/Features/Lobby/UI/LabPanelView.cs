@@ -73,6 +73,23 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
         Refresh();
     }
 
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null || userDataManager == manager)
+            return;
+
+        Unsubscribe();
+        userDataManager = manager;
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
+        Subscribe();
+        BuildCards();
+        ConfigureGrid();
+        Refresh();
+    }
+
     private void OnDisable()
     {
         operationVersion++;
@@ -84,6 +101,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDestroy()
     {
+        Unsubscribe();
         developButton?.onClick.RemoveListener(HandleDevelop);
         offerDismissButton?.onClick.RemoveListener(DismissOffer);
         detailDismissButton?.onClick.RemoveListener(DismissDetail);

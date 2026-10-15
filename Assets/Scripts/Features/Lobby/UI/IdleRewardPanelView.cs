@@ -49,8 +49,24 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
-        TryInitialize();
+        if (TryInitialize())
+            Subscribe();
+    }
+
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null || userDataManager == manager)
+            return;
+
+        Unsubscribe();
+        userDataManager = manager;
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
         Subscribe();
+        if (PopupLifecycle.IsVisible)
+            Refresh(true);
     }
 
     private void OnDisable()
