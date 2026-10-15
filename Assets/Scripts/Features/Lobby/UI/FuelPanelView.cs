@@ -35,9 +35,10 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private FuelPanelPresenter presenter;
     private UserDataManager userDataManager;
-    private AdManager subscribedAdManager;
+    private AdManager adManager;
     private float refreshTimer;
     private bool isSubscribed;
+    private bool isAdSubscribed;
     private bool isAdRequestPending;
     private bool isSavingAdReward;
     private bool hasAdClosed;
@@ -58,7 +59,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
         SubscribeEvents();
         SubscribeAdEvents();
-        subscribedAdManager?.EnsureRewardedAdLoading();
+        adManager?.EnsureRewardedAdLoading();
         refreshTimer = 0f;
         Refresh();
     }
@@ -81,7 +82,8 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager = UserDataManager.Instance;
+        userDataManager ??= UserDataManager.Instance;
+        adManager ??= AdManager.Instance;
         if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
         {
             Debug.LogError("[FuelPanelView] User data services are not ready.");
@@ -91,6 +93,29 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
         presenter ??= new FuelPanelPresenter(userDataManager.UserData);
         return true;
+    }
+
+    public void Initialize(UserDataManager manager, AdManager ads = null)
+    {
+        if (manager != null)
+        {
+            UnsubscribeEvents();
+            userDataManager = manager;
+            presenter = manager.UserData != null ? new FuelPanelPresenter(manager.UserData) : null;
+        }
+
+        if (ads != null && adManager != ads)
+        {
+            UnsubscribeAdEvents();
+            adManager = ads;
+        }
+
+        if (isActiveAndEnabled && TryInitialize())
+        {
+            SubscribeEvents();
+            SubscribeAdEvents();
+            Refresh();
+        }
     }
 
     private void ResolveProducts()
@@ -165,21 +190,26 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private void SubscribeAdEvents()
     {
-        if (subscribedAdManager != null)
+        if (isAdSubscribed)
             return;
 
-        subscribedAdManager = AdManager.Instance;
-        if (subscribedAdManager != null)
-            subscribedAdManager.RewardedStateChanged += HandleRewardedAdStateChanged;
+        if (adManager == null)
+            adManager = AdManager.Instance;
+
+        if (adManager == null)
+            return;
+
+        adManager.RewardedStateChanged += HandleRewardedAdStateChanged;
+        isAdSubscribed = true;
     }
 
     private void UnsubscribeAdEvents()
     {
-        if (subscribedAdManager == null)
+        if (!isAdSubscribed || adManager == null)
             return;
 
-        subscribedAdManager.RewardedStateChanged -= HandleRewardedAdStateChanged;
-        subscribedAdManager = null;
+        adManager.RewardedStateChanged -= HandleRewardedAdStateChanged;
+        isAdSubscribed = false;
     }
 
     private void HandleRewardedAdStateChanged(RewardedAdState state)
@@ -190,7 +220,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private void Refresh()
     {
-        bool isAdReady = AdManager.Instance?.IsRewardedAdReady == true;
+        bool isAdReady = adManager?.IsRewardedAdReady == true;
         FuelPanelViewState state = presenter?.Build(isAdRequestPending, isAdReady, DateTime.UtcNow);
         if (state == null)
         {
@@ -227,7 +257,6 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
             return;
         }
 
-        AdManager adManager = AdManager.Instance;
         if (adManager == null)
         {
             UIFeedbackToast.Show(LobbyOperationFeedbackMessages.AdUnavailable);
@@ -249,16 +278,19 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private void HandleAdCompleted(RewardedAdCompletion completion)
     {
+        if (this == null)
+            return;
+
         hasAdClosed = true;
         if (!isSavingAdReward)
             isAdRequestPending = false;
 
-        Refresh();
+        RefreshIfVisible();
     }
 
     private async void HandleAdRewardEarned()
     {
-        if (isSavingAdReward || userDataManager == null)
+        if (this == null || isSavingAdReward || userDataManager == null)
             return;
 
         isSavingAdReward = true;
@@ -296,7 +328,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     public async void OnClickPurchaseFuel()
     {
-        if (isPurchasingFuel || userDataManager == null)
+        if (isPurchasingFuel || !TryInitialize())
             return;
 
         isPurchasingFuel = true;

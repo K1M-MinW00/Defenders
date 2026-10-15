@@ -28,6 +28,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
 
     private LobbyBattlePresenter presenter;
     private UserDataManager userDataManager;
+    private SceneFlowService sceneFlowService;
     private bool isSubscribed;
     private bool isStartingBattle;
     private int operationVersion;
@@ -45,13 +46,30 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
 
     private void OnEnable()
     {
-        userDataManager ??= UserDataManager.Instance;
-        if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
+        if (!TryInitialize())
             return;
 
-        presenter ??= new LobbyBattlePresenter(userDataManager.UserData, GameConfig.UserLevelProgression);
         SubscribeEvents();
         Refresh();
+    }
+
+    public void Initialize(UserDataManager manager, SceneFlowService sceneFlow = null)
+    {
+        if (manager != null && userDataManager != manager)
+        {
+            UnsubscribeEvents();
+            userDataManager = manager;
+            presenter = null;
+        }
+
+        if (sceneFlow != null)
+            sceneFlowService = sceneFlow;
+
+        if (isActiveAndEnabled && TryInitialize())
+        {
+            SubscribeEvents();
+            Refresh();
+        }
     }
 
     private void OnDisable()
@@ -94,6 +112,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
         }
 
         profileIconImage.sprite = state.ProfileIcon;
+        profileIconImage.enabled = state.ProfileIcon != null;
         levelText.text = state.Level.ToString();
         powerText.text = state.Power.ToString("N0");
         expSlider.value = state.NormalizedExp;
@@ -107,7 +126,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
 
     private async void HandleStartButtonClicked()
     {
-        if (isStartingBattle)
+        if (isStartingBattle || !TryInitialize())
             return;
 
         StageEnterData enterData = null;
@@ -142,7 +161,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
             fuelConsumed = true;
             StageEnterHolder.Set(enterData.WithEntryFuelCost(stageFuelCost));
 
-            SceneTransitionResult result = await SceneFlowService.Shared.LoadAsync(gameSceneName);
+            SceneTransitionResult result = await sceneFlowService.LoadAsync(gameSceneName);
             if (result == SceneTransitionResult.Succeeded)
                 return;
 
@@ -187,6 +206,20 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
 
     private bool CanApplyOperationResult(int version) =>
         this != null && isActiveAndEnabled && version == operationVersion;
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        sceneFlowService ??= SceneFlowService.Shared;
+        if (userDataManager?.UserData == null || !userDataManager.IsLoaded || sceneFlowService == null)
+        {
+            startButton.interactable = false;
+            return false;
+        }
+
+        presenter ??= new LobbyBattlePresenter(userDataManager.UserData, GameConfig.UserLevelProgression);
+        return true;
+    }
 
     private bool ValidateReferences()
     {
