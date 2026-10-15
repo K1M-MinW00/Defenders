@@ -101,12 +101,20 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
 
     public void Initialize(UserDataManager manager)
     {
-        if (manager == null || userDataManager == manager)
+        if (manager == null)
             return;
 
-        Unsubscribe();
-        userDataManager = manager;
+        if (userDataManager != manager)
+        {
+            Unsubscribe();
+            userDataManager = manager;
+        }
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
         Subscribe();
+        Refresh();
     }
 
     public void Show() { gameObject.SetActive(true); Refresh(); }

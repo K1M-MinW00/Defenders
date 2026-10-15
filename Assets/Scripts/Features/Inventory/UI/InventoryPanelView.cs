@@ -66,6 +66,26 @@ public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable() => Unsubscribe();
 
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null)
+            return;
+
+        if (userDataManager != manager)
+        {
+            Unsubscribe();
+            userDataManager = manager;
+            inventoryService = null;
+        }
+
+        equipmentPanel?.Initialize(manager);
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
+        Subscribe();
+        RefreshCurrentTab();
+    }
+
     public void ShowConsumables()
     {
         SelectTab(InventoryTab.Consumables);

@@ -48981,6 +48981,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1052719729}
   m_CullTransparentMesh: 1
+--- !u!1 &1058218832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1058218834}
+  - component: {fileID: 1058218833}
+  m_Layer: 0
+  m_Name: LobbySceneCompositionRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1058218833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058218832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ea72221cdf343e2a06448a25ee9f723, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::LobbySceneCompositionRoot
+  recruitPanel: {fileID: 1616451120}
+  unitPanel: {fileID: 1872875769}
+  battlePanel: {fileID: 911008209}
+  labPanel: {fileID: 904028835}
+  shopPanel: {fileID: 1339739196}
+  fuelPanel: {fileID: 1102741575}
+  idleRewardPanel: {fileID: 930730959}
+  settingsPanel: {fileID: 556910489}
+  inventoryPanel: {fileID: 383759064}
+  mailboxPanel: {fileID: 1116901236}
+  questController: {fileID: 1419769333}
+  waveMilestoneRewards: {fileID: 930730960}
+  shopNotificationBadge: {fileID: 74629315}
+--- !u!4 &1058218834
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058218832}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1059877810
 GameObject:
   m_ObjectHideFlags: 0
@@ -90791,7 +90848,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 416ad953c8ae8cc48a8a3e7b7c5b4d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyModalStack
-  exitConfirmation: {fileID: 459488146}
 --- !u!4 &1893080701
 Transform:
   m_ObjectHideFlags: 0
@@ -102917,3 +102973,4 @@ SceneRoots:
   - {fileID: 1893080701}
   - {fileID: 1392447543}
   - {fileID: 1456082738}
+  - {fileID: 1058218834}

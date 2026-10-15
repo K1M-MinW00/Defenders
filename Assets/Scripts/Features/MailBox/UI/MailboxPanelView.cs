@@ -69,6 +69,20 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
         isProcessing = false;
     }
 
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null)
+            return;
+
+        if (userDataManager != manager)
+        {
+            userDataManager = manager;
+            mailboxService = null;
+        }
+
+        TryInitialize();
+    }
+
     public async Task RefreshAsync()
     {
         await RefreshAsync(activationVersion);
