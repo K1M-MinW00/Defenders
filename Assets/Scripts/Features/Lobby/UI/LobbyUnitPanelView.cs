@@ -57,6 +57,26 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
         RefreshView();
     }
 
+    public void Initialize(UserDataManager manager)
+    {
+        if (manager == null)
+            return;
+
+        if (userDataManager != manager)
+        {
+            UnsubscribeEvents();
+            userDataManager = manager;
+            resource = null;
+            presenter = null;
+        }
+
+        if (!isActiveAndEnabled || !TryInitialize())
+            return;
+
+        SubscribeEvents();
+        RefreshView();
+    }
+
     private void OnDisable()
     {
         operationVersion++;
