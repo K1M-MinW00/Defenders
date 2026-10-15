@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class UserDataPipelineTestRunner
 {
-    private const int TestCount = 43;
+    private const int TestCount = 45;
 
     [MenuItem("Tools/Tests/Run User Data Pipeline Tests")]
     public static async void RunFromMenu()
@@ -50,6 +50,8 @@ public static class UserDataPipelineTestRunner
         await tests.NicknameUpdate_ChargesGem_AfterFreeChange();
         await tests.NicknameUpdate_RejectsInsufficientGem();
         tests.Normalize_AssignsDefaultProfileIcon_WhenMissing();
+        tests.CreateDefault_AssignsOwnedProfileIconWithSprite();
+        tests.LobbyUnitPanelPresenter_RebuildsChangedUnitLevel();
         await tests.ProfileUpdate_RejectsUnownedIcon();
         tests.LobbyBattlePresenter_BuildsStateAndStageEntry();
         tests.LobbyBattlePresenter_RejectsInvalidFormation();

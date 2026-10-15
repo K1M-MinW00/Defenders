@@ -170,6 +170,37 @@ public sealed class UserDataPipelineTests
     }
 
     [Test]
+    public void CreateDefault_AssignsOwnedProfileIconWithSprite()
+    {
+        GameConfig.Initialize();
+
+        UserDataRoot data = UserDataFactory.CreateDefault(UserId);
+
+        Assert.That(data.Profile.IconId, Is.Not.Null.And.Not.Empty);
+        Assert.That(ProfileIconResolver.IsSelectable(data.Profile.IconId, data.Roster), Is.True);
+        Assert.That(ProfileIconResolver.ResolveIcon(data.Profile.IconId, data.Roster), Is.Not.Null);
+    }
+
+    [Test]
+    public void LobbyUnitPanelPresenter_RebuildsChangedUnitLevel()
+    {
+        GameConfig.Initialize();
+        UserDataRoot data = UserDataFactory.CreateDefault(UserId);
+        Assert.That(data.Roster.OwnedUnits, Is.Not.Empty);
+
+        UserUnitData unit = data.Roster.OwnedUnits[0];
+        LobbyUnitPanelPresenter presenter = new(new RosterService(data));
+
+        LobbyUnitViewModel before = FindUnit(presenter.Build(), unit.UnitId);
+        unit.Level += 1;
+        LobbyUnitViewModel after = FindUnit(presenter.Build(), unit.UnitId);
+
+        Assert.That(before, Is.Not.Null);
+        Assert.That(after, Is.Not.Null);
+        Assert.That(after.Level, Is.EqualTo(before.Level + 1));
+    }
+
+    [Test]
     public async Task ProfileUpdate_RejectsUnownedIcon()
     {
         UserDataRoot data = CreateValidData();
@@ -248,6 +279,19 @@ public sealed class UserDataPipelineTests
             Ad = new UserAdData(),
             IdleReward = UserDataFactory.CreateDefaultIdleReward(),
         };
+    }
+
+    private static LobbyUnitViewModel FindUnit(LobbyUnitPanelViewState state, string unitId)
+    {
+        foreach (LobbyUnitViewModel unit in state.SelectedUnits)
+            if (unit.UnitId == unitId)
+                return unit;
+
+        foreach (LobbyUnitViewModel unit in state.AvailableUnits)
+            if (unit.UnitId == unitId)
+                return unit;
+
+        return null;
     }
 
     private sealed class FakeUserDataRepository : IUserDataRepository

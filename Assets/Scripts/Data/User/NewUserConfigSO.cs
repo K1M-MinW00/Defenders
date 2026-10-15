@@ -40,6 +40,11 @@ public class NewUserConfigSO : ScriptableObject
             error = $"Default profile icon unit does not exist: {DefaultProfileIconId}";
             return false;
         }
+        if (units.GetIcon(DefaultProfileIconId) == null)
+        {
+            error = $"Default profile icon sprite is missing: {DefaultProfileIconId}";
+            return false;
+        }
         if (DefaultOwnedUnitIds == null || DefaultOwnedUnitIds.Count == 0)
         {
             error = "At least one default owned unit is required.";
