@@ -422,7 +422,6 @@ public sealed class LobbyShopPanelView : MonoBehaviour
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         return userDataManager?.UserData != null;
     }
 

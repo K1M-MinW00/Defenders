@@ -48,11 +48,14 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
     public void Initialize(UserDataManager manager)
     {
-        if (manager == null || userDataManager == manager)
+        if (manager == null)
             return;
 
-        userDataManager = manager;
-        presenter = manager.UserData != null ? new ProfileIconEditPresenter(manager.UserData) : null;
+        if (userDataManager != manager || presenter == null)
+        {
+            userDataManager = manager;
+            presenter = manager.UserData != null ? new ProfileIconEditPresenter(manager.UserData) : null;
+        }
 
         if (isActiveAndEnabled)
             RefreshEditor();
@@ -210,7 +213,6 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         if (userDataManager?.UserData == null)
             return false;
 

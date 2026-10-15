@@ -306,7 +306,6 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         return userDataManager?.UserData != null;
     }
 

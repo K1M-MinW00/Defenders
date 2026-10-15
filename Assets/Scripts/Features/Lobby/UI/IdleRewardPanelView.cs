@@ -228,7 +228,6 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         bool initialized = userDataManager?.UserData != null;
         supplyButton.interactable = initialized;
         return initialized;

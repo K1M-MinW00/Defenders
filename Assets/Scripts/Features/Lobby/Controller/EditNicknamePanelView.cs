@@ -47,11 +47,14 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     public void Initialize(UserDataManager manager)
     {
-        if (manager == null || userDataManager == manager)
+        if (manager == null)
             return;
 
-        userDataManager = manager;
-        presenter = CreatePresenter(manager.UserData);
+        if (userDataManager != manager || presenter == null)
+        {
+            userDataManager = manager;
+            presenter = CreatePresenter(manager.UserData);
+        }
 
         if (isActiveAndEnabled)
             RefreshEditor();
@@ -189,7 +192,6 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         if (userDataManager?.UserData?.Profile == null)
             return false;
 

@@ -300,7 +300,6 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         if (userDataManager?.UserData == null || GameConfig.Lab == null)
         {
             developButton.interactable = false;

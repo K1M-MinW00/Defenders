@@ -124,7 +124,6 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         if (userDataManager?.UserData == null || !userDataManager.IsLoaded ||
             userDataManager.InventoryService == null || userDataManager.GachaService == null)
         {

@@ -233,8 +233,6 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
-        gameSettingsManager ??= GameSettingsManager.Instance;
         if (userDataManager?.UserData == null || gameSettingsManager == null)
         {
             SetInteraction(false);

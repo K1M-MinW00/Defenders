@@ -244,7 +244,6 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         bool initialized = userDataManager?.UserData?.Progress != null;
         openButton.interactable = initialized;
         return initialized;

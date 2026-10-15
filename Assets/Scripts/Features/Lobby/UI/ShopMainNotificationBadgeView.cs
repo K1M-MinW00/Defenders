@@ -73,7 +73,6 @@ public sealed class ShopMainNotificationBadgeView : MonoBehaviour
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         return userDataManager?.UserData != null;
     }
 

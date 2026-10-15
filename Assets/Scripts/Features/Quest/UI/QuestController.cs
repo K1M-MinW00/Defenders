@@ -324,7 +324,6 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         return userDataManager?.UserData?.Quest != null;
     }
 

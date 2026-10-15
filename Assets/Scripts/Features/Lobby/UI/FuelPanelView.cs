@@ -82,8 +82,6 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
-        adManager ??= AdManager.Instance;
         if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
         {
             Debug.LogError("[FuelPanelView] User data services are not ready.");
@@ -114,6 +112,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
         {
             SubscribeEvents();
             SubscribeAdEvents();
+            adManager?.EnsureRewardedAdLoading();
             Refresh();
         }
     }
@@ -192,9 +191,6 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
     {
         if (isAdSubscribed)
             return;
-
-        if (adManager == null)
-            adManager = AdManager.Instance;
 
         if (adManager == null)
             return;

@@ -36,31 +36,13 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
         deleteAllButton.onClick.AddListener(HandleDeleteAllButtonClicked);
     }
 
-    private async void OnEnable()
+    private void OnEnable()
     {
         int currentActivation = ++activationVersion;
         if (!TryInitialize())
-        {
-            Debug.LogError("[MailboxPanelView] MailboxService is not ready.");
             return;
-        }
 
-        SetProcessing(true);
-
-        try
-        {
-            await RefreshAsync(currentActivation);
-        }
-        catch (Exception exception)
-        {
-            Debug.LogError($"[MailboxPanelView] Load failed: {exception}");
-            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
-        }
-        finally
-        {
-            if (currentActivation == activationVersion && isActiveAndEnabled)
-                SetProcessing(false);
-        }
+        _ = RefreshAfterInitializeAsync(currentActivation);
     }
 
     private void OnDisable()
@@ -80,7 +62,8 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
             mailboxService = null;
         }
 
-        TryInitialize();
+        if (isActiveAndEnabled && TryInitialize())
+            _ = RefreshAfterInitializeAsync(++activationVersion);
     }
 
     public async Task RefreshAsync()
@@ -320,9 +303,30 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         mailboxService ??= userDataManager?.MailboxService;
         return userDataManager?.UserData != null && mailboxService != null;
+    }
+
+    private async Task RefreshAfterInitializeAsync(int expectedActivation)
+    {
+        SetProcessing(true);
+        try
+        {
+            await RefreshAsync(expectedActivation);
+        }
+        catch (Exception exception)
+        {
+            if (IsCurrentActivation(expectedActivation))
+            {
+                Debug.LogError($"[MailboxPanelView] Load failed: {exception}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+            }
+        }
+        finally
+        {
+            if (IsCurrentActivation(expectedActivation))
+                SetProcessing(false);
+        }
     }
 
     private bool IsCurrentActivation(int version) =>

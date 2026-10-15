@@ -209,8 +209,6 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
-        sceneFlowService ??= SceneFlowService.Shared;
         if (userDataManager?.UserData == null || !userDataManager.IsLoaded || sceneFlowService == null)
         {
             startButton.interactable = false;

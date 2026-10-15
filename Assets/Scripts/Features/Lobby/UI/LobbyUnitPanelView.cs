@@ -87,7 +87,6 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         if (userDataManager?.UserData?.Resource == null || userDataManager.RosterService == null)
         {
             Debug.LogError("[LobbyUnitPanelView] User data services are not ready.");

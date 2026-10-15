@@ -83,7 +83,7 @@ public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
             return;
 
         Subscribe();
-        RefreshCurrentTab();
+        ShowConsumables();
     }
 
     public void ShowConsumables()
@@ -239,7 +239,6 @@ public sealed class InventoryPanelView : MonoBehaviour, IModalDismissHandler
 
     private bool TryInitialize()
     {
-        userDataManager ??= UserDataManager.Instance;
         if (userDataManager?.UserData == null || userDataManager.InventoryService == null)
             return false;
 
