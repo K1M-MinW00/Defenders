@@ -4,17 +4,17 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class StageProgressService : MonoBehaviour
 {
-    private UserDataManager userDataManager;
+    private IStageUserDataGateway userDataGateway;
 
-    public bool Configure(UserDataManager manager)
+    public bool Configure(IStageUserDataGateway gateway)
     {
-        if (manager?.UserData?.Progress == null || !manager.IsLoaded)
+        if (gateway?.UserData?.Progress == null || !gateway.IsLoaded)
         {
             Debug.LogError("[StageProgressService] Loaded user progress is required.", this);
             return false;
         }
 
-        userDataManager = manager;
+        userDataGateway = gateway;
         return true;
     }
 
@@ -42,36 +42,7 @@ public sealed class StageProgressService : MonoBehaviour
         if (nextProgress.BestWaveCleared == currentProgress.BestWaveCleared)
             return true;
 
-        return await userDataManager.SaveUserProgressAsync(nextProgress);
-    }
-
-    public async Task<bool> ApplyStageClearAsync(StageDataSO clearedStage)
-    {
-        if (!TryGetCurrentProgress(clearedStage, out UserProgressData currentProgress))
-            return false;
-
-        UserProgressData nextProgress;
-
-        try
-        {
-            nextProgress = StageProgressRules.AdvanceAfterStageClear(
-                currentProgress,
-                clearedStage.sector,
-                clearedStage.stage,
-                GameConfig.Stages);
-        }
-        catch (System.Exception exception)
-        {
-            Debug.LogError($"ApplyStageClearAsync failed: {exception.Message}");
-            return false;
-        }
-
-        return await userDataManager.SaveUserProgressAsync(nextProgress);
-    }
-
-    public Task<bool> ApplyStageFailAsync(StageDataSO failedStage, int clearedWaveCount)
-    {
-        return RecordWaveClearAsync(failedStage, clearedWaveCount);
+        return await userDataGateway.SaveUserProgressAsync(nextProgress);
     }
 
     private bool TryGetCurrentProgress(StageDataSO stage, out UserProgressData progress)
@@ -84,7 +55,7 @@ public sealed class StageProgressService : MonoBehaviour
             return false;
         }
 
-        progress = userDataManager?.UserData?.Progress;
+        progress = userDataGateway?.UserData?.Progress;
 
         if (progress == null)
         {

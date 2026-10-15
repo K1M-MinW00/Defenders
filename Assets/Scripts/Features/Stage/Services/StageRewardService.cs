@@ -8,17 +8,17 @@ public sealed class StageRewardService : MonoBehaviour
     [SerializeField] private StageCurrencyRewardVFX currencyRewardVfx;
     private int fusionCount;
     private int fourStarFusionCount;
-    private UserDataManager userDataManager;
+    private IStageUserDataGateway userDataGateway;
 
-    public bool Configure(UserDataManager manager)
+    public bool Configure(IStageUserDataGateway gateway)
     {
-        if (manager?.UserData == null || !manager.IsLoaded)
+        if (gateway?.UserData == null || !gateway.IsLoaded)
         {
             Debug.LogError("[StageRewardService] Loaded user data manager is required.", this);
             return false;
         }
 
-        userDataManager = manager;
+        userDataGateway = gateway;
         return true;
     }
 
@@ -68,8 +68,8 @@ public sealed class StageRewardService : MonoBehaviour
 
     public Task<StageOutcomeResult> GiveStageClearRewardAsync(StageDataSO stageData)
     {
-        return userDataManager != null
-            ? userDataManager.CompleteStageAsync(stageData, fusionCount, fourStarFusionCount)
+        return userDataGateway != null
+            ? userDataGateway.CompleteStageAsync(stageData, fusionCount, fourStarFusionCount)
             : Task.FromResult(StageOutcomeResult.Fail(StageOutcomeFailure.InvalidRequest));
     }
 
@@ -78,8 +78,8 @@ public sealed class StageRewardService : MonoBehaviour
         int clearedWaveCount,
         int entryFuelCost)
     {
-        return userDataManager != null
-            ? userDataManager.FailStageAsync(
+        return userDataGateway != null
+            ? userDataGateway.FailStageAsync(
                 stageData,
                 clearedWaveCount,
                 entryFuelCost,

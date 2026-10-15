@@ -24,7 +24,7 @@ public sealed class StageSessionController : MonoBehaviour
     private StageWaveSequence waveSequence;
     private readonly StagePhaseMachine phaseMachine = new();
     private StageOutcomeCoordinator outcomeCoordinator;
-    private UserDataManager userDataManager;
+    private IStageUserDataGateway userDataGateway;
     private SceneFlowService sceneFlowService;
     private GameSettingsManager settingsManager;
     private Task<bool> exitPreparationTask;
@@ -44,11 +44,11 @@ public sealed class StageSessionController : MonoBehaviour
     public WaveData CurrentWave => waveSequence?.Current;
 
     public void Initialize(
-        UserDataManager userData,
+        IStageUserDataGateway userData,
         SceneFlowService sceneFlow,
         GameSettingsManager gameSettings)
     {
-        userDataManager = userData;
+        userDataGateway = userData;
         sceneFlowService = sceneFlow;
         settingsManager = gameSettings;
     }
@@ -184,18 +184,18 @@ public sealed class StageSessionController : MonoBehaviour
 
     private bool TryConfigureUserDataServices(out string error)
     {
-        if (userDataManager?.UserData == null || !userDataManager.IsLoaded)
+        if (userDataGateway?.UserData == null || !userDataGateway.IsLoaded)
         {
             error = "Loaded user data is unavailable.";
             return false;
         }
 
-        if (!rewardService.Configure(userDataManager) ||
-            !progressService.Configure(userDataManager) ||
+        if (!rewardService.Configure(userDataGateway) ||
+            !progressService.Configure(userDataGateway) ||
             !bootstrapper.Configure(
-                userDataManager.RosterService,
-                userDataManager.UserData.Inventory,
-                LabBonusProvider.CreateSnapshot(userDataManager.UserData, GameConfig.Lab)))
+                userDataGateway.RosterService,
+                userDataGateway.UserData.Inventory,
+                LabBonusProvider.CreateSnapshot(userDataGateway.UserData, GameConfig.Lab)))
         {
             error = "Stage data services could not be configured.";
             return false;
@@ -224,8 +224,8 @@ public sealed class StageSessionController : MonoBehaviour
         bool refundSucceeded = refundAmount <= 0;
         if (refundAmount > 0)
         {
-            refundSucceeded = userDataManager != null &&
-                              await userDataManager.RefundStageEntryFuelAsync(refundAmount);
+            refundSucceeded = userDataGateway != null &&
+                              await userDataGateway.RefundStageEntryFuelAsync(refundAmount);
             if (!refundSucceeded)
                 Debug.LogError($"[{nameof(StageSessionController)}] Failed to refund {refundAmount} entry fuel.", this);
         }

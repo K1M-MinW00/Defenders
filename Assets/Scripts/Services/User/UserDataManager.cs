@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public partial class UserDataManager : PersistentSingleton<UserDataManager>
+public partial class UserDataManager : PersistentSingleton<UserDataManager>, IStageUserDataGateway
 {
     public UserDataRoot UserData { get; private set; }
     public InventoryService InventoryService { get; private set; }
