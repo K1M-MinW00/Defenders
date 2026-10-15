@@ -15,19 +15,32 @@ public sealed class StageRelicService : MonoBehaviour
 
     [SerializeField, Min(0f)] private float delayBetweenRelicUnits = 0.5f;
 
-    public void Initialize(
+    public bool TryInitialize(
         StagePreparationService preparation,
         MonsterSpawner spawner,
-        StageRelicUI relicUI)
+        StageRelicUI relicUI,
+        out string error)
     {
+        UnsubscribeRosterChanged();
+
+        if (preparation?.UnitRoster == null || spawner == null || relicUI == null)
+        {
+            preparationService = null;
+            monsterSpawner = null;
+            ui = null;
+            error = "Required relic service references are missing.";
+            return false;
+        }
+
         preparationService = preparation;
         monsterSpawner = spawner;
-        if (preparationService?.UnitRoster != null)
-            preparationService.UnitRoster.OnRosterChanged += HandleRosterChanged;
+        SubscribeRosterChanged();
 
         ui = relicUI;
-        ui?.Initialize();
-        ui?.SetOwnedRelics(acquired);
+        ui.Initialize();
+        ui.SetOwnedRelics(acquired);
+        error = string.Empty;
+        return true;
     }
 
     public async Task PresentChoiceAsync()
@@ -161,14 +174,18 @@ public sealed class StageRelicService : MonoBehaviour
     private void OnDestroy()
     {
         StopUnitSpawnQueue();
-
-        if (preparationService?.UnitRoster != null)
-            preparationService.UnitRoster.OnRosterChanged -= HandleRosterChanged;
+        UnsubscribeRosterChanged();
     }
 
     private void OnDisable()
     {
         StopUnitSpawnQueue();
+        UnsubscribeRosterChanged();
+    }
+
+    private void OnEnable()
+    {
+        SubscribeRosterChanged();
     }
 
     private void StopUnitSpawnQueue()
@@ -177,6 +194,21 @@ public sealed class StageRelicService : MonoBehaviour
             StopCoroutine(unitSpawnRoutine);
         unitSpawnRoutine = null;
         pendingUnitSpawns.Clear();
+    }
+
+    private void UnsubscribeRosterChanged()
+    {
+        if (preparationService?.UnitRoster != null)
+            preparationService.UnitRoster.OnRosterChanged -= HandleRosterChanged;
+    }
+
+    private void SubscribeRosterChanged()
+    {
+        if (preparationService?.UnitRoster == null)
+            return;
+
+        preparationService.UnitRoster.OnRosterChanged -= HandleRosterChanged;
+        preparationService.UnitRoster.OnRosterChanged += HandleRosterChanged;
     }
 
     private readonly struct UnitSpawnRequest

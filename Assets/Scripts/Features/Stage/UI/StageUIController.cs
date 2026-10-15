@@ -36,14 +36,24 @@ public class StageUIController : MonoBehaviour
     private StageOverlayController overlayController;
     public StageRelicUI RelicUI => relicUI;
 
-    public void Initialize(GameSettingsManager settingsManager, SceneFlowService sceneFlowService)
+    public bool TryInitialize(
+        GameSettingsManager settingsManager,
+        SceneFlowService sceneFlowService,
+        out string error)
     {
         Dispose();
 
-        if (session == null || flowController == null || gameCameraController == null)
+        if (session == null || flowController == null || gameCameraController == null ||
+            timeController == null || resultUI == null || pausePanelUI == null)
         {
-            Debug.LogError($"[{nameof(StageUIController)}] Required scene references are missing.", this);
-            return;
+            error = "Required scene UI references are missing.";
+            return false;
+        }
+
+        if (settingsManager == null || sceneFlowService == null)
+        {
+            error = "Required UI services are unavailable.";
+            return false;
         }
 
         session.PhaseChanged -= HandlePhaseChanged;
@@ -89,6 +99,8 @@ public class StageUIController : MonoBehaviour
 
         isInitialized = true;
         SetPhase(session.CurrentState);
+        error = string.Empty;
+        return true;
     }
 
     private void OnDestroy()

@@ -126,7 +126,12 @@ public sealed class StageSessionController : MonoBehaviour
         currentStageData = stageData;
         waveSequence = new StageWaveSequence(stageData.waves);
         outcomeCoordinator = new StageOutcomeCoordinator(rewardService);
-        phaseRuntimeController.Configure(stageData);
+
+        if (!phaseRuntimeController.TryConfigure(stageData, out string runtimeError))
+        {
+            error = $"Stage runtime configuration failed ({stageData.StageKey}): {runtimeError}";
+            return false;
+        }
 
         if (!bootstrapper.TryInitializeStage(stageData, enterData, out _, out string bootstrapError))
         {
@@ -134,11 +139,23 @@ public sealed class StageSessionController : MonoBehaviour
             return false;
         }
 
-        stageUI.Initialize(settingsManager, sceneFlowService);
-        relicService.Initialize(
-            phaseRuntimeController.PreparationService,
-            phaseRuntimeController.MonsterSpawner,
-            stageUI.RelicUI);
+        if (!stageUI.TryInitialize(settingsManager, sceneFlowService, out string uiError))
+        {
+            error = $"Stage UI initialization failed ({stageData.StageKey}): {uiError}";
+            return false;
+        }
+
+        if (!relicService.TryInitialize(
+                phaseRuntimeController.PreparationService,
+                phaseRuntimeController.MonsterSpawner,
+                stageUI.RelicUI,
+                out string relicError))
+        {
+            stageUI.Dispose();
+            error = $"Stage relic initialization failed ({stageData.StageKey}): {relicError}";
+            return false;
+        }
+
         stageUI.RefreshWaveUI(CurrentWaveIndex);
 
         error = string.Empty;

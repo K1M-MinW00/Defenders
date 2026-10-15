@@ -25,12 +25,25 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     public StagePreparationService PreparationService => preparationService;
     public MonsterSpawner MonsterSpawner => monsterSpawner;
 
-    public void Configure(StageDataSO stageData)
+    public bool TryConfigure(StageDataSO stageData, out string error)
     {
         if (stageData == null)
-            throw new ArgumentNullException(nameof(stageData));
+        {
+            error = "Stage data is missing.";
+            return false;
+        }
+
+        if (prepareTimerController == null || waveController == null || preparationService == null ||
+            monsterSpawner == null || monsterPrewarmService == null || stageTimeController == null ||
+            poolManager == null || pathPreview == null)
+        {
+            error = "Required phase runtime references are missing.";
+            return false;
+        }
 
         prepareTimerController.Configure(stageData.prepareDuration);
+        error = string.Empty;
+        return true;
     }
 
     public void CancelActiveUnitInteraction()
@@ -56,9 +69,6 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
                 throw new InvalidOperationException("Failed to enter stage preparation mode.");
 
             stageTimeController.ExitCombatPhase();
-            if (pathPreview == null)
-                throw new InvalidOperationException("MonsterPathPreview is not assigned.");
-
             pathPreview.Show(wave, monsterSpawner.SpawnPoints, preparationService.UnitRoster);
             pendingPrepareFinished = onFinished;
             if (waitForFirstUnit && !preparationService.HasAnyUnit)
