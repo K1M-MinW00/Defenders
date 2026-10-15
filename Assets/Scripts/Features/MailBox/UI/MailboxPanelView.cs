@@ -23,6 +23,7 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private Button deleteAllButton;
 
     private MailboxService mailboxService;
+    private UserDataManager userDataManager;
     private readonly Dictionary<string, MailSlotUI> slotsByMailId = new();
     private readonly List<string> staleMailIds = new();
     private readonly Queue<MailSlotUI> availableSlots = new();
@@ -38,9 +39,7 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
     private async void OnEnable()
     {
         int currentActivation = ++activationVersion;
-        UserDataManager userDataManager = UserDataManager.Instance;
-        mailboxService = userDataManager != null ? userDataManager.MailboxService : null;
-        if (mailboxService == null)
+        if (!TryInitialize())
         {
             Debug.LogError("[MailboxPanelView] MailboxService is not ready.");
             return;
@@ -152,14 +151,17 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
 
     private async void HandleMailClicked(MailData mail)
     {
-        if (isProcessing)
+        if (isProcessing || mail == null || !TryInitialize())
             return;
 
+        int operationVersion = activationVersion;
         SetProcessing(true);
 
         try
         {
-            MailboxClaimResult result = await UserDataManager.Instance.ClaimMailAsync(mail);
+            MailboxClaimResult result = await userDataManager.ClaimMailAsync(mail);
+            if (!IsCurrentActivation(operationVersion))
+                return;
 
             if (!result.Succeeded)
             {
@@ -170,25 +172,32 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
         }
         catch (Exception exception)
         {
-            Debug.LogError($"[MailboxPanelView] Claim refresh failed: {exception}");
-            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+            if (IsCurrentActivation(operationVersion))
+            {
+                Debug.LogError($"[MailboxPanelView] Claim refresh failed: {exception}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+            }
         }
         finally
         {
-            SetProcessing(false);
+            if (IsCurrentActivation(operationVersion))
+                SetProcessing(false);
         }
     }
 
     private async void HandleReceiveAllButtonClicked()
     {
-        if (isProcessing)
+        if (isProcessing || !TryInitialize())
             return;
 
+        int operationVersion = activationVersion;
         SetProcessing(true);
 
         try
         {
-            MailboxClaimResult result = await UserDataManager.Instance.ClaimAllMailAsync();
+            MailboxClaimResult result = await userDataManager.ClaimAllMailAsync();
+            if (!IsCurrentActivation(operationVersion))
+                return;
 
             if (!result.Succeeded)
             {
@@ -201,35 +210,46 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
         }
         catch (Exception exception)
         {
-            Debug.LogError($"[MailboxPanelView] Claim all refresh failed: {exception}");
-            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+            if (IsCurrentActivation(operationVersion))
+            {
+                Debug.LogError($"[MailboxPanelView] Claim all refresh failed: {exception}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxLoadFailed);
+            }
         }
         finally
         {
-            SetProcessing(false);
+            if (IsCurrentActivation(operationVersion))
+                SetProcessing(false);
         }
     }
 
     private async void HandleDeleteAllButtonClicked()
     {
-        if (isProcessing)
+        if (isProcessing || !TryInitialize())
             return;
 
+        int operationVersion = activationVersion;
         SetProcessing(true);
 
         try
         {
             await mailboxService.DeleteAllAsync();
+            if (!IsCurrentActivation(operationVersion))
+                return;
             await RefreshAsync();
         }
         catch (Exception exception)
         {
-            Debug.LogError($"[MailboxPanelView] Delete failed: {exception}");
-            UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxDeleteFailed);
+            if (IsCurrentActivation(operationVersion))
+            {
+                Debug.LogError($"[MailboxPanelView] Delete failed: {exception}");
+                UIFeedbackToast.Show(LobbyOperationFeedbackMessages.MailboxDeleteFailed);
+            }
         }
         finally
         {
-            SetProcessing(false);
+            if (IsCurrentActivation(operationVersion))
+                SetProcessing(false);
         }
     }
 
@@ -283,4 +303,14 @@ public sealed class MailboxPanelView : MonoBehaviour, IModalDismissHandler
         slotsByMailId.Clear();
         availableSlots.Clear();
     }
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        mailboxService ??= userDataManager?.MailboxService;
+        return userDataManager?.UserData != null && mailboxService != null;
+    }
+
+    private bool IsCurrentActivation(int version) =>
+        this != null && isActiveAndEnabled && version == activationVersion;
 }

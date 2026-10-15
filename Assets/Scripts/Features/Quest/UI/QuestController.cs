@@ -21,7 +21,13 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
     private bool questActionBusy;
     private bool rewardClaimBusy;
     private int openVersion;
+    private bool isSubscribed;
+    private UserDataManager userDataManager;
+    private ModalOverlayLifecycle overlayLifecycle;
     private readonly List<QuestDefinition> orderedQuests = new(16);
+
+    private ModalOverlayLifecycle OverlayLifecycle =>
+        overlayLifecycle ??= new ModalOverlayLifecycle(overlay);
 
     private void Awake()
     {
@@ -29,34 +35,57 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         closeButton?.onClick.AddListener(Dismiss);
     }
 
+    private void OnEnable()
+    {
+        TryInitialize();
+        Subscribe();
+    }
+
+    private void OnDisable()
+    {
+        openVersion++;
+        questActionBusy = false;
+        rewardClaimBusy = false;
+        StopTimer();
+        rewardDisplay?.Hide();
+        OverlayLifecycle.HideImmediately();
+        Unsubscribe();
+    }
+
     private void OnDestroy()
     {
+        Unsubscribe();
         openButton?.onClick.RemoveListener(Open);
         closeButton?.onClick.RemoveListener(Dismiss);
     }
 
     public async void Open()
     {
-        if (overlay == null)
+        if (overlay == null || !TryInitialize())
+        {
+            UIFeedbackToast.Show("퀘스트 정보를 불러오는 중입니다.");
             return;
+        }
 
+        Subscribe();
         int currentOpen = ++openVersion;
-        overlay.SetActive(true);
-        overlay.transform.SetAsLastSibling();
+        OverlayLifecycle.Show();
 
-        UserDataManager manager = UserDataManager.Instance;
         try
         {
-            if (manager?.IsLoaded == true)
-                await manager.RefreshQuestPeriodsAsync();
+            if (userDataManager.IsLoaded)
+                await userDataManager.RefreshQuestPeriodsAsync();
         }
         catch (Exception exception)
         {
-            Debug.LogError($"[QuestController] Period refresh failed: {exception}");
-            UIFeedbackToast.Show("퀘스트 정보를 갱신하지 못했습니다.");
+            if (IsCurrentOpen(currentOpen))
+            {
+                Debug.LogError($"[QuestController] Period refresh failed: {exception}");
+                UIFeedbackToast.Show("퀘스트 정보를 갱신하지 못했습니다.");
+            }
         }
 
-        if (currentOpen != openVersion || !overlay.activeSelf)
+        if (!IsCurrentOpen(currentOpen))
             return;
 
         Refresh();
@@ -67,20 +96,17 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
     public void Dismiss()
     {
         openVersion++;
+        questActionBusy = false;
+        rewardClaimBusy = false;
         rewardDisplay?.Hide();
-        if (timerRoutine != null)
-        {
-            StopCoroutine(timerRoutine);
-            timerRoutine = null;
-        }
-        if (overlay != null)
-            ModalTransitionUtility.RequestExit(overlay, () => overlay.SetActive(false));
+        StopTimer();
+        OverlayLifecycle.Close();
     }
 
     public void Refresh()
     {
-        UserQuestData data = UserDataManager.Instance?.UserData?.Quest;
-        if (overlay == null || data == null) return;
+        UserQuestData data = userDataManager?.UserData?.Quest;
+        if (!OverlayLifecycle.IsVisible || data == null) return;
 
         weeklyRewardTrack?.SetState(data.WeeklyScore, data.ClaimedWeeklyRewards);
         dailyRewardTrack?.SetState(data.DailyScore, data.ClaimedDailyRewards);
@@ -137,7 +163,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         if (questActionBusy)
             return;
 
-        UserQuestData data = UserDataManager.Instance?.UserData?.Quest;
+        UserQuestData data = userDataManager?.UserData?.Quest;
         if (data == null) return;
         if (QuestProgressService.GetProgress(data, definition.Id) < definition.Target)
         {
@@ -146,21 +172,27 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         }
 
         questActionBusy = true;
+        int operationVersion = openVersion;
         QuestScoreClaimResult result;
         try
         {
-            result = await UserDataManager.Instance.ClaimQuestScoreAsync(definition.Id);
+            result = await userDataManager.ClaimQuestScoreAsync(definition.Id);
         }
         catch (Exception exception)
         {
-            Debug.LogError($"[QuestController] Score claim failed: {exception}");
-            UIFeedbackToast.Show("퀘스트 점수를 획득하지 못했습니다.");
+            if (IsCurrentOpen(operationVersion))
+            {
+                Debug.LogError($"[QuestController] Score claim failed: {exception}");
+                UIFeedbackToast.Show("퀘스트 점수를 획득하지 못했습니다.");
+            }
             return;
         }
         finally
         {
-            questActionBusy = false;
+            if (operationVersion == openVersion)
+                questActionBusy = false;
         }
+        if (!IsCurrentOpen(operationVersion)) return;
         if (result.Succeeded)
         {
             UIFeedbackToast.Show($"퀘스트 점수 {definition.Score}점을 획득했습니다.");
@@ -176,7 +208,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
     {
         if (rewardClaimBusy) return;
         QuestRewardMilestone milestone = GameConfig.QuestRewards?.Get(period, threshold);
-        UserQuestData data = UserDataManager.Instance?.UserData?.Quest;
+        UserQuestData data = userDataManager?.UserData?.Quest;
         if (milestone == null || data == null) return;
         int score = period == QuestRewardPeriod.Daily ? data.DailyScore : data.WeeklyScore;
         IReadOnlyCollection<int> claimed = period == QuestRewardPeriod.Daily
@@ -194,21 +226,27 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         }
 
         rewardClaimBusy = true;
+        int operationVersion = openVersion;
         QuestRewardClaimResult result;
         try
         {
-            result = await UserDataManager.Instance.ClaimQuestRewardAsync(period, threshold);
+            result = await userDataManager.ClaimQuestRewardAsync(period, threshold);
         }
         catch (Exception exception)
         {
-            Debug.LogError($"[QuestController] Reward claim failed: {exception}");
-            UIFeedbackToast.Show("퀘스트 보상을 받을 수 없습니다.");
+            if (IsCurrentOpen(operationVersion))
+            {
+                Debug.LogError($"[QuestController] Reward claim failed: {exception}");
+                UIFeedbackToast.Show("퀘스트 보상을 받을 수 없습니다.");
+            }
             return;
         }
         finally
         {
-            rewardClaimBusy = false;
+            if (operationVersion == openVersion)
+                rewardClaimBusy = false;
         }
+        if (!IsCurrentOpen(operationVersion)) return;
         if (result.Succeeded)
         {
             Refresh();
@@ -262,6 +300,48 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
             }
             yield return new WaitForSecondsRealtime(30f);
         }
+        timerRoutine = null;
+    }
+
+    private bool TryInitialize()
+    {
+        userDataManager ??= UserDataManager.Instance;
+        return userDataManager?.UserData?.Quest != null;
+    }
+
+    private void Subscribe()
+    {
+        if (isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnQuestUpdated += HandleQuestUpdated;
+        isSubscribed = true;
+    }
+
+    private void Unsubscribe()
+    {
+        if (!isSubscribed || userDataManager == null)
+            return;
+
+        userDataManager.OnQuestUpdated -= HandleQuestUpdated;
+        isSubscribed = false;
+    }
+
+    private void HandleQuestUpdated()
+    {
+        if (OverlayLifecycle.IsVisible)
+            Refresh();
+    }
+
+    private bool IsCurrentOpen(int version) =>
+        this != null && isActiveAndEnabled && version == openVersion && OverlayLifecycle.IsVisible;
+
+    private void StopTimer()
+    {
+        if (timerRoutine == null)
+            return;
+
+        StopCoroutine(timerRoutine);
         timerRoutine = null;
     }
 }
