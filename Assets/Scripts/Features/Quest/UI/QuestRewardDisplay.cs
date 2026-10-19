@@ -11,12 +11,14 @@ public sealed class QuestRewardDisplay : MonoBehaviour
     [SerializeField] private Button backdropButton;
     [SerializeField] private CommonSlotUI slotPrefab;
     private readonly List<CommonSlotUI> slotPool = new();
+    private bool showingAcquired;
 
     public void ShowPreview(IReadOnlyList<RewardData> rewards, RectTransform anchor)
     {
         Bind(rewards);
         if (panel == null || title == null) return;
-        title.text = "보상 정보";
+        showingAcquired = false;
+        RefreshTitle();
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
         PositionNear(anchor);
@@ -27,7 +29,8 @@ public sealed class QuestRewardDisplay : MonoBehaviour
     {
         Bind(rewards);
         if (panel == null || title == null) return;
-        title.text = "획득한 보상";
+        showingAcquired = true;
+        RefreshTitle();
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
         panel.anchorMin = panel.anchorMax = panel.pivot = new Vector2(.5f, .5f);
@@ -44,9 +47,33 @@ public sealed class QuestRewardDisplay : MonoBehaviour
         backdropButton?.onClick.AddListener(Hide);
     }
 
+    private void OnEnable()
+    {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
+        RefreshTitle();
+    }
+
+    private void OnDisable()
+    {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
+    }
+
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         backdropButton?.onClick.RemoveListener(Hide);
+    }
+
+    private void HandleLocaleChanged(string _) => RefreshTitle();
+
+    private void RefreshTitle()
+    {
+        if (title == null)
+            return;
+
+        title.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            showingAcquired ? "quest.reward.acquired_title" : "quest.reward.preview_title");
     }
 
     private void Bind(IReadOnlyList<RewardData> rewards)

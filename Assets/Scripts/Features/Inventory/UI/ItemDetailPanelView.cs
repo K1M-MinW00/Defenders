@@ -14,13 +14,21 @@ public class ItemDetailPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private TMP_Text descriptionText;
 
     private ModalOverlayLifecycle lifecycle;
+    private ItemDataSO currentItem;
+    private int currentCount;
     public bool IsVisible => Lifecycle.IsVisible;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
+
+    private void OnEnable() => LocalizationService.LocaleChanged += HandleLocaleChanged;
+    private void OnDisable() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
 
     public void Show(ItemDataSO itemData, int count)
     {
         if (itemData == null)
             return;
+
+        currentItem = itemData;
+        currentCount = count;
 
         Lifecycle.Show();
         
@@ -28,10 +36,10 @@ public class ItemDetailPanelView : MonoBehaviour, IModalDismissHandler
         itemIconImage.sprite = itemData.Icon;
         itemIconImage.color = Color.white;
         itemIconImage.enabled = itemData.Icon != null;
-        nameText.text = itemData.ItemName;
-        descriptionText.text = itemData.Description;
+        nameText.text = itemData.LocalizedName;
+        descriptionText.text = itemData.LocalizedDescription;
 
-        countText.text = itemData.Stackable ? $"보유 : {count}": "";
+        countText.text = FormatCount(itemData, count);
     }
 
     public void Hide()
@@ -47,6 +55,8 @@ public class ItemDetailPanelView : MonoBehaviour, IModalDismissHandler
 
     private void ClearContent()
     {
+        currentItem = null;
+        currentCount = 0;
         iconImage.color = Color.white;
         itemIconImage.sprite = null;
         itemIconImage.color = Color.white;
@@ -58,4 +68,18 @@ public class ItemDetailPanelView : MonoBehaviour, IModalDismissHandler
     }
 
     public void Dismiss() => Hide();
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (currentItem != null && IsVisible)
+            Show(currentItem, currentCount);
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Items, key, arguments);
+
+    public static string FormatCount(ItemDataSO itemData, int count) =>
+        itemData != null && itemData.Stackable ? count.ToString("N0") : string.Empty;
+
+    private void OnDestroy() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
 }

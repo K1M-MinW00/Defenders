@@ -42,6 +42,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
     private bool isSubscribed;
     private ModalOverlayLifecycle offerLifecycle;
     private ModalOverlayLifecycle detailLifecycle;
+    private LabCardDataSO currentDetailCard;
     private ModalOverlayLifecycle OfferLifecycle =>
         offerLifecycle ??= new ModalOverlayLifecycle(offerOverlay);
     private ModalOverlayLifecycle DetailLifecycle =>
@@ -64,6 +65,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (!TryInitialize())
             return;
 
@@ -95,6 +97,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         operationVersion++;
         currentOffer = null;
         Unsubscribe();
@@ -104,6 +107,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         Unsubscribe();
         developButton?.onClick.RemoveListener(HandleDevelop);
         offerDismissButton?.onClick.RemoveListener(DismissOffer);
@@ -143,7 +147,11 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
         priceText.SetText(userDataManager.GetNextLabDevelopmentCost().ToString("N0"));
         int capacity = LabDevelopmentUseCase.GetCardCapacity(data.Profile.Level);
         int owned = data.Lab.AcquiredCardIds.Count;
-        limitText.SetText("보유 {0}/{1}  다음 슬롯 레벨 {2}", owned, capacity, ((data.Profile.Level / 5) + 1) * 5);
+        limitText.text = Localize(
+            "lab.capacity",
+            owned,
+            capacity,
+            ((data.Profile.Level / 5) + 1) * 5);
         developButton.interactable = !resolving;
         HashSet<string> acquired = new(data.Lab.AcquiredCardIds);
         LabCardDataSO[] sortedCards = GameConfig.Lab.Cards.Where(card => card != null).OrderBy(card => card.Rarity).ToArray();
@@ -261,8 +269,9 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
         detailIcon.enabled = card.Icon != null;
         if (detailBackground != null) detailBackground.color = Color.white;
         detailGradient?.SetRarity(card.Rarity);
-        detailName.text = card.DisplayName;
-        detailDescription.text = card.Description;
+        currentDetailCard = card;
+        detailName.text = card.LocalizedName;
+        detailDescription.text = card.LocalizedDescription;
         detailValue.text = card.GetFormattedValue();
         DetailLifecycle.Show();
     }
@@ -276,6 +285,7 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
     private void DismissDetail()
     {
         DetailLifecycle.Close();
+        currentDetailCard = null;
     }
 
     public void Dismiss()
@@ -291,12 +301,27 @@ public sealed class LabPanelView : MonoBehaviour, IModalDismissHandler
 
     private static string FailureMessage(LabDevelopmentFailure failure) => failure switch
     {
-        LabDevelopmentFailure.InsufficientCurrency => "재화가 부족합니다.",
-        LabDevelopmentFailure.LevelLocked => "계정 레벨을 더 올리면 새로운 기술을 개발할 수 있습니다.",
-        LabDevelopmentFailure.AllCardsAcquired => "모든 기술 카드를 획득했습니다.",
-        LabDevelopmentFailure.SaveFailed => "저장에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-        _ => "기술 개발을 진행할 수 없습니다.",
+        LabDevelopmentFailure.InsufficientCurrency => Localize("lab.failure.insufficient_currency"),
+        LabDevelopmentFailure.LevelLocked => Localize("lab.failure.level_locked"),
+        LabDevelopmentFailure.AllCardsAcquired => Localize("lab.failure.all_cards_acquired"),
+        LabDevelopmentFailure.SaveFailed => Localize("lab.failure.save_failed"),
+        _ => Localize("lab.failure.unavailable"),
     };
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (!isActiveAndEnabled)
+            return;
+
+        Refresh();
+        foreach (LabCardView offerView in offerViews)
+            offerView?.RefreshLocalization();
+        if (currentDetailCard != null && DetailLifecycle.IsVisible)
+            ShowDetail(currentDetailCard);
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 
     private bool TryInitialize()
     {

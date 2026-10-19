@@ -248,9 +248,9 @@ public sealed class StageSessionController : MonoBehaviour
         {
             string message = refundAmount > 0
                 ? refundSucceeded
-                    ? "스테이지를 불러오지 못해 사용한 연료를 반환했습니다."
-                    : "스테이지를 불러오지 못했으며 연료 반환에도 실패했습니다."
-                : "스테이지를 불러오지 못해 로비로 돌아왔습니다.";
+                    ? LocalizationService.Get(LocalizationTables.Stage, "initialization.refunded")
+                    : LocalizationService.Get(LocalizationTables.Stage, "initialization.refund_failed")
+                : LocalizationService.Get(LocalizationTables.Stage, "initialization.returned");
             UIFeedbackToast.Show(message);
             return;
         }

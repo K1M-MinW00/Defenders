@@ -50,6 +50,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
             return;
 
         SubscribeEvents();
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         Refresh();
     }
 
@@ -75,6 +76,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
     private void OnDisable()
     {
         operationVersion++;
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         UnsubscribeEvents();
     }
 
@@ -116,11 +118,19 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
         levelText.text = state.Level.ToString();
         powerText.text = state.Power.ToString("N0");
         expSlider.value = state.NormalizedExp;
-        sectorStageText.text = $"{state.Sector}-{state.Stage}";
+        sectorStageText.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            "battle.stage",
+            state.Sector,
+            state.Stage);
         bestWaveText.text = state.BestWaveCleared.ToString();
         goldText.text = state.Gold.ToString("N0");
         gemText.text = state.Gem.ToString("N0");
-        fuelText.text = $"{state.Fuel} / {state.MaxFuel}";
+        fuelText.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            "battle.fuel",
+            state.Fuel,
+            state.MaxFuel);
         startButton.interactable = !isStartingBattle && state.CanStartBattle && state.Fuel >= stageFuelCost;
     }
 
@@ -179,7 +189,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
             Refresh();
             string message = GetSceneTransitionFailureMessage(result);
             if (!refunded)
-                message += " 연료 반환에 실패했습니다.";
+                message += Localize("battle.scene.refund_failed_suffix");
             UIFeedbackToast.Show(message);
         }
         catch (Exception exception)
@@ -198,14 +208,16 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
             {
                 Refresh();
                 UIFeedbackToast.Show(refunded
-                    ? "전투 화면을 불러오지 못해 사용한 연료를 반환했습니다."
-                    : "전투 화면을 불러오지 못했으며 연료 반환에도 실패했습니다.");
+                    ? Localize("battle.scene.exception_refunded")
+                    : Localize("battle.scene.exception_refund_failed"));
             }
         }
     }
 
     private bool CanApplyOperationResult(int version) =>
         this != null && isActiveAndEnabled && version == operationVersion;
+
+    private void HandleLocaleChanged(string _) => Refresh();
 
     private bool TryInitialize()
     {
@@ -236,10 +248,10 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
     {
         return failure switch
         {
-            LobbyBattleStartFailure.EmptyFormation => "전투에 참여할 유닛을 편성해주세요.",
-            LobbyBattleStartFailure.InvalidFormation => "편성 정보가 올바르지 않습니다.",
-            LobbyBattleStartFailure.InvalidProgress => "스테이지 진행 정보를 확인할 수 없습니다.",
-            _ => "전투를 시작할 수 없습니다.",
+            LobbyBattleStartFailure.EmptyFormation => Localize("battle.start.empty_formation"),
+            LobbyBattleStartFailure.InvalidFormation => Localize("battle.start.invalid_formation"),
+            LobbyBattleStartFailure.InvalidProgress => Localize("battle.start.invalid_progress"),
+            _ => Localize("battle.start.unavailable"),
         };
     }
 
@@ -247,9 +259,9 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
     {
         return result switch
         {
-            SceneTransitionResult.InvalidScene => "전투 씬이 빌드 설정에 없습니다.",
-            SceneTransitionResult.AlreadyLoading => "다른 화면으로 이동 중입니다.",
-            _ => "전투 화면을 불러오지 못했습니다.",
+            SceneTransitionResult.InvalidScene => Localize("battle.scene.invalid"),
+            SceneTransitionResult.AlreadyLoading => Localize("battle.scene.already_loading"),
+            _ => Localize("battle.scene.load_failed"),
         };
     }
 
@@ -257,14 +269,21 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
     {
         return failure switch
         {
-            StageEntryFuelFailure.InsufficientFuel => $"스테이지 입장에는 연료 {fuelCost}이 필요합니다.",
-            StageEntryFuelFailure.SaveFailed => "연료 사용 정보를 저장하지 못했습니다.",
-            _ => "연료를 사용할 수 없습니다.",
+            StageEntryFuelFailure.InsufficientFuel => LocalizationService.Get(
+                LocalizationTables.Lobby,
+                "battle.fuel.insufficient",
+                fuelCost),
+            StageEntryFuelFailure.SaveFailed => Localize("battle.fuel.save_failed"),
+            _ => Localize("battle.fuel.unavailable"),
         };
     }
 
+    private static string Localize(string key) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key);
+
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         UnsubscribeEvents();
 
         if (startButton != null)

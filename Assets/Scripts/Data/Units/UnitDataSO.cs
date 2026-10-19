@@ -41,6 +41,24 @@ public class UnitDataSO : ScriptableObject
     [Header("Limit Break")]
     public List<LimitBreakData> limitBreaks = new();
 
+    public string LocalizedName
+    {
+        get
+        {
+            string value = LocalizationService.Get(LocalizationTables.Units, $"unit.{unitId}.name");
+            return string.IsNullOrWhiteSpace(value) || value.StartsWith("No translation found for") ? displayName : value;
+        }
+    }
+
+    public string GetLocalizedLimitBreakDescription(int index)
+    {
+        if (limitBreaks == null || index < 0 || index >= limitBreaks.Count)
+            return string.Empty;
+        string fallback = limitBreaks[index]?.description;
+        string value = LocalizationService.Get(LocalizationTables.Units, $"unit.{unitId}.limit_break.{index}");
+        return string.IsNullOrWhiteSpace(value) || value.StartsWith("No translation found for") ? fallback : value;
+    }
+
     public UnitStats GetOriginStats(int level)
     {
         level = Mathf.Clamp(level, 1, maxLevel);

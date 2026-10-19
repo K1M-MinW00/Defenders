@@ -31,18 +31,22 @@ public sealed class StageResultUI : MonoBehaviour
     private StageSessionController session;
     private SceneFlowService sceneFlowService;
     private StageResultPresentation currentPresentation;
+    private StageDataSO currentStage;
+    private string currentReturnButtonKey = "result.return";
     private bool isReturningToLobby;
 
     private void Awake()
     {
         clearReturnButton.onClick.AddListener(OnClickReturnToLobby);
         failReturnButton.onClick.AddListener(OnClickReturnToLobby);
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
     }
 
     private void OnDestroy()
     {
         clearReturnButton.onClick.RemoveListener(OnClickReturnToLobby);
         failReturnButton.onClick.RemoveListener(OnClickReturnToLobby);
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
     }
 
     public void Initialize(StageSessionController stageSession, SceneFlowService sceneFlow)
@@ -55,12 +59,14 @@ public sealed class StageResultUI : MonoBehaviour
 
     public void ShowSettling(bool isClear, StageDataSO stage, int clearedWaveCount)
     {
+        currentStage = stage;
         currentPresentation = StageResultPresenter.Create(isClear, stage, clearedWaveCount, System.Array.Empty<RewardData>());
         HideAll();
     }
 
     public void ShowResult(bool isClear, StageDataSO stage, int clearedWaveCount, IReadOnlyList<RewardData> rewards)
     {
+        currentStage = stage;
         currentPresentation = StageResultPresenter.Create(isClear, stage, clearedWaveCount, rewards);
         if (isClear)
             ShowClear(currentPresentation);
@@ -75,8 +81,8 @@ public sealed class StageResultUI : MonoBehaviour
         else
             ShowFail(currentPresentation);
 
-        SetReturnButtons(true, "다시 시도");
-        UIFeedbackToast.Show("결과 저장에 실패했습니다. 다시 시도해 주세요.");
+        SetReturnButtons(true, "result.retry");
+        UIFeedbackToast.Show(Localize("result.save_failed"));
     }
 
     public void HideAll()
@@ -89,9 +95,9 @@ public sealed class StageResultUI : MonoBehaviour
     {
         HideAll();
         clearStageText.text = presentation.StageLabel;
-        clearWaveText.text = $"{presentation.ClearedWaveCount} / {presentation.TotalWaveCount}";
+        clearWaveText.text = Localize("result.waves_survived", presentation.ClearedWaveCount, presentation.TotalWaveCount);
         BindClearRewards(presentation.Rewards);
-        SetReturnButtons(true, "돌아가기");
+        SetReturnButtons(true, "result.return");
         stageClearPanel.SetActive(true);
     }
 
@@ -99,13 +105,13 @@ public sealed class StageResultUI : MonoBehaviour
     {
         HideAll();
         failStageText.text = presentation.StageLabel;
-        failWaveText.text = $"{presentation.ClearedWaveCount} / {presentation.TotalWaveCount}";
+        failWaveText.text = Localize("result.waves_survived", presentation.ClearedWaveCount, presentation.TotalWaveCount);
 
         RewardData fuelReward = FindReward(presentation.Rewards, RewardType.Fuel);
         failRewardArea.SetActive(fuelReward != null && fuelReward.Amount > 0);
         failFuelIcon.sprite = GameConfig.Icons?.GetResourceIcon(RewardType.Fuel);
         failFuelAmountText.text = fuelReward != null ? fuelReward.Amount.ToString("N0") : "0";
-        SetReturnButtons(true, "돌아가기");
+        SetReturnButtons(true, "result.return");
         stageFailPanel.SetActive(true);
     }
 
@@ -122,8 +128,10 @@ public sealed class StageResultUI : MonoBehaviour
         }
     }
 
-    private void SetReturnButtons(bool interactable, string label)
+    private void SetReturnButtons(bool interactable, string localizationKey)
     {
+        currentReturnButtonKey = localizationKey;
+        string label = Localize(localizationKey);
         clearReturnButton.interactable = interactable;
         failReturnButton.interactable = interactable;
         clearReturnButtonText.text = label;
@@ -146,7 +154,7 @@ public sealed class StageResultUI : MonoBehaviour
             return;
 
         isReturningToLobby = true;
-        SetReturnButtons(false, "처리 중...");
+        SetReturnButtons(false, "result.processing");
         if (session == null || !await session.TryPrepareExitAsync())
         {
             isReturningToLobby = false;
@@ -157,8 +165,8 @@ public sealed class StageResultUI : MonoBehaviour
         if (sceneFlowService == null)
         {
             isReturningToLobby = false;
-            SetReturnButtons(true, "돌아가기");
-            UIFeedbackToast.Show("씬 전환 서비스를 사용할 수 없습니다.");
+            SetReturnButtons(true, "result.return");
+            UIFeedbackToast.Show(Localize("result.scene_service_unavailable"));
             return;
         }
 
@@ -166,8 +174,39 @@ public sealed class StageResultUI : MonoBehaviour
         if (result != SceneTransitionResult.Succeeded && this != null)
         {
             isReturningToLobby = false;
-            SetReturnButtons(true, "돌아가기");
-            UIFeedbackToast.Show("로비로 이동하지 못했습니다. 다시 시도해 주세요.");
+            SetReturnButtons(true, "result.return");
+            UIFeedbackToast.Show(Localize("result.lobby_load_failed"));
         }
+    }
+
+    private static string Localize(string key) =>
+        LocalizationService.Get(LocalizationTables.Stage, key);
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Stage, key, arguments);
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (!stageClearPanel.activeSelf && !stageFailPanel.activeSelf)
+            return;
+
+        currentPresentation = StageResultPresenter.Create(
+            currentPresentation.IsClear,
+            currentStage,
+            currentPresentation.ClearedWaveCount,
+            currentPresentation.Rewards);
+
+        if (stageClearPanel.activeSelf)
+        {
+            clearStageText.text = currentPresentation.StageLabel;
+            clearWaveText.text = Localize("result.waves_survived", currentPresentation.ClearedWaveCount, currentPresentation.TotalWaveCount);
+        }
+        else
+        {
+            failStageText.text = currentPresentation.StageLabel;
+            failWaveText.text = Localize("result.waves_survived", currentPresentation.ClearedWaveCount, currentPresentation.TotalWaveCount);
+        }
+
+        SetReturnButtons(!isReturningToLobby, currentReturnButtonKey);
     }
 }

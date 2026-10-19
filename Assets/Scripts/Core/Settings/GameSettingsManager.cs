@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManager>
 {
@@ -27,8 +29,7 @@ public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManage
     private void Load()
     {
         SoundEnabled = PlayerPrefs.GetInt(SoundKey, 1) == 1;
-        string savedLanguage = PlayerPrefs.GetString(LanguageKey, "ko");
-        LanguageCode = savedLanguage == "en" ? "en" : "ko";
+        LanguageCode = ResolveInitialLanguageCode();
 
         PushEnabled = PlayerPrefs.GetInt(PushKey, 1) == 1;
     }
@@ -86,6 +87,38 @@ public sealed class GameSettingsManager : PersistentSingleton<GameSettingsManage
 
     private void ApplyLanguage()
     {
-        // LocalizationManager.Instance.SetLanguage(LangaugeCode);
+        var initialization = LocalizationSettings.InitializationOperation;
+        if (initialization.IsDone)
+        {
+            ApplyInitializedLanguage();
+            return;
+        }
+
+        initialization.Completed += _ => ApplyInitializedLanguage();
+    }
+
+    private void ApplyInitializedLanguage()
+    {
+        Locale locale = LocalizationSettings.AvailableLocales.GetLocale(LanguageCode);
+        if (locale == null)
+        {
+            locale = LocalizationSettings.AvailableLocales.GetLocale("ko");
+            Debug.LogWarning($"[GameSettingsManager] Locale '{LanguageCode}' is unavailable. Falling back to Korean.", this);
+        }
+
+        if (locale != null && LocalizationSettings.SelectedLocale != locale)
+            LocalizationSettings.SelectedLocale = locale;
+    }
+
+    private static string ResolveInitialLanguageCode()
+    {
+        if (PlayerPrefs.HasKey(LanguageKey))
+        {
+            string savedLanguage = PlayerPrefs.GetString(LanguageKey);
+            if (savedLanguage == "ko" || savedLanguage == "en")
+                return savedLanguage;
+        }
+
+        return SupportedDeviceLocaleSelector.GetLanguageCode(Application.systemLanguage);
     }
 }

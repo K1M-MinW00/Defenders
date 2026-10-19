@@ -45,6 +45,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (TryInitialize())
             Subscribe();
 
@@ -73,6 +74,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         operationVersion++;
         Unsubscribe();
         Lifecycle.HideImmediately();
@@ -80,6 +82,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         Unsubscribe();
         openButton?.onClick.RemoveListener(Open);
         claimAllButton?.onClick.RemoveListener(ClaimAll);
@@ -90,7 +93,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
     {
         if (!TryInitialize())
         {
-            UIFeedbackToast.Show("유저 데이터를 불러오는 중입니다.");
+            UIFeedbackToast.Show(Localize("wave_reward.loading_user_data"));
             return;
         }
 
@@ -126,7 +129,10 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
         }
 
         StageDataSO stage = WaveMilestoneRewardRules.ResolveRewardStage(progress, GameConfig.Stages);
-        if (titleText != null) titleText.text = stage == null ? "웨이브 달성 보상" : $"스테이지\n{stage.StageKey}";
+        if (titleText != null)
+            titleText.text = stage == null
+                ? Localize("wave_reward.title")
+                : Localize("wave_reward.stage_title", stage.StageKey);
 
         IReadOnlyList<WaveMilestoneReward> milestones = stage?.milestoneRewards?
             .Where(milestone => milestone != null)
@@ -233,14 +239,23 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
 
     private static void ShowResult(WaveMilestoneClaimResult result)
     {
-        UIFeedbackToast.Show(result.Succeeded ? "웨이브 달성 보상을 받았습니다." : result.Failure switch
+        UIFeedbackToast.Show(result.Succeeded ? Localize("wave_reward.claim.succeeded") : result.Failure switch
         {
-            WaveMilestoneClaimFailure.Locked => "아직 달성하지 않은 보상입니다.",
-            WaveMilestoneClaimFailure.AlreadyClaimed => "이미 받은 보상입니다.",
-            WaveMilestoneClaimFailure.SaveFailed => "보상 저장에 실패했습니다.",
-            _ => "보상을 받을 수 없습니다.",
+            WaveMilestoneClaimFailure.Locked => Localize("wave_reward.claim.locked"),
+            WaveMilestoneClaimFailure.AlreadyClaimed => Localize("wave_reward.claim.already_claimed"),
+            WaveMilestoneClaimFailure.SaveFailed => Localize("wave_reward.claim.save_failed"),
+            _ => Localize("wave_reward.claim.unavailable"),
         });
     }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (Lifecycle.IsVisible)
+            RefreshPopup();
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 
     private bool TryInitialize()
     {

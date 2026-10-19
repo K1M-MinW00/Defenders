@@ -9,6 +9,7 @@ public sealed class GemConfirmPopupView : MonoBehaviour, IModalDismissHandler
 
     private readonly OneShotConfirmation confirmation = new();
     private bool isConfirming;
+    private int currentGemCost;
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
@@ -27,7 +28,8 @@ public sealed class GemConfirmPopupView : MonoBehaviour, IModalDismissHandler
             return false;
         }
 
-        messageText.text = $"{gemCost:N0} 개를 사용하여 모집하시겠습니까?";
+        currentGemCost = gemCost;
+        RefreshMessage();
         Lifecycle.Show();
         return true;
     }
@@ -53,9 +55,28 @@ public sealed class GemConfirmPopupView : MonoBehaviour, IModalDismissHandler
 
     public void Dismiss() => OnCancel();
 
+    private void OnEnable()
+    {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
+    }
+
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (!isConfirming)
             confirmation.Cancel();
+    }
+
+    private void HandleLocaleChanged(string _) => RefreshMessage();
+
+    private void RefreshMessage()
+    {
+        if (messageText == null || !confirmation.HasPendingAction)
+            return;
+
+        messageText.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            "recruit.confirm_gems",
+            currentGemCost);
     }
 }

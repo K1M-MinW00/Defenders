@@ -1,0 +1,276 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Relics Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Relics
+  m_TableCollectionNameGuidString: 9c2ab5e47ffb91c4fa76c1ca18676aa3
+  m_Entries:
+  - m_Id: 2744938496
+    m_Key: WarlordsSeal.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2786881536
+    m_Key: WarlordsSeal.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075840
+    m_Key: WarlordsSeal.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075841
+    m_Key: WarlordsSeal.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075842
+    m_Key: HawkeyeCrystal.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075843
+    m_Key: HawkeyeCrystal.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075844
+    m_Key: HawkeyeCrystal.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075845
+    m_Key: HawkeyeCrystal.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075846
+    m_Key: BerserkersSpring.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075847
+    m_Key: BerserkersSpring.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075848
+    m_Key: BerserkersSpring.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075849
+    m_Key: BerserkersSpring.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075850
+    m_Key: FrostShackles.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075851
+    m_Key: FrostShackles.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075852
+    m_Key: FrostShackles.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075853
+    m_Key: FrostShackles.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075854
+    m_Key: ReinforcementFlare.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075855
+    m_Key: ReinforcementFlare.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075856
+    m_Key: ReinforcementFlare.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075857
+    m_Key: ReinforcementFlare.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075858
+    m_Key: EliteSummons.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075859
+    m_Key: EliteSummons.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075860
+    m_Key: EliteSummons.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075861
+    m_Key: EliteSummons.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075862
+    m_Key: AbundantVein.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075863
+    m_Key: AbundantVein.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075864
+    m_Key: AbundantVein.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075865
+    m_Key: AbundantVein.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075866
+    m_Key: DiceOfFate.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075867
+    m_Key: DiceOfFate.short
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075868
+    m_Key: DiceOfFate.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075869
+    m_Key: DiceOfFate.symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985704837120
+    m_Key: lab.attack.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985755168768
+    m_Key: lab.attack.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363072
+    m_Key: lab.attack_speed.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363073
+    m_Key: lab.attack_speed.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363074
+    m_Key: lab.critical_chance.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363075
+    m_Key: lab.critical_chance.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557376
+    m_Key: lab.critical_damage.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557377
+    m_Key: lab.critical_damage.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557378
+    m_Key: lab.damage_reduction.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557379
+    m_Key: lab.damage_reduction.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557380
+    m_Key: lab.detection_range.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557381
+    m_Key: lab.detection_range.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751680
+    m_Key: lab.energy_recovery.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751681
+    m_Key: lab.energy_recovery.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751682
+    m_Key: lab.idle_reward.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751683
+    m_Key: lab.idle_reward.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751684
+    m_Key: lab.max_hp.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751685
+    m_Key: lab.max_hp.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140288
+    m_Key: lab.max_units.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140289
+    m_Key: lab.max_units.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140290
+    m_Key: lab.population_discount.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140291
+    m_Key: lab.population_discount.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334592
+    m_Key: lab.reroll_discount.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334593
+    m_Key: lab.reroll_discount.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334594
+    m_Key: lab.sell_price.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334595
+    m_Key: lab.sell_price.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528896
+    m_Key: lab.starting_minerals.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528897
+    m_Key: lab.starting_minerals.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528898
+    m_Key: lab.wave_reward.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528899
+    m_Key: lab.wave_reward.description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5228347474716393472
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347474716393472
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792099122579

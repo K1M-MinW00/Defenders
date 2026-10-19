@@ -1,0 +1,312 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI_Stage Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: UI_Stage
+  m_TableCollectionNameGuidString: 76bdf26c69eb8854fb162c3f2f9a069e
+  m_Entries:
+  - m_Id: 2698801152
+    m_Key: hud.free_count
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2744938496
+    m_Key: hud.monsters.incoming
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132800
+    m_Key: hud.monsters.remaining
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132801
+    m_Key: result.stage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132802
+    m_Key: result.stage_unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132803
+    m_Key: result.retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132804
+    m_Key: result.return
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132805
+    m_Key: result.processing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132806
+    m_Key: result.save_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132807
+    m_Key: result.scene_service_unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132808
+    m_Key: result.lobby_load_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132809
+    m_Key: prepare.unit_required
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132810
+    m_Key: prepare.insufficient_minerals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132811
+    m_Key: prepare.population_full
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132812
+    m_Key: prepare.last_unit_required
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132813
+    m_Key: initialization.refunded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132814
+    m_Key: initialization.refund_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132815
+    m_Key: initialization.returned
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854119112704
+    m_Key: unit_info.active_locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055744
+    m_Key: unit_info.passive_locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055745
+    m_Key: unit_info.no_skill_info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055746
+    m_Key: unit_info.promotion_effect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055747
+    m_Key: unit_info.no_skill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055748
+    m_Key: monster.description.unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055749
+    m_Key: monster.description.Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055750
+    m_Key: monster.description.Elite_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055751
+    m_Key: monster.description.Armored_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055752
+    m_Key: monster.description.Orc_Rider
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055753
+    m_Key: monster.description.Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055754
+    m_Key: monster.description.Armored_Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055755
+    m_Key: monster.description.Skeleton_Archer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055756
+    m_Key: monster.description.Slime
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055757
+    m_Key: monster.description.WereWolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143907581952
+    m_Key: prepare.start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143953719296
+    m_Key: prepare.summon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143953719297
+    m_Key: prepare.increase_population
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913600
+    m_Key: prepare.reroll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913601
+    m_Key: prepare.reroll_guide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913602
+    m_Key: prepare.sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913603
+    m_Key: prepare.sell_guide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687588691968
+    m_Key: hud.stage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829312
+    m_Key: hud.wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829313
+    m_Key: monster.info.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829314
+    m_Key: monster.info.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829315
+    m_Key: monster.name.Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829316
+    m_Key: monster.name.Elite_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829317
+    m_Key: monster.name.Armored_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829318
+    m_Key: monster.name.Orc_Rider
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829319
+    m_Key: monster.name.Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829320
+    m_Key: monster.name.Armored_Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829321
+    m_Key: monster.name.Skeleton_Archer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829322
+    m_Key: monster.name.Slime
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829323
+    m_Key: monster.name.WereWolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298232991744
+    m_Key: pause.resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129088
+    m_Key: pause.exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129089
+    m_Key: pause.push_notifications
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129090
+    m_Key: pause.sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129091
+    m_Key: pause.combat_formation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670424711168
+    m_Key: result.success
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654208
+    m_Key: result.failure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654209
+    m_Key: result.rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654210
+    m_Key: result.waves_survived
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654211
+    m_Key: result.refunded_fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654212
+    m_Key: result.refund_description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1028263201501184
+    m_Key: announcement.sector
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1028263247638528
+    m_Key: announcement.boss_wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029048060637184
+    m_Key: relic_choice.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029048106774528
+    m_Key: relic_choice.select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029975886819328
+    m_Key: unit_info.active
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029975937150976
+    m_Key: unit_info.passive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1065510453932032
+    m_Key: result.waves_survived_label
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5228347474562252800
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347474562252800
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792098534146

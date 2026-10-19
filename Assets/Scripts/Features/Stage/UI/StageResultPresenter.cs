@@ -6,7 +6,9 @@ public static class StageResultPresenter
     {
         int totalWaveCount = stage?.waves?.Count ?? 0;
         int safeClearedCount = System.Math.Clamp(clearedWaveCount, 0, totalWaveCount);
-        string stageLabel = stage != null ? $"스테이지 {stage.StageKey}" : "스테이지";
+        string stageLabel = stage != null
+            ? LocalizationService.Get(LocalizationTables.Stage, "result.stage", stage.StageKey)
+            : LocalizationService.Get(LocalizationTables.Stage, "result.stage_unknown");
         return new StageResultPresentation(isClear, stageLabel, safeClearedCount, totalWaveCount, rewards);
     }
 }

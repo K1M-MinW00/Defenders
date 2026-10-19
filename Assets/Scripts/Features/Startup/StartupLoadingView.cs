@@ -15,7 +15,11 @@ public sealed class StartupLoadingView : MonoBehaviour
     [SerializeField] private float smoothSpeed = 3f;
 
     private float targetProgress;
+    private string currentStatusKey;
+    private string currentActionKey;
     public event System.Action ActionRequested;
+
+    private void OnEnable() => LocalizationService.LocaleChanged += HandleLocaleChanged;
 
     private void Awake()
     {
@@ -27,7 +31,7 @@ public sealed class StartupLoadingView : MonoBehaviour
 
         targetProgress = 0f;
         progressSlider.value = 0f;
-        statusText.text = "Initializing...";
+        SetStatusKey("startup.status.initializing");
         startButton.onClick.AddListener(HandleActionRequested);
         startButton.gameObject.SetActive(false);
         startButton.interactable = false;
@@ -55,18 +59,34 @@ public sealed class StartupLoadingView : MonoBehaviour
 
     public void SetStatus(string message)
     {
+        currentStatusKey = null;
         statusText.text = message ?? string.Empty;
+    }
+
+    public void SetStatusKey(string key)
+    {
+        currentStatusKey = key;
+        statusText.text = Localize(key);
     }
 
     public void SetStartButtonVisible(bool visible)
     {
-        SetActionButton("Start", visible);
+        SetActionButtonKey("startup.action.start", visible);
     }
 
     public void SetActionButton(string label, bool visible)
     {
+        currentActionKey = null;
         actionButtonLabel.text = label;
 
+        startButton.gameObject.SetActive(visible);
+        startButton.interactable = visible;
+    }
+
+    public void SetActionButtonKey(string key, bool visible)
+    {
+        currentActionKey = key;
+        actionButtonLabel.text = Localize(key);
         startButton.gameObject.SetActive(visible);
         startButton.interactable = visible;
     }
@@ -90,8 +110,22 @@ public sealed class StartupLoadingView : MonoBehaviour
         ActionRequested?.Invoke();
     }
 
+    private void HandleLocaleChanged(string _)
+    {
+        if (!string.IsNullOrWhiteSpace(currentStatusKey))
+            statusText.text = Localize(currentStatusKey);
+        if (!string.IsNullOrWhiteSpace(currentActionKey))
+            actionButtonLabel.text = Localize(currentActionKey);
+    }
+
+    private void OnDisable() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
+
+    private static string Localize(string key) =>
+        LocalizationService.Get(LocalizationTables.Common, key);
+
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (startButton != null)
             startButton.onClick.RemoveListener(HandleActionRequested);
     }

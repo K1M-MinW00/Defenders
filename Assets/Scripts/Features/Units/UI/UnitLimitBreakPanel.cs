@@ -45,12 +45,14 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (currentUnitData != null && userDataManager != null)
             Refresh();
     }
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         operationVersion++;
     }
 
@@ -107,7 +109,9 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
         if (isMax)
         {
             if (materialText != null)
-                materialText.text = "유닛이 이미 최고 품질에 도달했습니다.";
+                materialText.text = LocalizationService.Get(
+                    LocalizationTables.Items,
+                    "unit.limit_break.max");
 
             unitIconImage?.gameObject.SetActive(false);
             limitBreakButton?.gameObject.SetActive(false);
@@ -181,7 +185,7 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
             bool unlocked = i < currentUnit.LimitBreak;
 
             slot.gameObject.SetActive(true);
-            slot.Setup(datas[i], unlocked);
+            slot.Setup(currentUnitData.GetLocalizedLimitBreakDescription(i), unlocked);
         }
     }
 
@@ -274,7 +278,14 @@ public sealed class UnitLimitBreakPanel : MonoBehaviour
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (limitBreakButton != null)
             limitBreakButton.onClick.RemoveListener(OnClickLimitBreak);
+    }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (isActiveAndEnabled)
+            Refresh();
     }
 }

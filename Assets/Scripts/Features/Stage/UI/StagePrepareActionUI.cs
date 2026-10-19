@@ -3,10 +3,6 @@ using UnityEngine.UI;
 
 public class StagePrepareActionUI : MonoBehaviour
 {
-    private const string UnitRequiredMessage = "전투를 진행할 유닛이 하나 이상 있어야 합니다";
-    private const string InsufficientMineralsMessage = "광물이 모자랍니다";
-    private const string PopulationFullMessage = "유닛 수가 최대입니다. 인구 수를 증가 시키거나 유닛을 판매하세요";
-
     [SerializeField] private Button startButton;
     [SerializeField] private Button summonButton;
     [SerializeField] private Button increasePopButton;
@@ -67,7 +63,7 @@ public class StagePrepareActionUI : MonoBehaviour
     {
         if (preparationService == null || !preparationService.HasAnyUnit)
         {
-            UIFeedbackToast.Show(UnitRequiredMessage);
+            UIFeedbackToast.Show(Localize("prepare.unit_required"));
             return;
         }
 
@@ -79,11 +75,14 @@ public class StagePrepareActionUI : MonoBehaviour
         switch (failure)
         {
             case StageUnitTransactionFailure.InsufficientMinerals:
-                UIFeedbackToast.Show(InsufficientMineralsMessage);
+                UIFeedbackToast.Show(Localize("prepare.insufficient_minerals"));
                 break;
             case StageUnitTransactionFailure.PopulationFull:
-                UIFeedbackToast.Show(PopulationFullMessage);
+                UIFeedbackToast.Show(Localize("prepare.population_full"));
                 break;
         }
     }
+
+    private static string Localize(string key) =>
+        LocalizationService.Get(LocalizationTables.Stage, key);
 }

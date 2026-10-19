@@ -40,12 +40,14 @@ public sealed class UnitPromotionPanel : MonoBehaviour
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (currentUnitData != null && userDataManager != null)
             Refresh();
     }
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         operationVersion++;
     }
 
@@ -89,7 +91,10 @@ public sealed class UnitPromotionPanel : MonoBehaviour
         int promotion = currentUnit.Promotion;
 
         if (promotionText != null)
-            promotionText.text = $"{promotion}진급";
+            promotionText.text = LocalizationService.Get(
+                LocalizationTables.Items,
+                "unit.promotion",
+                promotion);
 
         Sprite promotionSprite = visualConfig?.GetPromotionSprite(promotion);
         if (promotionImage != null && promotionSprite != null)
@@ -213,7 +218,14 @@ public sealed class UnitPromotionPanel : MonoBehaviour
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (promotionButton != null)
             promotionButton.onClick.RemoveListener(OnClickPromotion);
+    }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (isActiveAndEnabled)
+            Refresh();
     }
 }

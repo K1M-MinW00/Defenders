@@ -1,0 +1,215 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: SystemMessages_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 4fc665ed381e503428abd47b359a673e, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 2694606848
+    m_Localized: Failed to save. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2736549888
+    m_Localized: Unable to load the ad. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2744938496
+    m_Localized: Unable to load the mailbox. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2744938497
+    m_Localized: Failed to delete the mail. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132800
+    m_Localized: User information could not be found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132801
+    m_Localized: There is no mail to claim.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132802
+    m_Localized: The mail reward information is invalid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132803
+    m_Localized: Failed to save the mail reward. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132804
+    m_Localized: Unable to claim the mail reward.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132805
+    m_Localized: This recruit banner is currently unavailable.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132806
+    m_Localized: Not enough recruit currency.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132807
+    m_Localized: No units are available to recruit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132808
+    m_Localized: Failed to save the recruit results. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132809
+    m_Localized: Unable to recruit units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132810
+    m_Localized: Not enough Gems.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132811
+    m_Localized: You cannot hold any more Fuel.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132812
+    m_Localized: Failed to save the Fuel purchase. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132813
+    m_Localized: Unable to purchase Fuel.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132814
+    m_Localized: You have claimed all ad rewards available today.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132815
+    m_Localized: Failed to save the ad reward. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132816
+    m_Localized: Unable to claim the ad reward.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132817
+    m_Localized: Failed to process the purchase.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132818
+    m_Localized: Purchase complete.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132819
+    m_Localized: Not enough Gems.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132820
+    m_Localized: You have purchased the maximum available quantity.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132821
+    m_Localized: This product is not currently on sale.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132822
+    m_Localized: This purchase method is not supported yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132823
+    m_Localized: The product reward information is invalid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132824
+    m_Localized: The purchase would exceed your inventory limit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132825
+    m_Localized: The purchase request is invalid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132826
+    m_Localized: Unit information could not be found.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132827
+    m_Localized: This unit is already at the maximum level.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132828
+    m_Localized: Not enough Gold.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132829
+    m_Localized: Not enough training materials.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132830
+    m_Localized: Unable to train this unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132831
+    m_Localized: This unit is already at the maximum Promotion tier.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132832
+    m_Localized: The Promotion cost information is invalid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132833
+    m_Localized: Not enough Promotion materials.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132834
+    m_Localized: Unable to promote this unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132835
+    m_Localized: This unit is already at the maximum Limit Break tier.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132836
+    m_Localized: Not enough Limit Break materials.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132837
+    m_Localized: Unable to Limit Break this unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132838
+    m_Localized: Unable to load the current battle roster.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132839
+    m_Localized: You do not own this unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132840
+    m_Localized: This unit is not in the selected roster.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132841
+    m_Localized: This unit is already selected.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132842
+    m_Localized: Failed to save the roster. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132843
+    m_Localized: Unable to change the battle roster.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

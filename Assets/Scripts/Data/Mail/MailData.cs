@@ -6,6 +6,8 @@ public class MailData
 {
     [FirestoreProperty] public string MailId { get; set; }
     [FirestoreProperty] public string Title { get; set; }
+    [FirestoreProperty] public string TitleKo { get; set; }
+    [FirestoreProperty] public string TitleEn { get; set; }
     [FirestoreProperty] public string Description { get; set; }
     [FirestoreProperty] public Timestamp CreatedAt { get; set; }
     [FirestoreProperty] public Timestamp ExpireAt { get; set; }

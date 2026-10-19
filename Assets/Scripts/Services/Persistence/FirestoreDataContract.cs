@@ -28,5 +28,8 @@ internal static class FirestoreDataContract
     public static class MailFields
     {
         public const string Claimed = "Claimed";
+        public const string Title = "Title";
+        public const string TitleKo = "TitleKo";
+        public const string TitleEn = "TitleEn";
     }
 }

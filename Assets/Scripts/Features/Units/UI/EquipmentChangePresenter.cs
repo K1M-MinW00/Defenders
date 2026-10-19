@@ -97,9 +97,8 @@ public sealed class EquipmentChangePresenter
         if (definition == null)
             return string.Empty;
 
-        string stat = definition.BaseStatType == EquipmentStatType.MaxHp
-            ? "최대 체력"
-            : "공격력";
-        return $"{stat}  +{balance.GetBaseStatValue(definition, item.Level):N0}";
+        return EquipmentLocalizedText.StatValue(
+            definition.BaseStatType,
+            balance.GetBaseStatValue(definition, item.Level));
     }
 }

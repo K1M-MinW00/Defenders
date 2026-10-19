@@ -36,7 +36,12 @@ public sealed class QuestItemView : MonoBehaviour
             progressSlider.SetValueWithoutNotify(progress);
         }
         action = onAction;
-        if (actionText != null) actionText.text = scoreClaimed ? "획득함" : completed ? "획득" : "이동";
+        if (actionText != null)
+            actionText.text = scoreClaimed
+                ? Localize("quest.action.claimed")
+                : completed
+                    ? Localize("quest.action.claim")
+                    : Localize("quest.action.go");
         if (actionButton != null)
         {
             actionButton.interactable = !scoreClaimed;
@@ -50,6 +55,9 @@ public sealed class QuestItemView : MonoBehaviour
     }
 
     private void HandleAction() => action?.Invoke();
+
+    private static string Localize(string key) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key);
 
     public void Clear()
     {

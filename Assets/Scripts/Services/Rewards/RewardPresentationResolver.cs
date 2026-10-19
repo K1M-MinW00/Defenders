@@ -32,7 +32,7 @@ public static class RewardPresentationResolver
             presentation = new RewardPresentation(
                 icons.GetResourceIcon(reward.Type),
                 icons.GetResourceRarity(reward.Type),
-                icons.GetResourceDisplayName(reward.Type),
+                GetLocalizedResourceName(reward.Type),
                 true);
             return true;
         }
@@ -46,7 +46,7 @@ public static class RewardPresentationResolver
             presentation = new RewardPresentation(
                 item.Icon,
                 item.Rarity,
-                item.ItemName,
+                item.LocalizedName,
                 reward.Type == RewardType.Item && item.Stackable);
             return true;
         }
@@ -60,11 +60,26 @@ public static class RewardPresentationResolver
             presentation = new RewardPresentation(
                 unit.icon,
                 unit.rarity,
-                unit.displayName,
+                unit.LocalizedName,
                 false);
             return true;
         }
 
         return false;
+    }
+
+    private static string GetLocalizedResourceName(RewardType type)
+    {
+        string key = type switch
+        {
+            RewardType.Gold => "resource.gold",
+            RewardType.Gem => "resource.gem",
+            RewardType.Fuel => "resource.fuel",
+            RewardType.Experience => "resource.experience",
+            RewardType.ResearchMaterial => "resource.research_material",
+            _ => string.Empty,
+        };
+
+        return LocalizationService.Get(LocalizationTables.Common, key);
     }
 }

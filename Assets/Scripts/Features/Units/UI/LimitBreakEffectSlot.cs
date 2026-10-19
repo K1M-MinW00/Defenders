@@ -10,9 +10,9 @@ public sealed class LimitBreakEffectSlot : MonoBehaviour
     [SerializeField] private GameObject lockObject;
     [SerializeField] private CanvasGroup canvasGroup;
 
-    public void Setup(LimitBreakData data, bool unlocked)
+    public void Setup(string description, bool unlocked)
     {
-        descriptionText.text = data.description;
+        descriptionText.text = description;
 
         lockObject.SetActive(!unlocked);
 

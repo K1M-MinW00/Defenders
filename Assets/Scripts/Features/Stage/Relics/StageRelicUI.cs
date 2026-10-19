@@ -33,6 +33,7 @@ public sealed class StageRelicUI : MonoBehaviour
     private TaskCompletionSource<StageRelicDefinition> choiceCompletion;
     private Transform tooltipHomeParent;
     private readonly List<StageRelicIconView> ownedIconPool = new();
+    private StageRelicDefinition tooltipRelic;
     public event Action<bool> ChoiceVisibilityChanged;
     public bool IsConfigured => ownedList != null && ownedIconPrefab != null &&
                                 choiceOverlay != null && firstChoiceButton != null && secondChoiceButton != null;
@@ -50,6 +51,11 @@ public sealed class StageRelicUI : MonoBehaviour
         HideTooltip();
         if (choiceOverlay != null)
             choiceOverlay.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
     }
 
     public void SetOwnedHudVisible(bool visible)
@@ -123,6 +129,7 @@ public sealed class StageRelicUI : MonoBehaviour
 
         tooltipName.text = relic.Name;
         tooltipDescription.text = relic.Description;
+        tooltipRelic = relic;
         RectTransform tooltipRect = tooltip.transform as RectTransform;
         tooltipRect.SetParent(icon, false);
         tooltipRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -167,6 +174,7 @@ public sealed class StageRelicUI : MonoBehaviour
             return;
 
         tooltip.SetActive(false);
+        tooltipRelic = null;
         if (tooltipHomeParent != null && tooltip.transform.parent != tooltipHomeParent)
             tooltip.transform.SetParent(tooltipHomeParent, false);
     }
@@ -225,6 +233,7 @@ public sealed class StageRelicUI : MonoBehaviour
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         ChoiceVisibilityChanged?.Invoke(false);
         firstChoiceButton?.onClick.RemoveListener(SelectFirstChoice);
         secondChoiceButton?.onClick.RemoveListener(SelectSecondChoice);
@@ -233,7 +242,19 @@ public sealed class StageRelicUI : MonoBehaviour
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         ChoiceVisibilityChanged?.Invoke(false);
         HideTooltip();
+    }
+
+    private void HandleLocaleChanged(string _)
+    {
+        ApplyChoice(firstChoiceRoot, firstChoiceName, firstChoiceSymbol, firstChoiceDescription, firstChoice);
+        ApplyChoice(secondChoiceRoot, secondChoiceName, secondChoiceSymbol, secondChoiceDescription, secondChoice);
+        if (tooltipRelic != null && tooltip != null && tooltip.activeSelf)
+        {
+            tooltipName.text = tooltipRelic.Name;
+            tooltipDescription.text = tooltipRelic.Description;
+        }
     }
 }

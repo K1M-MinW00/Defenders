@@ -13,6 +13,8 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
     [SerializeField] private ShopRewardSlotView rewardSlotPrefab;
     [SerializeField] private Button closeButton;
     private readonly List<ShopRewardSlotView> rewardSlots = new();
+    private ShopProductData currentProduct;
+    private ShopPurchaseResult currentResult;
 
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
@@ -30,20 +32,10 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
 
     public void Show(ShopProductData product, ShopPurchaseResult result)
     {
+        currentProduct = product;
+        currentResult = result;
         bool succeeded = result != null && result.Succeeded;
-
-        if (resultTitleText != null)
-        {
-            resultTitleText.text = succeeded ? "구매 완료!" : "구매 실패";
-            resultTitleText.color = succeeded
-                ? new Color32(255, 229, 76, 255)
-                : new Color32(255, 120, 120, 255);
-        }
-
-        if (productNameText != null)
-            productNameText.text = product != null ? product.DisplayName : string.Empty;
-        if (messageText != null)
-            messageText.text = ShopFeedbackMessages.Get(result);
+        RefreshLocalizedText();
 
         RebuildRewards(succeeded ? product : null);
 
@@ -61,6 +53,34 @@ public sealed class ShopPurchaseResultPopup : MonoBehaviour, IModalDismissHandle
     public void Hide() => Dismiss();
 
     public void HideImmediately() => Lifecycle.HideImmediately();
+
+    private void OnEnable()
+    {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
+    }
+
+    private void HandleLocaleChanged(string _) => RefreshLocalizedText();
+
+    private void RefreshLocalizedText()
+    {
+        if (currentResult == null)
+            return;
+
+        bool succeeded = currentResult.Succeeded;
+        resultTitleText.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            succeeded ? "shop.result_success_title" : "shop.result_failure_title");
+        resultTitleText.color = succeeded
+            ? new Color32(255, 229, 76, 255)
+            : new Color32(255, 120, 120, 255);
+        productNameText.text = currentProduct != null ? currentProduct.DisplayName : string.Empty;
+        messageText.text = ShopFeedbackMessages.Get(currentResult);
+    }
 
     private void RebuildRewards(ShopProductData product)
     {

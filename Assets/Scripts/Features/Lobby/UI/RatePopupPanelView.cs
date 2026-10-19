@@ -14,6 +14,7 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private List<RateGroupView> groupViews = new();
 
     private Coroutine rebuildRoutine;
+    private GachaDataSO currentBanner;
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
@@ -28,6 +29,11 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
         closeButton.onClick.AddListener(Close);
     }
 
+    private void OnEnable()
+    {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
+    }
+
     public bool Open(GachaDataSO banner)
     {
         if (banner == null)
@@ -39,7 +45,8 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
         if (!ValidateReferences())
             return false;
 
-        IReadOnlyList<RecruitRatePreviewRow> rows = RecruitRatePreviewBuilder.Build(banner);
+        currentBanner = banner;
+        IReadOnlyList<RecruitRatePreviewRow> rows = RecruitRatePreviewBuilder.Build(currentBanner);
         if (rows.Count > groupViews.Count)
         {
             Debug.LogError($"[RatePopupPanelView] {rows.Count} rows are required, but only {groupViews.Count} are assigned.", this);
@@ -95,7 +102,14 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         rebuildRoutine = null;
+    }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (currentBanner != null && Lifecycle.IsVisible)
+            Open(currentBanner);
     }
 
     private bool ValidateReferences()
@@ -126,6 +140,7 @@ public sealed class RatePopupPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (closeButton != null)
             closeButton.onClick.RemoveListener(Close);
     }

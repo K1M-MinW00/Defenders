@@ -27,7 +27,7 @@ public sealed class NicknameEditPresenter
         return new NicknameEditState
         {
             NormalizedNickname = normalized,
-            ConfirmLabel = currentCost > 0 ? $"변경 (보석 {currentCost:N0})" : "무료 변경",
+            ChangeCost = currentCost,
             CanSave = !isSaving && normalized != currentNickname && NicknamePolicy.IsValid(normalized),
         };
     }

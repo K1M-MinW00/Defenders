@@ -22,6 +22,17 @@ public abstract class ShopProductView : MonoBehaviour
     private Func<ShopProductData, ShopProductState> stateProvider;
     private readonly List<ShopRewardSlotView> rewardSlots = new();
 
+    private void OnEnable()
+    {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
+        RefreshLocalizedText();
+    }
+
+    private void OnDisable()
+    {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
+    }
+
     public void Initialize(
         ShopProductData product,
         Func<ShopProductData, ShopProductState> productStateProvider,
@@ -57,13 +68,14 @@ public abstract class ShopProductView : MonoBehaviour
         if (remainText != null)
             remainText.text = Product.PurchaseLimit <= 0
                 ? string.Empty
-                : $"구매 가능 {state.RemainingCount}/{Product.PurchaseLimit}";
+                : Localize("shop.remaining_purchases", state.RemainingCount, Product.PurchaseLimit);
 
         RefreshTimer(state);
 
         if (statusText != null)
-            statusText.text = !Product.IsGemProduct ? "준비 중" :
-                state.IsSoldOut ? "품절" : state.IsOnSale ? string.Empty : "판매 종료";
+            statusText.text = !Product.IsGemProduct ? Localize("shop.status.coming_soon") :
+                state.IsSoldOut ? Localize("shop.status.sold_out") :
+                state.IsOnSale ? string.Empty : Localize("shop.status.sale_ended");
 
         if (purchaseButton != null)
             purchaseButton.interactable =
@@ -162,10 +174,10 @@ public abstract class ShopProductView : MonoBehaviour
 
         return Product.PurchaseType switch
         {
-            ShopPurchaseType.Gem => $"Gem {Product.CostAmount:N0}",
-            ShopPurchaseType.InAppPurchase => $"{Product.Price:N0}원",
-            ShopPurchaseType.Advertisement => "광고 보기",
-            ShopPurchaseType.Gold => $"골드 {Product.CostAmount:N0}",
+            ShopPurchaseType.Gem => Localize("shop.cost.gems", Product.CostAmount),
+            ShopPurchaseType.InAppPurchase => Localize("shop.cost.iap", Product.Price),
+            ShopPurchaseType.Advertisement => Localize("shop.cost.ad"),
+            ShopPurchaseType.Gold => Localize("shop.cost.gold", Product.CostAmount),
             _ => string.Empty,
         };
     }
@@ -183,11 +195,27 @@ public abstract class ShopProductView : MonoBehaviour
 
         TimeSpan remain = state.NextResetUtc.Value - DateTimeOffset.UtcNow;
         timerText.text = remain <= TimeSpan.Zero
-            ? "재고 갱신 중"
+            ? Localize("shop.stock.refreshing")
             : remain.TotalDays >= 1
-                ? $"{(int)remain.TotalDays}일 {remain.Hours}시간"
+                ? Localize("shop.stock.remaining_days", (int)remain.TotalDays, remain.Hours)
                 : $"{remain.Hours:00}:{remain.Minutes:00}:{remain.Seconds:00}";
     }
+
+    private void HandleLocaleChanged(string _) => RefreshLocalizedText();
+
+    private void RefreshLocalizedText()
+    {
+        if (Product == null)
+            return;
+
+        if (costText != null)
+            costText.text = BuildCostText();
+
+        RefreshState();
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 
     private void OnClickPurchase()
     {
@@ -196,6 +224,7 @@ public abstract class ShopProductView : MonoBehaviour
     }
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (purchaseButton != null)
             purchaseButton.onClick.RemoveListener(OnClickPurchase);
     }

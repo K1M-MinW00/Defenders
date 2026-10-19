@@ -1,0 +1,273 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Relics_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 9c2ab5e47ffb91c4fa76c1ca18676aa3, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 2744938496
+    m_Localized: Warlord's Seal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2786881536
+    m_Localized: Ally Attack +15%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075840
+    m_Localized: Increases all allied units' Attack by 15% for this stage.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075841
+    m_Localized: ATK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075842
+    m_Localized: Hawkeye Crystal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075843
+    m_Localized: Critical Chance +20%p
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075844
+    m_Localized: Increases all allied units' Critical Chance by 20 percentage points
+      for this stage.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075845
+    m_Localized: CRIT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075846
+    m_Localized: Berserker's Spring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075847
+    m_Localized: Ally Attack Speed +20%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075848
+    m_Localized: Increases all allied units' Attack Speed by 20% for this stage.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075849
+    m_Localized: SPD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075850
+    m_Localized: Frost Shackles
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075851
+    m_Localized: Enemy Move Speed -20%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075852
+    m_Localized: Reduces all enemies' Move Speed by 20% for this stage.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075853
+    m_Localized: ICE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075854
+    m_Localized: Reinforcement Flare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075855
+    m_Localized: Gain 1-5 one-star units
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075856
+    m_Localized: Immediately gain 1-5 random one-star units, ignoring the population
+      limit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075857
+    m_Localized: REIN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075858
+    m_Localized: Elite Summons
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075859
+    m_Localized: Gain one two-star unit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075860
+    m_Localized: Immediately gain one random two-star unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075861
+    m_Localized: ELT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075862
+    m_Localized: Abundant Vein
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075863
+    m_Localized: Gain 10-30 Minerals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075864
+    m_Localized: Immediately gain a random amount of 10-30 Minerals.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075865
+    m_Localized: ORE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075866
+    m_Localized: Dice of Fate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075867
+    m_Localized: 10 free unit rerolls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075868
+    m_Localized: The next 10 unit rerolls are free during this stage.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2791075869
+    m_Localized: FATE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985704837120
+    m_Localized: Firepower Amplification
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985755168768
+    m_Localized: Increases allied units' Attack.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363072
+    m_Localized: Neural Acceleration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363073
+    m_Localized: Increases allied units' Attack Speed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363074
+    m_Localized: Precision Aiming
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985759363075
+    m_Localized: Increases allied units' Critical Chance.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557376
+    m_Localized: Weakness Analysis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557377
+    m_Localized: Increases allied units' Critical Damage.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557378
+    m_Localized: Reinforced Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557379
+    m_Localized: Reduces damage taken by allied units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557380
+    m_Localized: Wide-Area Detection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985763557381
+    m_Localized: Increases allied units' Detection Range.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751680
+    m_Localized: Energy Circulation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751681
+    m_Localized: Increases allied units' Energy Recovery.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751682
+    m_Localized: Automated Research
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751683
+    m_Localized: Increases idle reward gains.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751684
+    m_Localized: Biological Enhancement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985767751685
+    m_Localized: Increases allied units' maximum HP.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140288
+    m_Localized: Command Structure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140289
+    m_Localized: Increases the maximum unit count at the start of battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140290
+    m_Localized: Command Automation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985776140291
+    m_Localized: Reduces the Minerals required to expand the maximum unit count.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334592
+    m_Localized: Recycling Process
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334593
+    m_Localized: Reduces the Minerals required to reroll units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334594
+    m_Localized: Resource Recovery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985780334595
+    m_Localized: Increases the Minerals refunded when selling units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528896
+    m_Localized: Initial Supplies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528897
+    m_Localized: Increases starting Minerals.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528898
+    m_Localized: Field Mining
+    m_Metadata:
+      m_Items: []
+  - m_Id: 292985784528899
+    m_Localized: Increases Minerals gained upon completing a wave.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

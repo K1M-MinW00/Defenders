@@ -8,10 +8,10 @@ public static class RecruitRatePreviewBuilder
         if (banner == null)
             return rows;
 
-        AddRarityRows(rows, banner, Rarity.Legend, "전설", banner.LegendRate);
+        AddRarityRows(rows, banner, Rarity.Legend, "recruit.rate.legend_units", banner.LegendRate);
         if (banner.EpicRate > 0f)
-            AddRarityRows(rows, banner, Rarity.Epic, "에픽", banner.EpicRate);
-        AddRarityRows(rows, banner, Rarity.Rare, "희귀", banner.RareRate);
+            AddRarityRows(rows, banner, Rarity.Epic, "recruit.rate.epic_units", banner.EpicRate);
+        AddRarityRows(rows, banner, Rarity.Rare, "recruit.rate.rare_units", banner.RareRate);
         return rows;
     }
 
@@ -19,15 +19,16 @@ public static class RecruitRatePreviewBuilder
         ICollection<RecruitRatePreviewRow> rows,
         GachaDataSO banner,
         Rarity rarity,
-        string rarityLabel,
+        string rarityLabelKey,
         float rarityRate)
     {
         IReadOnlyList<UnitDataSO> pool = banner.GetPool(rarity);
         UnitDataSO pickup = banner.RecruitType == RecruitType.Special ? banner.PickupUnit : null;
+        string rarityLabel = Localize(rarityLabelKey);
 
         if (pickup == null || pickup.rarity != rarity)
         {
-            rows.Add(new RecruitRatePreviewRow($"{rarityLabel} 유닛", rarityRate, pool));
+            rows.Add(new RecruitRatePreviewRow(rarityLabel, rarityRate, pool));
             return;
         }
 
@@ -40,12 +41,15 @@ public static class RecruitRatePreviewBuilder
 
         if (otherUnits.Count == 0)
         {
-            rows.Add(new RecruitRatePreviewRow($"{pickup.displayName} (픽업)", rarityRate, new[] { pickup }));
+            rows.Add(new RecruitRatePreviewRow(Localize("recruit.rate.pickup", pickup.displayName), rarityRate, new[] { pickup }));
             return;
         }
 
         float pickupRate = rarityRate * banner.PickupRateWithinRarity / 100f;
-        rows.Add(new RecruitRatePreviewRow($"{pickup.displayName} (픽업)", pickupRate, new[] { pickup }));
-        rows.Add(new RecruitRatePreviewRow($"{rarityLabel} 유닛", rarityRate - pickupRate, otherUnits));
+        rows.Add(new RecruitRatePreviewRow(Localize("recruit.rate.pickup", pickup.displayName), pickupRate, new[] { pickup }));
+        rows.Add(new RecruitRatePreviewRow(rarityLabel, rarityRate - pickupRate, otherUnits));
     }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 }

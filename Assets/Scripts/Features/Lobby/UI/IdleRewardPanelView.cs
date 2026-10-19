@@ -49,6 +49,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (TryInitialize())
             Subscribe();
     }
@@ -74,6 +75,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         claimOperationVersion++;
         StopRefreshRoutine();
         Unsubscribe();
@@ -84,7 +86,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
     {
         if (!TryInitialize())
         {
-            UIFeedbackToast.Show("유저 데이터를 불러오는 중입니다.");
+            UIFeedbackToast.Show(Localize("idle.loading_user_data"));
             return;
         }
 
@@ -117,10 +119,14 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
         IdleRewardPreview preview = userDataManager?.GetIdleRewardPreview();
         if (preview == null || (!force && preview.AccumulatedMinutes == lastDisplayedMinute)) return;
         lastDisplayedMinute = preview.AccumulatedMinutes;
-        sectorDescriptionText.text = $"섹터 {preview.Sector} 기준 시간당 보상";
+        sectorDescriptionText.text = Localize("idle.sector_hourly_rewards", preview.Sector);
         goldHourlyText.text = FormatRate(preview.HourlyRates.FirstOrDefault(x => x.Type == RewardType.Gold));
         researchHourlyText.text = FormatRate(preview.HourlyRates.FirstOrDefault(x => x.Type == RewardType.ResearchMaterial));
-        accumulatedTimeText.text = $"{preview.AccumulatedMinutes / 60}시간 {preview.AccumulatedMinutes % 60}분 / 최대 {preview.MaxMinutes / 60}시간";
+        accumulatedTimeText.text = Localize(
+            "idle.accumulated_time",
+            preview.AccumulatedMinutes / 60,
+            preview.AccumulatedMinutes % 60,
+            preview.MaxMinutes / 60);
         claimButton.interactable = preview.CanClaim && !claiming;
         ReconcileSlots(preview.AccumulatedRewards);
     }
@@ -164,8 +170,8 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
     }
 
     private static string FormatRate(IdleRewardEntry entry) => entry == null
-        ? "0 /시간"
-        : $"{entry.BaseAmount:N0}<color=#56FF69> (+{entry.BonusAmount:N0})</color> /시간";
+        ? Localize("idle.hourly_rate_zero")
+        : Localize("idle.hourly_rate", entry.BaseAmount, entry.BonusAmount);
 
     private async void Claim()
     {
@@ -194,12 +200,14 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
             if (failure != IdleRewardClaimFailure.None)
             {
-                UIFeedbackToast.Show(failure == IdleRewardClaimFailure.NotReady ? "수령할 보상이 없습니다." : "보상 수령에 실패했습니다.");
+                UIFeedbackToast.Show(failure == IdleRewardClaimFailure.NotReady
+                    ? Localize("idle.claim.not_ready")
+                    : Localize("idle.claim.failed"));
                 Refresh(true);
                 return;
             }
 
-            UIFeedbackToast.Show("방치형 보상을 획득했습니다.");
+            UIFeedbackToast.Show(Localize("idle.claim.succeeded"));
             StopRefreshRoutine();
             PopupLifecycle.Close();
         }
@@ -220,6 +228,7 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         Unsubscribe();
         supplyButton?.onClick.RemoveListener(Open);
         closeButton?.onClick.RemoveListener(Dismiss);
@@ -256,6 +265,15 @@ public sealed class IdleRewardPanelView : MonoBehaviour, IModalDismissHandler
         if (PopupLifecycle.IsVisible)
             Refresh(true);
     }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (PopupLifecycle.IsVisible)
+            Refresh(true);
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 
     private bool IsCurrentOperation(int version) =>
         this != null && isActiveAndEnabled && version == claimOperationVersion;

@@ -37,6 +37,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (TryInitialize())
             Subscribe();
     }
@@ -62,6 +63,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         openVersion++;
         questActionBusy = false;
         rewardClaimBusy = false;
@@ -73,6 +75,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         Unsubscribe();
         openButton?.onClick.RemoveListener(Open);
         closeButton?.onClick.RemoveListener(Dismiss);
@@ -82,7 +85,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
     {
         if (overlay == null || !TryInitialize())
         {
-            UIFeedbackToast.Show("퀘스트 정보를 불러오는 중입니다.");
+            UIFeedbackToast.Show(Localize("quest.loading"));
             return;
         }
 
@@ -100,7 +103,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
             if (IsCurrentOpen(currentOpen))
             {
                 Debug.LogError($"[QuestController] Period refresh failed: {exception}");
-                UIFeedbackToast.Show("퀘스트 정보를 갱신하지 못했습니다.");
+                UIFeedbackToast.Show(Localize("quest.refresh_failed"));
             }
         }
 
@@ -147,7 +150,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
             QuestDefinition definition = orderedQuests[i];
             int progress = QuestProgressService.GetProgress(data, definition.Id);
             bool claimed = QuestProgressService.IsScoreClaimed(data, definition.Id);
-            questItems[i].Configure(definition.Score, definition.DisplayName,
+            questItems[i].Configure(definition.Score, GetQuestDisplayName(definition),
                 progress, definition.Target, claimed,
                 () => HandleQuestAction(definition));
         }
@@ -202,7 +205,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
             if (IsCurrentOpen(operationVersion))
             {
                 Debug.LogError($"[QuestController] Score claim failed: {exception}");
-                UIFeedbackToast.Show("퀘스트 점수를 획득하지 못했습니다.");
+                UIFeedbackToast.Show(Localize("quest.score.claim_failed"));
             }
             return;
         }
@@ -214,13 +217,13 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         if (!IsCurrentOpen(operationVersion)) return;
         if (result.Succeeded)
         {
-            UIFeedbackToast.Show($"퀘스트 점수 {definition.Score}점을 획득했습니다.");
+            UIFeedbackToast.Show(Localize("quest.score.claimed", definition.Score));
             Refresh();
             return;
         }
         UIFeedbackToast.Show(result.Failure == QuestScoreClaimFailure.AlreadyClaimed
-            ? "이미 점수를 획득한 퀘스트입니다."
-            : "퀘스트 점수를 획득하지 못했습니다.");
+            ? Localize("quest.score.already_claimed")
+            : Localize("quest.score.claim_failed"));
     }
 
     private async void HandleRewardClick(QuestRewardPeriod period, int threshold, RectTransform anchor)
@@ -256,7 +259,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
             if (IsCurrentOpen(operationVersion))
             {
                 Debug.LogError($"[QuestController] Reward claim failed: {exception}");
-                UIFeedbackToast.Show("퀘스트 보상을 받을 수 없습니다.");
+                UIFeedbackToast.Show(Localize("quest.reward.unavailable"));
             }
             return;
         }
@@ -274,10 +277,10 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         }
         UIFeedbackToast.Show(result.Failure switch
         {
-            QuestRewardClaimFailure.InsufficientScore => "퀘스트 점수가 부족합니다.",
-            QuestRewardClaimFailure.AlreadyClaimed => "이미 받은 보상입니다.",
-            QuestRewardClaimFailure.SaveFailed => "보상 저장에 실패했습니다.",
-            _ => "보상을 받을 수 없습니다.",
+            QuestRewardClaimFailure.InsufficientScore => Localize("quest.reward.insufficient_score"),
+            QuestRewardClaimFailure.AlreadyClaimed => Localize("quest.reward.already_claimed"),
+            QuestRewardClaimFailure.SaveFailed => Localize("quest.reward.save_failed"),
+            _ => Localize("quest.reward.unavailable"),
         });
     }
 
@@ -301,7 +304,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         };
         if (lobbyTabView == null || !lobbyTabView.ShowPanel(panelName))
         {
-            UIFeedbackToast.Show("이동할 화면을 찾지 못했습니다.");
+            UIFeedbackToast.Show(Localize("quest.navigation_missing"));
             return;
         }
         Dismiss();
@@ -313,9 +316,7 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         {
             if (timerText != null)
             {
-                TimeSpan remaining = QuestPeriodPolicy.GetNextDailyResetUtc(DateTimeOffset.UtcNow) - DateTimeOffset.UtcNow;
-                if (remaining < TimeSpan.Zero) remaining = TimeSpan.Zero;
-                timerText.text = $"{(int)remaining.TotalHours}시간 {remaining.Minutes:00}분";
+                RefreshTimerText();
             }
             yield return new WaitForSecondsRealtime(30f);
         }
@@ -350,6 +351,38 @@ public sealed class QuestController : MonoBehaviour, IModalDismissHandler
         if (OverlayLifecycle.IsVisible)
             Refresh();
     }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (!OverlayLifecycle.IsVisible)
+            return;
+
+        Refresh();
+        RefreshTimerText();
+    }
+
+    private void RefreshTimerText()
+    {
+        if (timerText == null)
+            return;
+
+        TimeSpan remaining = QuestPeriodPolicy.GetNextDailyResetUtc(DateTimeOffset.UtcNow) - DateTimeOffset.UtcNow;
+        if (remaining < TimeSpan.Zero)
+            remaining = TimeSpan.Zero;
+
+        timerText.text = Localize("quest.timer", (int)remaining.TotalHours, remaining.Minutes);
+    }
+
+    private static string GetQuestDisplayName(QuestDefinition definition)
+    {
+        if (definition == null || string.IsNullOrWhiteSpace(definition.Id))
+            return string.Empty;
+
+        return Localize($"quest.definition.{definition.Id}");
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 
     private bool IsCurrentOpen(int version) =>
         this != null && isActiveAndEnabled && version == openVersion && OverlayLifecycle.IsVisible;

@@ -86,6 +86,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         TryInitialize();
         Subscribe();
         Refresh();
@@ -93,6 +94,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         dismantleOperationVersion++;
         busy = false;
         Unsubscribe();
@@ -209,7 +211,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
     }
     private void RefreshRewards()
     {
-        EquipmentDismantleResult preview=GetPreview(); totalExpText.text=$"합산 경험치 : {(preview.Succeeded?preview.RefundedExp:0):N0}";
+        EquipmentDismantleResult preview=GetPreview(); totalExpText.text=Localize("equipment.dismantle.total_exp", preview.Succeeded?preview.RefundedExp:0);
         confirmDismantleButton.interactable=preview.Succeeded&&!busy;
         closeDismantleButton.interactable=!busy;
         BindRewardSlots(rewardRoot,rewardSlots,preview.Succeeded?preview.Rewards:null);
@@ -241,7 +243,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
         if (result != EquipmentOperationFailure.None)
         {
             RefreshRewards();
-            UIFeedbackToast.Show("장비 분해에 실패했습니다.");
+            UIFeedbackToast.Show(Localize("equipment.dismantle.failed"));
             return;
         }
 
@@ -273,7 +275,7 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
         busy = false;
         if (result != EquipmentOperationFailure.None)
         {
-            UIFeedbackToast.Show("장비 분해에 실패했습니다.");
+            UIFeedbackToast.Show(Localize("equipment.dismantle.failed"));
             return;
         }
 
@@ -340,8 +342,19 @@ public sealed class EquipmentInventoryPanelView : MonoBehaviour, IModalDismissHa
         RewardLifecycle.HideImmediately();
     }
 
+    private void HandleLocaleChanged(string _)
+    {
+        Refresh();
+        if (detailOverlay != null && detailOverlay.IsVisible && detailItem != null)
+            OpenDetail(detailItem);
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Items, key, arguments);
+
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         Unsubscribe();
         dismantleModeButton?.onClick.RemoveListener(OpenDismantle);
         filterButton?.onClick.RemoveListener(OpenFilter);

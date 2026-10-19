@@ -28,6 +28,15 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private Toggle soundToggle;
     [SerializeField] private TMP_Dropdown languageDropdown;
 
+    [Header("Localized Text")]
+    [SerializeField] private TMP_Text titleText;
+    [SerializeField] private TMP_Text soundLabelText;
+    [SerializeField] private TMP_Text languageLabelText;
+    [SerializeField] private TMP_Text accountLabelText;
+    [SerializeField] private TMP_Text copyUidButtonText;
+    [SerializeField] private TMP_Text linkAccountButtonText;
+    [SerializeField] private TMP_Text dismissHintText;
+
     private SettingsPanelPresenter presenter;
     private UserDataManager userDataManager;
     private GameSettingsManager gameSettingsManager;
@@ -93,6 +102,7 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
             return;
 
         SubscribeEvents();
+        RefreshLocalizedText();
         Refresh();
     }
 
@@ -150,12 +160,16 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
         string userId = userDataManager?.UserData?.Profile?.UserId;
         if (string.IsNullOrWhiteSpace(userId))
         {
-            UIFeedbackToast.Show("사용자 ID를 확인할 수 없습니다.");
+            UIFeedbackToast.Show(LocalizationService.Get(
+                LocalizationTables.Common,
+                "settings.user_id_unavailable"));
             return;
         }
 
         GUIUtility.systemCopyBuffer = userId;
-        UIFeedbackToast.Show("사용자 ID를 복사했습니다.");
+        UIFeedbackToast.Show(LocalizationService.Get(
+            LocalizationTables.Common,
+            "settings.user_id_copied"));
     }
 
     private void OpenAccountLinkPopup()
@@ -218,6 +232,18 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
     private void HandleLanguageChanged(string languageCode)
     {
         languageDropdown.SetValueWithoutNotify(SettingsPanelPresenter.GetLanguageIndex(languageCode));
+        RefreshLocalizedText();
+    }
+
+    private void RefreshLocalizedText()
+    {
+        titleText.text = LocalizationService.Get(LocalizationTables.Common, "settings.title");
+        soundLabelText.text = LocalizationService.Get(LocalizationTables.Common, "settings.sound");
+        languageLabelText.text = LocalizationService.Get(LocalizationTables.Common, "settings.language");
+        accountLabelText.text = LocalizationService.Get(LocalizationTables.Common, "settings.account");
+        copyUidButtonText.text = LocalizationService.Get(LocalizationTables.Common, "settings.copy");
+        linkAccountButtonText.text = LocalizationService.Get(LocalizationTables.Common, "settings.link");
+        dismissHintText.text = LocalizationService.Get(LocalizationTables.Common, "common.tap_to_close");
     }
 
     private void OnDestroy()
@@ -267,6 +293,9 @@ public sealed class SettingsPanelView : MonoBehaviour, IModalDismissHandler
                      iconImage != null && nicknameText != null && levelText != null && uidText != null &&
                      editProfileButton != null && editNicknameButton != null && copyUidButton != null &&
                      linkAccountButton != null && soundToggle != null && languageDropdown != null;
+        valid &= titleText != null && soundLabelText != null && languageLabelText != null &&
+                 accountLabelText != null && copyUidButtonText != null && linkAccountButtonText != null &&
+                 dismissHintText != null;
         if (!valid)
             Debug.LogError("[SettingsPanelView] Required UI references are not assigned.", this);
         return valid;

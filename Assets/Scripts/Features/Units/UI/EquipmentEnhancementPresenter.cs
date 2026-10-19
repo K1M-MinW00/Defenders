@@ -132,10 +132,9 @@ public sealed class EquipmentEnhancementPresenter
 
     private string FormatBaseEffect(EquipmentDataSO definition, int level)
     {
-        string stat = definition.BaseStatType == EquipmentStatType.MaxHp
-            ? "최대 체력"
-            : "공격력";
-        return $"{stat}  +{balance.GetBaseStatValue(definition, level):N0}";
+        return EquipmentLocalizedText.StatValue(
+            definition.BaseStatType,
+            balance.GetBaseStatValue(definition, level));
     }
 
     private string FormatNextEffect(EquipmentDataSO definition, int level)

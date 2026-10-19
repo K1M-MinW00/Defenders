@@ -66,11 +66,13 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if(!string.IsNullOrWhiteSpace(unitId) && userDataManager != null)Refresh();
     }
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         operationVersion++;
     }
 
@@ -169,13 +171,13 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
                 return;
 
             if(result==EquipmentOperationFailure.None)CloseChange();
-            else{UIFeedbackToast.Show("장비를 장착할 수 없습니다.");Refresh();}
+            else{UIFeedbackToast.Show(Localize("equipment.equip.failed"));Refresh();}
         }
         catch (Exception exception)
         {
             Debug.LogException(exception, this);
             if (CanApplyOperationResult(currentOperation))
-                UIFeedbackToast.Show("장비를 장착할 수 없습니다.");
+                UIFeedbackToast.Show(Localize("equipment.equip.failed"));
         }
     }
 
@@ -209,14 +211,14 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
                 return;
 
             if(result==EquipmentOperationFailure.None)CloseDetail();
-            else UIFeedbackToast.Show("장비를 해제할 수 없습니다.");
+            else UIFeedbackToast.Show(Localize("equipment.unequip.failed"));
             Refresh();
         }
         catch (Exception exception)
         {
             Debug.LogException(exception, this);
             if (CanApplyOperationResult(currentOperation))
-                UIFeedbackToast.Show("장비를 해제할 수 없습니다.");
+                UIFeedbackToast.Show(Localize("equipment.unequip.failed"));
         }
     }
 
@@ -285,14 +287,14 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
                     return;
                 }
             }
-            else UIFeedbackToast.Show("장비 강화에 실패했습니다.");
+            else UIFeedbackToast.Show(Localize("equipment.enhance.failed"));
             Refresh();
         }
         catch (Exception exception)
         {
             Debug.LogException(exception, this);
             if (CanApplyOperationResult(currentOperation))
-                UIFeedbackToast.Show("장비 강화에 실패했습니다.");
+                UIFeedbackToast.Show(Localize("equipment.enhance.failed"));
         }
     }
 
@@ -303,6 +305,9 @@ public sealed class UnitEquipmentPanel : MonoBehaviour, IModalDismissHandler
     private IEnumerable<EquipmentItemData> GetEquippedItems()=>DataSource.GetEquippedItems(unitId,partSlots.Select(slot=>slot.type));
     private Sprite GetEmptySlotIcon(EquipmentType type)=>type switch{EquipmentType.MainWeapon=>mainWeaponEmptyIcon,EquipmentType.SubWeapon=>subWeaponEmptyIcon,EquipmentType.Helmet=>helmetEmptyIcon,EquipmentType.Armor=>armorEmptyIcon,_=>null};
     private void ResetEnhancementSelection(){EnhancementPresenter.ResetSelection();RefreshEnhancement();}
+    private void HandleLocaleChanged(string _){if(isActiveAndEnabled)Refresh();}
+    private static string Localize(string key)=>LocalizationService.Get(LocalizationTables.Items,key);
+    private void OnDestroy()=>LocalizationService.LocaleChanged-=HandleLocaleChanged;
 
     private bool ValidateReferences()
     {

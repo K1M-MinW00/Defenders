@@ -70,7 +70,7 @@ public sealed class StartupBootstrap : MonoBehaviour
                 return;
             }
 
-            loadingView.SetActionButton("Start", false);
+            loadingView.SetActionButtonKey("startup.action.start", false);
             StartupBootResult result = await flow.RunAsync(stage =>
             {
                 if (IsCurrentOperation(currentOperation))
@@ -97,7 +97,7 @@ public sealed class StartupBootstrap : MonoBehaviour
         {
             Debug.LogError($"[StartupBootstrap] Unexpected boot failure: {exception}");
             if (IsCurrentOperation(currentOperation))
-                SetFailed("Boot Failed");
+                SetFailed(Localize("startup.error.boot_failed"));
         }
         finally
         {
@@ -117,12 +117,12 @@ public sealed class StartupBootstrap : MonoBehaviour
             return;
 
         isReadyToStart = false;
-        loadingView.SetActionButton("Start", false);
-        loadingView.SetStatus("Loading Lobby...");
+        loadingView.SetActionButtonKey("startup.action.start", false);
+        loadingView.SetStatusKey("startup.status.loading_lobby");
 
         if (sceneFlowService == null)
         {
-            SetFailed("Required Service Missing");
+            SetFailed(Localize("startup.error.required_service_missing"));
             return;
         }
 
@@ -139,19 +139,19 @@ public sealed class StartupBootstrap : MonoBehaviour
 
         if (loadingView == null)
         {
-            errorMessage = "Loading view is missing.";
+            errorMessage = Localize("startup.error.required_service_missing");
             return false;
         }
 
         if (authService == null)
         {
-            errorMessage = "Authentication service is missing.";
+            errorMessage = Localize("startup.error.required_service_missing");
             return false;
         }
 
         if (userDataManager == null)
         {
-            errorMessage = "User data service is missing.";
+            errorMessage = Localize("startup.error.required_service_missing");
             return false;
         }
 
@@ -169,19 +169,19 @@ public sealed class StartupBootstrap : MonoBehaviour
         switch (stage)
         {
             case StartupBootStage.Initializing:
-                loadingView.SetStatus("Initializing...");
+                loadingView.SetStatusKey("startup.status.initializing");
                 loadingView.SetProgress(0.05f);
                 break;
             case StartupBootStage.SigningIn:
-                loadingView.SetStatus("Checking Login...");
+                loadingView.SetStatusKey("startup.status.checking_login");
                 loadingView.SetProgress(0.3f);
                 break;
             case StartupBootStage.LoadingUserData:
-                loadingView.SetStatus("Loading User Data...");
+                loadingView.SetStatusKey("startup.status.loading_user_data");
                 loadingView.SetProgress(0.7f);
                 break;
             case StartupBootStage.Ready:
-                loadingView.SetStatus("Game Ready");
+                loadingView.SetStatusKey("startup.status.ready");
                 loadingView.SetProgress(1f);
                 break;
         }
@@ -196,7 +196,7 @@ public sealed class StartupBootstrap : MonoBehaviour
         if (loadingView != null)
         {
             loadingView.SetStatus(message);
-            loadingView.SetActionButton("Retry", true);
+            loadingView.SetActionButtonKey("startup.action.retry", true);
         }
     }
 
@@ -204,10 +204,10 @@ public sealed class StartupBootstrap : MonoBehaviour
     {
         return failure switch
         {
-            StartupBootFailure.LoginFailed => "Login Failed",
-            StartupBootFailure.UserDataLoadFailed => "User Data Load Failed",
-            StartupBootFailure.MissingService => "Required Service Missing",
-            _ => "Boot Failed"
+            StartupBootFailure.LoginFailed => Localize("startup.error.login_failed"),
+            StartupBootFailure.UserDataLoadFailed => Localize("startup.error.user_data_load_failed"),
+            StartupBootFailure.MissingService => Localize("startup.error.required_service_missing"),
+            _ => Localize("startup.error.boot_failed")
         };
     }
 
@@ -215,9 +215,9 @@ public sealed class StartupBootstrap : MonoBehaviour
     {
         return result switch
         {
-            SceneTransitionResult.InvalidScene => "Lobby Scene Missing",
-            SceneTransitionResult.AlreadyLoading => "Scene Is Already Loading",
-            _ => "Lobby Load Failed",
+            SceneTransitionResult.InvalidScene => Localize("startup.error.lobby_scene_missing"),
+            SceneTransitionResult.AlreadyLoading => Localize("startup.error.scene_already_loading"),
+            _ => Localize("startup.error.lobby_load_failed"),
         };
     }
 
@@ -229,4 +229,7 @@ public sealed class StartupBootstrap : MonoBehaviour
 
     private bool IsCurrentOperation(int version) =>
         this != null && isActiveAndEnabled && version == operationVersion;
+
+    private static string Localize(string key) =>
+        LocalizationService.Get(LocalizationTables.Common, key);
 }

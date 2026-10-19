@@ -1,0 +1,332 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Items Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Items
+  m_TableCollectionNameGuidString: eb10d321c8db779449f548837cf20fc9
+  m_Entries:
+  - m_Id: 2619109376
+    m_Key: item.owned
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2661052416
+    m_Key: equipment.header
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2665246720
+    m_Key: equipment.action.cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2665246721
+    m_Key: equipment.action.dismantle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441024
+    m_Key: equipment.action.unequip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441025
+    m_Key: equipment.action.max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441026
+    m_Key: equipment.action.enhance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441027
+    m_Key: equipment.action.replace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441028
+    m_Key: equipment.action.confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441029
+    m_Key: equipment.rarity.legend
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441030
+    m_Key: equipment.rarity.epic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441031
+    m_Key: equipment.rarity.rare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441032
+    m_Key: equipment.rarity.normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441033
+    m_Key: equipment.stat.max_hp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441034
+    m_Key: equipment.stat.attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441035
+    m_Key: equipment.stat.crit_chance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441036
+    m_Key: equipment.stat.damage_reduction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441037
+    m_Key: equipment.stat.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441038
+    m_Key: equipment.stat.bonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441039
+    m_Key: equipment.dismantle.total_exp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441040
+    m_Key: equipment.dismantle.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441041
+    m_Key: equipment.equip.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441042
+    m_Key: equipment.unequip.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441043
+    m_Key: equipment.enhance.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644586696704
+    m_Key: equipment.change.none_equipped
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644637028352
+    m_Key: equipment.enhance.next_level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644637028353
+    m_Key: unit.promotion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644637028354
+    m_Key: unit.limit_break.max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172273688576
+    m_Key: item.summon_ticket_normal.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172370157568
+    m_Key: item.summon_ticket_normal.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172374351872
+    m_Key: item.summon_ticket_special.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172374351873
+    m_Key: item.summon_ticket_special.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172386934784
+    m_Key: item.equipment_armor_epic.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172386934785
+    m_Key: item.equipment_armor_epic.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172391129088
+    m_Key: item.equipment_armor_legend.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172391129089
+    m_Key: item.equipment_armor_legend.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172395323392
+    m_Key: item.equipment_armor_rare.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172395323393
+    m_Key: item.equipment_armor_rare.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172407906304
+    m_Key: item.equipment_helmet_epic.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172407906305
+    m_Key: item.equipment_helmet_epic.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172412100608
+    m_Key: item.equipment_helmet_legend.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172412100609
+    m_Key: item.equipment_helmet_legend.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172416294912
+    m_Key: item.equipment_helmet_rare.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172416294913
+    m_Key: item.equipment_helmet_rare.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172424683520
+    m_Key: item.equipment_main_weapon_epic.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172424683521
+    m_Key: item.equipment_main_weapon_epic.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172433072128
+    m_Key: item.equipment_main_weapon_legend.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172433072129
+    m_Key: item.equipment_main_weapon_legend.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266432
+    m_Key: item.equipment_main_weapon_rare.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266433
+    m_Key: item.equipment_main_weapon_rare.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266434
+    m_Key: item.equipment_sub_weapon_epic.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266435
+    m_Key: item.equipment_sub_weapon_epic.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172449849344
+    m_Key: item.equipment_sub_weapon_legend.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172449849345
+    m_Key: item.equipment_sub_weapon_legend.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172454043648
+    m_Key: item.equipment_sub_weapon_rare.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172454043649
+    m_Key: item.equipment_sub_weapon_rare.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172458237952
+    m_Key: item.equipment_stone_epic.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172458237953
+    m_Key: item.equipment_stone_epic.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172470820864
+    m_Key: item.equipment_stone_legend.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172470820865
+    m_Key: item.equipment_stone_legend.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172475015168
+    m_Key: item.equipment_stone_rare.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172475015169
+    m_Key: item.equipment_stone_rare.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172479209472
+    m_Key: item.material_exp_1.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172479209473
+    m_Key: item.material_exp_1.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172483403776
+    m_Key: item.material_exp_2.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172483403777
+    m_Key: item.material_exp_2.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172487598080
+    m_Key: item.material_exp_3.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172487598081
+    m_Key: item.material_exp_3.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172491792384
+    m_Key: item.material_prom_1.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172491792385
+    m_Key: item.material_prom_1.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172495986688
+    m_Key: item.material_prom_2.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172495986689
+    m_Key: item.material_prom_2.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172500180992
+    m_Key: item.material_prom_3.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172500180993
+    m_Key: item.material_prom_3.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172504375296
+    m_Key: item.material_prom_4.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172504375297
+    m_Key: item.material_prom_4.description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5228347474484396032
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347474484396032
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792098237741

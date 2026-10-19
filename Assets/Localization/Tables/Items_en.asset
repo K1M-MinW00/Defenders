@@ -1,0 +1,346 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Items_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: eb10d321c8db779449f548837cf20fc9, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 5228347474484396033
+  m_TableData:
+  - m_Id: 2619109376
+    m_Localized: 'Owned: {0:N0}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474484396033
+  - m_Id: 2661052416
+    m_Localized: Equipment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2665246720
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2665246721
+    m_Localized: Dismantle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441024
+    m_Localized: Unequip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441025
+    m_Localized: Max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441026
+    m_Localized: Enhance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441027
+    m_Localized: Replace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441028
+    m_Localized: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441029
+    m_Localized: Legendary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441030
+    m_Localized: Epic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441031
+    m_Localized: Rare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441032
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441033
+    m_Localized: Max HP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441034
+    m_Localized: Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441035
+    m_Localized: Critical Chance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441036
+    m_Localized: Damage Reduction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441037
+    m_Localized: '{0}  +{1:N0}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474484396033
+  - m_Id: 2669441038
+    m_Localized: '{0}  +{1:0.#}{2}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474484396033
+  - m_Id: 2669441039
+    m_Localized: 'Total EXP: {0:N0}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474484396033
+  - m_Id: 2669441040
+    m_Localized: Failed to dismantle the equipment.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441041
+    m_Localized: Unable to equip this item.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441042
+    m_Localized: Unable to unequip this item.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2669441043
+    m_Localized: Failed to enhance the equipment.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644586696704
+    m_Localized: No equipment is currently equipped.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 644637028352
+    m_Localized: Next LV.{0}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474484396033
+  - m_Id: 644637028353
+    m_Localized: Promotion {0}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474484396033
+  - m_Id: 644637028354
+    m_Localized: This unit has already reached maximum quality.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172273688576
+    m_Localized: Mercenary Recruitment Ticket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172370157568
+    m_Localized: A ticket used to recruit a new mercenary.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172374351872
+    m_Localized: Hero Recruitment Ticket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172374351873
+    m_Localized: A special ticket used to recruit exceptional heroes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172386934784
+    m_Localized: Enchanted Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172386934785
+    m_Localized: A enchanted piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172391129088
+    m_Localized: Celestial Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172391129089
+    m_Localized: A celestial piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172395323392
+    m_Localized: Steel Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172395323393
+    m_Localized: A steel piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172407906304
+    m_Localized: Enchanted Helmet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172407906305
+    m_Localized: A enchanted piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172412100608
+    m_Localized: Celestial Helmet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172412100609
+    m_Localized: A celestial piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172416294912
+    m_Localized: Steel Helmet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172416294913
+    m_Localized: A steel piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172424683520
+    m_Localized: Enchanted Longsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172424683521
+    m_Localized: A enchanted piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172433072128
+    m_Localized: Celestial Longsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172433072129
+    m_Localized: A celestial piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266432
+    m_Localized: Steel Longsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266433
+    m_Localized: A steel piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266434
+    m_Localized: Enchanted Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172437266435
+    m_Localized: A enchanted piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172449849344
+    m_Localized: Celestial Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172449849345
+    m_Localized: A celestial piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172454043648
+    m_Localized: Steel Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172454043649
+    m_Localized: A steel piece of equipment forged for battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172458237952
+    m_Localized: Abyssal Magic Stone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172458237953
+    m_Localized: Violet ore found deep underground. Used to enhance equipment.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172470820864
+    m_Localized: Primordial Magic Stone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172470820865
+    m_Localized: Golden ore crystallized from primordial magic. Used to enhance equipment.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172475015168
+    m_Localized: Magic Stone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172475015169
+    m_Localized: Ore infused with blue magic. Used to enhance equipment.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172479209472
+    m_Localized: Essence of Growth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172479209473
+    m_Localized: A blue crystal containing condensed life energy. Used to train units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172483403776
+    m_Localized: Concentrated Essence of Growth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172483403777
+    m_Localized: A highly concentrated crystal of life energy. Used to train units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172487598080
+    m_Localized: Transcendent Essence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172487598081
+    m_Localized: A golden essence created through ancient alchemy. Used to train
+      units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172491792384
+    m_Localized: Training Insignia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172491792385
+    m_Localized: An insignia awarded to warriors who complete their basic training.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172495986688
+    m_Localized: Valor Insignia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172495986689
+    m_Localized: An insignia awarded to warriors who prove their valor in battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172500180992
+    m_Localized: Hero Insignia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172500180993
+    m_Localized: An insignia reserved for heroes of extraordinary achievement.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172504375296
+    m_Localized: Transcendence Insignia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249172504375297
+    m_Localized: An insignia granted to those who transcend mortal limits.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347474484396033
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 2619109376
+        - id: 2669441037
+        - id: 2669441038
+        - id: 2669441039
+        - id: 644637028352
+        - id: 644637028353

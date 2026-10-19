@@ -1,18 +1,18 @@
 public static class LobbyOperationFeedbackMessages
 {
-    public const string AdUnavailable = "광고를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
-    public const string MailboxLoadFailed = "우편함을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
-    public const string MailboxDeleteFailed = "우편 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.";
+    public static string AdUnavailable => Localize("lobby.ad_unavailable");
+    public static string MailboxLoadFailed => Localize("mailbox.load_failed");
+    public static string MailboxDeleteFailed => Localize("mailbox.delete_failed");
 
     public static string Get(RecruitUnitsFailure failure)
     {
         return failure switch
         {
-            RecruitUnitsFailure.InvalidBanner => "현재 소환 배너를 사용할 수 없습니다.",
-            RecruitUnitsFailure.InsufficientCurrency => "소환 재화가 부족합니다.",
-            RecruitUnitsFailure.EmptyPool => "소환 가능한 유닛이 없습니다.",
-            RecruitUnitsFailure.SaveFailed => "소환 결과 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-            _ => "소환을 진행할 수 없습니다.",
+            RecruitUnitsFailure.InvalidBanner => Localize("recruit.invalid_banner"),
+            RecruitUnitsFailure.InsufficientCurrency => Localize("recruit.insufficient_currency"),
+            RecruitUnitsFailure.EmptyPool => Localize("recruit.empty_pool"),
+            RecruitUnitsFailure.SaveFailed => Localize("recruit.save_failed"),
+            _ => Localize("recruit.unavailable"),
         };
     }
 
@@ -20,11 +20,11 @@ public static class LobbyOperationFeedbackMessages
     {
         return failure switch
         {
-            MailboxClaimFailure.UserNotFound => "사용자 정보를 찾을 수 없습니다.",
-            MailboxClaimFailure.NoClaimableMail => "받을 수 있는 우편이 없습니다.",
-            MailboxClaimFailure.InvalidReward => "우편 보상 정보가 올바르지 않습니다.",
-            MailboxClaimFailure.SaveFailed => "우편 보상 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-            _ => "우편 보상을 받을 수 없습니다.",
+            MailboxClaimFailure.UserNotFound => Localize("mailbox.user_not_found"),
+            MailboxClaimFailure.NoClaimableMail => Localize("mailbox.nothing_to_claim"),
+            MailboxClaimFailure.InvalidReward => Localize("mailbox.invalid_reward"),
+            MailboxClaimFailure.SaveFailed => Localize("mailbox.claim_save_failed"),
+            _ => Localize("mailbox.claim_unavailable"),
         };
     }
 
@@ -32,10 +32,10 @@ public static class LobbyOperationFeedbackMessages
     {
         return failure switch
         {
-            PurchaseFuelFailure.InsufficientGem => "보석이 부족합니다.",
-            PurchaseFuelFailure.Overflow => "연료를 더 보유할 수 없습니다.",
-            PurchaseFuelFailure.SaveFailed => "연료 구매 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-            _ => "연료를 구매할 수 없습니다.",
+            PurchaseFuelFailure.InsufficientGem => Localize("fuel.insufficient_gems"),
+            PurchaseFuelFailure.Overflow => Localize("fuel.capacity_reached"),
+            PurchaseFuelFailure.SaveFailed => Localize("fuel.purchase_save_failed"),
+            _ => Localize("fuel.purchase_unavailable"),
         };
     }
 
@@ -43,10 +43,13 @@ public static class LobbyOperationFeedbackMessages
     {
         return failure switch
         {
-            ClaimAdFuelRewardFailure.DailyLimitReached => "오늘 받을 수 있는 광고 보상을 모두 받았습니다.",
-            ClaimAdFuelRewardFailure.Overflow => "연료를 더 보유할 수 없습니다.",
-            ClaimAdFuelRewardFailure.SaveFailed => "광고 보상 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.",
-            _ => "광고 보상을 받을 수 없습니다.",
+            ClaimAdFuelRewardFailure.DailyLimitReached => Localize("fuel.ad_daily_limit"),
+            ClaimAdFuelRewardFailure.Overflow => Localize("fuel.capacity_reached"),
+            ClaimAdFuelRewardFailure.SaveFailed => Localize("fuel.ad_save_failed"),
+            _ => Localize("fuel.ad_reward_unavailable"),
         };
     }
+
+    private static string Localize(string key) =>
+        LocalizationService.Get(LocalizationTables.SystemMessages, key);
 }

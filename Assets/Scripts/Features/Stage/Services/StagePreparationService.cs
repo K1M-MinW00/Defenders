@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 public class StagePreparationService : MonoBehaviour
 {
-    private const string LastUnitRequiredMessage = "유닛을 1명 이상 배치해야 전투를 시작할 수 있습니다";
-
     [Header("References")]
     [SerializeField] private UnitSummoner unitSummoner;
     [SerializeField] private UnitRoster unitRoster;
@@ -160,7 +158,9 @@ public class StagePreparationService : MonoBehaviour
 
         placementController?.RestoreDraggingUnitPosition();
         if (failure == StageUnitTransactionFailure.LastUnitRequired)
-            UIFeedbackToast.Show(LastUnitRequiredMessage);
+            UIFeedbackToast.Show(LocalizationService.Get(
+                LocalizationTables.Stage,
+                "prepare.last_unit_required"));
     }
 
     private void HandleRerollRequested(UnitController unit)

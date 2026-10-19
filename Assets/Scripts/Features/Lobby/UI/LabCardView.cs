@@ -31,7 +31,7 @@ public sealed class LabCardView : MonoBehaviour
         icon.sprite = faceUp ? card.Icon : null;
         icon.enabled = faceUp && card.Icon != null;
         if (lockedIcon != null) lockedIcon.enabled = !faceUp;
-        nameText.text = faceUp ? card.DisplayName : string.Empty;
+        nameText.text = faceUp ? card.LocalizedName : string.Empty;
         valueText.text = faceUp ? card.GetFormattedValue() : string.Empty;
         button.interactable = faceUp;
     }
@@ -66,12 +66,18 @@ public sealed class LabCardView : MonoBehaviour
         icon.sprite = faceUp ? card.Icon : null;
         icon.enabled = faceUp && card.Icon != null;
         if (lockedIcon != null) lockedIcon.enabled = !faceUp;
-        nameText.text = faceUp ? card.DisplayName : string.Empty;
+        nameText.text = faceUp ? card.LocalizedName : string.Empty;
         valueText.text = faceUp ? card.GetFormattedValue() : string.Empty;
         button.interactable = !faceUp;
     }
 
     public void HandleClick() => onClick?.Invoke(card);
+
+    public void RefreshLocalization()
+    {
+        if (card != null && icon.enabled)
+            nameText.text = card.LocalizedName;
+    }
 
     public void Clear()
     {

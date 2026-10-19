@@ -1,0 +1,171 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_Common_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 69be42b3c4dfa264caebe424d0999a91, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1591504896
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225152
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225153
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225154
+    m_Localized: Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225155
+    m_Localized: Copy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225156
+    m_Localized: Link
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225157
+    m_Localized: Unable to retrieve the user ID.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225158
+    m_Localized: User ID copied.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1650225159
+    m_Localized: Tap to close.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683894185984
+    m_Localized: Account Management
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683940323328
+    m_Localized: Sign in with Google
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683940323329
+    m_Localized: Sign in with Apple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683944517632
+    m_Localized: Log Out
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683944517633
+    m_Localized: Delete Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683944517634
+    m_Localized: Exit Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683944517635
+    m_Localized: Are you sure you want to exit the game?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683944517636
+    m_Localized: Exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 997683944517637
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018566041600
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567552
+    m_Localized: Retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567553
+    m_Localized: Initializing...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567554
+    m_Localized: Checking Login...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567555
+    m_Localized: Loading User Data...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567556
+    m_Localized: Game Ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567557
+    m_Localized: Loading Lobby...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567558
+    m_Localized: Failed to start the game.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567559
+    m_Localized: Login failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567560
+    m_Localized: Failed to load user data.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567561
+    m_Localized: A required service is unavailable.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567562
+    m_Localized: The Lobby scene is missing.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567563
+    m_Localized: A scene is already loading.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1074018620567564
+    m_Localized: Failed to load the Lobby.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1091435920912384
+    m_Localized: Gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1091435967049728
+    m_Localized: Gems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1091435967049729
+    m_Localized: Fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1091435967049730
+    m_Localized: Experience
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1091435967049731
+    m_Localized: Research Materials
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

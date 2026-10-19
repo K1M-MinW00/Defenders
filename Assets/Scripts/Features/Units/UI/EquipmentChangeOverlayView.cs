@@ -68,7 +68,9 @@ public sealed class EquipmentChangeOverlayView : MonoBehaviour, IModalDismissHan
         {
             previewSlot?.BindEmpty(emptyIcon, string.Empty, null);
             if (previewText != null)
-                previewText.text = "현재 착용한 장비가 없습니다.";
+                previewText.text = LocalizationService.Get(
+                    LocalizationTables.Items,
+                    "equipment.change.none_equipped");
         }
         else
         {

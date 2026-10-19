@@ -14,6 +14,8 @@ public class SkillDetailPopup : MonoBehaviour
     [SerializeField] private Transform contentRoot;
     [SerializeField] private SkillUpgradeSlot slotPrefab;
     private readonly System.Collections.Generic.List<SkillUpgradeSlot> slotPool = new();
+    private SkillDataSO currentSkill;
+    private int currentPromotion;
 
     private void Awake()
     {
@@ -28,21 +30,24 @@ public class SkillDetailPopup : MonoBehaviour
         if (skill == null)
             return;
 
+        currentSkill = skill;
+        currentPromotion = promotion;
         gameObject.SetActive(true);
 
         if (skillIconImage != null)
             skillIconImage.sprite = skill.icon;
 
         if (skillNameText != null)
-            skillNameText.text = skill.skillName;
+            skillNameText.text = skill.LocalizedName;
 
         HideSlots();
 
         int index = 0;
-        foreach (SkillUpgradeData data in skill.upgrades)
+        for (int upgradeIndex = 0; upgradeIndex < skill.upgrades.Count; upgradeIndex++)
         {
+            SkillUpgradeData data = skill.upgrades[upgradeIndex];
             SkillUpgradeSlot slot = GetOrCreateSlot(index++);
-            slot.Setup(promotion, data);
+            slot.Setup(promotion, data, skill.GetLocalizedUpgradeDescription(upgradeIndex));
             slot.gameObject.SetActive(true);
         }
     }
@@ -50,6 +55,23 @@ public class SkillDetailPopup : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
+    }
+
+    private void OnEnable() => LocalizationService.LocaleChanged += HandleLocaleChanged;
+
+    private void OnDisable() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (currentSkill != null)
+            Open(currentSkill, currentPromotion);
+    }
+
+    private void OnDestroy()
+    {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
+        if (closeButton != null)
+            closeButton.onClick.RemoveListener(Close);
     }
 
     private SkillUpgradeSlot GetOrCreateSlot(int index)

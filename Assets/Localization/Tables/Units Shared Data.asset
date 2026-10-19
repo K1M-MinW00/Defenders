@@ -1,0 +1,292 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Units Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Units
+  m_TableCollectionNameGuidString: 3aca37513fe960945873c6db60ed9afa
+  m_Entries:
+  - m_Id: 1151102976
+    m_Key: unit.unit_archer.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1188851712
+    m_Key: unit.unit_archer.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1188851713
+    m_Key: unit.unit_archer.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1188851714
+    m_Key: unit.unit_archer.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1188851715
+    m_Key: unit.unit_archer.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1218211840
+    m_Key: unit.unit_axeman.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1218211841
+    m_Key: unit.unit_axeman.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1218211842
+    m_Key: unit.unit_axeman.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1218211843
+    m_Key: unit.unit_axeman.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1218211844
+    m_Key: unit.unit_axeman.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1247571968
+    m_Key: unit.unit_knightTemplar.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1247571969
+    m_Key: unit.unit_knightTemplar.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1247571970
+    m_Key: unit.unit_knightTemplar.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1247571971
+    m_Key: unit.unit_knightTemplar.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1247571972
+    m_Key: unit.unit_knightTemplar.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1268543488
+    m_Key: unit.unit_knight.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1268543489
+    m_Key: unit.unit_knight.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1268543490
+    m_Key: unit.unit_knight.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1268543491
+    m_Key: unit.unit_knight.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1268543492
+    m_Key: unit.unit_knight.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1297903616
+    m_Key: unit.unit_lancer.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1297903617
+    m_Key: unit.unit_lancer.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1297903618
+    m_Key: unit.unit_lancer.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1297903619
+    m_Key: unit.unit_lancer.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1297903620
+    m_Key: unit.unit_lancer.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1318875136
+    m_Key: unit.unit_priest.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1318875137
+    m_Key: unit.unit_priest.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1318875138
+    m_Key: unit.unit_priest.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1318875139
+    m_Key: unit.unit_priest.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1318875140
+    m_Key: unit.unit_priest.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1335652352
+    m_Key: unit.unit_soldierM.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1335652353
+    m_Key: unit.unit_soldierM.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1335652354
+    m_Key: unit.unit_soldierM.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1335652355
+    m_Key: unit.unit_soldierM.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1335652356
+    m_Key: unit.unit_soldierM.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1352429568
+    m_Key: unit.unit_soldierR.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1352429569
+    m_Key: unit.unit_soldierR.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1352429570
+    m_Key: unit.unit_soldierR.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1352429571
+    m_Key: unit.unit_soldierR.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1352429572
+    m_Key: unit.unit_soldierR.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1373401088
+    m_Key: unit.unit_swordsman.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1373401089
+    m_Key: unit.unit_swordsman.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1373401090
+    m_Key: unit.unit_swordsman.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1373401091
+    m_Key: unit.unit_swordsman.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1373401092
+    m_Key: unit.unit_swordsman.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1394372608
+    m_Key: unit.unit_werebear.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1394372609
+    m_Key: unit.unit_werebear.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1394372610
+    m_Key: unit.unit_werebear.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1394372611
+    m_Key: unit.unit_werebear.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1394372612
+    m_Key: unit.unit_werebear.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1415344128
+    m_Key: unit.unit_wizard.limit_break.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1415344129
+    m_Key: unit.unit_wizard.limit_break.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1415344130
+    m_Key: unit.unit_wizard.limit_break.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1415344131
+    m_Key: unit.unit_wizard.limit_break.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1415344132
+    m_Key: unit.unit_wizard.limit_break.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686155420692480
+    m_Key: unit.unit_archer.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686155622019072
+    m_Key: unit.unit_axeman.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686155773014016
+    m_Key: unit.unit_knightTemplar.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686155924008960
+    m_Key: unit.unit_knight.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686156049838080
+    m_Key: unit.unit_lancer.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686156200833024
+    m_Key: unit.unit_priest.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686156301496320
+    m_Key: unit.unit_soldierM.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686156381188096
+    m_Key: unit.unit_soldierR.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686156532183040
+    m_Key: unit.unit_swordsman.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686156678983680
+    m_Key: unit.unit_werebear.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 686156821590016
+    m_Key: unit.unit_wizard.name
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5228347490217754625
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347490217754625
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792158256276

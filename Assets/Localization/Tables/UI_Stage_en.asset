@@ -1,0 +1,327 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_Stage_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 76bdf26c69eb8854fb162c3f2f9a069e, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 5228347474562252801
+  m_TableData:
+  - m_Id: 2698801152
+    m_Localized: Free ({0})
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474562252801
+  - m_Id: 2744938496
+    m_Localized: 'Incoming: {0:00}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474562252801
+  - m_Id: 2749132800
+    m_Localized: 'Monsters Remaining: {0:00}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474562252801
+  - m_Id: 2749132801
+    m_Localized: Stage {0}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474562252801
+  - m_Id: 2749132802
+    m_Localized: Stage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132803
+    m_Localized: Retry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132804
+    m_Localized: Return
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132805
+    m_Localized: Processing...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132806
+    m_Localized: Failed to save the result. Please try again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132807
+    m_Localized: The scene transition service is unavailable.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132808
+    m_Localized: Failed to return to the lobby. Please try again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132809
+    m_Localized: At least one unit is required to start the battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132810
+    m_Localized: Not enough minerals.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132811
+    m_Localized: The unit limit has been reached. Increase population or sell a unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132812
+    m_Localized: At least one unit must remain deployed to start the battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132813
+    m_Localized: Failed to load the stage. The consumed Fuel was refunded.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132814
+    m_Localized: Failed to load the stage, and the Fuel refund also failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132815
+    m_Localized: Failed to load the stage. Returned to the lobby.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854119112704
+    m_Localized: Locked - Unlocks at 3 Stars
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055744
+    m_Localized: Locked - Unlocks at Promotion 1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055745
+    m_Localized: No skill information available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055746
+    m_Localized: '[Promotion {0} Effect] '
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474562252801
+  - m_Id: 1854161055747
+    m_Localized: No Skill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055748
+    m_Localized: Description coming soon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055749
+    m_Localized: A melee orc warrior that charges swiftly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055750
+    m_Localized: A fast and powerful elite orc warrior.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055751
+    m_Localized: An orc with heavy armor and powerful attacks.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055752
+    m_Localized: A mounted fighter known for speed and powerful strikes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055753
+    m_Localized: A slow skeleton soldier with exceptionally high health.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055754
+    m_Localized: An armored skeleton that attacks rapidly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055755
+    m_Localized: A skeleton archer that fires arrows from a distance.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055756
+    m_Localized: A slime that closes in quickly and attacks repeatedly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1854161055757
+    m_Localized: A werewolf that unleashes fast, ferocious combinations.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143907581952
+    m_Localized: Start!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143953719296
+    m_Localized: Summon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143953719297
+    m_Localized: Unit Cap +
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913600
+    m_Localized: Reroll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913601
+    m_Localized: Drag a unit here to reroll.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913602
+    m_Localized: Sell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 976143957913603
+    m_Localized: Drag a unit here to sell.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687588691968
+    m_Localized: Stage {0}-{1}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474562252801
+  - m_Id: 1018687634829312
+    m_Localized: WAVE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829313
+    m_Localized: Monster Information
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829314
+    m_Localized: There are no monsters to display for this wave.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829315
+    m_Localized: Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829316
+    m_Localized: Elite Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829317
+    m_Localized: Armored Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829318
+    m_Localized: Orc Rider
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829319
+    m_Localized: Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829320
+    m_Localized: Armored Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829321
+    m_Localized: Skeleton Archer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829322
+    m_Localized: Slime
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1018687634829323
+    m_Localized: Werewolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298232991744
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129088
+    m_Localized: Exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129089
+    m_Localized: Push Notifications
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129090
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1026298279129091
+    m_Localized: Combat Formation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670424711168
+    m_Localized: Success
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654208
+    m_Localized: Failure
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654209
+    m_Localized: Rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654210
+    m_Localized: '{0} / {1}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347474562252801
+  - m_Id: 1027670466654211
+    m_Localized: Refunded Fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1027670466654212
+    m_Localized: Most of the Fuel is refunded when an operation fails.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1028263201501184
+    m_Localized: Sector
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1028263247638528
+    m_Localized: Boss Wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029048060637184
+    m_Localized: Choose a Relic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029048106774528
+    m_Localized: Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029975886819328
+    m_Localized: Active
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1029975937150976
+    m_Localized: Passive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1065510453932032
+    m_Localized: Waves Survived
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347474562252801
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 2698801152
+        - id: 2744938496
+        - id: 2749132800
+        - id: 2749132801
+        - id: 1854161055746
+        - id: 1018687588691968
+        - id: 1027670466654210

@@ -128,7 +128,7 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
         Rarity rarity = currentState.Rarity;
 
         if (rarityText != null)
-            rarityText.text = rarity.ToString();
+            rarityText.text = LocalizationService.Get(LocalizationTables.Lobby, GetRarityKey(rarity));
         
         if (rarityBackgroundImage != null)
             rarityBackgroundImage.color = visualConfig != null ? visualConfig.GetRarityColor(rarity) : Color.white;
@@ -201,6 +201,17 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
 
         if (passiveSkillIconImage != null)
             passiveSkillIconImage.sprite = currentState.PassiveSkill?.icon;
+    }
+
+    private static string GetRarityKey(Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.Legend => "recruit.rarity.legend",
+            Rarity.Epic => "recruit.rarity.epic",
+            Rarity.Rare => "recruit.rarity.rare",
+            _ => "recruit.rarity.normal",
+        };
     }
 
     private void Render()

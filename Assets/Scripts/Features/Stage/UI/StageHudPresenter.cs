@@ -21,6 +21,9 @@ public class StageHudPresenter : MonoBehaviour
     private StageState cachedState = StageState.None;
     private Color populationDefaultColor = Color.white;
     private bool hasPopulationDefaultColor;
+    private int lastMonsterCount;
+    private int lastSector;
+    private int lastStage;
 
     private EconomyManager economy;
     private PopulationManager population;
@@ -32,6 +35,9 @@ public class StageHudPresenter : MonoBehaviour
     {
         CachePopulationDefaultColor();
     }
+
+    private void OnEnable() => LocalizationService.LocaleChanged += HandleLocaleChanged;
+    private void OnDisable() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
 
     public void Initialize(
         StageDataSO stageData,
@@ -133,14 +139,16 @@ public class StageHudPresenter : MonoBehaviour
             return;
 
         rerollCostText.text = freeRemaining > 0
-            ? $"무료 ({freeRemaining}회)"
+            ? Localize("hud.free_count", freeRemaining)
             : economy.GetRerollCost().ToString();
     }
 
-    private void SetStageInfo(int stageName, int stageId)
+    private void SetStageInfo(int sector, int stage)
     {
+        lastSector = sector;
+        lastStage = stage;
         if (stageInfoText != null)
-            stageInfoText.text = $"{stageName} - {stageId}";
+            stageInfoText.text = Localize("hud.stage", sector, stage);
     }
 
     private void UpdateGold(int gold)
@@ -191,13 +199,14 @@ public class StageHudPresenter : MonoBehaviour
 
     private void UpdateMonsterCount(int remainCount)
     {
+        lastMonsterCount = remainCount;
         if (monsterCountText == null)
             return;
 
         if (cachedState == StageState.Preparing)
-            monsterCountText.SetText("출현 예정 : {0:00}", remainCount);
+            monsterCountText.text = Localize("hud.monsters.incoming", remainCount);
         else if (cachedState == StageState.Combat)
-            monsterCountText.SetText("남은 몬스터 수 : {0:00}", remainCount);
+            monsterCountText.text = Localize("hud.monsters.remaining", remainCount);
         else
             monsterCountText.text = string.Empty;
     }
@@ -206,4 +215,17 @@ public class StageHudPresenter : MonoBehaviour
     {
         UpdateMonsterCount(count);
     }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (lastSector > 0 && lastStage > 0)
+            SetStageInfo(lastSector, lastStage);
+        UpdateRerollCost(preparationService?.FreeRerollsRemaining ?? 0);
+        UpdateMonsterCount(lastMonsterCount);
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Stage, key, arguments);
+
+    private void OnDestroy() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
 }

@@ -62,8 +62,8 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
     {
         if (!ShowContent(item, definition, DisplayMode.Inventory, onDismissed))
             return;
-        BindButton(leftButton, leftButtonLabel, "취소", Dismiss, true);
-        BindButton(primaryButton, primaryButtonLabel, "분해", onDismantle, canDismantle);
+        BindButton(leftButton, leftButtonLabel, Localize("equipment.action.cancel"), Dismiss, true);
+        BindButton(primaryButton, primaryButtonLabel, Localize("equipment.action.dismantle"), onDismantle, canDismantle);
         BindButton(rightButton, rightButtonLabel, null, null, false);
     }
 
@@ -79,14 +79,14 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
     {
         if (!ShowContent(item, definition, DisplayMode.Equipped, onDismissed))
             return;
-        BindButton(leftButton, leftButtonLabel, "해제", onUnequip, actionsEnabled);
+        BindButton(leftButton, leftButtonLabel, Localize("equipment.action.unequip"), onUnequip, actionsEnabled);
         BindButton(
             primaryButton,
             primaryButtonLabel,
-            isMaxLevel ? "최대" : "강화",
+            isMaxLevel ? Localize("equipment.action.max") : Localize("equipment.action.enhance"),
             isMaxLevel ? null : onEnhance,
             actionsEnabled && !isMaxLevel);
-        BindButton(rightButton, rightButtonLabel, "장비 교체", onReplace, actionsEnabled);
+        BindButton(rightButton, rightButtonLabel, Localize("equipment.action.replace"), onReplace, actionsEnabled);
     }
 
     public void ShowPreview(
@@ -96,7 +96,7 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
     {
         if (!ShowContent(item, definition, DisplayMode.Preview, onDismissed))
             return;
-        BindButton(leftButton, leftButtonLabel, "확인", Dismiss, true);
+        BindButton(leftButton, leftButtonLabel, Localize("equipment.action.confirm"), Dismiss, true);
         BindButton(primaryButton, primaryButtonLabel, null, null, false);
         BindButton(rightButton, rightButtonLabel, null, null, false);
     }
@@ -112,14 +112,14 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
 
         CurrentMode = mode;
         dismissed = onDismissed;
-        if (headerLabel != null) headerLabel.text = "장비";
+        if (headerLabel != null) headerLabel.text = Localize("equipment.header");
         rarityHeader.color = RarityPalette.Get(definition.Rarity);
         rarityText.text = RarityName(definition.Rarity);
-        itemNameText.text = definition.ItemName;
+        itemNameText.text = definition.LocalizedName;
         equipmentSlot.Bind(item, definition, false, null);
         SetIcon(baseEffectIcon, GetStatIcon(definition.BaseStatType));
         baseEffectText.text = FormatBase(item, definition);
-        descriptionText.text = definition.Description;
+        descriptionText.text = definition.LocalizedDescription;
 
         bool hasBonus = item.Level >= EquipmentBalanceConfigSO.MaxLevel && item.BonusOption != null;
         bool showBonus = hasBonus && bonusEffectRoot != null && bonusEffectText != null;
@@ -189,27 +189,38 @@ public sealed class EquipmentDetailOverlayView : MonoBehaviour, IModalDismissHan
 
     private static string FormatBase(EquipmentItemData item, EquipmentDataSO definition)
     {
-        string stat = definition.BaseStatType == EquipmentStatType.MaxHp ? "최대 체력" : "공격력";
-        return $"{stat}  +{GameConfig.EquipmentBalance.GetBaseStatValue(definition, item.Level):N0}";
+        string stat = StatName(definition.BaseStatType);
+        return Localize("equipment.stat.value", stat, GameConfig.EquipmentBalance.GetBaseStatValue(definition, item.Level));
     }
 
     private static string FormatBonus(EquipmentBonusOptionData bonus)
     {
         string stat = bonus.StatType switch
         {
-            EquipmentStatType.MaxHp => "최대 체력",
-            EquipmentStatType.Attack => "공격력",
-            EquipmentStatType.CritChance => "치명타 확률",
-            _ => "받는 피해 감소"
+            EquipmentStatType.MaxHp => Localize("equipment.stat.max_hp"),
+            EquipmentStatType.Attack => Localize("equipment.stat.attack"),
+            EquipmentStatType.CritChance => Localize("equipment.stat.crit_chance"),
+            _ => Localize("equipment.stat.damage_reduction")
         };
-        return $"{stat}  +{bonus.Value:0.#}{(bonus.ModifierType == EquipmentModifierType.Percent ? "%" : string.Empty)}";
+        return Localize("equipment.stat.bonus", stat, bonus.Value, bonus.ModifierType == EquipmentModifierType.Percent ? "%" : string.Empty);
     }
 
     private static string RarityName(Rarity rarity) => rarity switch
     {
-        Rarity.Legend => "전설",
-        Rarity.Epic => "에픽",
-        Rarity.Rare => "희귀",
-        _ => "일반"
+        Rarity.Legend => Localize("equipment.rarity.legend"),
+        Rarity.Epic => Localize("equipment.rarity.epic"),
+        Rarity.Rare => Localize("equipment.rarity.rare"),
+        _ => Localize("equipment.rarity.normal")
     };
+
+    private static string StatName(EquipmentStatType type) => type switch
+    {
+        EquipmentStatType.MaxHp => Localize("equipment.stat.max_hp"),
+        EquipmentStatType.Attack => Localize("equipment.stat.attack"),
+        EquipmentStatType.CritChance => Localize("equipment.stat.crit_chance"),
+        _ => Localize("equipment.stat.damage_reduction"),
+    };
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Items, key, arguments);
 }

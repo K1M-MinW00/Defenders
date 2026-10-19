@@ -1,0 +1,1017 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_Lobby_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 817038df937c0ce499b58553684017c3, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 5228347473059643394
+  m_TableData:
+  - m_Id: 2648469504
+    m_Localized: Spend {0:N0} Gems to recruit?
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 2694606848
+    m_Localized: 'Current Gems: {0:N0}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 2698801152
+    m_Localized: 'Price: {0:N0} Gems'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 2698801153
+    m_Localized: 'Gems after purchase: {0:N0}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 2698801154
+    m_Localized: Not enough Gems after purchase
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2702995456
+    m_Localized: Purchase this product?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2702995457
+    m_Localized: Not enough Gems.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2702995458
+    m_Localized: Processing purchase...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2702995459
+    m_Localized: Purchase Complete!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2702995460
+    m_Localized: Purchase Failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700766744576
+    m_Localized: 'Sector
+
+      {0}-{1}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 8700833853440
+    m_Localized: '{0} / {1}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 8700833853441
+    m_Localized: Assign units to the battle roster first.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853442
+    m_Localized: The battle roster is invalid.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853443
+    m_Localized: Unable to verify stage progress.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853444
+    m_Localized: Unable to start the battle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853445
+    m_Localized: The battle scene is missing from the build settings.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853446
+    m_Localized: Another screen is currently loading.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853447
+    m_Localized: Unable to load the battle screen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853448
+    m_Localized: ' Fuel refund also failed.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853449
+    m_Localized: Unable to load the battle screen. The consumed Fuel was refunded.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853450
+    m_Localized: Unable to load the battle screen, and the Fuel refund also failed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853451
+    m_Localized: You need {0} Fuel to enter this stage.
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 8700833853452
+    m_Localized: Unable to save the Fuel consumption.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8700833853453
+    m_Localized: Unable to use Fuel.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9510787510272
+    m_Localized: '{0}/{1}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841920
+    m_Localized: Next Fuel in {0}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841921
+    m_Localized: Full recovery in {0}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841922
+    m_Localized: Daily ads ({0}/{1})
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841923
+    m_Localized: '{0:N0} Gems'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841924
+    m_Localized: Loading user data.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9510837841925
+    m_Localized: Hourly rewards for Sector {0}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841926
+    m_Localized: '{0}h {1}m / Max {2}h'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841927
+    m_Localized: 0 /hr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9510837841928
+    m_Localized: '{0:N0}<color=#56FF69> (+{1:N0})</color> /hr'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 9510837841929
+    m_Localized: There are no rewards to claim.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9510837841930
+    m_Localized: Failed to claim rewards.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9510837841931
+    m_Localized: Idle rewards claimed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10061906472960
+    m_Localized: Change for Free
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10061956804608
+    m_Localized: Change ({0:N0} Gems)
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 10061956804609
+    m_Localized: Enter a nickname between 2 and 12 characters.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10061956804610
+    m_Localized: Not enough Gems to change your nickname.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10061956804611
+    m_Localized: This nickname is already in use.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10061956804612
+    m_Localized: A nickname change is already in progress.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10061956804613
+    m_Localized: Failed to change the nickname. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10061956804614
+    m_Localized: Failed to save the profile icon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11020036501504
+    m_Localized: Legendary unit guaranteed within {0} recruits
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 11020091027456
+    m_Localized: Legendary Units
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11020091027457
+    m_Localized: Epic Units
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11020091027458
+    m_Localized: Rare Units
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11020091027459
+    m_Localized: '{0} (Rate Up)'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 12075239501824
+    m_Localized: 'Available: {0}/{1}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 12075285639168
+    m_Localized: Coming Soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12075285639169
+    m_Localized: Sold Out
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12075285639170
+    m_Localized: Sale Ended
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12075285639171
+    m_Localized: '{0:N0} Gems'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 12075285639172
+    m_Localized: "\u20A9{0:N0}"
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 12075285639173
+    m_Localized: Watch Ad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12075285639174
+    m_Localized: '{0:N0} Gold'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 12075285639175
+    m_Localized: Refreshing stock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12075285639176
+    m_Localized: '{0}d {1}h'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 12545769107456
+    m_Localized: Owned {0}/{1}  Next slot at Lv. {2}
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 12545827827712
+    m_Localized: Not enough research materials.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12545827827713
+    m_Localized: Increase your account level to develop new technologies.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12545827827714
+    m_Localized: You have acquired all technology cards.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12545827827715
+    m_Localized: Failed to save. Please try again shortly.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12545827827716
+    m_Localized: Unable to develop a technology.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057172205568
+    m_Localized: Loading user data.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057209954304
+    m_Localized: Wave Milestone Rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057209954305
+    m_Localized: 'Stage
+
+      {0}'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 13057218342912
+    m_Localized: 'WAVE
+
+      <size=150%>{0}</size>'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 13057218342913
+    m_Localized: Claimed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057218342914
+    m_Localized: Claim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057218342915
+    m_Localized: Locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057218342916
+    m_Localized: Wave milestone rewards claimed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057218342917
+    m_Localized: This reward milestone has not been reached yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057218342918
+    m_Localized: This reward has already been claimed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057218342919
+    m_Localized: Failed to save the rewards.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13057218342920
+    m_Localized: Unable to claim the rewards.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181202407424
+    m_Localized: Loading quest information.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739072
+    m_Localized: Failed to refresh quest information.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739073
+    m_Localized: Failed to claim quest points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739074
+    m_Localized: Claimed {0} quest points.
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 18181252739075
+    m_Localized: The points for this quest have already been claimed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739076
+    m_Localized: Unable to claim the quest reward.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739077
+    m_Localized: Not enough quest points.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739078
+    m_Localized: This reward has already been claimed.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739079
+    m_Localized: Failed to save the reward.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739080
+    m_Localized: Unable to find the destination screen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181252739081
+    m_Localized: '{0}h {1:00}m'
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 18181256933376
+    m_Localized: Claimed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933377
+    m_Localized: Claim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933378
+    m_Localized: Go
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933379
+    m_Localized: Reward Details
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933380
+    m_Localized: Rewards Acquired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933381
+    m_Localized: Log in once
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933382
+    m_Localized: Fuse a 4-star unit once
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933383
+    m_Localized: Recruit a unit once
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933384
+    m_Localized: Level up a unit once
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933385
+    m_Localized: Develop a Lab technology once
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933386
+    m_Localized: Clear 10 waves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933387
+    m_Localized: Fuse units 10 times
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933388
+    m_Localized: Spend 150 Fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18181256933389
+    m_Localized: Spend 50 Fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27179293110272
+    m_Localized: Expired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27179347636224
+    m_Localized: Expires in {0} days
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 27179347636225
+    m_Localized: Expires in {0} hours
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 27179347636226
+    m_Localized: Expires in {0} minutes
+    m_Metadata:
+      m_Items:
+      - rid: 5228347473059643394
+  - m_Id: 27179356024832
+    m_Localized: Expires soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872287576064
+    m_Localized: Recruit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102016
+    m_Localized: Units
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102017
+    m_Localized: Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102018
+    m_Localized: Lab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102019
+    m_Localized: Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102020
+    m_Localized: Supplies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102021
+    m_Localized: 'Conquest
+
+      Rewards'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102022
+    m_Localized: Mailbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102023
+    m_Localized: Bag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 245872342102024
+    m_Localized: Quests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246599303065600
+    m_Localized: Unit Recruitment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246599378563072
+    m_Localized: 'Normal
+
+      Recruitment'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246599378563073
+    m_Localized: 'Special
+
+      Recruitment'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246599378563074
+    m_Localized: View Rates
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246599378563075
+    m_Localized: Use
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246599378563076
+    m_Localized: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393339338752
+    m_Localized: Units
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224832
+    m_Localized: Battle Roster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224833
+    m_Localized: Reserve Roster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224834
+    m_Localized: Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224835
+    m_Localized: HP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224836
+    m_Localized: Select Materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224837
+    m_Localized: +1 Level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224838
+    m_Localized: Max Level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247393423224839
+    m_Localized: Training
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461322383360
+    m_Localized: Promotion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461414658048
+    m_Localized: Limit Break
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461414658049
+    m_Localized: Equipment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461414658050
+    m_Localized: Promotion Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461414658051
+    m_Localized: Cost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461414658052
+    m_Localized: Active
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461414658053
+    m_Localized: Passive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248461414658054
+    m_Localized: Limit Break Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138832502784
+    m_Localized: Main Weapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000256
+    m_Localized: Secondary Weapon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000257
+    m_Localized: Helmet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000258
+    m_Localized: Armor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000259
+    m_Localized: Equipment Stats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000260
+    m_Localized: Modification Effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000261
+    m_Localized: Change Equipment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000262
+    m_Localized: Equip or replace equipment.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000263
+    m_Localized: No equipment is currently equipped.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249138908000264
+    m_Localized: Equip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249989387022336
+    m_Localized: Equipment Enhancement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249989441548288
+    m_Localized: Level Up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249989441548289
+    m_Localized: Reset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249989441548290
+    m_Localized: Auto Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 249989441548291
+    m_Localized: Select enhancement stones.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250990751936512
+    m_Localized: Unequip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250990814851072
+    m_Localized: Enhance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 250990814851073
+    m_Localized: Replace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252910686203904
+    m_Localized: Lab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 252910757507072
+    m_Localized: Develop Technology
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253964970651648
+    m_Localized: Limited
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253965046149120
+    m_Localized: Packages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253965046149121
+    m_Localized: Recharge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253965046149122
+    m_Localized: Exchange
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253965046149123
+    m_Localized: Daily Packages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253965046149124
+    m_Localized: Weekly Packages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 253965046149125
+    m_Localized: Monthly Packages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254837998252032
+    m_Localized: Purchase Product
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254838073749504
+    m_Localized: Purchase
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254838073749505
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254838073749506
+    m_Localized: Recharge Gems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 254838073749507
+    m_Localized: OK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256615837888512
+    m_Localized: Inventory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256615917580288
+    m_Localized: Items
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256615917580289
+    m_Localized: Equipment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256615917580290
+    m_Localized: Materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256615917580291
+    m_Localized: All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 256615917580292
+    m_Localized: Reset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257254890434560
+    m_Localized: Dismantle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257254991097856
+    m_Localized: Select equipment to dismantle.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257254991097857
+    m_Localized: Dismantle Rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257254991097858
+    m_Localized: Dismantle Rewards Acquired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257942248779776
+    m_Localized: Mailbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257942303305728
+    m_Localized: Claim All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 257942303305729
+    m_Localized: Delete All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258848008728576
+    m_Localized: Daily Quests
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258848096808960
+    m_Localized: Daily Rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 258848096808961
+    m_Localized: Weekly Rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259691659423744
+    m_Localized: Challenge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259691734921216
+    m_Localized: Go
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259691734921217
+    m_Localized: Guide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259691734921218
+    m_Localized: 'Attendance
+
+      Event'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259691734921219
+    m_Localized: 'Battle
+
+      Pass'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259691734921220
+    m_Localized: 'Growth
+
+      Event'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 259691734921221
+    m_Localized: Privileges
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020665700352
+    m_Localized: Purchase Fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420608
+    m_Localized: <sprite=4>Ad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420609
+    m_Localized: Nickname
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420610
+    m_Localized: "2\u201312 characters (no spaces, symbols, or profanity)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420611
+    m_Localized: Enter a nickname
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420612
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420613
+    m_Localized: Profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420614
+    m_Localized: Cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 270020724420615
+    m_Localized: Confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271082927714304
+    m_Localized: Current Rewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271083015794688
+    m_Localized: 'Maximum supply support: 12 hours'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271083015794689
+    m_Localized: Claim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271083015794690
+    m_Localized: Claim All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271083015794691
+    m_Localized: Recruit Units
+    m_Metadata:
+      m_Items: []
+  - m_Id: 271083015794692
+    m_Localized: Recruit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274529303425024
+    m_Localized: Unlock Passive Skill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274529370533888
+    m_Localized: Add Active Skill Effect, HP +10%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 274529370533889
+    m_Localized: Add Passive Skill Effect, Attack +10%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365005549367296
+    m_Localized: Best Wave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 379441450348544
+    m_Localized: Rate Information
+    m_Metadata:
+      m_Items: []
+  - m_Id: 380447068286976
+    m_Localized: Recruitment Results
+    m_Metadata:
+      m_Items: []
+  - m_Id: 960688790728704
+    m_Localized: New Unit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 960688836866048
+    m_Localized: Skip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 960688836866049
+    m_Localized: Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 960688836866050
+    m_Localized: Rare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 960688836866051
+    m_Localized: Epic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 960688836866052
+    m_Localized: Legendary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 963112431546368
+    m_Localized: Codex
+    m_Metadata:
+      m_Items: []
+  - m_Id: 963112486072320
+    m_Localized: Formation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 996483371134976
+    m_Localized: First Purchase x2
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347473059643394
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 2648469504
+        - id: 2694606848
+        - id: 2698801152
+        - id: 2698801153
+        - id: 8700766744576
+        - id: 8700833853440
+        - id: 8700833853451
+        - id: 9510787510272
+        - id: 9510837841920
+        - id: 9510837841921
+        - id: 9510837841922
+        - id: 9510837841923
+        - id: 9510837841925
+        - id: 9510837841926
+        - id: 9510837841928
+        - id: 10061956804608
+        - id: 11020036501504
+        - id: 11020091027459
+        - id: 12075239501824
+        - id: 12075285639171
+        - id: 12075285639172
+        - id: 12075285639174
+        - id: 12075285639176
+        - id: 12545769107456
+        - id: 13057209954305
+        - id: 13057218342912
+        - id: 18181252739074
+        - id: 18181252739081
+        - id: 27179347636224
+        - id: 27179347636225
+        - id: 27179347636226

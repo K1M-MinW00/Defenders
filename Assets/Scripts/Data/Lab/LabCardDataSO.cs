@@ -15,6 +15,17 @@ public sealed class LabCardDataSO : ScriptableObject
     public float Value;
     [Min(0f)] public float DrawWeight = 1f;
 
+    public string LocalizedName => Localize("name", DisplayName);
+    public string LocalizedDescription => Localize("description", Description);
+
+    private string Localize(string suffix, string fallback)
+    {
+        string value = LocalizationService.Get(LocalizationTables.Relics, $"lab.{CardId}.{suffix}");
+        return string.IsNullOrWhiteSpace(value) || value.StartsWith("No translation found for")
+            ? fallback
+            : value;
+    }
+
     public string GetFormattedValue()
     {
         return EffectType == LabEffectType.StartingMinerals || EffectType == LabEffectType.MaxUnitCount

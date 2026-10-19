@@ -55,7 +55,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -95,9 +95,9 @@ MonoBehaviour:
   m_fontSize: 24
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 24
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -311,10 +311,6 @@ MonoBehaviour:
   frameImage: {fileID: 8591767693689895495}
   countText: {fileID: 933368410549186229}
   button: {fileID: 8424797009381731084}
-  normalFrameColor: {r: 0.55, g: 0.55, b: 0.55, a: 1}
-  rareFrameColor: {r: 0.2, g: 0.55, b: 1, a: 1}
-  epicFrameColor: {r: 0.65, g: 0.3, b: 0.9, a: 1}
-  legendFrameColor: {r: 1, g: 0.72, b: 0.12, a: 1}
   normalCountColor: {r: 1, g: 1, b: 1, a: 1}
   insufficientCountColor: {r: 1, g: 0.25, b: 0.25, a: 1}
 --- !u!1 &8649451412088733168

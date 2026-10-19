@@ -56,7 +56,7 @@ public class UnitDragActionUI : MonoBehaviour
 
         int freeRemaining = preparationService?.FreeRerollsRemaining ?? 0;
         rerollCostText.text = freeRemaining > 0
-            ? $"무료 ({freeRemaining}회)"
+            ? LocalizationService.Get(LocalizationTables.Stage, "hud.free_count", freeRemaining)
             : economy.GetRerollCost().ToString();
     }
 

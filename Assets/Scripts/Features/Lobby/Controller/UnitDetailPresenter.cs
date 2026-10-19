@@ -33,7 +33,7 @@ public sealed class UnitDetailPresenter
             UnitId = unitId,
             Definition = definition,
             Icon = definition.icon,
-            DisplayName = definition.displayName,
+            DisplayName = definition.LocalizedName,
             Rarity = definition.rarity,
             Level = userUnit.Level,
             Attack = stats.Attack,

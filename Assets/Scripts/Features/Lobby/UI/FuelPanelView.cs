@@ -54,6 +54,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (!TryInitialize())
             return;
 
@@ -66,6 +67,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         UnsubscribeEvents();
         UnsubscribeAdEvents();
     }
@@ -135,10 +137,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
         BindFuelReward(gemPurchaseRewardSlot, gemPurchaseProduct);
 
         if (gemPurchaseButtonText != null && gemPurchaseProduct != null)
-        {
-            string gemName = GameConfig.Icons?.GetResourceDisplayName(RewardType.Gem) ?? "젬";
-            gemPurchaseButtonText.text = $"{gemName} {gemPurchaseProduct.CostAmount:N0}";
-        }
+            gemPurchaseButtonText.text = Localize("fuel.gem_cost", gemPurchaseProduct.CostAmount);
     }
 
     private static void BindFuelReward(CommonSlotUI slot, ShopProductData product)
@@ -226,10 +225,10 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
             return;
         }
 
-        fuelText.text = $"{state.Fuel}/{state.MaxFuel}";
-        nextRecoverText.text = $"다음 충전까지 {FormatDuration(state.NextRecoverSeconds)}";
-        fullRecoverText.text = $"최대 충전까지 {FormatDuration(state.FullRecoverSeconds)}";
-        dailyAdText.text = $"일일 광고 시청 ({state.DailyAdWatchCount}/{state.DailyAdLimit})";
+        fuelText.text = Localize("fuel.status", state.Fuel, state.MaxFuel);
+        nextRecoverText.text = Localize("fuel.next_recovery", FormatDuration(state.NextRecoverSeconds));
+        fullRecoverText.text = Localize("fuel.full_recovery", FormatDuration(state.FullRecoverSeconds));
+        dailyAdText.text = Localize("fuel.daily_ads", state.DailyAdWatchCount, state.DailyAdLimit);
         rewardAdButton.interactable = state.CanRequestRewardAd;
         if (gemPurchaseButton != null)
             gemPurchaseButton.interactable = !isPurchasingFuel && gemPurchaseProduct != null;
@@ -364,6 +363,15 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
             Refresh();
     }
 
+    private void HandleLocaleChanged(string _)
+    {
+        BindProductSlots();
+        RefreshIfVisible();
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
+
     private void ShowFeedbackIfVisible(string message)
     {
         if (isActiveAndEnabled)
@@ -372,6 +380,7 @@ public sealed class FuelPanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         UnsubscribeEvents();
         UnsubscribeAdEvents();
     }

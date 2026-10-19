@@ -87,7 +87,12 @@ public sealed class EquipmentEnhancementOverlayView : MonoBehaviour, IModalDismi
         if (nextLevelText != null)
         {
             nextLevelText.gameObject.SetActive(ready);
-            nextLevelText.text = ready ? $"다음 LV.{equipment.Level + 1}" : string.Empty;
+            nextLevelText.text = ready
+                ? LocalizationService.Get(
+                    LocalizationTables.Items,
+                    "equipment.enhance.next_level",
+                    equipment.Level + 1)
+                : string.Empty;
         }
         if (effectText != null)
             effectText.text = ready ? $"{currentEffect}  >  {nextEffect}" : currentEffect;

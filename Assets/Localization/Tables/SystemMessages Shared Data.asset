@@ -1,0 +1,220 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: SystemMessages Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: SystemMessages
+  m_TableCollectionNameGuidString: 4fc665ed381e503428abd47b359a673e
+  m_Entries:
+  - m_Id: 2694606848
+    m_Key: common.save_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2736549888
+    m_Key: lobby.ad_unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2744938496
+    m_Key: mailbox.load_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2744938497
+    m_Key: mailbox.delete_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132800
+    m_Key: mailbox.user_not_found
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132801
+    m_Key: mailbox.nothing_to_claim
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132802
+    m_Key: mailbox.invalid_reward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132803
+    m_Key: mailbox.claim_save_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132804
+    m_Key: mailbox.claim_unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132805
+    m_Key: recruit.invalid_banner
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132806
+    m_Key: recruit.insufficient_currency
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132807
+    m_Key: recruit.empty_pool
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132808
+    m_Key: recruit.save_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132809
+    m_Key: recruit.unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132810
+    m_Key: fuel.insufficient_gems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132811
+    m_Key: fuel.capacity_reached
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132812
+    m_Key: fuel.purchase_save_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132813
+    m_Key: fuel.purchase_unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132814
+    m_Key: fuel.ad_daily_limit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132815
+    m_Key: fuel.ad_save_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132816
+    m_Key: fuel.ad_reward_unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132817
+    m_Key: shop.processing_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132818
+    m_Key: shop.completed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132819
+    m_Key: shop.insufficient_gems
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132820
+    m_Key: shop.sold_out
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132821
+    m_Key: shop.not_on_sale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132822
+    m_Key: shop.unsupported_purchase_type
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132823
+    m_Key: shop.invalid_reward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132824
+    m_Key: shop.capacity_exceeded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132825
+    m_Key: shop.invalid_request
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132826
+    m_Key: unit.not_found
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132827
+    m_Key: unit.train.max_level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132828
+    m_Key: unit.train.insufficient_gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132829
+    m_Key: unit.train.insufficient_materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132830
+    m_Key: unit.train.unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132831
+    m_Key: unit.promote.max_level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132832
+    m_Key: unit.promote.invalid_cost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132833
+    m_Key: unit.promote.insufficient_materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132834
+    m_Key: unit.promote.unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132835
+    m_Key: unit.limit_break.max_level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132836
+    m_Key: unit.limit_break.insufficient_materials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132837
+    m_Key: unit.limit_break.unavailable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132838
+    m_Key: formation.invalid_roster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132839
+    m_Key: formation.unit_not_owned
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132840
+    m_Key: formation.unit_not_selected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132841
+    m_Key: formation.unit_already_selected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132842
+    m_Key: formation.save_failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2749132843
+    m_Key: formation.unavailable
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5228347473017700352
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347473017700352
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792092642319

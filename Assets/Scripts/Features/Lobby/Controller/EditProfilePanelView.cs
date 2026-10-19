@@ -181,7 +181,9 @@ public sealed class EditProfilePanelView : MonoBehaviour, IModalDismissHandler
 
             if (!succeeded)
             {
-                UIFeedbackToast.Show("프로필 아이콘 저장에 실패했습니다.");
+                UIFeedbackToast.Show(LocalizationService.Get(
+                    LocalizationTables.Lobby,
+                    "profile.icon.save_failed"));
                 return;
             }
 

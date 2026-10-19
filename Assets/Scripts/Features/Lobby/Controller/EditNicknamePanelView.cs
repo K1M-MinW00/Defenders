@@ -62,6 +62,7 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (!TryInitialize())
         {
             Debug.LogError("[EditNicknamePanelView] User profile is not ready.");
@@ -91,6 +92,7 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         operationVersion++;
     }
 
@@ -109,7 +111,9 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
         cancelButton.interactable = !isSaving;
 
         if (confirmButtonLabel != null && state != null)
-            confirmButtonLabel.text = state.ConfirmLabel;
+            confirmButtonLabel.text = state.ChangeCost > 0
+                ? Localize("nickname.confirm.paid", state.ChangeCost)
+                : Localize("nickname.confirm.free");
     }
 
     private async void HandleConfirmButtonClicked()
@@ -167,16 +171,26 @@ public sealed class EditNicknamePanelView : MonoBehaviour, IModalDismissHandler
     {
         return failure switch
         {
-            NicknameChangeFailure.InvalidNickname => "닉네임은 2~12자로 입력해주세요.",
-            NicknameChangeFailure.InsufficientGem => "닉네임 변경에 필요한 보석이 부족합니다.",
-            NicknameChangeFailure.NicknameAlreadyTaken => "이미 사용 중인 닉네임입니다.",
-            NicknameChangeFailure.Busy => "닉네임 변경을 처리 중입니다.",
-            _ => "닉네임 변경에 실패했습니다. 잠시 후 다시 시도해주세요.",
+            NicknameChangeFailure.InvalidNickname => Localize("nickname.failure.invalid"),
+            NicknameChangeFailure.InsufficientGem => Localize("nickname.failure.insufficient_gems"),
+            NicknameChangeFailure.NicknameAlreadyTaken => Localize("nickname.failure.already_taken"),
+            NicknameChangeFailure.Busy => Localize("nickname.failure.busy"),
+            _ => Localize("nickname.failure.save_failed"),
         };
     }
 
+    private void HandleLocaleChanged(string _)
+    {
+        if (isActiveAndEnabled)
+            RefreshButton();
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
+
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (cancelButton != null)
             cancelButton.onClick.RemoveListener(Dismiss);
 

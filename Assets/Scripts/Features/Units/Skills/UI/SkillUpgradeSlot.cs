@@ -9,10 +9,12 @@ public class SkillUpgradeSlot : MonoBehaviour
     [SerializeField] private Image lockImage;
     [SerializeField] private CanvasGroup canvasGroup;
 
-    public void Setup(int promotion, SkillUpgradeData data)
+    public void Setup(int promotion, SkillUpgradeData data, string localizedDescription)
     {
-        titleText.text = data.promotionLevel <= 1 ? "기본 효과" : $"{data.promotionLevel} 진급 효과";
-        descriptionText.text = data.description;
+        titleText.text = data.promotionLevel <= 1
+            ? LocalizationService.Get(LocalizationTables.Skills, "skill.effect.base")
+            : LocalizationService.Get(LocalizationTables.Skills, "skill.effect.promotion", data.promotionLevel);
+        descriptionText.text = localizedDescription;
 
         bool unlocked = promotion >= data.promotionLevel;
 

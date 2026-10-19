@@ -37,11 +37,15 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
     {
         requiredWave = milestone.requiredWave;
         claimRequested = onClaimRequested;
-        waveText.text = $"WAVE\n<size=150%>{requiredWave}</size>";
+        waveText.text = Localize("wave_reward.wave", requiredWave);
         BindRewards(milestone.rewards);
 
         bool claimable = unlocked && !claimed && !busy;
-        stateText.text = claimed ? "수령 완료" : unlocked ? "수령" : "잠김";
+        stateText.text = claimed
+            ? Localize("wave_reward.state.claimed")
+            : unlocked
+                ? Localize("wave_reward.state.claim")
+                : Localize("wave_reward.state.locked");
         claimButton.interactable = claimable;
         if (claimButtonBackground != null)
             claimButtonBackground.color = claimable ? ClaimableColor : DisabledColor;
@@ -93,6 +97,9 @@ public sealed class WaveMilestoneRewardSlotView : MonoBehaviour
     }
 
     private void HandleClick() => claimRequested?.Invoke(requiredWave);
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 
     private bool ValidateReferences()
     {

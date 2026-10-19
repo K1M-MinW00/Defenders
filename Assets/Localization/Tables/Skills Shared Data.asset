@@ -1,0 +1,344 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Skills Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Skills
+  m_TableCollectionNameGuidString: 93838c526a0202842a3ce1a6de581990
+  m_Entries:
+  - m_Id: 4745621504
+    m_Key: skill.effect.base
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4783370240
+    m_Key: skill.effect.promotion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4804341760
+    m_Key: skill.Archer_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4804341761
+    m_Key: skill.Archer_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4804341762
+    m_Key: skill.Archer_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4804341763
+    m_Key: skill.Archer_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4808536064
+    m_Key: skill.Archer_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4808536065
+    m_Key: skill.Archer_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4808536066
+    m_Key: skill.Archer_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4812730368
+    m_Key: skill.Axeman_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4816924672
+    m_Key: skill.Axeman_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4816924673
+    m_Key: skill.Axeman_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4816924674
+    m_Key: skill.Axeman_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4816924675
+    m_Key: skill.Axeman_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4816924676
+    m_Key: skill.Axeman_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4816924677
+    m_Key: skill.Axeman_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4821118976
+    m_Key: skill.Knight_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4821118977
+    m_Key: skill.Knight_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4821118978
+    m_Key: skill.Knight_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4821118979
+    m_Key: skill.Knight_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4825313280
+    m_Key: skill.Knight_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4825313281
+    m_Key: skill.Knight_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4825313282
+    m_Key: skill.Knight_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4825313283
+    m_Key: skill.KnightTemplar_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4825313284
+    m_Key: skill.KnightTemplar_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4825313285
+    m_Key: skill.KnightTemplar_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4825313286
+    m_Key: skill.KnightTemplar_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4833701888
+    m_Key: skill.KnightTemplar_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4833701889
+    m_Key: skill.KnightTemplar_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4833701890
+    m_Key: skill.KnightTemplar_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4837896192
+    m_Key: skill.Lancer_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4837896193
+    m_Key: skill.Lancer_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4837896194
+    m_Key: skill.Lancer_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4837896195
+    m_Key: skill.Lancer_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4837896196
+    m_Key: skill.Lancer_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4842090496
+    m_Key: skill.Lancer_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4842090497
+    m_Key: skill.Lancer_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4842090498
+    m_Key: skill.Priest_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4846284800
+    m_Key: skill.Priest_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4846284801
+    m_Key: skill.Priest_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4846284802
+    m_Key: skill.Priest_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4850479104
+    m_Key: skill.Priest_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4850479105
+    m_Key: skill.Priest_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4850479106
+    m_Key: skill.Priest_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4850479107
+    m_Key: skill.SoldierM_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4854673408
+    m_Key: skill.SoldierM_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4854673409
+    m_Key: skill.SoldierM_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4854673410
+    m_Key: skill.SoldierM_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4854673411
+    m_Key: skill.SoldierM_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4854673412
+    m_Key: skill.SoldierM_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4854673413
+    m_Key: skill.SoldierM_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4858867712
+    m_Key: skill.SoldierR_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4858867713
+    m_Key: skill.SoldierR_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4858867714
+    m_Key: skill.SoldierR_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4858867715
+    m_Key: skill.SoldierR_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4863062016
+    m_Key: skill.SoldierR_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4863062017
+    m_Key: skill.SoldierR_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4863062018
+    m_Key: skill.SoldierR_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4871450624
+    m_Key: skill.Swordsman_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4871450625
+    m_Key: skill.Swordsman_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4871450626
+    m_Key: skill.Swordsman_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4871450627
+    m_Key: skill.Swordsman_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4875644928
+    m_Key: skill.Swordsman_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4875644929
+    m_Key: skill.Swordsman_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4875644930
+    m_Key: skill.Swordsman_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4879839232
+    m_Key: skill.Werebear_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4879839233
+    m_Key: skill.Werebear_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4879839234
+    m_Key: skill.Werebear_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4879839235
+    m_Key: skill.Werebear_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4884033536
+    m_Key: skill.Werebear_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4884033537
+    m_Key: skill.Werebear_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4884033538
+    m_Key: skill.Werebear_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4888227840
+    m_Key: skill.Wizard_Active.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4888227841
+    m_Key: skill.Wizard_Active.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4888227842
+    m_Key: skill.Wizard_Active.upgrade.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4888227843
+    m_Key: skill.Wizard_Active.upgrade.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4892422144
+    m_Key: skill.Wizard_Passive.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4892422145
+    m_Key: skill.Wizard_Passive.upgrade.0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4892422146
+    m_Key: skill.Wizard_Passive.upgrade.1
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5228347490217754624
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347490217754624
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792158255108

@@ -259,7 +259,7 @@ public sealed class UnitTrainingPanel : MonoBehaviour
 
         string color = preview.CanAfford ? "white" : "red";
 
-        goldCostText.text = $"<sprite=1> <color={color}>{previewTotalGold:N0}</color> / {resource.Gold:N0}";
+        goldCostText.text = $"<color={color}>{previewTotalGold:N0}</color> / {resource.Gold:N0}";
 
         int needCurrentExp = previewLevel >= currentUnitData.maxLevel ? 1 : UnitExpTable.GetRequiredExp(previewLevel);
 

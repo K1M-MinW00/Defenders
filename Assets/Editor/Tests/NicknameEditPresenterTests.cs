@@ -11,7 +11,7 @@ public sealed class NicknameEditPresenterTests
         NicknameEditState unchanged = presenter.Build(current, false);
         NicknameEditState changed = presenter.Build("  New Hero  ", false);
 
-        Assert(unchanged.ConfirmLabel == "무료 변경", "First nickname change should be free.");
+        Assert(unchanged.ChangeCost == 0, "First nickname change should be free.");
         Assert(!unchanged.CanSave, "Unchanged nickname should not be saved.");
         Assert(changed.CanSave && changed.NormalizedNickname == "New Hero", "Valid changed nickname should be normalized and savable.");
     }
@@ -24,7 +24,7 @@ public sealed class NicknameEditPresenterTests
 
         NicknameEditState state = presenter.Build("Another", true);
 
-        Assert(state.ConfirmLabel == "변경 (보석 500)", "Paid nickname cost should be displayed.");
+        Assert(state.ChangeCost == 500, "Paid nickname cost should be exposed for display.");
         Assert(!state.CanSave, "Save should be disabled while another save is running.");
     }
 

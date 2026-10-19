@@ -22,12 +22,16 @@ public sealed class MailSlotUI : MonoBehaviour
     private MailData currentMail;
     private Action<MailData> clicked;
     private bool canClaim;
+    private IGameIconProvider currentIcons;
 
     private void Awake()
     {
         if (button != null)
             button.onClick.AddListener(HandleClicked);
     }
+
+    private void OnEnable() => LocalizationService.LocaleChanged += HandleLocaleChanged;
+    private void OnDisable() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
 
     public void Setup(MailData mail, Action<MailData> onClick, IGameIconProvider icons)
     {
@@ -39,7 +43,8 @@ public sealed class MailSlotUI : MonoBehaviour
 
         currentMail = mail;
         clicked = onClick;
-        titleText.text = mail.Title;
+        currentIcons = icons;
+        titleText.text = MailTitleResolver.Resolve(mail);
 
         DateTime expireTime = mail.ExpireAt.ToDateTime();
         TimeSpan remain = expireTime - DateTime.UtcNow;
@@ -60,6 +65,7 @@ public sealed class MailSlotUI : MonoBehaviour
     {
         currentMail = null;
         clicked = null;
+        currentIcons = null;
         canClaim = false;
 
         if (titleText != null)
@@ -125,22 +131,32 @@ public sealed class MailSlotUI : MonoBehaviour
     private static string GetExpireText(TimeSpan remain)
     {
         if (remain.TotalSeconds <= 0)
-            return "만료됨";
+            return Localize("mail.expired");
 
         if (remain.TotalDays >= 1)
-            return $"{Mathf.CeilToInt((float)remain.TotalDays)}일 후 만료";
+            return Localize("mail.expires_days", Mathf.CeilToInt((float)remain.TotalDays));
 
         if (remain.TotalHours >= 1)
-            return $"{Mathf.CeilToInt((float)remain.TotalHours)}시간 후 만료";
+            return Localize("mail.expires_hours", Mathf.CeilToInt((float)remain.TotalHours));
 
         if (remain.TotalMinutes >= 1)
-            return $"{Mathf.CeilToInt((float)remain.TotalMinutes)}분 후 만료";
+            return Localize("mail.expires_minutes", Mathf.CeilToInt((float)remain.TotalMinutes));
 
-        return "곧 만료";
+        return Localize("mail.expires_soon");
     }
+
+    private void HandleLocaleChanged(string _)
+    {
+        if (currentMail != null)
+            Setup(currentMail, clicked, currentIcons);
+    }
+
+    private static string Localize(string key, params object[] arguments) =>
+        LocalizationService.Get(LocalizationTables.Lobby, key, arguments);
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         if (button != null)
             button.onClick.RemoveListener(HandleClicked);
     }

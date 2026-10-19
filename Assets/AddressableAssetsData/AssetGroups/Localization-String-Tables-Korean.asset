@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Korean
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Korean
+  m_GUID: d4486bc566742624e8ea6eee8762f251
+  m_SerializeEntries:
+  - m_GUID: 2c10eb60d3ce6a2478a00175508eb2c5
+    m_Address: Skills_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a2a0114587f52c4586ade741e3ecfdd
+    m_Address: SystemMessages_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72febe3c8f79d3540b02a97a3a20037c
+    m_Address: UI_Lobby_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77883c04e1b9f24458a42649e01cb21c
+    m_Address: Units_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 88c3819150dfa2d4aad1945932a6e915
+    m_Address: Items_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b5330ad5d8eb81489d47566f180eb89
+    m_Address: Relics_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91a336da77852394ea059f19059f3191
+    m_Address: UI_Common_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d81ae2d0070e1cc43b965e084bb3fec0
+    m_Address: UI_Stage_ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 4e66760e5691097459915c65b5cbbe42, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 15e8589dc6bedb54992938cfb6d81b14, type: 2}
+    - {fileID: 11400000, guid: aef19f5ce5472c34a869204dbf80d38c, type: 2}
+    - {fileID: 11400000, guid: 1a21ae9d3b316ad408d3961c2b72d6f0, type: 2}

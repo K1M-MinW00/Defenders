@@ -28,7 +28,7 @@ public sealed class ShopRewardSlotView : MonoBehaviour
             commonSlot.SetupPresentation(
                 presentation,
                 reward.Amount,
-                () => ItemTooltipUI.Show(presentation.DisplayName, transform as RectTransform));
+                () => ShowCurrentTooltip(reward));
         else
             commonSlot.Clear();
     }
@@ -36,6 +36,17 @@ public sealed class ShopRewardSlotView : MonoBehaviour
     public void Clear()
     {
         commonSlot?.Clear();
+    }
+
+    private void ShowCurrentTooltip(RewardData reward)
+    {
+        if (RewardPresentationResolver.TryResolve(
+                reward,
+                GameConfig.Icons,
+                out RewardPresentation currentPresentation))
+        {
+            ItemTooltipUI.Show(currentPresentation.DisplayName, transform as RectTransform);
+        }
     }
 }
 

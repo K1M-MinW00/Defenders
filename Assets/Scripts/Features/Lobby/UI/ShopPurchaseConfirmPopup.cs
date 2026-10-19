@@ -22,6 +22,8 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
     private UnityAction onRecharge;
     private readonly List<ShopRewardSlotView> rewardSlots = new();
     private bool isBusy;
+    private ShopProductData currentProduct;
+    private int currentGem;
     private ModalOverlayLifecycle lifecycle;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(gameObject);
 
@@ -50,23 +52,12 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
         onConfirm = confirm;
         onRecharge = recharge;
         isBusy = false;
+        currentProduct = product;
+        this.currentGem = currentGem;
 
-        if (titleText != null)
-            titleText.text = product.DisplayName;
-        if (currentGemText != null)
-            currentGemText.text = "보유 Gem " + currentGem.ToString("N0");
-        if (costText != null)
-            costText.text = "가격 Gem " + product.CostAmount.ToString("N0");
-
-        long remaining = (long)currentGem - product.CostAmount;
+        long remaining = (long)this.currentGem - product.CostAmount;
         bool affordable = remaining >= 0;
-
-        if (remainingGemText != null)
-            remainingGemText.text = affordable
-                ? "구매 후 Gem " + remaining.ToString("N0")
-                : "구매 후  Gem 부족";
-        if (warningText != null)
-            warningText.text = affordable ? "이 상품을 구매하시겠습니까?" : "Gem이 부족합니다.";
+        RefreshLocalizedText();
 
         RebuildRewards(product);
 
@@ -102,7 +93,7 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
             rechargeButton.interactable = !busy;
 
         if (warningText != null && busy)
-            warningText.text = "구매 처리 중";
+            warningText.text = LocalizationService.Get(LocalizationTables.Lobby, "shop.processing");
     }
 
     public void Dismiss()
@@ -190,8 +181,49 @@ public sealed class ShopPurchaseConfirmPopup : MonoBehaviour, IModalDismissHandl
     private void ClearActions()
     {
         isBusy = false;
+        currentProduct = null;
+        currentGem = 0;
         onConfirm = null;
         onRecharge = null;
+    }
+
+    private void OnEnable()
+    {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
+    }
+
+    private void HandleLocaleChanged(string _) => RefreshLocalizedText();
+
+    private void RefreshLocalizedText()
+    {
+        if (currentProduct == null)
+            return;
+
+        titleText.text = currentProduct.DisplayName;
+        currentGemText.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            "shop.current_gems",
+            currentGem);
+        costText.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            "shop.price_gems",
+            currentProduct.CostAmount);
+
+        long remaining = (long)currentGem - currentProduct.CostAmount;
+        bool affordable = remaining >= 0;
+        remainingGemText.text = affordable
+            ? LocalizationService.Get(LocalizationTables.Lobby, "shop.remaining_gems", remaining)
+            : LocalizationService.Get(LocalizationTables.Lobby, "shop.remaining_gems_insufficient");
+        warningText.text = isBusy
+            ? LocalizationService.Get(LocalizationTables.Lobby, "shop.processing")
+            : LocalizationService.Get(
+                LocalizationTables.Lobby,
+                affordable ? "shop.confirm_purchase" : "shop.insufficient_gems");
     }
 
     private void OnDestroy()

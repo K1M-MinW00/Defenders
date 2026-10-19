@@ -44,8 +44,8 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
         rarityColor = color;
         ConfigureRarity(unit.rarity);
         unitIconImage.sprite = unit.icon;
-        unitNameText.text = unit.displayName;
-        rarityText.text = unit.rarity.ToString().ToUpperInvariant();
+        unitNameText.text = unit.LocalizedName;
+        rarityText.text = LocalizationService.Get(LocalizationTables.Lobby, GetRarityKey(unit.rarity));
 
         transform.SetAsLastSibling();
         gameObject.SetActive(true);
@@ -160,6 +160,17 @@ public sealed class RecruitPresentationOverlayView : MonoBehaviour
                 Mathf.Clamp01(rarityColor.b * brightness),
                 i == 1 ? 0.95f : 0.62f);
         }
+    }
+
+    private static string GetRarityKey(Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.Legend => "recruit.rarity.legend",
+            Rarity.Epic => "recruit.rarity.epic",
+            Rarity.Rare => "recruit.rarity.rare",
+            _ => "recruit.rarity.normal",
+        };
     }
 
     private static Color GetBackdropColor(Color color, float alpha)

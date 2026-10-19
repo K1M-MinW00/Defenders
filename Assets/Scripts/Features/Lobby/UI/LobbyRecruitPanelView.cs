@@ -85,6 +85,7 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
     private void OnEnable()
     {
+        LocalizationService.LocaleChanged += HandleLocaleChanged;
         if (!TryInitialize())
             return;
 
@@ -117,6 +118,7 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
 
     private void OnDisable()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         operationVersion++;
         gemConfirmPopup?.Dismiss();
         UnsubscribeEvents();
@@ -190,7 +192,10 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
         bannerImage.sprite = currentState.PortraitImage;
         bannerImage.preserveAspect = currentState.HasPickup;
         bannerImage.enabled = currentState.PortraitImage != null;
-        pityText.text = $"앞으로 {currentState.RemainingPity}회 모집 안에 전설 유닛 확정 획득";
+        pityText.text = LocalizationService.Get(
+            LocalizationTables.Lobby,
+            "recruit.pity",
+            currentState.RemainingPity);
 
         bool canInput = !isRecruiting && !presentationController.IsPresenting;
         recruitOneButton.interactable = canInput && currentState.CanRecruitOne;
@@ -303,11 +308,18 @@ public sealed class LobbyRecruitPanelView : MonoBehaviour
             Refresh();
     }
 
+    private void HandleLocaleChanged(string _)
+    {
+        if (isActiveAndEnabled)
+            Refresh();
+    }
+
     private bool CanApplyOperationResult(int version) =>
         this != null && isActiveAndEnabled && version == operationVersion;
 
     private void OnDestroy()
     {
+        LocalizationService.LocaleChanged -= HandleLocaleChanged;
         UnsubscribeEvents();
 
         if (presentationController != null)
