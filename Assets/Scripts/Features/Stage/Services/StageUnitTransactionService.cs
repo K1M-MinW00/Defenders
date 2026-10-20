@@ -17,6 +17,10 @@ public sealed class StageUnitTransactionService
     private readonly EconomyManager economyManager;
     private readonly StageRerollAllowance rerollAllowance;
 
+    public event System.Action<string> UnitSummoned;
+    public event System.Action<string, int> UnitSold;
+    public event System.Action<string> UnitRerolled;
+
     public StageUnitTransactionService(
         UnitSummoner unitSummoner,
         UnitRoster unitRoster,
@@ -76,6 +80,7 @@ public sealed class StageUnitTransactionService
         }
 
         unitSummoner.CommitSummonedUnit(unit);
+        UnitSummoned?.Invoke(unit.UnitId);
         failure = StageUnitTransactionFailure.None;
         return true;
     }
@@ -142,6 +147,7 @@ public sealed class StageUnitTransactionService
         }
 
         int star = unit.Star;
+        string unitId = unit.UnitId;
         if (economyManager.GetSellCost(star) < 0 ||
             !unit.TryBeginRemoval(UnitRemovalReason.Sold))
         {
@@ -153,6 +159,7 @@ public sealed class StageUnitTransactionService
         if (!economyManager.SellUnit(star))
             UnityEngine.Debug.LogError("Failed to grant unit sell gold after removal.");
         unit.ReturnToPool();
+        UnitSold?.Invoke(unitId, star);
         failure = StageUnitTransactionFailure.None;
         return true;
     }
@@ -185,10 +192,12 @@ public sealed class StageUnitTransactionService
             return false;
         }
 
+        string outgoingUnitId = unit.UnitId;
         unitRoster.Unregister(unit);
         unitSummoner.CommitRerolledUnit(unit, replacement);
         if (useFreeReroll)
             rerollAllowance.TryConsume();
+        UnitRerolled?.Invoke(outgoingUnitId);
         return true;
     }
 }

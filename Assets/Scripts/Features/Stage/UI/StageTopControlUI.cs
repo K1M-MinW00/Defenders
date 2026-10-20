@@ -13,8 +13,9 @@ public class StageTopControlUI : MonoBehaviour
     [SerializeField] private Sprite fastSpeedSprite;
 
     private StageTimeController timeController;
+    private bool allowPause;
 
-    public void Initialize(StageTimeController timeController)
+    public void Initialize(StageTimeController timeController, bool allowPause = true)
     {
         Dispose();
 
@@ -25,6 +26,12 @@ public class StageTopControlUI : MonoBehaviour
         }
 
         this.timeController = timeController;
+        this.allowPause = allowPause;
+
+        if (pauseButton != null)
+            pauseButton.interactable = allowPause;
+        if (speedButton != null)
+            speedButton.interactable = allowPause;
 
         pauseButton?.onClick.AddListener(HandlePauseClicked);
         speedButton?.onClick.AddListener(HandleSpeedClicked);
@@ -49,11 +56,17 @@ public class StageTopControlUI : MonoBehaviour
 
     private void HandlePauseClicked()
     {
+        if (!allowPause)
+            return;
+
         timeController?.Pause();
     }
 
     private void HandleSpeedClicked()
     {
+        if (!allowPause)
+            return;
+
         timeController?.ToggleSpeed();
     }
 

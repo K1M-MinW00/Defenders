@@ -286,6 +286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StartupBootstrap
   nextSceneName: LobbyScene
+  tutorialSceneName: TutorialScene
   loadingView: {fileID: 1961521251}
 --- !u!4 &327165661
 Transform:

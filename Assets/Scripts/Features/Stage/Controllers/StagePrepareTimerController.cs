@@ -10,12 +10,18 @@ public sealed class StagePrepareTimerController : MonoBehaviour
     private Action onPrepareFinished;
     private float timer;
     private bool isPreparing;
+    private bool manualMode;
 
     public float PrepareDuration => prepareDuration;
     public float CurrentTimer => timer;
     public bool IsPreparing => isPreparing;
 
     public event Action<float> OnPrepareTimerChanged;
+
+    public void SetManualMode(bool enabled)
+    {
+        manualMode = enabled;
+    }
 
     public void Configure(float duration)
     {
@@ -72,6 +78,12 @@ public sealed class StagePrepareTimerController : MonoBehaviour
     {
         while (timer > 0f)
         {
+            if (manualMode)
+            {
+                yield return null;
+                continue;
+            }
+
             timer -= Time.deltaTime;
             
             if (timer < 0f)

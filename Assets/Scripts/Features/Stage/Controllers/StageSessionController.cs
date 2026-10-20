@@ -19,6 +19,9 @@ public sealed class StageSessionController : MonoBehaviour
 
     [Header("Runtime")]
     [SerializeField] private StageDataSO currentStageData;
+
+    [Header("Tutorial")]
+    [SerializeField] private StageDataSO tutorialStageData;
     private StageEnterData enterData;
     private StageDataProvider stageDataProvider;
     private StageWaveSequence waveSequence;
@@ -34,6 +37,7 @@ public sealed class StageSessionController : MonoBehaviour
     public StageState CurrentState => phaseMachine.Current;
     public StageDataSO CurrentStageData => currentStageData;
     public int CurrentWaveIndex => waveSequence?.CurrentIndex ?? 0;
+    public bool IsTutorial => enterData?.IsTutorial == true;
 
     public event Action<StageState, StageState> PhaseChanged
     {
@@ -91,11 +95,16 @@ public sealed class StageSessionController : MonoBehaviour
                 GameConfig.Initialize();
 
             stageDataProvider = new StageDataProvider(GameConfig.Stages);
-            StageDataSO stageData = stageDataProvider.Load(enterData.Sector, enterData.Stage);
+            StageDataSO stageData = enterData.IsTutorial
+                ? tutorialStageData
+                : stageDataProvider.Load(enterData.Sector, enterData.Stage);
 
             if (stageData == null)
             {
-                await HandleInitializationFailureAsync($"Stage data is missing: {enterData.StageKey}");
+                string missingData = enterData.IsTutorial
+                    ? "Tutorial stage data is not assigned to the scene."
+                    : $"Stage data is missing: {enterData.StageKey}";
+                await HandleInitializationFailureAsync(missingData);
                 return;
             }
 
@@ -354,12 +363,15 @@ public sealed class StageSessionController : MonoBehaviour
 
         int clearedWaveCount = waveSequence.ClearedWaveCount;
 
-        bool saved = await progressService.RecordWaveClearAsync(currentStageData, clearedWaveCount);
-        if (isDisposed)
-            return;
+        if (!IsTutorial)
+        {
+            bool saved = await progressService.RecordWaveClearAsync(currentStageData, clearedWaveCount);
+            if (isDisposed)
+                return;
 
-        if (!saved)
-            Debug.LogWarning($"Wave progress save failed: {currentStageData.StageKey}, cleared waves: {clearedWaveCount}");
+            if (!saved)
+                Debug.LogWarning($"Wave progress save failed: {currentStageData.StageKey}, cleared waves: {clearedWaveCount}");
+        }
 
         if (!waveSequence.TryMoveNext())
         {
@@ -396,6 +408,19 @@ public sealed class StageSessionController : MonoBehaviour
         if (!canFail)
             return;
 
+        if (IsTutorial)
+        {
+            phaseRuntimeController.EndCurrentPhase(preserveCombatObjects: true);
+            if (!TransitionTo(StageState.Resolving))
+                return;
+
+            StageEnterHolder.Set(enterData);
+            SceneTransitionResult restartResult = await sceneFlowService.LoadAsync(gameObject.scene.name);
+            if (restartResult != SceneTransitionResult.Succeeded && this != null)
+                Debug.LogError($"Tutorial restart failed: {restartResult}", this);
+            return;
+        }
+
         GameAudioManager.Instance?.PlaySfx(GameAudioCue.WaveFail);
         phaseRuntimeController.EndCurrentPhase(preserveCombatObjects: true);
         if (!TransitionTo(StageState.Resolving))
@@ -422,6 +447,17 @@ public sealed class StageSessionController : MonoBehaviour
 
         int clearedWaveCount = waveSequence.ClearedWaveCount;
         stageUI.ShowStageResultSettling(true, currentStageData, clearedWaveCount);
+
+        if (IsTutorial)
+        {
+            stageUI.ShowStageResult(
+                true,
+                currentStageData,
+                clearedWaveCount,
+                System.Array.Empty<RewardData>());
+            return;
+        }
+
         StageOutcomeResult result = await TrySaveStageOutcomeAsync(isClear: true);
         if (isDisposed)
             return;
@@ -505,7 +541,7 @@ public sealed class StageSessionController : MonoBehaviour
 
     public void RequestStageFail()
     {
-        if (isDisposed)
+        if (isDisposed || IsTutorial)
             return;
 
         _ = HandleWaveLoseAsync(allowPreparingFailure: true);

@@ -14,6 +14,7 @@ public class StageDataSO : ScriptableObject
     [Header("Stage ID")]
     public int sector;
     public int stage;
+    public string displayName;
 
     [Header("Map")]
     public GameObject mapPrefab;
@@ -41,6 +42,7 @@ public class StageDataSO : ScriptableObject
     public List<RewardData> failureRewards = new();
 
     public string StageKey => $"{sector}-{stage}";
+    public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? StageKey : displayName;
 
     public bool TryValidate(out string error)
     {

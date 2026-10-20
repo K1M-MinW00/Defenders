@@ -28,6 +28,7 @@ public class PlacementController : MonoBehaviour
 
     public event Action<UnitController> OnSellRequested;
     public event Action<UnitController> OnRerollRequested;
+    public event Action<UnitController> OnUnitMoved;
 
     private void Awake()
     {
@@ -233,6 +234,8 @@ public class PlacementController : MonoBehaviour
 
         if (!ok)
             DraggingUnit.transform.position = originalPos;
+        else if (Vector3.Distance(DraggingUnit.transform.position, originalPos) > 0.05f)
+            OnUnitMoved?.Invoke(DraggingUnit);
 
         FinishDrag();
     }

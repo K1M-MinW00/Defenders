@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class StartupBootstrap : MonoBehaviour
 {
     [SerializeField] private string nextSceneName = "LobbyScene";
+    [SerializeField] private string tutorialSceneName = "TutorialScene";
     [SerializeField] private StartupLoadingView loadingView;
 
     private bool isReadyToStart;
@@ -27,7 +28,8 @@ public sealed class StartupBootstrap : MonoBehaviour
 
     private void Awake()
     {
-        if (loadingView == null || string.IsNullOrWhiteSpace(nextSceneName))
+        if (loadingView == null || string.IsNullOrWhiteSpace(nextSceneName) ||
+            string.IsNullOrWhiteSpace(tutorialSceneName))
         {
             Debug.LogError("[StartupBootstrap] Required startup references are not assigned.", this);
             enabled = false;
@@ -126,7 +128,29 @@ public sealed class StartupBootstrap : MonoBehaviour
             return;
         }
 
-        SceneTransitionResult result = await sceneFlowService.LoadAsync(nextSceneName);
+        string destination = nextSceneName;
+        string tutorialStep = userDataManager?.UserData?.Tutorial?.NextStepId;
+        if (userDataManager?.ShouldRunFirstBattleTutorial == true &&
+            FirstBattleTutorialSequence.IsBattleStep(tutorialStep))
+        {
+            LobbyBattlePresenter presenter = new(
+                userDataManager.UserData,
+                GameConfig.UserLevelProgression);
+            if (!presenter.TryBuildStageEnterData(out StageEnterData enterData, out LobbyBattleStartFailure failure))
+            {
+                Debug.LogError($"[StartupBootstrap] Tutorial stage entry failed: {failure}");
+                SetFailed(Localize("startup.error.user_data_load_failed"));
+                return;
+            }
+
+            StageEnterHolder.Set(enterData.AsTutorial());
+            destination = tutorialSceneName;
+        }
+
+        SceneTransitionResult result = await sceneFlowService.LoadAsync(destination);
+
+        if (result != SceneTransitionResult.Succeeded)
+            StageEnterHolder.Clear();
 
         if (result != SceneTransitionResult.Succeeded && this != null && isActiveAndEnabled)
             SetFailed(GetSceneTransitionFailureMessage(result));

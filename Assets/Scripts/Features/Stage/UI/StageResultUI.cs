@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,6 +35,12 @@ public sealed class StageResultUI : MonoBehaviour
     private StageDataSO currentStage;
     private string currentReturnButtonKey = "result.return";
     private bool isReturningToLobby;
+
+    public RectTransform ClearReturnButtonTarget => clearReturnButton?.transform as RectTransform;
+    private Func<System.Threading.Tasks.Task<bool>> beforeReturnToLobby;
+
+    public void SetBeforeReturnToLobby(Func<System.Threading.Tasks.Task<bool>> callback) =>
+        beforeReturnToLobby = callback;
 
     private void Awake()
     {
@@ -155,6 +162,13 @@ public sealed class StageResultUI : MonoBehaviour
 
         isReturningToLobby = true;
         SetReturnButtons(false, "result.processing");
+        if (beforeReturnToLobby != null && !await beforeReturnToLobby())
+        {
+            isReturningToLobby = false;
+            SetReturnButtons(true, "result.return");
+            return;
+        }
+
         if (session == null || !await session.TryPrepareExitAsync())
         {
             isReturningToLobby = false;

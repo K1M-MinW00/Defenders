@@ -9,6 +9,9 @@ public class StagePrepareActionUI : MonoBehaviour
 
     private StagePreparationService preparationService;
     private StagePrepareTimerController flowController;
+    public RectTransform StartButtonTarget => startButton?.transform as RectTransform;
+    public RectTransform SummonButtonTarget => summonButton?.transform as RectTransform;
+    public RectTransform IncreasePopulationButtonTarget => increasePopButton?.transform as RectTransform;
 
     public void Initialize(StagePreparationService preparationService, StagePrepareTimerController flowController)
     {
@@ -18,6 +21,9 @@ public class StagePrepareActionUI : MonoBehaviour
         this.flowController = flowController;
 
         Bind();
+        RefreshAllowedActions(preparationService != null
+            ? preparationService.AllowedActions
+            : StagePreparationAction.All);
     }
 
     public void Dispose()
@@ -29,6 +35,9 @@ public class StagePrepareActionUI : MonoBehaviour
 
     private void Bind()
     {
+        if (preparationService != null)
+            preparationService.AllowedActionsChanged += RefreshAllowedActions;
+
         startButton?.onClick.AddListener(HandleStartButtonClicked);
         summonButton?.onClick.AddListener(HandleSummonButtonClicked);
         increasePopButton?.onClick.AddListener(HandleIncreasePopulationClicked);
@@ -36,6 +45,9 @@ public class StagePrepareActionUI : MonoBehaviour
 
     private void Unbind()
     {
+        if (preparationService != null)
+            preparationService.AllowedActionsChanged -= RefreshAllowedActions;
+
         startButton?.onClick.RemoveListener(HandleStartButtonClicked);
         summonButton?.onClick.RemoveListener(HandleSummonButtonClicked);
         increasePopButton?.onClick.RemoveListener(HandleIncreasePopulationClicked);
@@ -61,13 +73,26 @@ public class StagePrepareActionUI : MonoBehaviour
 
     private void HandleStartButtonClicked()
     {
-        if (preparationService == null || !preparationService.HasAnyUnit)
+        if (preparationService == null || !preparationService.CanStartWave)
+            return;
+
+        if (!preparationService.HasAnyUnit)
         {
             UIFeedbackToast.Show(Localize("prepare.unit_required"));
             return;
         }
 
         flowController?.ForceFinishPrepare();
+    }
+
+    private void RefreshAllowedActions(StagePreparationAction actions)
+    {
+        if (startButton != null)
+            startButton.interactable = (actions & StagePreparationAction.StartWave) != 0;
+        if (summonButton != null)
+            summonButton.interactable = (actions & StagePreparationAction.Summon) != 0;
+        if (increasePopButton != null)
+            increasePopButton.interactable = (actions & StagePreparationAction.IncreasePopulation) != 0;
     }
 
     private static void ShowTransactionFailure(StageUnitTransactionFailure failure)

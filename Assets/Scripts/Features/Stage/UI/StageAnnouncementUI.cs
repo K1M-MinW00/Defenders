@@ -32,7 +32,7 @@ public sealed class StageAnnouncementUI : MonoBehaviour
     public Task ShowStageIntroAsync(StageDataSO stage)
     {
         if (stageInfoText != null)
-            stageInfoText.SetText("{0}-{1}", stage?.sector ?? 0, stage?.stage ?? 0);
+            stageInfoText.text = stage?.DisplayName ?? string.Empty;
 
         return PlayAsync(showStageIntro: true);
     }

@@ -12,6 +12,7 @@ public class UnitSummoner : MonoBehaviour
     [SerializeField] private Transform unitsRoot;
     
     private StageUnitInitData[] runtimeCombatFormation;
+    private IStageUnitSelector unitSelector = new RandomStageUnitSelector();
 
     public IReadOnlyList<StageUnitInitData> RuntimeCombatFormation =>
         runtimeCombatFormation ?? System.Array.Empty<StageUnitInitData>();
@@ -35,6 +36,12 @@ public class UnitSummoner : MonoBehaviour
         spawnPoint = null;
         placementArea = null;
         runtimeCombatFormation = System.Array.Empty<StageUnitInitData>();
+        unitSelector = new RandomStageUnitSelector();
+    }
+
+    public void SetUnitSelector(IStageUnitSelector selector)
+    {
+        unitSelector = selector ?? new RandomStageUnitSelector();
     }
 
     public bool SetCombatFormation(IReadOnlyList<StageUnitInitData> definitions)
@@ -82,7 +89,12 @@ public class UnitSummoner : MonoBehaviour
             return false;
         }
 
-        StageUnitInitData definition = runtimeCombatFormation[Random.Range(0, runtimeCombatFormation.Length)];
+        StageUnitInitData definition = unitSelector.Select(runtimeCombatFormation);
+        if (definition == null)
+        {
+            Debug.LogWarning("Unit selection failed for the current stage formation.");
+            return false;
+        }
         UnitDataSO data = definition.UnitData;
 
         if (data == null || data.unitPrefab == null)

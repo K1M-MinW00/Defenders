@@ -80,7 +80,7 @@ public class StageUIController : MonoBehaviour
 
         timeController?.Initialize();
 
-        topControlUI?.Initialize(timeController);
+        topControlUI?.Initialize(timeController, allowPause: !session.IsTutorial);
         pausePanelUI?.Initialize(
             timeController,
             session,
@@ -111,7 +111,7 @@ public class StageUIController : MonoBehaviour
     private void Update()
     {
         // Android's hardware/software Back action is reported as Escape by Unity.
-        if (!isInitialized || !Input.GetKeyDown(KeyCode.Escape))
+        if (!isInitialized || session.IsTutorial || !Input.GetKeyDown(KeyCode.Escape))
             return;
 
         overlayController?.HandleSystemBack();

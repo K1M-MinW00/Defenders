@@ -24,6 +24,7 @@ public class StageHudPresenter : MonoBehaviour
     private int lastMonsterCount;
     private int lastSector;
     private int lastStage;
+    private string lastDisplayName;
 
     private EconomyManager economy;
     private PopulationManager population;
@@ -59,7 +60,7 @@ public class StageHudPresenter : MonoBehaviour
         cachedState = initialState;
 
         if (stageData != null)
-            SetStageInfo(stageData.sector, stageData.stage);
+            SetStageInfo(stageData);
 
         Bind();
         RefreshInitialValues();
@@ -143,12 +144,17 @@ public class StageHudPresenter : MonoBehaviour
             : economy.GetRerollCost().ToString();
     }
 
-    private void SetStageInfo(int sector, int stage)
+    private void SetStageInfo(StageDataSO stageData)
     {
-        lastSector = sector;
-        lastStage = stage;
+        lastSector = stageData.sector;
+        lastStage = stageData.stage;
+        lastDisplayName = stageData.displayName;
         if (stageInfoText != null)
-            stageInfoText.text = Localize("hud.stage", sector, stage);
+        {
+            stageInfoText.text = string.IsNullOrWhiteSpace(lastDisplayName)
+                ? Localize("hud.stage", lastSector, lastStage)
+                : lastDisplayName;
+        }
     }
 
     private void UpdateGold(int gold)
@@ -219,7 +225,14 @@ public class StageHudPresenter : MonoBehaviour
     private void HandleLocaleChanged(string _)
     {
         if (lastSector > 0 && lastStage > 0)
-            SetStageInfo(lastSector, lastStage);
+        {
+            if (stageInfoText != null)
+            {
+                stageInfoText.text = string.IsNullOrWhiteSpace(lastDisplayName)
+                    ? Localize("hud.stage", lastSector, lastStage)
+                    : lastDisplayName;
+            }
+        }
         UpdateRerollCost(preparationService?.FreeRerollsRemaining ?? 0);
         UpdateMonsterCount(lastMonsterCount);
     }

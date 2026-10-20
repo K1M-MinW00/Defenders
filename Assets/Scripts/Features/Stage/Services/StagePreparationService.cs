@@ -12,6 +12,7 @@ public class StagePreparationService : MonoBehaviour
     private bool isPrepareMode;
     private StageUnitTransactionService unitTransactions;
     private readonly StageRerollAllowance rerollAllowance = new();
+    private StagePreparationAction allowedActions = StagePreparationAction.All;
 
     public bool IsPrepareMode => isPrepareMode;
     public bool HasAnyUnit => unitRoster != null && unitRoster.RegisteredCount > 0;
@@ -19,6 +20,14 @@ public class StagePreparationService : MonoBehaviour
     public UnitSummoner UnitSummoner => unitSummoner;
     public EconomyManager EconomyManager => economyManager;
     public int FreeRerollsRemaining => rerollAllowance.Remaining;
+    public StagePreparationAction AllowedActions => allowedActions;
+    public bool CanStartWave => IsActionAllowed(StagePreparationAction.StartWave);
+    public event System.Action<string> UnitSummoned;
+    public event System.Action<string, int> UnitSold;
+    public event System.Action<string> UnitRerolled;
+    public event System.Action<string> UnitMoved;
+    public event System.Action PopulationIncreased;
+    public event System.Action<StagePreparationAction> AllowedActionsChanged;
     public event System.Action<int> OnFreeRerollsChanged
     {
         add => rerollAllowance.Changed += value;
@@ -50,6 +59,10 @@ public class StagePreparationService : MonoBehaviour
 
         if (!unitTransactions.IsConfigured)
             Debug.LogError($"[{nameof(StagePreparationService)}] Unit transaction dependencies are missing.", this);
+
+        unitTransactions.UnitSummoned += HandleUnitSummoned;
+        unitTransactions.UnitSold += HandleUnitSold;
+        unitTransactions.UnitRerolled += HandleUnitRerolled;
     }
 
     private void OnEnable()
@@ -58,18 +71,31 @@ public class StagePreparationService : MonoBehaviour
         {
             placementController.OnSellRequested += HandleSellRequested;
             placementController.OnRerollRequested += HandleRerollRequested;
+            placementController.OnUnitMoved += HandleUnitMoved;
         }
     }
 
     private void OnDisable()
     {
+        SetAllowedActions(StagePreparationAction.All);
         ClosePreparationInput();
 
         if(placementController != null)
         {
             placementController.OnSellRequested -= HandleSellRequested;
             placementController.OnRerollRequested -= HandleRerollRequested;
+            placementController.OnUnitMoved -= HandleUnitMoved;
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (unitTransactions == null)
+            return;
+
+        unitTransactions.UnitSummoned -= HandleUnitSummoned;
+        unitTransactions.UnitSold -= HandleUnitSold;
+        unitTransactions.UnitRerolled -= HandleUnitRerolled;
     }
 
     public bool EnterPrepareMode()
@@ -122,7 +148,7 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySummonUnit(out StageUnitTransactionFailure failure)
     {
-        if (!isPrepareMode || unitTransactions == null)
+        if (!isPrepareMode || unitTransactions == null || !IsActionAllowed(StagePreparationAction.Summon))
         {
             failure = StageUnitTransactionFailure.NotAvailable;
             return false;
@@ -142,13 +168,17 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TryIncreasePopulation(out StageUnitTransactionFailure failure)
     {
-        if (!isPrepareMode || unitTransactions == null)
+        if (!isPrepareMode || unitTransactions == null ||
+            !IsActionAllowed(StagePreparationAction.IncreasePopulation))
         {
             failure = StageUnitTransactionFailure.NotAvailable;
             return false;
         }
 
-        return unitTransactions.TryIncreasePopulation(out failure);
+        bool succeeded = unitTransactions.TryIncreasePopulation(out failure);
+        if (succeeded)
+            PopulationIncreased?.Invoke();
+        return succeeded;
     }
 
     private void HandleSellRequested(UnitController unit)
@@ -180,7 +210,7 @@ public class StagePreparationService : MonoBehaviour
 
     public bool TrySellUnit(UnitController unit, out StageUnitTransactionFailure failure)
     {
-        if (!isPrepareMode || unitTransactions == null)
+        if (!isPrepareMode || unitTransactions == null || !IsActionAllowed(StagePreparationAction.Sell))
         {
             failure = StageUnitTransactionFailure.NotAvailable;
             return false;
@@ -192,6 +222,7 @@ public class StagePreparationService : MonoBehaviour
     public bool TryRerollUnit(UnitController unit, Vector3? replacementPosition = null)
     {
         bool succeeded = isPrepareMode && unitTransactions != null &&
+                         IsActionAllowed(StagePreparationAction.Reroll) &&
                          unitTransactions.TryRerollUnit(unit, replacementPosition);
         if (succeeded)
             GameAudioManager.Instance?.PlaySfx(GameAudioCue.UnitSummon);
@@ -203,6 +234,18 @@ public class StagePreparationService : MonoBehaviour
     {
         rerollAllowance.Grant(count);
     }
+
+    public void SetAllowedActions(StagePreparationAction actions)
+    {
+        if (allowedActions == actions)
+            return;
+
+        allowedActions = actions;
+        AllowedActionsChanged?.Invoke(allowedActions);
+    }
+
+    public bool IsActionAllowed(StagePreparationAction action) =>
+        (allowedActions & action) == action;
 
     public void CancelActiveInteraction()
     {
@@ -228,4 +271,9 @@ public class StagePreparationService : MonoBehaviour
         isPrepareMode = false;
         placementController?.SetInputEnabled(false);
     }
+
+    private void HandleUnitSummoned(string unitId) => UnitSummoned?.Invoke(unitId);
+    private void HandleUnitSold(string unitId, int star) => UnitSold?.Invoke(unitId, star);
+    private void HandleUnitRerolled(string unitId) => UnitRerolled?.Invoke(unitId);
+    private void HandleUnitMoved(UnitController unit) => UnitMoved?.Invoke(unit?.UnitId);
 }

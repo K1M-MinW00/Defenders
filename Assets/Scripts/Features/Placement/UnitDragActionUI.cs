@@ -14,29 +14,49 @@ public class UnitDragActionUI : MonoBehaviour
     private EconomyManager economy;
     private StagePreparationService preparationService;
     private TextMeshProUGUI rerollCostText;
+    private bool isDraggingUnit;
+    private bool draggedUnitCanReroll;
+    private int draggedUnitStar = 1;
+
+    public RectTransform RerollTarget => rerollZone != null
+        ? rerollZone.transform as RectTransform
+        : null;
 
     public void Initialize(EconomyManager economy, StagePreparationService preparationService)
     {
         if (this.preparationService != null)
+        {
             this.preparationService.OnFreeRerollsChanged -= HandleFreeRerollsChanged;
+            this.preparationService.AllowedActionsChanged -= HandleAllowedActionsChanged;
+        }
 
         this.economy = economy;
         this.preparationService = preparationService;
         rerollCostText = FindRerollCostText();
         if (this.preparationService != null)
+        {
             this.preparationService.OnFreeRerollsChanged += HandleFreeRerollsChanged;
+            this.preparationService.AllowedActionsChanged += HandleAllowedActionsChanged;
+        }
         SetDragMode(false);
     }
 
     public void SetDragMode(bool isDraggingUnit, bool canReroll = true, int star = 1)
     {
+        this.isDraggingUnit = isDraggingUnit;
+        draggedUnitCanReroll = canReroll;
+        draggedUnitStar = star;
+
         defaultButtonsGroup?.SetActive(!isDraggingUnit);
         unitActionButtonsGroup?.SetActive(isDraggingUnit);
 
-        bool showRerollZone = isDraggingUnit && canReroll;
+        StagePreparationAction actions = preparationService?.AllowedActions ?? StagePreparationAction.All;
+        bool showRerollZone = isDraggingUnit && canReroll &&
+                              (actions & StagePreparationAction.Reroll) != 0;
+        bool showSellZone = isDraggingUnit && (actions & StagePreparationAction.Sell) != 0;
 
         rerollZone?.SetActive(showRerollZone);
-        sellZone?.SetActive(isDraggingUnit);
+        sellZone?.SetActive(showSellZone);
 
         if (sellCostText != null && economy != null)
             sellCostText.SetText("+{0}", economy.GetSellCost(star));
@@ -47,6 +67,11 @@ public class UnitDragActionUI : MonoBehaviour
     private void HandleFreeRerollsChanged(int _)
     {
         RefreshRerollCost();
+    }
+
+    private void HandleAllowedActionsChanged(StagePreparationAction _)
+    {
+        SetDragMode(isDraggingUnit, draggedUnitCanReroll, draggedUnitStar);
     }
 
     private void RefreshRerollCost()
@@ -78,6 +103,9 @@ public class UnitDragActionUI : MonoBehaviour
     private void OnDestroy()
     {
         if (preparationService != null)
+        {
             preparationService.OnFreeRerollsChanged -= HandleFreeRerollsChanged;
+            preparationService.AllowedActionsChanged -= HandleAllowedActionsChanged;
+        }
     }
 }
