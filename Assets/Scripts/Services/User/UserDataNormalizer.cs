@@ -145,6 +145,15 @@ public static class UserDataNormalizer
             changed = true;
         }
 
+        if (data.Tutorial == null)
+        {
+            bool isExistingUser = data.SchemaVersion < 7;
+            data.Tutorial = UserDataFactory.CreateDefaultTutorial(completed: isExistingUser);
+            changed = true;
+        }
+
+        changed |= NormalizeTutorial(data.Tutorial);
+
         data.Quest.Progress ??= new List<UserQuestProgressData>();
         data.Quest.ClaimedDailyRewards ??= new List<int>();
         data.Quest.ClaimedWeeklyRewards ??= new List<int>();
@@ -182,6 +191,40 @@ public static class UserDataNormalizer
                 data.Lab.AcquiredCardIds.RemoveAt(i);
                 changed = true;
             }
+        }
+
+        return changed;
+    }
+
+    private static bool NormalizeTutorial(UserTutorialData tutorial)
+    {
+        bool changed = false;
+
+        if (!tutorial.Completed && !tutorial.Skipped &&
+            tutorial.Version != FirstBattleTutorialSequence.Version)
+        {
+            tutorial.Version = FirstBattleTutorialSequence.Version;
+            tutorial.SequenceId = UserTutorialData.FirstBattleSequenceId;
+            tutorial.NextStepId = UserTutorialData.InitialStepId;
+            changed = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(tutorial.SequenceId))
+        {
+            tutorial.SequenceId = UserTutorialData.FirstBattleSequenceId;
+            changed = true;
+        }
+
+        if (!tutorial.Completed && !tutorial.Skipped && string.IsNullOrWhiteSpace(tutorial.NextStepId))
+        {
+            tutorial.NextStepId = UserTutorialData.InitialStepId;
+            changed = true;
+        }
+
+        if ((tutorial.Completed || tutorial.Skipped) && !string.IsNullOrEmpty(tutorial.NextStepId))
+        {
+            tutorial.NextStepId = string.Empty;
+            changed = true;
         }
 
         return changed;

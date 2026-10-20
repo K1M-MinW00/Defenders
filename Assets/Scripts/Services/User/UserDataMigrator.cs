@@ -42,6 +42,9 @@ public static class UserDataMigrator
                 case 5:
                     MigrateVersion5To6(data);
                     break;
+                case 6:
+                    MigrateVersion6To7(data);
+                    break;
 
                 default:
                     throw new InvalidOperationException(
@@ -88,5 +91,12 @@ public static class UserDataMigrator
     {
         data.Quest ??= UserDataFactory.CreateDefaultQuest();
         data.SchemaVersion = 6;
+    }
+
+    private static void MigrateVersion6To7(UserDataRoot data)
+    {
+        // Existing players must not be forced into the first-user tutorial.
+        data.Tutorial = UserDataFactory.CreateDefaultTutorial(completed: true);
+        data.SchemaVersion = 7;
     }
 }

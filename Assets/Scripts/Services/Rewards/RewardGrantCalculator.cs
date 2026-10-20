@@ -91,26 +91,31 @@ public static class RewardGrantCalculator
                 return AddUnit(resources, roster, reward.Id, reward.Amount);
 
             case RewardType.Experience:
-                return AddExperience(profile, reward.Amount);
+                return AddExperience(profile, resources, reward.Amount);
 
             default:
                 return false;
         }
     }
 
-    private static bool AddExperience(UserProfileData profile, int amount)
+    private static bool AddExperience(UserProfileData profile, UserResourceData resources, int amount)
     {
         UserLevelProgressionSO progression = GameConfig.UserLevelProgression;
         if (profile == null || progression == null || profile.Level < 1)
             return false;
 
+        int previousLevel = profile.Level;
         profile.Exp = checked(profile.Exp + amount);
 
         while (true)
         {
             int requiredExp = progression.GetRequiredExp(profile.Level);
             if (requiredExp <= 0 || profile.Exp < requiredExp)
+            {
+                resources.MaxFuel = checked(resources.MaxFuel +
+                    AccountLevelBenefitPolicy.GetMaxFuelIncrease(profile.Level - previousLevel));
                 return true;
+            }
 
             profile.Exp -= requiredExp;
             profile.Level = checked(profile.Level + 1);

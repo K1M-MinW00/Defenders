@@ -66,9 +66,17 @@ public partial class UserDataManager
 
         return await RunSerializedMutationAsync(async () =>
         {
+            int previousLevel = UserData.Profile.Level;
+            int previousMaxFuel = UserData.Resource.MaxFuel;
+            string iconId = UserData.Profile.IconId;
             StageOutcomeResult result = await StageOutcomeUseCase.CompleteAsync(stage, fusionCount, fourStarFusionCount);
             if (result.Succeeded)
+            {
+                if (UserData.Profile.Level > previousLevel)
+                    LevelUpPresentationState.Set(new LevelUpPresentationData(
+                        previousLevel, UserData.Profile.Level, previousMaxFuel, UserData.Resource.MaxFuel, iconId));
                 RaiseStageOutcomeUpdated();
+            }
             return result;
         });
     }

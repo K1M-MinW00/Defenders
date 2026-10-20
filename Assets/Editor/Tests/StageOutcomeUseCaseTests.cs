@@ -48,8 +48,10 @@ public sealed class StageOutcomeUseCaseTests
             Assert.That(result.Succeeded, Is.True);
             Assert.That(user.Profile.Level, Is.EqualTo(2));
             Assert.That(user.Profile.Exp, Is.EqualTo(30));
+            Assert.That(user.Resource.MaxFuel, Is.EqualTo(104));
             Assert.That(repository.LastUpdate.Profile.Level, Is.EqualTo(2));
             Assert.That(repository.LastUpdate.Profile.Exp, Is.EqualTo(30));
+            Assert.That(repository.LastUpdate.Resources.MaxFuel, Is.EqualTo(104));
         }
         finally
         {
@@ -124,6 +126,7 @@ public sealed class StageOutcomeUseCaseTests
 
             Assert.That(result.Failure, Is.EqualTo(StageOutcomeFailure.SaveFailed));
             Assert.That(user.Resource.Gold, Is.Zero);
+            Assert.That(user.Resource.MaxFuel, Is.EqualTo(100));
             Assert.That(user.Progress.CurrentStage, Is.EqualTo(1));
         }
         finally

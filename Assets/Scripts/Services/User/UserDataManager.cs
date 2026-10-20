@@ -25,6 +25,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>, ISt
     private IdleRewardUseCase IdleRewardUseCase { get; set; }
     private EquipmentUseCase EquipmentUseCase { get; set; }
     private WaveMilestoneRewardClaimUseCase WaveMilestoneRewardClaimUseCase { get; set; }
+    private TutorialProgressUseCase TutorialProgressUseCase { get; set; }
 
     public string CurrentUserId { get; private set; }
 
@@ -40,6 +41,8 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>, ISt
     public event Action OnShopUpdated;
     public event Action OnLabUpdated;
     public event Action OnQuestUpdated;
+    public event Action OnTutorialUpdated;
+    public event Action OnUnitTrained;
 
     private IUserDataRepository repository;
     private UserDataLoader userDataLoader;
@@ -142,6 +145,7 @@ public partial class UserDataManager : PersistentSingleton<UserDataManager>, ISt
         IdleRewardUseCase = new IdleRewardUseCase(repository as IIdleRewardRepository, CurrentUserId, UserData, GameConfig.IdleReward);
         EquipmentUseCase = new EquipmentUseCase(repository, CurrentUserId, UserData);
         WaveMilestoneRewardClaimUseCase = new WaveMilestoneRewardClaimUseCase(repository, CurrentUserId, UserData, GameConfig.Stages);
+        TutorialProgressUseCase = new TutorialProgressUseCase(repository, CurrentUserId, UserData);
     }
 
     private Task<bool> SaveProgressAsync(UserProgressData progress) =>

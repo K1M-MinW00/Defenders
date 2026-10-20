@@ -33,6 +33,7 @@ public partial class UserDataManager
             RaiseInventoryUpdated();
             RaiseRosterUpdated();
             RaiseQuestUpdated();
+            OnUnitTrained?.Invoke();
             return result;
         });
     }

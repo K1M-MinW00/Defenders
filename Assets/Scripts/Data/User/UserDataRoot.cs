@@ -17,4 +17,5 @@ public class UserDataRoot
     [FirestoreProperty] public UserLabData Lab { get; set; } = new();
     [FirestoreProperty] public UserIdleRewardData IdleReward { get; set; } = new();
     [FirestoreProperty] public UserQuestData Quest { get; set; } = new();
+    [FirestoreProperty] public UserTutorialData Tutorial { get; set; } = new();
 }

@@ -21,7 +21,8 @@ service cloud.firestore {
           'Shop',
           'Lab',
           'IdleReward',
-          'Quest'
+          'Quest',
+          'Tutorial'
         ]) &&
         data.keys().hasOnly([
           'SchemaVersion',
@@ -37,7 +38,8 @@ service cloud.firestore {
           'Shop',
           'Lab',
           'IdleReward',
-          'Quest'
+          'Quest',
+          'Tutorial'
         ]) &&
         data.SchemaVersion is int &&
         data.SchemaVersion >= 0 &&
@@ -53,7 +55,8 @@ service cloud.firestore {
         data.Shop is map &&
         data.Lab is map &&
         data.IdleReward is map &&
-        data.Quest is map;
+        data.Quest is map &&
+        data.Tutorial is map;
     }
 
     function isLegacyTimestampRepair() {
@@ -74,7 +77,7 @@ service cloud.firestore {
 
       allow create: if isOwner(userId) &&
         hasValidUserShape(request.resource.data) &&
-        request.resource.data.SchemaVersion == 6 &&
+        request.resource.data.SchemaVersion == 7 &&
         request.resource.data.CreatedAt == request.time &&
         request.resource.data.UpdatedAt == request.time;
 

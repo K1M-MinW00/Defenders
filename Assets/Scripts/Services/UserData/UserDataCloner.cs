@@ -65,6 +65,17 @@ public static class UserDataCloner
         ClaimedWeeklyRewards = source?.ClaimedWeeklyRewards?.Distinct().ToList() ?? new List<int>(),
     };
 
+    public static UserTutorialData Copy(UserTutorialData source) => new()
+    {
+        Version = source?.Version ?? 1,
+        SequenceId = source?.SequenceId ?? UserTutorialData.FirstBattleSequenceId,
+        NextStepId = source?.NextStepId ?? UserTutorialData.InitialStepId,
+        Completed = source?.Completed ?? false,
+        Skipped = source?.Skipped ?? false,
+        LobbyUnitGuideCompleted = source?.LobbyUnitGuideCompleted ?? false,
+        LaboratoryUnlockGuideCompleted = source?.LaboratoryUnlockGuideCompleted ?? false,
+    };
+
     public static UserInventoryData Copy(UserInventoryData source)
     {
         return new UserInventoryData

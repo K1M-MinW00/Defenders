@@ -19,6 +19,7 @@ public static class UserDataFactory
             Lab = CreateDefaultLab(),
             IdleReward = CreateDefaultIdleReward(),
             Quest = CreateDefaultQuest(),
+            Tutorial = CreateDefaultTutorial(),
         };
 
         data.Profile.IconId = ProfileIconResolver.ResolveIconId(data.Profile.IconId, data.Roster);
@@ -107,4 +108,12 @@ public static class UserDataFactory
         LastClaimAt = Timestamp.GetCurrentTimestamp(),
     };
     public static UserQuestData CreateDefaultQuest() => new();
+    public static UserTutorialData CreateDefaultTutorial(bool completed = false) => new()
+    {
+        Version = FirstBattleTutorialSequence.Version,
+        SequenceId = UserTutorialData.FirstBattleSequenceId,
+        NextStepId = completed ? string.Empty : UserTutorialData.InitialStepId,
+        Completed = completed,
+        Skipped = false,
+    };
 }

@@ -25,6 +25,7 @@ public sealed class UserDataUpdate
     public UserLabData Lab { get; set; }
     public UserIdleRewardData IdleReward { get; set; }
     public UserQuestData Quest { get; set; }
+    public UserTutorialData Tutorial { get; set; }
 }
 
 public sealed class UserDataLoadResult
