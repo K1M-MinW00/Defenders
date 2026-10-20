@@ -28,6 +28,7 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
     private UserDataManager userDataManager;
     private bool isSubscribed;
     private ModalOverlayLifecycle Lifecycle => lifecycle ??= new ModalOverlayLifecycle(overlay);
+    public RectTransform OpenButtonTarget => openButton?.transform as RectTransform;
 
     private void Awake()
     {
@@ -37,10 +38,36 @@ public sealed class WaveMilestoneRewardController : MonoBehaviour, IModalDismiss
             return;
         }
 
+        EnsureNotificationMark();
         openButton.onClick.AddListener(Open);
         claimAllButton.onClick.AddListener(ClaimAll);
         closeButton.onClick.AddListener(Dismiss);
         Lifecycle.HideImmediately();
+    }
+
+    private void EnsureNotificationMark()
+    {
+        if (notificationBadge.GetComponentInChildren<TMP_Text>(true) != null)
+            return;
+
+        if (notificationBadge.TryGetComponent(out Image badgeImage))
+            badgeImage.color = new Color(0.94f, 0.18f, 0.16f, 1f);
+
+        GameObject markObject = new("Mark", typeof(RectTransform), typeof(TextMeshProUGUI));
+        RectTransform rect = markObject.GetComponent<RectTransform>();
+        rect.SetParent(notificationBadge.transform, false);
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        TextMeshProUGUI mark = markObject.GetComponent<TextMeshProUGUI>();
+        mark.text = "!";
+        mark.fontSize = 30f;
+        mark.fontStyle = FontStyles.Bold;
+        mark.alignment = TextAlignmentOptions.Center;
+        mark.color = Color.white;
+        mark.raycastTarget = false;
     }
 
     private void OnEnable()

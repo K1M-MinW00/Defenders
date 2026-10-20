@@ -12,6 +12,8 @@ public sealed class LobbyTabView : MonoBehaviour
         public Button button;
         public GameObject highlight;
         public GameObject panel;
+        [Min(0)] public int requiredAccountLevel;
+        public GameObject lockVisual;
     }
 
     [SerializeField] private TabEntry[] tabs;
@@ -19,6 +21,9 @@ public sealed class LobbyTabView : MonoBehaviour
 
     private UnityAction[] clickHandlers;
     private LobbyTabSelection selection;
+    private int? interactionRestrictedToIndex;
+    public event Action<int> TabSelected;
+    public int SelectedIndex => selection?.SelectedIndex ?? -1;
 
     private void Awake()
     {
@@ -32,6 +37,8 @@ public sealed class LobbyTabView : MonoBehaviour
         selection = new LobbyTabSelection(tabCount);
         clickHandlers = new UnityAction[tabCount];
         SetAllTabsInactive();
+        EnsureLockVisuals();
+        RefreshFeatureLocks();
 
         for (int i = 0; i < tabCount; i++)
         {
@@ -50,12 +57,71 @@ public sealed class LobbyTabView : MonoBehaviour
         ShowTab(Mathf.Clamp(defaultTabIndex, 0, tabs.Length - 1));
     }
 
+    private void OnEnable()
+    {
+        if (UserDataManager.Instance != null)
+            UserDataManager.Instance.OnProfileUpdated += RefreshFeatureLocks;
+    }
+
+    private void OnDisable()
+    {
+        if (UserDataManager.Instance != null)
+            UserDataManager.Instance.OnProfileUpdated -= RefreshFeatureLocks;
+    }
+
     public void ShowTab(int tabIndex)
     {
         if (selection == null || !selection.TrySelect(tabIndex))
             return;
 
         ApplySelection(tabIndex);
+        TabSelected?.Invoke(tabIndex);
+    }
+
+    public Button GetTabButton(int tabIndex) =>
+        tabs != null && tabIndex >= 0 && tabIndex < tabs.Length ? tabs[tabIndex]?.button : null;
+
+    public RectTransform GetTabTarget(int tabIndex) =>
+        GetTabButton(tabIndex)?.transform as RectTransform;
+
+    public void RefreshFeatureLocks()
+    {
+        int accountLevel = UserDataManager.Instance?.UserData?.Profile?.Level ?? 0;
+        if (tabs == null)
+            return;
+
+        foreach (TabEntry entry in tabs)
+        {
+            if (entry?.button == null)
+                continue;
+
+            int index = System.Array.IndexOf(tabs, entry);
+            bool unlocked = LobbyFeatureUnlockPolicy.IsUnlocked(accountLevel, entry.requiredAccountLevel);
+            bool allowedByGuide = !interactionRestrictedToIndex.HasValue || interactionRestrictedToIndex.Value == index;
+            entry.button.interactable = unlocked && allowedByGuide;
+            if (entry.lockVisual != null)
+                entry.lockVisual.SetActive(!unlocked);
+        }
+    }
+
+    public void RestrictInteractionTo(int? tabIndex)
+    {
+        interactionRestrictedToIndex = tabIndex;
+        RefreshFeatureLocks();
+    }
+
+    private void EnsureLockVisuals()
+    {
+        if (tabs == null)
+            return;
+
+        foreach (TabEntry entry in tabs)
+        {
+            if (entry?.button == null || entry.requiredAccountLevel <= 0 || entry.lockVisual != null)
+                continue;
+
+            entry.lockVisual = LobbyLockVisualFactory.Create(entry.button.transform);
+        }
     }
 
     public bool ShowPanel(string panelName)
@@ -132,6 +198,9 @@ public sealed class LobbyTabView : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (UserDataManager.Instance != null)
+            UserDataManager.Instance.OnProfileUpdated -= RefreshFeatureLocks;
+
         if (tabs == null || clickHandlers == null)
             return;
 

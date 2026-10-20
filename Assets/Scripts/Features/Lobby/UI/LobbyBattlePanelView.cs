@@ -23,6 +23,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
 
     [Header("Battle")]
     [SerializeField] private string gameSceneName = "GameScene";
+    [SerializeField] private string tutorialSceneName = "TutorialScene";
     [SerializeField, Min(1)] private int stageFuelCost = 10;
     [SerializeField] private Button startButton;
 
@@ -32,6 +33,8 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
     private bool isSubscribed;
     private bool isStartingBattle;
     private int operationVersion;
+    public RectTransform StartButtonTarget => startButton?.transform as RectTransform;
+    public RectTransform LevelTarget => levelText?.transform as RectTransform;
 
     private void Awake()
     {
@@ -131,7 +134,8 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
             "battle.fuel",
             state.Fuel,
             state.MaxFuel);
-        startButton.interactable = !isStartingBattle && state.CanStartBattle && state.Fuel >= stageFuelCost;
+        bool hasEntryFuel = userDataManager?.ShouldRunFirstBattleTutorial == true || state.Fuel >= stageFuelCost;
+        startButton.interactable = !isStartingBattle && state.CanStartBattle && hasEntryFuel;
     }
 
     private async void HandleStartButtonClicked()
@@ -152,11 +156,15 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
         int currentOperation = ++operationVersion;
         startButton.interactable = false;
         bool fuelConsumed = false;
+        int entryFuelCost = 0;
 
         try
         {
-            StageEntryFuelResult fuelResult =
-                await userDataManager.ConsumeStageEntryFuelAsync(stageFuelCost);
+            bool isTutorial = userDataManager.ShouldRunFirstBattleTutorial;
+            entryFuelCost = isTutorial ? 0 : stageFuelCost;
+            StageEntryFuelResult fuelResult = entryFuelCost == 0
+                ? StageEntryFuelResult.Success()
+                : await userDataManager.ConsumeStageEntryFuelAsync(entryFuelCost);
             if (!fuelResult.Succeeded)
             {
                 isStartingBattle = false;
@@ -168,15 +176,18 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
                 return;
             }
 
-            fuelConsumed = true;
-            StageEnterHolder.Set(enterData.WithEntryFuelCost(stageFuelCost));
+            fuelConsumed = entryFuelCost > 0;
+            StageEnterHolder.Set(isTutorial
+                ? enterData.AsTutorial()
+                : enterData.WithEntryFuelCost(entryFuelCost));
 
-            SceneTransitionResult result = await sceneFlowService.LoadAsync(gameSceneName);
+            string destinationScene = isTutorial ? tutorialSceneName : gameSceneName;
+            SceneTransitionResult result = await sceneFlowService.LoadAsync(destinationScene);
             if (result == SceneTransitionResult.Succeeded)
                 return;
 
             StageEnterHolder.Clear();
-            bool refunded = await userDataManager.RefundStageEntryFuelAsync(stageFuelCost);
+            bool refunded = !fuelConsumed || await userDataManager.RefundStageEntryFuelAsync(entryFuelCost);
             fuelConsumed = false;
             if (this == null)
                 return;
@@ -198,7 +209,7 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
             StageEnterHolder.Clear();
 
             bool refunded = !fuelConsumed ||
-                            await userDataManager.RefundStageEntryFuelAsync(stageFuelCost);
+                            await userDataManager.RefundStageEntryFuelAsync(entryFuelCost);
             if (this == null)
                 return;
 
@@ -236,7 +247,8 @@ public sealed class LobbyBattlePanelView : MonoBehaviour
         bool isValid = profileIconImage != null && levelText != null && powerText != null &&
                        expSlider != null && sectorStageText != null && bestWaveText != null &&
                        goldText != null && gemText != null && fuelText != null && startButton != null &&
-                       !string.IsNullOrWhiteSpace(gameSceneName) && stageFuelCost > 0;
+                       !string.IsNullOrWhiteSpace(gameSceneName) &&
+                       !string.IsNullOrWhiteSpace(tutorialSceneName) && stageFuelCost > 0;
 
         if (!isValid)
             Debug.LogError("[LobbyBattlePanelView] One or more required references or battle settings are invalid.", this);

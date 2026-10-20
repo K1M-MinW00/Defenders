@@ -8,6 +8,8 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class LobbyUnitPanelView : MonoBehaviour
 {
+    public event Action<UnitDetailView> UnitDetailOpened;
+
     [Header("Roots")]
     [SerializeField] private Transform selectedUnitRoot;
     [SerializeField] private Transform ownedUnitRoot;
@@ -359,6 +361,18 @@ public sealed class LobbyUnitPanelView : MonoBehaviour
         }
 
         unitDetailPanel.Open(vm, userDataManager);
+        UnitDetailOpened?.Invoke(unitDetailPanel);
+    }
+
+    public RectTransform GetFirstOwnedUnitTarget()
+    {
+        foreach (UnitCardUI card in cardsByUnitId.Values)
+        {
+            if (card != null && card.gameObject.activeInHierarchy && card.ViewModel?.IsOwned == true)
+                return card.transform as RectTransform;
+        }
+
+        return null;
     }
     private void HandleCardLongPressed(UnitCardUI card, LobbyUnitViewModel vm)
     {

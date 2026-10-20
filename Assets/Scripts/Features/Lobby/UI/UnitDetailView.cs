@@ -6,6 +6,8 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
 {
+    public event System.Action Dismissed;
+
     [Header("Root")]
     [SerializeField] private GameObject detailRoot;
 
@@ -36,6 +38,7 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
     [SerializeField] private Image passiveSkillIconImage;
 
     [Header("Content Tabs")]
+    [SerializeField] private LobbyTabView contentTabView;
     [SerializeField] private UnitTrainingPanel trainingPanel;
     [SerializeField] private UnitPromotionPanel promotionPanel;
     [SerializeField] private UnitLimitBreakPanel limitBreakPanel;
@@ -53,6 +56,10 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
     private string currentUnitId;
     private UserDataManager userDataManager;
     private bool isRosterSubscribed;
+    private bool dismissAllowed = true;
+
+    public LobbyTabView ContentTabView => contentTabView;
+    public void SetDismissAllowed(bool allowed) => dismissAllowed = allowed;
 
     private void Awake()
     {
@@ -107,6 +114,10 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
 
     public void Dismiss()
     {
+        if (!dismissAllowed)
+            return;
+
+        Dismissed?.Invoke();
         GameObject root = detailRoot != null ? detailRoot : gameObject;
         ModalTransitionUtility.RequestExit(root, () =>
         {
@@ -278,7 +289,7 @@ public sealed class UnitDetailView : MonoBehaviour, IModalDismissHandler
                        unitNameText != null && levelText != null && attackText != null && hpText != null &&
                        activeSkillButton != null && activeSkillIconImage != null &&
                        passiveSkillButton != null && passiveSkillIconImage != null &&
-                       trainingPanel != null && promotionPanel != null && limitBreakPanel != null &&
+                       contentTabView != null && trainingPanel != null && promotionPanel != null && limitBreakPanel != null &&
                        equipmentPanel != null && backButton != null &&
                        activeSkillDetailPopup != null && passiveSkillDetailPopup != null;
 
