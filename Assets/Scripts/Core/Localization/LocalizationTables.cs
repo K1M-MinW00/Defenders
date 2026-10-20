@@ -10,4 +10,5 @@ public static class LocalizationTables
     public const string Quest = "Quest";
     public const string Relics = "Relics";
     public const string SystemMessages = "SystemMessages";
+    public const string Tutorial = "Tutorial";
 }

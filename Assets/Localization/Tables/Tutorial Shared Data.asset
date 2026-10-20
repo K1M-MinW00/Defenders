@@ -1,0 +1,184 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Tutorial Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Tutorial
+  m_TableCollectionNameGuidString: f711ccf11634e1648914c75d1fe39c71
+  m_Entries:
+  - m_Id: 2631692288
+    m_Key: battle.summon_wave_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2673635328
+    m_Key: battle.move_wave_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2673635329
+    m_Key: battle.start_wave_1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2673635330
+    m_Key: battle.wait_wave_1_clear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829632
+    m_Key: battle.summon_wave_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829633
+    m_Key: battle.wait_wave_2_fusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829634
+    m_Key: battle.start_wave_2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829635
+    m_Key: battle.wait_wave_2_clear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829636
+    m_Key: battle.summon_wave_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829637
+    m_Key: battle.start_wave_3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829638
+    m_Key: battle.wait_elite_clear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829639
+    m_Key: battle.choose_relic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829640
+    m_Key: battle.summon_post_relic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829641
+    m_Key: battle.reroll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829642
+    m_Key: battle.wait_three_star_fusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829643
+    m_Key: battle.increase_population
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829644
+    m_Key: battle.free_play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829645
+    m_Key: battle.clear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829646
+    m_Key: battle.return_to_lobby
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829647
+    m_Key: lobby.unit_tab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829648
+    m_Key: lobby.owned_unit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829649
+    m_Key: lobby.training
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829650
+    m_Key: lobby.promotion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829651
+    m_Key: lobby.limit_break
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829652
+    m_Key: lobby.equipment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829653
+    m_Key: lobby.close_detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829654
+    m_Key: lobby.laboratory_unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829655
+    m_Key: lobby.laboratory_explanation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829656
+    m_Key: level_up.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829657
+    m_Key: level_up.max_fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829658
+    m_Key: level_up.research_unlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829659
+    m_Key: level_up.dismiss
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829660
+    m_Key: loading.status
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829661
+    m_Key: loading.tip.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829662
+    m_Key: loading.tip.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829663
+    m_Key: loading.tip.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829664
+    m_Key: loading.tip.4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829665
+    m_Key: loading.tip.5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829666
+    m_Key: loading.tip.6
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5228347586779283456
+  references:
+    version: 2
+    RefIds:
+    - rid: 5228347586779283456
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792526608120

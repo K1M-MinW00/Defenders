@@ -1,0 +1,188 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Tutorial_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: f711ccf11634e1648914c75d1fe39c71, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 2631692288
+    m_Localized: Create your first unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2673635328
+    m_Localized: Drag the unit to place it where you want.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2673635329
+    m_Localized: Your unit is ready. Start Wave 1.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2673635330
+    m_Localized: Watch your unit defend the field.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829632
+    m_Localized: Create another unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829633
+    m_Localized: Two matching 1-star units fuse automatically.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829634
+    m_Localized: Start Wave 2 with your 2-star unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829635
+    m_Localized: Higher-star units are much stronger.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829636
+    m_Localized: Create another unit to prepare a 3-star fusion.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829637
+    m_Localized: Start the Elite wave.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829638
+    m_Localized: Defeat the Elite enemies to earn a relic.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829639
+    m_Localized: Choose one relic.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829640
+    m_Localized: Create another unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829641
+    m_Localized: Drag {unitB} onto the Reroll area.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829642
+    m_Localized: The rerolled {unitA} units automatically fuse into a 3-star unit.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829643
+    m_Localized: Increase population to deploy more units.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829644
+    m_Localized: Continue through the remaining waves freely.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829645
+    m_Localized: You won your first battle!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829646
+    m_Localized: Press Return to go to the Lobby.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829647
+    m_Localized: The Unit tab manages your battle formation and owned units. Open
+      it now.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829648
+    m_Localized: Select an owned unit to review Training, Promotion, Limit Break,
+      and Equipment.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829649
+    m_Localized: Select training materials and train the unit once.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829650
+    m_Localized: Promotion improves stats and skills with dedicated materials. Open
+      the Promotion tab.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829651
+    m_Localized: Limit Break uses duplicate units to expand growth potential. Open
+      the Limit Break tab.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829652
+    m_Localized: Equipment provides additional stat upgrades. Open the Equipment
+      tab.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829653
+    m_Localized: Equip and enhance acquired gear here. Close the unit details when
+      you are ready.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829654
+    m_Localized: The Laboratory is unlocked. Develop research there to strengthen
+      your combat abilities.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829655
+    m_Localized: Spend research currency to reveal candidates and choose one. More
+      research opportunities unlock as your account level rises.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829656
+    m_Localized: LEVEL UP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829657
+    m_Localized: MAX FUEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829658
+    m_Localized: New research is now available.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829659
+    m_Localized: Tap outside to close.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829660
+    m_Localized: LOADING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829661
+    m_Localized: Matching units of the same rank automatically fuse into a higher
+      rank.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829662
+    m_Localized: During preparation, drag units to reposition them on the battlefield.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829663
+    m_Localized: Sell units you no longer need to recover battle currency.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829664
+    m_Localized: Increase population to deploy more units on the battlefield.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829665
+    m_Localized: Defeat Elite enemies to choose a relic that empowers your run.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2677829666
+    m_Localized: Reroll changes a unit while preserving its current rank.
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

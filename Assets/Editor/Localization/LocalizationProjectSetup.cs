@@ -49,6 +49,7 @@ public static class LocalizationProjectSetup
         StageStringTableSetup.Configure(korean, english, TablesDirectory);
         RelicStringTableSetup.Configure(korean, english, TablesDirectory);
         LabCardStringTableSetup.Configure(korean, english, TablesDirectory);
+        TutorialStringTableSetup.Configure(korean, english, TablesDirectory);
 
         LocalizationSettings.ProjectLocale = korean;
         settings.GetStringDatabase().UseFallback = true;
