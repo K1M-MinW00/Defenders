@@ -1,23 +1,24 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(MonsterHealth))]
 [RequireComponent(typeof(MonsterTargetingController))]
+[RequireComponent(typeof(MonsterFSMController))]
+[RequireComponent(typeof(MonsterMovementController))]
 public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnockbackReceiver
 {
     [Header("References")]
     private ModelView view;
-    private NavMeshAgent agent;
     private ICombatAttack attackBehavior;
     private StagePoolManager poolManager;
     private MonsterTargetingController targeting;
+    private MonsterFSMController fsmController;
+    private MonsterMovementController movementController;
 
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
-    public NavMeshAgent Agent => agent;
+    public NavMeshAgent Agent => movementController != null ? movementController.Agent : null;
     public UnitController Target => targeting != null ? targeting.CurrentTarget : null;
     public MonsterHealth Health { get; private set; }
     public StagePoolManager PoolManager => poolManager;
@@ -29,8 +30,13 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public Transform TargetTransform => transform;
     public ICombatHealth CombatHealth => Health;
     public bool IsDead => Health != null && Health.IsDead;
-    public bool IsControlLocked { get; private set; }
+    public bool IsControlLocked => movementController != null && movementController.IsControlLocked;
     public bool IsRuntimeInitialized { get; private set; }
+    public bool CanRunBehavior => IsRuntimeInitialized &&
+                                  Data != null &&
+                                  !IsDead &&
+                                  !IsControlLocked &&
+                                  gameObject.activeInHierarchy;
 
     public float GetInitialUpdateDelay(float interval)
     {
@@ -39,19 +45,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     private Poolable poolable;
 
-    private StateMachine fsm;
-    private MonsterMoveState moveState;
-    private MonsterAttackState attackState;
-    private MonsterIdleState idleState;
-
     public event Action<MonsterController> OnDead;
-    private Coroutine knockbackRoutine;
 
 
     private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-
         if (view == null)
             view = GetComponentInChildren<ModelView>();
 
@@ -62,15 +60,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
         Health = GetComponent<MonsterHealth>();
         targeting = GetComponent<MonsterTargetingController>();
+        fsmController = GetComponent<MonsterFSMController>();
+        movementController = GetComponent<MonsterMovementController>();
         Health.OnDead += HandleDead;
-
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
-
-        fsm = new StateMachine();
-        moveState = new MonsterMoveState(this);
-        attackState = new MonsterAttackState(this);
-        idleState = new MonsterIdleState(this);
+        movementController.Initialize(this);
+        fsmController.Initialize(this);
     }
 
     public bool Initialize(
@@ -114,7 +108,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         if (!IsRuntimeInitialized || Health.IsDead || IsControlLocked)
             return;
 
-        fsm.Tick();
+        fsmController.Tick();
     }
 
     public void OnSpawn()
@@ -133,15 +127,15 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
             return;
 
         Health.Initialize(FinalStats);
-        agent.speed = FinalStats.moveSpeed;
+        movementController.ApplyMoveSpeed(FinalStats.moveSpeed);
     }
 
     public void ApplyStageMoveSpeedMultiplier(float multiplier)
     {
-        if (agent == null || FinalStats == null)
+        if (movementController == null || FinalStats == null)
             return;
 
-        agent.speed = FinalStats.moveSpeed * Mathf.Max(0f, multiplier);
+        movementController.ApplyMoveSpeed(FinalStats.moveSpeed * Mathf.Max(0f, multiplier));
     }
 
 
@@ -157,9 +151,8 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         if (!IsRuntimeInitialized || IsDead)
             return;
 
-        StopKnockback();
-        IsControlLocked = true;
-        fsm.Reset();
+        movementController.Suspend();
+        fsmController.ResetRuntime();
         CancelAttack();
         ClearTarget();
         StopMovement();
@@ -168,13 +161,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     private void ResetRuntimeState()
     {
-        StopKnockback();
-        IsControlLocked = false;
         IsRuntimeInitialized = false;
-        fsm.Reset();
+        fsmController.ResetRuntime();
         attackBehavior?.CancelAttack();
         targeting.ClearTarget();
-        StopMovement();
+        movementController.ResetRuntime();
 
         Health.ClearRuntimeListeners();
         OnDead = null;
@@ -196,11 +187,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     public void MoveTo(Vector3 dest)
     {
-        if (agent == null || !agent.enabled)
-            return;
-
-        ResumeMovement();
-        agent.SetDestination(dest);
+        movementController.MoveTo(dest);
     }
 
     public void MoveToTarget()
@@ -208,27 +195,18 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         if (!HasValidTarget())
             return;
 
-        Vector3 velocity = agent.velocity;
+        Vector3 velocity = Agent != null ? Agent.velocity : Vector3.zero;
         view.FaceDirection(velocity);
         MoveTo(Target.transform.position);
     }
 
     public void ResumeMovement()
     {
-        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
-            return;
-
-        agent.enabled = true;
-        agent.isStopped = false;
+        movementController.TryResume();
     }
     public void StopMovement()
     {
-        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
-            return;
-
-        agent.isStopped = true;
-        agent.velocity = Vector3.zero;
-        agent.ResetPath();
+        movementController.Stop();
     }
 
     public bool IsTargetInAttackRange()
@@ -267,109 +245,35 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     public void ChangeToIdle()
     {
-        if (CanRunBehavior())
-            fsm.ChangeState(idleState);
+        if (CanRunBehavior)
+            fsmController.ChangeToIdle();
     }
 
     public void ChangeToMove()
     {
-        if (CanRunBehavior())
-            fsm.ChangeState(moveState);
+        if (CanRunBehavior)
+            fsmController.ChangeToMove();
     }
 
     public void ChangeToAttack()
     {
-        if (CanRunBehavior())
-            fsm.ChangeState(attackState);
-    }
-
-    private bool CanRunBehavior()
-    {
-        return IsRuntimeInitialized &&
-               Data != null &&
-               !IsDead &&
-               !IsControlLocked &&
-               gameObject.activeInHierarchy;
+        if (CanRunBehavior)
+            fsmController.ChangeToAttack();
     }
 
     public void ApplyKnockback(Vector2 direction, float distance, float duration)
     {
-        if (IsDead || direction.sqrMagnitude <= 0.0001f || distance <= 0f)
-            return;
+        movementController.ApplyKnockback(direction, distance, duration);
+    }
 
-        StopKnockback();
-
-        IsControlLocked = true;
-        fsm.Reset();
+    internal void PrepareForControlEffect()
+    {
+        fsmController.ResetRuntime();
         CancelAttack();
         StopMovement();
-
-        knockbackRoutine = StartCoroutine(KnockbackRoutine(
-            direction,
-            distance,
-            Mathf.Max(0.01f, duration)));
     }
 
-    private void StopKnockback()
-    {
-        if (knockbackRoutine == null)
-            return;
-
-        StopCoroutine(knockbackRoutine);
-        knockbackRoutine = null;
-        IsControlLocked = false;
-    }
-
-    private IEnumerator KnockbackRoutine(Vector2 direction, float distance, float duration)
-    {
-        Vector3 start = transform.position;
-        Vector3 desiredEnd = start + (Vector3)(direction.normalized * distance);
-        Vector3 end = ResolveKnockbackDestination(start, desiredEnd, direction.normalized);
-
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-
-            transform.position = Vector3.Lerp(start, end, t);
-            yield return null;
-        }
-
-        transform.position = end;
-
-        if (agent != null && agent.enabled && agent.isOnNavMesh)
-        {
-            agent.Warp(transform.position);
-            agent.ResetPath();
-            agent.isStopped = false;
-        }
-
-        knockbackRoutine = null;
-        IsControlLocked = false;
-        ResumeBehaviorAfterControlEffect();
-    }
-
-    private Vector3 ResolveKnockbackDestination(Vector3 start, Vector3 desiredEnd, Vector2 direction)
-    {
-        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
-            return start;
-
-        Vector3 end = desiredEnd;
-        if (NavMesh.Raycast(start, desiredEnd, out NavMeshHit boundaryHit, agent.areaMask))
-        {
-            float inset = Mathf.Max(0.05f, agent.radius * 0.25f);
-            end = boundaryHit.position - (Vector3)(direction * inset);
-        }
-
-        float sampleRadius = Mathf.Max(0.25f, agent.radius * 2f);
-        return NavMesh.SamplePosition(end, out NavMeshHit sampled, sampleRadius, agent.areaMask)
-            ? sampled.position
-            : start;
-    }
-
-    private void ResumeBehaviorAfterControlEffect()
+    internal void ResumeBehaviorAfterControlEffect()
     {
         if (IsDead || !gameObject.activeInHierarchy)
             return;
