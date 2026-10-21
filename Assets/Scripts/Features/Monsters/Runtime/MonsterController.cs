@@ -6,15 +6,16 @@ using UnityEngine.AI;
 [RequireComponent(typeof(MonsterTargetingController))]
 [RequireComponent(typeof(MonsterFSMController))]
 [RequireComponent(typeof(MonsterMovementController))]
+[RequireComponent(typeof(MonsterCombatController))]
+[RequireComponent(typeof(MonsterPresentationController))]
 public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnockbackReceiver
 {
-    [Header("References")]
-    private ModelView view;
-    private ICombatAttack attackBehavior;
     private StagePoolManager poolManager;
     private MonsterTargetingController targeting;
     private MonsterFSMController fsmController;
     private MonsterMovementController movementController;
+    private MonsterCombatController combatController;
+    private MonsterPresentationController presentationController;
 
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
@@ -50,21 +51,19 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     private void Awake()
     {
-        if (view == null)
-            view = GetComponentInChildren<ModelView>();
-
-        if (attackBehavior == null)
-            attackBehavior = GetComponent<ICombatAttack>();
-
         poolable = GetComponent<Poolable>();
 
         Health = GetComponent<MonsterHealth>();
         targeting = GetComponent<MonsterTargetingController>();
         fsmController = GetComponent<MonsterFSMController>();
         movementController = GetComponent<MonsterMovementController>();
+        combatController = GetComponent<MonsterCombatController>();
+        presentationController = GetComponent<MonsterPresentationController>();
         Health.OnDead += HandleDead;
         movementController.Initialize(this);
         fsmController.Initialize(this);
+        combatController.Initialize(this);
+        presentationController.Initialize();
     }
 
     public bool Initialize(
@@ -163,7 +162,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     {
         IsRuntimeInitialized = false;
         fsmController.ResetRuntime();
-        attackBehavior?.CancelAttack();
+        combatController.ResetRuntime();
         targeting.ClearTarget();
         movementController.ResetRuntime();
 
@@ -196,7 +195,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
             return;
 
         Vector3 velocity = Agent != null ? Agent.velocity : Vector3.zero;
-        view.FaceDirection(velocity);
+        presentationController.FaceMovement(velocity);
         MoveTo(Target.transform.position);
     }
 
@@ -223,12 +222,12 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
             return false;
 
         FaceTarget();
-        return attackBehavior?.TryAttack(Target) ?? false;
+        return combatController.TryAttack(Target);
     }
 
     public void CancelAttack()
     {
-        attackBehavior?.CancelAttack();
+        combatController.CancelAttack();
     }
 
     public void FaceTarget()
@@ -236,12 +235,12 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         if (!HasValidTarget())
             return;
 
-        view?.FaceTo(transform.position, Target.transform.position);
+        presentationController.FaceTarget(transform.position, Target.transform);
     }
 
-    public void PlayIdle() => view?.PlayIdle();
-    public void PlayMove() => view?.PlayMove();
-    public void PlayAttack() => view?.PlayAttack(FinalStats?.atkPerSec ?? 1f);
+    public void PlayIdle() => presentationController.PlayIdle();
+    public void PlayMove() => presentationController.PlayMove();
+    public void PlayAttack() => presentationController.PlayAttack(FinalStats?.atkPerSec ?? 1f);
 
     public void ChangeToIdle()
     {

@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 1385343888076783973}
   - component: {fileID: 6739472892145067341}
   - component: {fileID: 6739472892145067342}
+  - component: {fileID: 6739472892145067343}
+  - component: {fileID: 6739472892145067344}
   - component: {fileID: 4173038608186531338}
   - component: {fileID: 7485299739719026670}
   - component: {fileID: 2924555979757776060}
@@ -162,6 +164,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e88aedec7564eadb270b16ca9b631d5, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterMovementController
+--- !u!114 &6739472892145067343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390678771801392321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a523fd66baa4c57855db874fca84a65, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterCombatController
+--- !u!114 &6739472892145067344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390678771801392321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d083160c3c524e26871845c003e48ed5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterPresentationController
 --- !u!114 &4173038608186531338
 MonoBehaviour:
   m_ObjectHideFlags: 0

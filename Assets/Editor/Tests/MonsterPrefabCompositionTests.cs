@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -22,9 +23,18 @@ public sealed class MonsterPrefabCompositionTests
             Assert.That(prefab.GetComponent<MonsterController>(), Is.Not.Null, $"MonsterController is missing: {path}");
             Assert.That(prefab.GetComponent<MonsterFSMController>(), Is.Not.Null, $"MonsterFSMController is missing: {path}");
             Assert.That(prefab.GetComponent<MonsterMovementController>(), Is.Not.Null, $"MonsterMovementController is missing: {path}");
+            Assert.That(prefab.GetComponent<MonsterCombatController>(), Is.Not.Null, $"MonsterCombatController is missing: {path}");
+            Assert.That(prefab.GetComponent<MonsterPresentationController>(), Is.Not.Null, $"MonsterPresentationController is missing: {path}");
             Assert.That(prefab.GetComponent<MonsterTargetingController>(), Is.Not.Null, $"MonsterTargetingController is missing: {path}");
             Assert.That(prefab.GetComponent<MonsterHealth>(), Is.Not.Null, $"MonsterHealth is missing: {path}");
             Assert.That(prefab.GetComponent<UnityEngine.AI.NavMeshAgent>(), Is.Not.Null, $"NavMeshAgent is missing: {path}");
+            Assert.That(prefab.GetComponentInChildren<ModelView>(true), Is.Not.Null, $"ModelView is missing: {path}");
+
+            if (!path.EndsWith("Monster_Base.prefab"))
+            {
+                int attackCount = prefab.GetComponents<MonoBehaviour>().Count(component => component is ICombatAttack);
+                Assert.That(attackCount, Is.EqualTo(1), $"Expected exactly one attack behavior: {path}");
+            }
 
             foreach (Transform child in prefab.GetComponentsInChildren<Transform>(true))
             {
