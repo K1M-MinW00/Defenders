@@ -24,9 +24,9 @@ public sealed class MonsterMoveState : IState
 
     public void Update()
     {
-        if (!owner.HasValidTarget())
+        if (!owner.Targeting.HasValidTarget())
         {
-            if (!owner.TryFindClosestAliveUnit())
+            if (!owner.Targeting.TryAcquireClosest(owner.transform.position))
             {
                 owner.ChangeToIdle();
                 return;
@@ -38,7 +38,7 @@ public sealed class MonsterMoveState : IState
             }
         }
 
-        if(owner.IsTargetInAttackRange())
+        if(owner.Targeting.IsCurrentTargetInRange(owner.transform.position, owner.AttackRange))
         {
             owner.ChangeToAttack();
             return;
@@ -47,7 +47,7 @@ public sealed class MonsterMoveState : IState
         if (Time.time >= _nextRefreshTime)
         {
             _nextRefreshTime = Time.time + owner.MoveTargetRefreshInterval;
-            owner.TryFindClosestAliveUnit();
+            owner.Targeting.TryAcquireClosest(owner.transform.position);
             owner.MoveToTarget();
         }
     }

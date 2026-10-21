@@ -45,11 +45,12 @@ public class MonsterControllerEditor : Editor
 
     private void DrawTargetGizmo(MonsterController monster)
     {
-        if (monster.Target == null)
+        UnitController currentTarget = monster.Targeting?.CurrentTarget;
+        if (currentTarget == null)
             return;
 
         Handles.color = Color.red;
-        Handles.DrawLine(monster.transform.position, monster.Target.transform.position);
+        Handles.DrawLine(monster.transform.position, currentTarget.transform.position);
 
         Handles.color = new Color(1f, 0f, 0f, 0.15f);
         Handles.DrawWireDisc(monster.transform.position, Vector3.forward, monster.AttackRange);

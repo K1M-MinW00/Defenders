@@ -14,7 +14,7 @@ public class MonsterIdleState : IState
     public void Enter()
     {
         owner.StopMovement();
-        owner.ClearTarget();
+        owner.Targeting.ClearTarget();
         owner.PlayIdle();
 
         _nextAcquireTime = Time.time +
@@ -28,7 +28,7 @@ public class MonsterIdleState : IState
 
         _nextAcquireTime = Time.time + owner.IdleTargetAcquireInterval;
 
-        if (owner.TryFindClosestAliveUnit())
+        if (owner.Targeting.TryAcquireClosest(owner.transform.position))
             owner.ChangeToMove();
         
     }

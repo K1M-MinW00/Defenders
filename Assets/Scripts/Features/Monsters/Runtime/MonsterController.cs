@@ -11,7 +11,6 @@ using UnityEngine.AI;
 public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnockbackReceiver
 {
     private StagePoolManager poolManager;
-    private MonsterTargetingController targeting;
     private MonsterFSMController fsmController;
     private MonsterMovementController movementController;
     private MonsterCombatController combatController;
@@ -20,7 +19,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
     public NavMeshAgent Agent => movementController != null ? movementController.Agent : null;
-    public UnitController Target => targeting != null ? targeting.CurrentTarget : null;
+    public MonsterTargetingController Targeting { get; private set; }
     public MonsterHealth Health { get; private set; }
     public StagePoolManager PoolManager => poolManager;
     public float AttackRange => FinalStats.atkRange;
@@ -54,7 +53,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         poolable = GetComponent<Poolable>();
 
         Health = GetComponent<MonsterHealth>();
-        targeting = GetComponent<MonsterTargetingController>();
+        Targeting = GetComponent<MonsterTargetingController>();
         fsmController = GetComponent<MonsterFSMController>();
         movementController = GetComponent<MonsterMovementController>();
         combatController = GetComponent<MonsterCombatController>();
@@ -66,7 +65,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         presentationController.Initialize();
     }
 
-    public bool Initialize(
+    public bool TryInitialize(
         UnitRoster unitRoster,
         MonsterDataSO data,
         StagePoolManager poolManager,
@@ -74,14 +73,14 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     {
         if (data == null)
         {
-            Debug.LogError($"[{nameof(MonsterController)}] Initialize failed: data is null.", this);
+            Debug.LogError($"[{nameof(MonsterController)}] TryInitialize failed: data is null.", this);
             return false;
         }
 
         if (unitRoster == null || poolManager == null)
         {
             Debug.LogError(
-                $"[{nameof(MonsterController)}] Initialize failed: combat context is incomplete.",
+                $"[{nameof(MonsterController)}] TryInitialize failed: combat context is incomplete.",
                 this);
             return false;
         }
@@ -91,7 +90,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
             ? MonsterStatCalculator.Calculate(runtimeStats)
             : MonsterStatCalculator.Calculate(data);
         this.poolManager = poolManager;
-        targeting.Initialize(unitRoster);
+        Targeting.Initialize(unitRoster);
 
         Health.OnDead -= HandleDead;
         Health.OnDead += HandleDead;
@@ -153,7 +152,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         movementController.Suspend();
         fsmController.ResetRuntime();
         CancelAttack();
-        ClearTarget();
+        Targeting.ClearTarget();
         StopMovement();
         PlayIdle();
     }
@@ -163,10 +162,10 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         IsRuntimeInitialized = false;
         fsmController.ResetRuntime();
         combatController.ResetRuntime();
-        targeting.ClearTarget();
+        Targeting.ResetRuntime();
         movementController.ResetRuntime();
 
-        Health.ClearRuntimeListeners();
+        Health.ClearTransientListeners();
         OnDead = null;
         Data = null;
         FinalStats = null;
@@ -174,16 +173,7 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     }
 
 
-    // --- Targeting / Movement Helpers ---
-    public void ClearTarget() => targeting.ClearTarget();
-    public void SetTarget(UnitController newTarget) => targeting.SetTarget(newTarget);
-    public bool HasValidTarget() => targeting.HasValidTarget();
-
-    public bool TryFindClosestAliveUnit()
-    {
-        return targeting.TryAcquireClosest(transform.position);
-    }
-
+    // --- Movement / Combat State Helpers ---
     public void MoveTo(Vector3 dest)
     {
         movementController.MoveTo(dest);
@@ -191,12 +181,12 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     public void MoveToTarget()
     {
-        if (!HasValidTarget())
+        if (!Targeting.HasValidTarget())
             return;
 
         Vector3 velocity = Agent != null ? Agent.velocity : Vector3.zero;
         presentationController.FaceMovement(velocity);
-        MoveTo(Target.transform.position);
+        MoveTo(Targeting.CurrentTarget.transform.position);
     }
 
     public void ResumeMovement()
@@ -208,21 +198,13 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         movementController.Stop();
     }
 
-    public bool IsTargetInAttackRange()
-    {
-        if (!HasValidTarget())
-            return false;
-
-        return targeting.IsCurrentTargetInRange(transform.position, AttackRange);
-    }
-
     public bool TryAttackCurrentTarget()
     {
-        if (!HasValidTarget())
+        if (!Targeting.HasValidTarget())
             return false;
 
         FaceTarget();
-        return combatController.TryAttack(Target);
+        return combatController.TryAttack(Targeting.CurrentTarget);
     }
 
     public void CancelAttack()
@@ -232,10 +214,10 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     public void FaceTarget()
     {
-        if (!HasValidTarget())
+        if (!Targeting.HasValidTarget())
             return;
 
-        presentationController.FaceTarget(transform.position, Target.transform);
+        presentationController.FaceTarget(transform.position, Targeting.CurrentTarget.transform);
     }
 
     public void PlayIdle() => presentationController.PlayIdle();
@@ -277,13 +259,13 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         if (IsDead || !gameObject.activeInHierarchy)
             return;
 
-        if (!HasValidTarget() && !TryFindClosestAliveUnit())
+        if (!Targeting.HasValidTarget() && !Targeting.TryAcquireClosest(transform.position))
         {
             ChangeToIdle();
             return;
         }
 
-        if (IsTargetInAttackRange())
+        if (Targeting.IsCurrentTargetInRange(transform.position, AttackRange))
             ChangeToAttack();
         else
             ChangeToMove();

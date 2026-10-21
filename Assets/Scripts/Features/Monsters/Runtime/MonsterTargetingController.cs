@@ -13,6 +13,12 @@ public sealed class MonsterTargetingController : MonoBehaviour
         ClearTarget();
     }
 
+    public void ResetRuntime()
+    {
+        ClearTarget();
+        unitRoster = null;
+    }
+
     public void ClearTarget()
     {
         CurrentTarget = null;

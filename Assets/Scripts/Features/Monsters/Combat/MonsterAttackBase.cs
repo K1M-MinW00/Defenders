@@ -21,7 +21,7 @@ public abstract class MonsterAttackBase : MonoBehaviour, IAnimationDrivenAttack
         if (owner == null || owner.IsDead)
             return false;
 
-        return owner.IsTargetInAttackRange();
+        return owner.Targeting.IsCurrentTargetInRange(owner.transform.position, owner.AttackRange);
     }
 
     public bool TryAttack(ICombatTarget target)

@@ -308,7 +308,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         StageBalanceMultipliers multipliers = CalculateBalance(entry);
         MonsterStats runtimeStats = MonsterStatCalculator.Calculate(data, multipliers.Hp, multipliers.Attack);
 
-        if (!monster.Initialize(unitRoster, data, poolManager, runtimeStats))
+        if (!monster.TryInitialize(unitRoster, data, poolManager, runtimeStats))
         {
             if (monster.TryGetComponent(out Poolable failedSpawn))
                 poolManager.Despawn(failedSpawn);

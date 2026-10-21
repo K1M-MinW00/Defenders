@@ -20,9 +20,9 @@ public class MonsterAttackState : IState
 
     public void Update()
     {
-        if(!owner.HasValidTarget())
+        if(!owner.Targeting.HasValidTarget())
         {
-            if (owner.TryFindClosestAliveUnit())
+            if (owner.Targeting.TryAcquireClosest(owner.transform.position))
             {
                 owner.ChangeToMove();
                 return;
@@ -32,7 +32,7 @@ public class MonsterAttackState : IState
             return;
         }
 
-        if(!owner.IsTargetInAttackRange())
+        if(!owner.Targeting.IsCurrentTargetInRange(owner.transform.position, owner.AttackRange))
         {
             owner.ChangeToMove();
             return;
