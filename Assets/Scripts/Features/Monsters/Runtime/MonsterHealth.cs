@@ -66,6 +66,7 @@ public class MonsterHealth : MonoBehaviour, ICombatHealth
             resolution.IsCritical);
 
         CombatDebugTelemetry.ReportDamageApplied(this, request, result);
+        CombatStatisticsEvents.ReportDamageDealt(request.Source as UnitController, appliedDamage);
         OnDamaged?.Invoke(this, result);
 
         if (!result.WasLethal && request.Source is UnitController unitSource)

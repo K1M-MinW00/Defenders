@@ -19,6 +19,10 @@ MonoBehaviour:
   prepareDuration: 90
   waves:
   - waveType: 0
+    bossSettings:
+      timeLimit: 90
+      enrageLeadTime: 30
+      warningLeadTime: 10
     hpMultiplier: 0.25
     attackMultiplier: 0.15
     pressureMultiplier: 0.4
@@ -40,6 +44,10 @@ MonoBehaviour:
         delayAfterGroup: 0.15
       delayAfterSubWave: 0.75
   - waveType: 0
+    bossSettings:
+      timeLimit: 90
+      enrageLeadTime: 30
+      warningLeadTime: 10
     hpMultiplier: 0.35
     attackMultiplier: 0.15
     pressureMultiplier: 0.4
@@ -61,6 +69,10 @@ MonoBehaviour:
         delayAfterGroup: 0.15
       delayAfterSubWave: 0.75
   - waveType: 1
+    bossSettings:
+      timeLimit: 90
+      enrageLeadTime: 30
+      warningLeadTime: 10
     hpMultiplier: 0.45
     attackMultiplier: 0.15
     pressureMultiplier: 0.4
@@ -91,6 +103,10 @@ MonoBehaviour:
         delayAfterGroup: 0.15
       delayAfterSubWave: 0.75
   - waveType: 0
+    bossSettings:
+      timeLimit: 90
+      enrageLeadTime: 30
+      warningLeadTime: 10
     hpMultiplier: 0.6
     attackMultiplier: 0.25
     pressureMultiplier: 0.6
@@ -128,6 +144,10 @@ MonoBehaviour:
         delayAfterGroup: 0.15
       delayAfterSubWave: 0.75
   - waveType: 2
+    bossSettings:
+      timeLimit: 90
+      enrageLeadTime: 30
+      warningLeadTime: 10
     hpMultiplier: 0.6
     attackMultiplier: 0.25
     pressureMultiplier: 0.6

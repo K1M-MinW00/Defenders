@@ -407,6 +407,26 @@ MonoBehaviour:
     m_Key: combat.status.immune
     m_Metadata:
       m_Items: []
+  - m_Id: 2290962560479232
+    m_Key: combat.statistics.rank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616576
+    m_Key: combat.statistics.unit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616577
+    m_Key: combat.statistics.damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616578
+    m_Key: combat.statistics.healing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616579
+    m_Key: combat.statistics.damage_taken
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

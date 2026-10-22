@@ -19,6 +19,6 @@ public class Werebear_BloodThirst : PassiveSkillBase
 
         float ratio = skillController.HasPassiveUpgrade2 ? upgrade_healRatio : healRatio;
         float healAmount = damage * ratio;
-        owner.Health.Heal(healAmount);
+        owner.Health.Heal(healAmount, owner);
     }
 }

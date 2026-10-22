@@ -33,6 +33,19 @@ public sealed class StageLocalizationTests
     public void InsufficientMinerals_UsesSelectedLocale(string localeCode, string expected)
     { SelectLocale(localeCode); Assert.That(Localize("prepare.insufficient_minerals"), Is.EqualTo(expected)); }
 
+    [TestCase("ko", "combat.statistics.rank", "순위")]
+    [TestCase("en", "combat.statistics.rank", "Rank")]
+    [TestCase("ko", "combat.statistics.unit", "유닛")]
+    [TestCase("en", "combat.statistics.unit", "Unit")]
+    [TestCase("ko", "combat.statistics.damage", "피해량")]
+    [TestCase("en", "combat.statistics.damage", "Damage")]
+    [TestCase("ko", "combat.statistics.healing", "회복량")]
+    [TestCase("en", "combat.statistics.healing", "Healing")]
+    [TestCase("ko", "combat.statistics.damage_taken", "받은 피해")]
+    [TestCase("en", "combat.statistics.damage_taken", "Damage Taken")]
+    public void CombatStatistics_UsesSelectedLocale(string localeCode, string key, string expected)
+    { SelectLocale(localeCode); Assert.That(Localize(key), Is.EqualTo(expected)); }
+
     private static string Localize(string key, params object[] arguments) =>
         LocalizationService.Get(LocalizationTables.Stage, key, arguments);
 

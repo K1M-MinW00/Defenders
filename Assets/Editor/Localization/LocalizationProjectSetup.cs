@@ -54,7 +54,28 @@ public static class LocalizationProjectSetup
         LocalizationSettings.ProjectLocale = korean;
         settings.GetStringDatabase().UseFallback = true;
 
+        EnsureStartupLocaleSelectors(settings);
+
+        EditorUtility.SetDirty(settings);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("[LocalizationProjectSetup] Korean and English locales are configured.");
+    }
+
+    private static void EnsureStartupLocaleSelectors(LocalizationSettings settings)
+    {
         var selectors = settings.GetStartupLocaleSelectors();
+        bool alreadyConfigured =
+            selectors.Count == 3 &&
+            selectors[0] is PlayerPrefLocaleSelector playerPreference &&
+            playerPreference.PlayerPreferenceKey == LanguagePreferenceKey &&
+            selectors[1] is SupportedDeviceLocaleSelector &&
+            selectors[2] is SpecificLocaleSelector specificLocale &&
+            specificLocale.LocaleId == new LocaleIdentifier("en");
+
+        if (alreadyConfigured)
+            return;
+
         selectors.Clear();
         selectors.Add(new PlayerPrefLocaleSelector
         {
@@ -65,11 +86,6 @@ public static class LocalizationProjectSetup
         {
             LocaleId = new LocaleIdentifier("en"),
         });
-
-        EditorUtility.SetDirty(settings);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log("[LocalizationProjectSetup] Korean and English locales are configured.");
     }
 
     private static Locale GetOrCreateLocale(SystemLanguage language, string displayName, string path)

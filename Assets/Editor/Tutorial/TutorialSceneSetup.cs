@@ -32,6 +32,7 @@ public static class TutorialSceneSetup
         EnsureTutorialDataFolder();
         EconomyConfig tutorialEconomy = CreateOrRepairTutorialEconomy();
         StageDataSO tutorialStage = CreateOrRepairTutorialStage(tutorialEconomy);
+        SyncStageFeatures();
         ConfigureTutorialScene(tutorialStage);
         ConfigureLobbyScene();
         ConfigureStartupScene();
@@ -47,6 +48,13 @@ public static class TutorialSceneSetup
 
         AssetDatabase.SaveAssets();
         Debug.Log($"[{nameof(TutorialSceneSetup)}] Tutorial scene is ready: {TutorialScenePath}");
+    }
+
+    private static void SyncStageFeatures()
+    {
+        BossFeatureSetup.ApplyRuntimeSetup(TutorialScenePath);
+        BossHudSetup.Build(TutorialScenePath);
+        CombatStatisticsHudSetup.Build(TutorialScenePath);
     }
 
     private static EconomyConfig CreateOrRepairTutorialEconomy()

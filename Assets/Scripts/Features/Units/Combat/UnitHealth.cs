@@ -75,6 +75,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
             resolution.IsCritical);
 
         CombatDebugTelemetry.ReportDamageApplied(this, request, result);
+        CombatStatisticsEvents.ReportDamageTaken(owner, appliedDamage);
         OnDamaged?.Invoke(owner, result);
 
         if (IsDead)
@@ -99,7 +100,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
         return Mathf.Clamp(baseReduction - Mathf.Max(0f, defensePenalty), 0f, 90f);
     }
 
-    public void Heal(float amount)
+    public void Heal(float amount, UnitController source = null)
     {
         float appliedAmount = state.Heal(amount);
         if (appliedAmount <= 0f)
@@ -107,6 +108,7 @@ public class UnitHealth : MonoBehaviour, ICombatHealth
 
         OnHpChanged?.Invoke(owner, CurrentHp, MaxHp);
         OnHealed?.Invoke(owner, appliedAmount);
+        CombatStatisticsEvents.ReportHealingDone(source, appliedAmount);
     }
 
     private void Die()

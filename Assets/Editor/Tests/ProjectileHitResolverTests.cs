@@ -49,6 +49,45 @@ public sealed class ProjectileHitResolverTests
         }
     }
 
+    [Test]
+    public void BasicAttackHit_AppliesDamageWithBasicAttackOrigin()
+    {
+        GameObject targetObject = new("Target");
+        FakeTarget target = new(targetObject.transform, false);
+
+        try
+        {
+            DamageResult result = UnitBasicAttackHitResolver.Apply(
+                source: null,
+                target,
+                target.CombatHealth,
+                damage: 12f);
+
+            FakeHealth health = (FakeHealth)target.CombatHealth;
+            Assert.That(result.WasApplied, Is.True);
+            Assert.That(health.LastRequest.Amount, Is.EqualTo(12f));
+            Assert.That(health.LastRequest.Origin, Is.EqualTo(DamageOrigin.BasicAttack));
+            Assert.That(health.LastRequest.Source, Is.Null);
+        }
+        finally
+        {
+            Object.DestroyImmediate(targetObject);
+        }
+    }
+
+    [Test]
+    public void BasicAttackHit_RejectsMissingHealth()
+    {
+        DamageResult result = UnitBasicAttackHitResolver.Apply(
+            source: null,
+            target: null,
+            targetHealth: null,
+            damage: 12f);
+
+        Assert.That(result.WasApplied, Is.False);
+        Assert.That(result.RejectReason, Is.EqualTo(DamageRejectReason.InvalidTarget));
+    }
+
     private sealed class FakeTarget : ICombatTarget
     {
         public Transform TargetTransform { get; }
@@ -67,6 +106,7 @@ public sealed class ProjectileHitResolverTests
         public float CurrentHp => IsDead ? 0f : 1f;
         public float MaxHp => 1f;
         public bool IsDead { get; }
+        public DamageRequest LastRequest { get; private set; }
 
         public FakeHealth(bool isDead)
         {
@@ -77,6 +117,7 @@ public sealed class ProjectileHitResolverTests
 
         public DamageResult ApplyDamage(DamageRequest request)
         {
+            LastRequest = request;
             return IsDead
                 ? DamageResult.Rejected(request.Amount, DamageRejectReason.TargetAlreadyDead)
                 : DamageResult.Applied(request.Amount, request.Amount, false);

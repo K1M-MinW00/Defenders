@@ -10,11 +10,16 @@ public static class BossFeatureSetup
     [MenuItem("Tools/Game/Bosses/Apply Runtime Setup")]
     public static void ApplyRuntimeSetup()
     {
-        Scene scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
+        ApplyRuntimeSetup(GameScenePath);
+    }
+
+    public static void ApplyRuntimeSetup(string scenePath)
+    {
+        Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
         StagePhaseRuntimeController phaseRuntime = Object.FindFirstObjectByType<StagePhaseRuntimeController>(
             FindObjectsInactive.Include);
         if (phaseRuntime == null)
-            throw new System.InvalidOperationException("StagePhaseRuntimeController was not found in GameScene.");
+            throw new System.InvalidOperationException($"StagePhaseRuntimeController was not found in {scenePath}.");
 
         BossBattleTimerController timer = phaseRuntime.GetComponent<BossBattleTimerController>();
         if (timer == null)
@@ -29,6 +34,6 @@ public static class BossFeatureSetup
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         AssetDatabase.SaveAssets();
-        Debug.Log("Boss runtime setup applied to GameScene.");
+        Debug.Log($"Boss runtime setup applied to {scenePath}.");
     }
 }

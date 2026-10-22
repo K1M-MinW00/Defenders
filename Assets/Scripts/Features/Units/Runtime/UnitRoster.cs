@@ -160,6 +160,11 @@ public class UnitRoster : MonoBehaviour
         return CombatTargetSelector.FindLowestHealth(units);
     }
 
+    public UnitController GetMostInjuredAliveUnit()
+    {
+        return CombatTargetSelector.FindMostInjured(units);
+    }
+
     private void OnDestroy()
     {
         for (int i = units.Count - 1; i >= 0; i--)

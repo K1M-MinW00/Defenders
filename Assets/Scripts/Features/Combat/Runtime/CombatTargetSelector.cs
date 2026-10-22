@@ -74,4 +74,33 @@ public static class CombatTargetSelector
 
         return lowest;
     }
+
+    public static T FindMostInjured<T>(IEnumerable<T> candidates)
+        where T : class, ICombatTarget
+    {
+        if (candidates == null)
+            return null;
+
+        T mostInjured = null;
+        float lowestHealthRatio = 1f;
+
+        foreach (T candidate in candidates)
+        {
+            if (!IsValid(candidate))
+                continue;
+
+            ICombatHealth health = candidate.CombatHealth;
+            if (health.MaxHp <= 0f || health.CurrentHp >= health.MaxHp)
+                continue;
+
+            float healthRatio = Mathf.Clamp01(health.CurrentHp / health.MaxHp);
+            if (healthRatio >= lowestHealthRatio)
+                continue;
+
+            mostInjured = candidate;
+            lowestHealthRatio = healthRatio;
+        }
+
+        return mostInjured;
+    }
 }
