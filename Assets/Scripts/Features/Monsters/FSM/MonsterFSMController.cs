@@ -7,6 +7,9 @@ public sealed class MonsterFSMController : MonoBehaviour
     private MonsterIdleState idleState;
     private MonsterMoveState moveState;
     private MonsterAttackState attackState;
+    private MonsterAbilityState abilityState;
+
+    public bool IsUsingAbility => stateMachine?.CurrentState == abilityState;
 
     public string CurrentStateName => stateMachine?.CurrentState?.GetType().Name ?? "None";
 
@@ -17,6 +20,7 @@ public sealed class MonsterFSMController : MonoBehaviour
         idleState = new MonsterIdleState(owner);
         moveState = new MonsterMoveState(owner);
         attackState = new MonsterAttackState(owner);
+        abilityState = new MonsterAbilityState(owner);
     }
 
     public void Tick()
@@ -46,6 +50,21 @@ public sealed class MonsterFSMController : MonoBehaviour
     {
         if (CanRunBehavior())
             stateMachine.ChangeState(attackState);
+    }
+
+    public bool TryUseAbility(IMonsterAbility ability)
+    {
+        if (!CanRunBehavior() || IsUsingAbility || !abilityState.TryConfigure(ability))
+            return false;
+
+        stateMachine.ChangeState(abilityState);
+        return true;
+    }
+
+    public void CompleteAbility()
+    {
+        if (IsUsingAbility)
+            owner.ResumeBehaviorAfterControlEffect();
     }
 
     private bool CanRunBehavior()

@@ -130,7 +130,7 @@ public class UnitFSMController : MonoBehaviour
 
     private bool CanEnterCombatState()
     {
-        return owner != null && owner.IsCombatPhase && !owner.IsDead;
+        return owner != null && owner.CanAct;
     }
 
 #if UNITY_EDITOR

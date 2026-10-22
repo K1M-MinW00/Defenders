@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f28b45379dfab014f9fd00e5e20df9d7, type: 3}
+  m_Name: Boss_WereWolf
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
+  monsterId: Boss_WereWolf
+  displayName: Boss WereWolf
+  portrait: {fileID: 4565372846758268570, guid: 47661863db3a2d042a553d749731c80e, type: 3}
+  description: "늑대인간 외형을 재사용한 보스 후보"
+  prefab: {fileID: 9212727190419322969, guid: 26d5d722accd23e4e97ad975b58a675b, type: 3}
+  classification: 2
+  visualScaleOverride: 0
+  bossDefinition: {fileID: 11400000, guid: b1000000000000000000000000000004, type: 2}
+  attackSound: {clip: {fileID: 0}, volume: 1}
+  hitSound: {clip: {fileID: 0}, volume: 1}
+  baseStats: {maxHp: 160, moveSpeed: 4.4, atkDamage: 15, atkRange: 1.8, atkPerSec: 1.6}
+  threatCost: 5
+  behavior: {idleTargetAcquireInterval: 0.5, moveTargetRefreshInterval: 0.25}

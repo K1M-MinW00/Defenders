@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aa8d740f62d49a2b25a4213d48660ce, type: 3}
+  m_Name: StatusEffectIconSet
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectIconSetSO
+  slow: {fileID: 21300000, guid: 5ba88cb662b0d6241afa2f04bee37489, type: 3}
+  stun: {fileID: 21300000, guid: 997fef5beb279d24bbbac27b6d1c566c, type: 3}
+  poison: {fileID: 21300000, guid: bd9724d2c86a5f248bc2de336200b20a, type: 3}
+  burn: {fileID: 21300000, guid: 8bf2d77b8f491ba40ac251ad268813c4, type: 3}
+  defenseDown: {fileID: 21300000, guid: c8363a793f6a7734483d84eee5e15b5b, type: 3}
+  berserk: {fileID: 21300000, guid: 1b7d72b30df9ea84c80ef2aef8ee1637, type: 3}

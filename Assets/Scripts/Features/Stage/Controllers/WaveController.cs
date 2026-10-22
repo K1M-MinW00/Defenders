@@ -100,6 +100,19 @@ public class WaveController : MonoBehaviour
         callback?.Invoke();
     }
 
+    public bool TryFailWave()
+    {
+        if (waveEnded)
+            return false;
+
+        EvaluateWaveResult();
+        if (waveEnded)
+            return false;
+
+        FinishWave(false);
+        return true;
+    }
+
     public void StopWave(bool preserveMonsters = false)
     {
         UnsubscribeRuntimeEvents();

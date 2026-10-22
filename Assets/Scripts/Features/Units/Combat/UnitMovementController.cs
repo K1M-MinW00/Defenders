@@ -13,6 +13,7 @@ public class UnitMovementController : MonoBehaviour
     private Vector3 lastDestination;
     private float nextPathRefreshTime;
     private bool hasDestination;
+    private float baseSpeed;
 
     public NavMeshAgent Agent => agent;
 
@@ -36,7 +37,14 @@ public class UnitMovementController : MonoBehaviour
 
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+        baseSpeed = agent.speed;
         ResetPathRefresh();
+    }
+
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        if (agent != null)
+            agent.speed = baseSpeed * Mathf.Max(0f, multiplier);
     }
 
     public void MoveTo(Vector3 destination)

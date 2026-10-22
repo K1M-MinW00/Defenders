@@ -17,6 +17,9 @@ MonoBehaviour:
   portrait: {fileID: 5525993030540068286, guid: 6bc8e12eaf619344eaf00d23f9e99155, type: 3}
   description: "갑옷을 두르고 빠르게 공격하는 해골"
   prefab: {fileID: 5632995424696654250, guid: 3ef2766bb54d49b4d935c69885efbbe8, type: 3}
+  classification: 1
+  visualScaleOverride: 0
+  bossDefinition: {fileID: 0}
   attackSound:
     clip: {fileID: 0}
     volume: 1

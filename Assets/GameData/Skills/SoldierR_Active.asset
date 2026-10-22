@@ -15,6 +15,14 @@ MonoBehaviour:
   skillName: "\uD654\uC0B4 \uBE44"
   icon: {fileID: 7984265967278385147, guid: 96460c55c5a814045a192f741ea727c4, type: 3}
   skillType: 0
+  onHitStatusEffect:
+    enabled: 1
+    type: 2
+    chance: 1
+    duration: 5
+    magnitude: 0.1
+    magnitudeMode: 1
+    tickInterval: 1
   upgrades:
   - promotionLevel: 0
     description: "\uC804\uC7A5\uC744 \uB4A4\uB36E\uB294 \uD654\uC0B4\uC744 \uC3DF\uC544\uB0B4

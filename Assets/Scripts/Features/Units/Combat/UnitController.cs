@@ -41,6 +41,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
     [SerializeField] private UnitRangeIndicator rangeIndicator;
     [SerializeField] private UnitSkillController skillController;
     [SerializeField] private UnitBuffController buffController;
+    [SerializeField] private UnitStatusEffectController statusEffectController;
     private UnitRoster unitRoster;
     private StagePoolManager poolManager;
     private Poolable poolable;
@@ -65,6 +66,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
     public UnitSkillController SkillController => skillController;
     public UnitStatService StatService => statService;
     public UnitBuffController BuffController => buffController;
+    public UnitStatusEffectController StatusEffects => statusEffectController;
     public ICombatTarget Target => targeting.CurrentTarget;
     public string UnitId => runtime.UnitId;
     public int Star => runtime.Star;
@@ -77,6 +79,8 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
     public bool IsDead => Health.IsDead;
     public bool IsCombatPhase { get; private set; }
+    public bool IsStunned => statusEffectController != null && statusEffectController.IsStunned;
+    public bool CanAct => IsCombatPhase && !IsDead && !IsStunned;
     public bool IsCombatAlerted => isCombatAlerted;
     public bool IsInteractionLocked { get; private set; }
     public UnitRuntimeState RuntimeState => runtimeState;
@@ -101,7 +105,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
         energy.Tick(Time.deltaTime);
 
-        if (IsCombatPhase)
+        if (CanAct)
             fsmController.Tick();
     }
 
@@ -140,6 +144,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         fsmController.Initialize(this);
         skillController.Initialize(this);
         buffController.Initialize(this);
+        statusEffectController.Initialize(this);
 
         statService.BuildInitialStats(initData);
         EnterPreparation();
@@ -161,6 +166,8 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         if (rangeIndicator == null) rangeIndicator = GetComponent<UnitRangeIndicator>();
         if (skillController == null) skillController = GetComponent<UnitSkillController>();
         if (buffController == null) buffController = GetComponent<UnitBuffController>();
+        if (statusEffectController == null)
+            statusEffectController = GetComponent<UnitStatusEffectController>() ?? gameObject.AddComponent<UnitStatusEffectController>();
         if (poolable == null) poolable = GetComponent<Poolable>();
     }
 
@@ -173,6 +180,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         isCombatAlerted = false;
         health.RestoreFull();
         energy.ConsumeAll();
+        statusEffectController.ClearAll();
 
         movement.Stop();
         movement.EnableMovement(true);
@@ -192,7 +200,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
     public void ReceiveCombatAlert()
     {
-        if (IsDead || !IsCombatPhase)
+        if (!CanAct)
             return;
 
         isCombatAlerted = true;
@@ -239,6 +247,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
 
         if (wasCombatPhase)
             buffController.CompleteWave();
+        statusEffectController.ClearAll();
 
         combat.CancelAttack();
         movement.Stop();
@@ -314,6 +323,7 @@ public class UnitController : MonoBehaviour, IPoolable, ICombatTarget, ICombatDa
         targeting.ClearTarget();
         targeting.EnableSensor(false);
         buffController.ResetRuntime();
+        statusEffectController.ResetRuntime();
         fsmController.ResetRuntime();
         rangeIndicator.Hide();
         health.ClearRuntimeListeners();

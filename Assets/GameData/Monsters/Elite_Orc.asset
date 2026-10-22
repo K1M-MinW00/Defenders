@@ -17,6 +17,9 @@ MonoBehaviour:
   portrait: {fileID: -342681156859825065, guid: 45013d16888157047aeadc24f3c9fd00, type: 3}
   description: "빠르고 강력한 정예 오크 전사"
   prefab: {fileID: 1101139171250549184, guid: f8d3676b92fbc4d44b6c6f811f32ca25, type: 3}
+  classification: 1
+  visualScaleOverride: 0
+  bossDefinition: {fileID: 0}
   attackSound:
     clip: {fileID: 0}
     volume: 1

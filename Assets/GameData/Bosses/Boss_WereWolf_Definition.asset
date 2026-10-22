@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 939fb0867734b6948b4f7621b7082f83, type: 3}
+  m_Name: Boss_WereWolf_Definition
+  m_EditorClassIdentifier: Assembly-CSharp::BossDefinitionSO
+  bossId: Boss_WereWolf
+  shieldTriggerHpRatio: 0.6
+  shieldMaxHpRatio: 0.2
+  enragedDamageMultiplier: 1.3
+  enragedAttackSpeedMultiplier: 1.25
+  areaAttackStatusEffects:
+    enableSlow: 1
+    slowDuration: 3
+    slowRatio: 0.35
+    enableStun: 0
+    stunDuration: 1.25
+    enablePoison: 0
+    poisonDuration: 5
+    poisonTickInterval: 1
+    poisonDamageMultiplier: 0.15
+    enableBurn: 1
+    burnDuration: 3
+    burnTickInterval: 0.5
+    burnDamageMultiplier: 0.1
+    enableDefenseDown: 0
+    defenseDownDuration: 5
+    defenseDownPercentagePoints: 20
+  statusResistance:
+    slow: 0.75
+    stun: 0.5
+    poison: 0.25
+    burn: 0.25
+    defenseDown: 0.25

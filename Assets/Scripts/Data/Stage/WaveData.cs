@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class WaveData
 {
     public WaveType waveType;
+    public BossWaveSettings bossSettings = new();
     [Min(0.01f)] public float hpMultiplier = 1f;
     [Min(0.01f)] public float attackMultiplier = 1f;
     [Min(0.01f)] public float pressureMultiplier = 1f;
@@ -38,6 +39,15 @@ public class WaveData
         }
     }
 }
+
+[System.Serializable]
+public sealed class BossWaveSettings
+{
+    [Min(1f)] public float timeLimit = 90f;
+    [Min(0f)] public float enrageLeadTime = 30f;
+    [Min(0f)] public float warningLeadTime = 10f;
+}
+
 public enum WaveType
 {
     Normal,

@@ -28,6 +28,16 @@ public sealed class StageInfoLocalizationTests
     public void WerewolfDescription_UsesSelectedLocale(string localeCode, string expected)
     { SelectLocale(localeCode); Assert.That(Localize("monster.description.WereWolf"), Is.EqualTo(expected)); }
 
+    [TestCase("ko", "갑옷 오크 보스")]
+    [TestCase("en", "Armored Orc Boss")]
+    public void BossName_UsesSelectedLocale(string localeCode, string expected)
+    { SelectLocale(localeCode); Assert.That(Localize("monster.name.Boss_Armored_Orc"), Is.EqualTo(expected)); }
+
+    [TestCase("ko", "면역")]
+    [TestCase("en", "IMMUNE")]
+    public void StatusImmuneFeedback_UsesSelectedLocale(string localeCode, string expected)
+    { SelectLocale(localeCode); Assert.That(Localize("combat.status.immune"), Is.EqualTo(expected)); }
+
     private static string Localize(string key, params object[] arguments) =>
         LocalizationService.Get(LocalizationTables.Stage, key, arguments);
 

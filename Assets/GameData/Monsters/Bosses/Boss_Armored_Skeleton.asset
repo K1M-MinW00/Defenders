@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f28b45379dfab014f9fd00e5e20df9d7, type: 3}
+  m_Name: Boss_Armored_Skeleton
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterDataSO
+  monsterId: Boss_Armored_Skeleton
+  displayName: Boss Armored_Skeleton
+  portrait: {fileID: 5525993030540068286, guid: 6bc8e12eaf619344eaf00d23f9e99155, type: 3}
+  description: "갑옷 해골 외형을 재사용한 보스 후보"
+  prefab: {fileID: 5632995424696654250, guid: 3ef2766bb54d49b4d935c69885efbbe8, type: 3}
+  classification: 2
+  visualScaleOverride: 0
+  bossDefinition: {fileID: 11400000, guid: b1000000000000000000000000000003, type: 2}
+  attackSound: {clip: {fileID: 0}, volume: 1}
+  hitSound: {clip: {fileID: 0}, volume: 1}
+  baseStats: {maxHp: 200, moveSpeed: 2.2, atkDamage: 15, atkRange: 1.8, atkPerSec: 0.9}
+  threatCost: 4
+  behavior: {idleTargetAcquireInterval: 0.5, moveTargetRefreshInterval: 0.25}

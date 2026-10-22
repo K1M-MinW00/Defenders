@@ -35,6 +35,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
     public event Action OnSpawnFailed;
     public event Action<int> OnAliveCountChanged;
     public event Action<int> OnRemainingCountChanged;
+    public event Action<MonsterController> OnMonsterSpawned;
 
     public void SetSpawnPoints(Transform[] spawnPoints)
     {
@@ -308,7 +309,7 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
         StageBalanceMultipliers multipliers = CalculateBalance(entry);
         MonsterStats runtimeStats = MonsterStatCalculator.Calculate(data, multipliers.Hp, multipliers.Attack);
 
-        if (!monster.TryInitialize(unitRoster, data, poolManager, runtimeStats))
+        if (!monster.TryInitialize(unitRoster, data, poolManager, runtimeStats, this))
         {
             if (monster.TryGetComponent(out Poolable failedSpawn))
                 poolManager.Despawn(failedSpawn);
@@ -323,7 +324,40 @@ public class MonsterSpawner : MonoBehaviour, ICombatTargetProvider
 
         waveHpTracker?.RegisterSpawnedMonster(monster);
         aliveMonsters.Add(monster);
+        OnMonsterSpawned?.Invoke(monster);
         OnAliveCountChanged?.Invoke(AliveCount);
+
+        return monster;
+    }
+
+    public MonsterController TrySpawnReinforcement(
+        MonsterDataSO data,
+        Vector3 spawnPosition,
+        float hpMultiplier = 1f,
+        float attackMultiplier = 1f)
+    {
+        if (currentWave == null || data == null || data.Classification == MonsterClassification.Boss)
+            return null;
+
+        MonsterSpawnEntry entry = new()
+        {
+            data = data,
+            count = 1,
+            hpMultiplier = Mathf.Max(0.01f, hpMultiplier),
+            attackMultiplier = Mathf.Max(0.01f, attackMultiplier),
+        };
+
+        plannedMonsterCount++;
+        MonsterController monster = SpawnMonster(entry, spawnPosition);
+        if (monster == null)
+        {
+            plannedMonsterCount--;
+            NotifyMonsterCounts();
+        }
+        else
+        {
+            OnRemainingCountChanged?.Invoke(RemainingCount);
+        }
 
         return monster;
     }

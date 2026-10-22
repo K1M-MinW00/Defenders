@@ -38,6 +38,7 @@ public sealed class StageSessionController : MonoBehaviour
     public StageDataSO CurrentStageData => currentStageData;
     public int CurrentWaveIndex => waveSequence?.CurrentIndex ?? 0;
     public bool IsTutorial => enterData?.IsTutorial == true;
+    public BossBattleTimerController BossBattleTimer => phaseRuntimeController?.BossBattleTimer;
 
     public event Action<StageState, StageState> PhaseChanged
     {

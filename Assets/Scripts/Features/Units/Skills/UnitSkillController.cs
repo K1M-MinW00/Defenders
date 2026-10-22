@@ -316,6 +316,32 @@ public class UnitSkillController : MonoBehaviour
         passiveSkill?.OnAttackHit(target, ref damage);
     }
 
+    public bool TryApplyDamageStatusEffect(MonsterController target, DamageOrigin origin)
+    {
+        if (target == null || target.IsDead || owner == null)
+            return false;
+
+        SkillDataSO skillData = origin switch
+        {
+            DamageOrigin.BasicAttack => HasPassive ? owner.UnitData?.passiveSkill : null,
+            DamageOrigin.Skill => owner.UnitData?.activeSkill,
+            _ => null,
+        };
+
+        if (skillData == null ||
+            !SkillOnHitStatusEffectResolver.TryBuildApplication(
+                skillData.onHitStatusEffect,
+                owner,
+                owner.Attack,
+                UnityEngine.Random.value,
+                out StatusEffectApplication application))
+        {
+            return false;
+        }
+
+        return target.ApplyStatusEffect(application);
+    }
+
     public void NotifyBeforeTakeDamage(ref float damage)
     {
         if (!HasPassive)

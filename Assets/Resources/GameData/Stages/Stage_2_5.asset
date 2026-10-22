@@ -166,11 +166,22 @@ MonoBehaviour:
         delayAfterGroup: 0.35
       delayAfterSubWave: 1.5
   - waveType: 2
+    bossSettings:
+      timeLimit: 90
+      enrageLeadTime: 30
+      warningLeadTime: 10
     hpMultiplier: 1.2
     attackMultiplier: 1.12
     pressureMultiplier: 1.02
     subWaves:
     - spawnEntries:
+      - data: {fileID: 11400000, guid: c1000000000000000000000000000004, type: 2}
+        hpMultiplier: 8
+        attackMultiplier: 1.2
+        count: 1
+        spawnPointIndex: 0
+        interval: 0
+        delayAfterGroup: 0.5
       - data: {fileID: 11400000, guid: f6534041debdffc45aaa26bc937b6db4, type: 2}
         hpMultiplier: 1.12
         attackMultiplier: 1.1

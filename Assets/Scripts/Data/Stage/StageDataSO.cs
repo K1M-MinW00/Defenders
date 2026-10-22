@@ -76,6 +76,9 @@ public class StageDataSO : ScriptableObject
             return Fail("Prepare duration cannot be negative.", out error);
         if (waves[^1] == null || waves[^1].waveType != WaveType.Boss)
             return Fail("The final wave must be a boss wave.", out error);
+        if (stage == StageProgressRules.StagesPerSector &&
+            !TryValidateChapterBoss(waves[^1], out error))
+            return false;
         if (!TryValidateMilestoneRewards(out error))
             return false;
 
@@ -94,6 +97,8 @@ public class StageDataSO : ScriptableObject
                 return Fail($"Wave {waveIndex + 1} has no sub-waves.", out error);
             if (wave.hpMultiplier <= 0f || wave.attackMultiplier <= 0f || wave.pressureMultiplier <= 0f)
                 return Fail($"Wave {waveIndex + 1} has an invalid balance multiplier.", out error);
+            if (wave.waveType == WaveType.Boss && !TryValidateBossSettings(wave, waveIndex, out error))
+                return false;
 
             for (int subWaveIndex = 0; subWaveIndex < wave.subWaves.Count; subWaveIndex++)
             {
@@ -126,6 +131,47 @@ public class StageDataSO : ScriptableObject
                 }
             }
         }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private static bool TryValidateBossSettings(WaveData wave, int waveIndex, out string error)
+    {
+        BossWaveSettings settings = wave.bossSettings;
+        if (settings == null)
+            return Fail($"Boss wave {waveIndex + 1} has no boss settings.", out error);
+        if (settings.timeLimit <= 0f)
+            return Fail($"Boss wave {waveIndex + 1} must have a positive time limit.", out error);
+        if (settings.enrageLeadTime < 0f || settings.enrageLeadTime > settings.timeLimit)
+            return Fail($"Boss wave {waveIndex + 1} has an invalid enrage lead time.", out error);
+        if (settings.warningLeadTime < 0f || settings.warningLeadTime > settings.enrageLeadTime)
+            return Fail($"Boss wave {waveIndex + 1} has an invalid warning lead time.", out error);
+
+        error = string.Empty;
+        return true;
+    }
+
+    private static bool TryValidateChapterBoss(WaveData wave, out string error)
+    {
+        int bossCount = 0;
+        if (wave?.subWaves != null)
+        {
+            foreach (SubWaveData subWave in wave.subWaves)
+            {
+                if (subWave?.spawnEntries == null)
+                    continue;
+
+                foreach (MonsterSpawnEntry entry in subWave.spawnEntries)
+                {
+                    if (entry?.data?.Classification == MonsterClassification.Boss)
+                        bossCount += Mathf.Max(0, entry.count);
+                }
+            }
+        }
+
+        if (bossCount != 1)
+            return Fail($"A chapter-final boss wave must spawn exactly one boss, but found {bossCount}.", out error);
 
         error = string.Empty;
         return true;

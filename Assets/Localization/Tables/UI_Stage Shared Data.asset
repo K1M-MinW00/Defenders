@@ -299,6 +299,114 @@ MonoBehaviour:
     m_Key: result.waves_survived_label
     m_Metadata:
       m_Items: []
+  - m_Id: 2153316731351040
+    m_Key: monster.info.boss_skills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488384
+    m_Key: monster.info.area_attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488385
+    m_Key: monster.info.shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488386
+    m_Key: monster.info.enrage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488387
+    m_Key: monster.info.status_effects
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488388
+    m_Key: monster.info.slow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488389
+    m_Key: monster.info.stun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488390
+    m_Key: monster.info.poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488391
+    m_Key: monster.info.burn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488392
+    m_Key: monster.info.defense_down
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488393
+    m_Key: monster.info.status_resistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488394
+    m_Key: monster.info.status_resistance.none
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488395
+    m_Key: monster.name.Boss_Elite_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488396
+    m_Key: monster.name.Boss_Armored_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488397
+    m_Key: monster.name.Boss_Armored_Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488398
+    m_Key: monster.name.Boss_WereWolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488399
+    m_Key: monster.description.Boss_Elite_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488400
+    m_Key: monster.description.Boss_Armored_Orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488401
+    m_Key: monster.description.Boss_Armored_Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2153316777488402
+    m_Key: monster.description.Boss_WereWolf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2155030607851520
+    m_Key: monster.info.summon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2159509101113344
+    m_Key: monster.info.resistance.slow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2159509172416512
+    m_Key: monster.info.resistance.stun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2159509172416513
+    m_Key: monster.info.resistance.poison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2159509172416514
+    m_Key: monster.info.resistance.burn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2159509172416515
+    m_Key: monster.info.resistance.defense_down
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2166757844086784
+    m_Key: combat.status.immune
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -11,6 +11,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
     }
 
     [SerializeField] private StagePrepareTimerController prepareTimerController;
+    [SerializeField] private BossBattleTimerController bossBattleTimerController;
     [SerializeField] private WaveController waveController;
     [SerializeField] private StagePreparationService preparationService;
     [SerializeField] private MonsterSpawner monsterSpawner;
@@ -24,6 +25,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
 
     public StagePreparationService PreparationService => preparationService;
     public MonsterSpawner MonsterSpawner => monsterSpawner;
+    public BossBattleTimerController BossBattleTimer => bossBattleTimerController;
 
     public bool TryConfigure(StageDataSO stageData, out string error)
     {
@@ -35,13 +37,14 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
 
         if (prepareTimerController == null || waveController == null || preparationService == null ||
             monsterSpawner == null || monsterPrewarmService == null || stageTimeController == null ||
-            poolManager == null || pathPreview == null)
+            poolManager == null || pathPreview == null || bossBattleTimerController == null)
         {
             error = "Required phase runtime references are missing.";
             return false;
         }
 
         prepareTimerController.Configure(stageData.prepareDuration);
+        bossBattleTimerController.Initialize(monsterSpawner);
         error = string.Empty;
         return true;
     }
@@ -97,8 +100,18 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         stageTimeController.EnterCombatPhase();
         currentPhase = RuntimePhase.Combat;
 
-        if (!waveController.TryStartWave(wave, onWin, onLose))
+        if (wave.waveType == WaveType.Boss &&
+            !bossBattleTimerController.TryStart(wave, () => waveController.TryFailWave()))
+        {
             onLose?.Invoke();
+            return;
+        }
+
+        if (!waveController.TryStartWave(wave, onWin, onLose))
+        {
+            bossBattleTimerController.StopTimer();
+            onLose?.Invoke();
+        }
     }
 
     public void EndCurrentPhase(bool preserveCombatObjects = false)
@@ -128,6 +141,7 @@ public sealed class StagePhaseRuntimeController : MonoBehaviour
         pendingPrepareFinished = null;
         pathPreview?.Hide();
         prepareTimerController?.StopPreparePhase();
+        bossBattleTimerController?.StopTimer();
         waveController?.StopWave(preserveMonsters: preserveCombatObjects);
 
         stageTimeController?.ResetToNormalTime();

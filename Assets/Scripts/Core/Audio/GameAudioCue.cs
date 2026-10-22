@@ -7,6 +7,11 @@ public enum GameAudioCue
     UnitSummon,
     MonsterAttack,
     MonsterHit,
+    BossAreaTelegraph,
+    BossAreaImpact,
+    BossShieldActivated,
+    BossEnrage,
+    BossSummon,
     WaveClear,
     WaveFail
 }

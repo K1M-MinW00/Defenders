@@ -3,10 +3,25 @@ using UnityEngine;
 public sealed class MonsterPresentationController : MonoBehaviour
 {
     private ModelView modelView;
+    private Vector3 baseModelScale = Vector3.one;
 
     public void Initialize()
     {
         modelView = GetComponentInChildren<ModelView>(true);
+        if (modelView != null)
+            baseModelScale = modelView.transform.localScale;
+    }
+
+    public void ApplyVisualScale(float multiplier)
+    {
+        if (modelView != null)
+            modelView.transform.localScale = baseModelScale * Mathf.Max(0.01f, multiplier);
+    }
+
+    public void ResetVisualScale()
+    {
+        if (modelView != null)
+            modelView.transform.localScale = baseModelScale;
     }
 
     public void FaceMovement(Vector3 velocity)
@@ -19,6 +34,11 @@ public sealed class MonsterPresentationController : MonoBehaviour
     {
         if (target != null)
             modelView?.FaceTo(ownerPosition, target.position);
+    }
+
+    public void FacePosition(Vector3 ownerPosition, Vector3 targetPosition)
+    {
+        modelView?.FaceTo(ownerPosition, targetPosition);
     }
 
     public void PlayIdle()

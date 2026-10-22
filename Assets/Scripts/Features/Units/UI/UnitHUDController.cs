@@ -12,6 +12,7 @@ public class UnitHUDController : MonoBehaviour
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Slider energySlider;
     [SerializeField] private UnitStarIconView starIcon;
+    [SerializeField] private UnitStatusEffectBarView statusEffectBar;
 
     [Header("Skill Ready Feedback")]
     [SerializeField] private RectTransform energyPulseTarget;
@@ -38,6 +39,17 @@ public class UnitHUDController : MonoBehaviour
             starIcon = GetComponentInChildren<UnitStarIconView>(true);
         if (hudCanvas == null)
             hudCanvas = GetComponentInChildren<Canvas>(true);
+        if (statusEffectBar == null && hudCanvas != null)
+        {
+            statusEffectBar = hudCanvas.GetComponentInChildren<UnitStatusEffectBarView>(true);
+            if (statusEffectBar == null)
+            {
+                GameObject statusBarObject = new("StatusEffectBar", typeof(RectTransform));
+                statusBarObject.layer = hudCanvas.gameObject.layer;
+                statusBarObject.transform.SetParent(hudCanvas.transform, false);
+                statusEffectBar = statusBarObject.AddComponent<UnitStatusEffectBarView>();
+            }
+        }
         if (energyPulseTarget == null && energySlider != null)
             energyPulseTarget = energySlider.transform as RectTransform;
         if (energyFillImage == null && energySlider != null && energySlider.fillRect != null)
@@ -48,6 +60,7 @@ public class UnitHUDController : MonoBehaviour
             energyNormalColor = energyFillImage.color;
 
         ApplyHudSorting();
+        statusEffectBar?.Bind(unit != null ? unit.StatusEffects : null);
     }
 
     private void OnEnable()
@@ -61,6 +74,7 @@ public class UnitHUDController : MonoBehaviour
         unit.Health.OnHpChanged += HandleHpChanged;
         unit.Energy.OnEnergyChanged += HandleEnergyChanged;
         unit.Energy.OnEnergyFull += HandleEnergyFull;
+        statusEffectBar?.Bind(unit.StatusEffects);
 
         if (unit.Runtime != null)
             RefreshAll();
@@ -88,7 +102,11 @@ public class UnitHUDController : MonoBehaviour
         transitionHidden = false;
     }
 
-    private void HandleInitialized(UnitController instance) => RefreshAll();
+    private void HandleInitialized(UnitController instance)
+    {
+        statusEffectBar?.Bind(instance.StatusEffects);
+        RefreshAll();
+    }
 
     private void HandleStarChanged(UnitController instance) => RefreshAll();
 

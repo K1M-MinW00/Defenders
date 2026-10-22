@@ -15,6 +15,14 @@ MonoBehaviour:
   skillName: "\uAD00\uD1B5 \uC77C\uACA9"
   icon: {fileID: 4766318457999732543, guid: 96460c55c5a814045a192f741ea727c4, type: 3}
   skillType: 0
+  onHitStatusEffect:
+    enabled: 1
+    type: 0
+    chance: 1
+    duration: 3
+    magnitude: 0.35
+    magnitudeMode: 0
+    tickInterval: 1
   skillSound:
     clip: {fileID: 8300000, guid: 520365ebbbc081e46bc212352af5cb10, type: 3}
     volume: 1

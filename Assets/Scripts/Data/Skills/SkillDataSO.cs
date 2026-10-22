@@ -12,6 +12,10 @@ public class SkillDataSO : ScriptableObject
     [Header("Audio")]
     public AudioClipSettings skillSound = new();
 
+    [Header("Status Effect On Hit")]
+    [Tooltip("이 스킬로 피해를 입힌 생존 대상에게 적용할 상태 효과")]
+    public SkillOnHitStatusEffectSettings onHitStatusEffect = new();
+
     [Header("Promotion Progression")]
     [Tooltip("스킬 해금 및 강화 단계 정보. promotionLevel 오름차순으로 작성")]
     public List<SkillUpgradeData> upgrades = new();

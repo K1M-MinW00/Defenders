@@ -15,6 +15,13 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     private MonsterMovementController movementController;
     private MonsterCombatController combatController;
     private MonsterPresentationController presentationController;
+    private BossController bossController;
+    private MonsterStatusEffectController statusEffectController;
+    private MonsterStatusEffectBarView statusEffectBar;
+    private float attackDamageMultiplier = 1f;
+    private float attackSpeedMultiplier = 1f;
+    private float stageMoveSpeedMultiplier = 1f;
+    private float statusMoveSpeedMultiplier = 1f;
 
     public MonsterDataSO Data { get; private set; }
     public MonsterStats FinalStats { get; private set; }
@@ -22,16 +29,22 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     public MonsterTargetingController Targeting { get; private set; }
     public MonsterHealth Health { get; private set; }
     public StagePoolManager PoolManager => poolManager;
+    public UnitRoster UnitRoster { get; private set; }
+    public MonsterSpawner Spawner { get; private set; }
+    public MonsterStatusEffectController StatusEffects => statusEffectController;
     public float AttackRange => FinalStats.atkRange;
-    public float AttackCooldown => 1f / Mathf.Max(0.01f, FinalStats.atkPerSec);
-    public float AtkDamage => FinalStats.atkDamage;
+    public float AttackCooldown => 1f / Mathf.Max(0.01f, FinalStats.atkPerSec * attackSpeedMultiplier);
+    public float AtkDamage => FinalStats.atkDamage * attackDamageMultiplier;
     public float IdleTargetAcquireInterval => Data?.IdleTargetAcquireInterval ?? 0.5f;
     public float MoveTargetRefreshInterval => Data?.MoveTargetRefreshInterval ?? 0.25f;
     public Transform TargetTransform => transform;
     public ICombatHealth CombatHealth => Health;
     public bool IsDead => Health != null && Health.IsDead;
-    public bool IsControlLocked => movementController != null && movementController.IsControlLocked;
+    public bool IsControlLocked =>
+        (movementController != null && movementController.IsControlLocked) ||
+        (statusEffectController != null && statusEffectController.IsStunned);
     public bool IsRuntimeInitialized { get; private set; }
+    public bool IsUsingAbility => fsmController != null && fsmController.IsUsingAbility;
     public bool CanRunBehavior => IsRuntimeInitialized &&
                                   Data != null &&
                                   !IsDead &&
@@ -58,6 +71,11 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         movementController = GetComponent<MonsterMovementController>();
         combatController = GetComponent<MonsterCombatController>();
         presentationController = GetComponent<MonsterPresentationController>();
+        bossController = GetComponent<BossController>();
+        statusEffectController = GetComponent<MonsterStatusEffectController>() ??
+                                 gameObject.AddComponent<MonsterStatusEffectController>();
+        statusEffectBar = GetComponentInChildren<MonsterStatusEffectBarView>(true) ??
+                          MonsterStatusEffectBarView.Create(transform);
         Health.OnDead += HandleDead;
         movementController.Initialize(this);
         fsmController.Initialize(this);
@@ -69,7 +87,8 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         UnitRoster unitRoster,
         MonsterDataSO data,
         StagePoolManager poolManager,
-        MonsterStats runtimeStats = null)
+        MonsterStats runtimeStats = null,
+        MonsterSpawner spawner = null)
     {
         if (data == null)
         {
@@ -90,13 +109,22 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
             ? MonsterStatCalculator.Calculate(runtimeStats)
             : MonsterStatCalculator.Calculate(data);
         this.poolManager = poolManager;
+        UnitRoster = unitRoster;
+        Spawner = spawner;
         Targeting.Initialize(unitRoster);
+        presentationController.ApplyVisualScale(data.VisualScale);
+
+        ConfigureBossRuntime(data);
+        statusEffectController.Initialize(this);
+        statusEffectBar.ConfigureHeight(data.Classification);
+        statusEffectBar.Bind(statusEffectController);
 
         Health.OnDead -= HandleDead;
         Health.OnDead += HandleDead;
 
         ApplyStats();
         IsRuntimeInitialized = true;
+        bossController?.Initialize(this);
         ChangeToIdle();
         return true;
     }
@@ -130,10 +158,14 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
 
     public void ApplyStageMoveSpeedMultiplier(float multiplier)
     {
-        if (movementController == null || FinalStats == null)
-            return;
+        stageMoveSpeedMultiplier = Mathf.Max(0f, multiplier);
+        RefreshMoveSpeed();
+    }
 
-        movementController.ApplyMoveSpeed(FinalStats.moveSpeed * Mathf.Max(0f, multiplier));
+    public void SetStatusMoveSpeedMultiplier(float multiplier)
+    {
+        statusMoveSpeedMultiplier = Mathf.Clamp01(multiplier);
+        RefreshMoveSpeed();
     }
 
 
@@ -160,6 +192,9 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     private void ResetRuntimeState()
     {
         IsRuntimeInitialized = false;
+        bossController?.ResetRuntime();
+        statusEffectBar?.Bind(null);
+        statusEffectController?.ResetRuntime();
         fsmController.ResetRuntime();
         combatController.ResetRuntime();
         Targeting.ResetRuntime();
@@ -170,6 +205,38 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         Data = null;
         FinalStats = null;
         poolManager = null;
+        UnitRoster = null;
+        Spawner = null;
+        attackDamageMultiplier = 1f;
+        attackSpeedMultiplier = 1f;
+        stageMoveSpeedMultiplier = 1f;
+        statusMoveSpeedMultiplier = 1f;
+        presentationController?.ResetVisualScale();
+    }
+
+    private void ConfigureBossRuntime(MonsterDataSO data)
+    {
+        if (data.Classification != MonsterClassification.Boss)
+        {
+            bossController?.Configure(null);
+            return;
+        }
+
+        BossShieldController shield = GetComponent<BossShieldController>();
+        if (shield == null)
+            shield = gameObject.AddComponent<BossShieldController>();
+
+        bossController = GetComponent<BossController>();
+        if (bossController == null)
+            bossController = gameObject.AddComponent<BossController>();
+
+        if (GetComponent<BossAreaAttackAbility>() == null)
+            gameObject.AddComponent<BossAreaAttackAbility>();
+
+        if (GetComponent<BossSummonAbility>() == null)
+            gameObject.AddComponent<BossSummonAbility>();
+
+        bossController.Configure(data.BossDefinition);
     }
 
 
@@ -220,9 +287,15 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
         presentationController.FaceTarget(transform.position, Targeting.CurrentTarget.transform);
     }
 
+    public void FacePosition(Vector3 position)
+    {
+        presentationController.FacePosition(transform.position, position);
+    }
+
     public void PlayIdle() => presentationController.PlayIdle();
     public void PlayMove() => presentationController.PlayMove();
-    public void PlayAttack() => presentationController.PlayAttack(FinalStats?.atkPerSec ?? 1f);
+    public void PlayAttack() => presentationController.PlayAttack(
+        (FinalStats?.atkPerSec ?? 1f) * attackSpeedMultiplier);
 
     public void ChangeToIdle()
     {
@@ -240,6 +313,32 @@ public class MonsterController : MonoBehaviour, IPoolable, ICombatTarget, IKnock
     {
         if (CanRunBehavior)
             fsmController.ChangeToAttack();
+    }
+
+    public bool TryUseAbility(IMonsterAbility ability)
+    {
+        return fsmController != null && fsmController.TryUseAbility(ability);
+    }
+
+    public void CompleteCurrentAbility()
+    {
+        fsmController?.CompleteAbility();
+    }
+
+    public void SetCombatMultipliers(float damageMultiplier, float speedMultiplier)
+    {
+        attackDamageMultiplier = Mathf.Max(0f, damageMultiplier);
+        attackSpeedMultiplier = Mathf.Max(0.01f, speedMultiplier);
+    }
+
+    public bool ApplyStatusEffect(StatusEffectApplication application) =>
+        statusEffectController != null && statusEffectController.Apply(application);
+
+    private void RefreshMoveSpeed()
+    {
+        if (movementController != null && FinalStats != null)
+            movementController.ApplyMoveSpeed(
+                FinalStats.moveSpeed * stageMoveSpeedMultiplier * statusMoveSpeedMultiplier);
     }
 
     public void ApplyKnockback(Vector2 direction, float distance, float duration)

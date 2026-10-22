@@ -16,6 +16,8 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private StageUnitInfoPanel unitInfoPanel;
     [SerializeField] private StageMonsterInfoUI monsterInfoUI;
     [SerializeField] private StageAnnouncementUI announcementUI;
+    [SerializeField] private BossBattleTimerView bossBattleTimerView;
+    [SerializeField] private BossHudView bossHudView;
 
     [Header("Time UI")]
     [SerializeField] private StageTimeController timeController;
@@ -77,6 +79,9 @@ public class StageUIController : MonoBehaviour
         relicUI?.Initialize();
         monsterInfoUI?.Initialize(session);
         waveTrackUI?.Initialize(session.CurrentStageData);
+        BossBattleTimerController bossTimer = session.BossBattleTimer;
+        bossBattleTimerView?.Initialize(bossTimer);
+        bossHudView?.Initialize(bossTimer);
 
         timeController?.Initialize();
 
@@ -134,6 +139,8 @@ public class StageUIController : MonoBehaviour
         overlayController?.Dispose();
         overlayController = null;
         monsterInfoUI?.Dispose();
+        bossBattleTimerView?.Dispose();
+        bossHudView?.Dispose();
         isInitialized = false;
     }
 

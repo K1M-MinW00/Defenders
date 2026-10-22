@@ -16,6 +16,14 @@ MonoBehaviour:
   description: 
   icon: {fileID: -4359082602864699174, guid: e4e213318b7aed04188bd97d3c4c83ba, type: 3}
   skillType: 0
+  onHitStatusEffect:
+    enabled: 1
+    type: 3
+    chance: 1
+    duration: 4
+    magnitude: 0.15
+    magnitudeMode: 1
+    tickInterval: 0.5
   upgrades:
   - promotionLevel: 0
     description: "\uD558\uB298\uC5D0\uC11C \uBD88\uB369\uC774\uB97C \uC18C\uD658\uD574
