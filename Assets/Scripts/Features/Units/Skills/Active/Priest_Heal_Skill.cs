@@ -17,7 +17,7 @@ public class Priest_Heal_Skill : ActiveSkillBase
         if (context == null || owner.UnitRoster == null)
             return false;
 
-        UnitController target = owner.UnitRoster.GetLowestHpAliveUnit();
+        UnitController target = owner.UnitRoster.GetMostInjuredAliveUnit();
         if (target == null)
             return false;
 
@@ -33,7 +33,7 @@ public class Priest_Heal_Skill : ActiveSkillBase
         if (owner.UnitRoster == null)
             return false;
 
-        UnitController target = owner.UnitRoster.GetLowestHpAliveUnit();
+        UnitController target = owner.UnitRoster.GetMostInjuredAliveUnit();
 
         if (target == null)
             return false;
@@ -67,7 +67,7 @@ public class Priest_Heal_Skill : ActiveSkillBase
         
         foreach (var target in context.AllyTargets)
         {
-            target.Health.Heal(healAmount);
+            target.Health.Heal(healAmount, owner);
             SpawnHealEffect(target);
         }
     }

@@ -11,7 +11,12 @@ public static class BossHudSetup
     [MenuItem("Tools/Game/Bosses/Build Boss HUD")]
     public static void Build()
     {
-        Scene scene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
+        Build(GameScenePath);
+    }
+
+    public static void Build(string scenePath)
+    {
+        Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
         GameObject canvas = FindSceneObject("Stage HUD Canvas");
         StageUIController stageUI = Object.FindFirstObjectByType<StageUIController>(FindObjectsInactive.Include);
         if (canvas == null || stageUI == null)
@@ -92,7 +97,7 @@ public static class BossHudSetup
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         AssetDatabase.SaveAssets();
-        Debug.Log("Boss HUD was built and wired in GameScene.");
+        Debug.Log($"Boss HUD was built and wired in {scenePath}.");
     }
 
     private static UnityEngine.UI.Slider CreateSlider(

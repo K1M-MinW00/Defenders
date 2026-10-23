@@ -26,12 +26,12 @@ public class Priest_HealingEcho : PassiveSkillBase
             return;
 
         hitCount = 0;
-        UnitController lowest = owner.UnitRoster.GetLowestHpAliveUnit();
+        UnitController lowest = owner.UnitRoster.GetMostInjuredAliveUnit();
 
         if (lowest == null)
             return;
 
         float healAmount = lowest.Health.MaxHp * healPercent;
-        lowest.Health.Heal(healAmount);
+        lowest.Health.Heal(healAmount, owner);
     }
 }

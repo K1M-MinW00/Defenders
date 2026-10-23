@@ -11,6 +11,7 @@ public class StageUIController : MonoBehaviour
     [SerializeField] private UnitDragActionUI unitDragActionUI;
     [SerializeField] private StageWaveTrackUI waveTrackUI;
     [SerializeField] private StageHpSummaryUI hpSummaryUI;
+    [SerializeField] private StageCombatStatisticsUI combatStatisticsUI;
     [SerializeField] private StageResultUI resultUI;
     [SerializeField] private StageRelicUI relicUI;
     [SerializeField] private StageUnitInfoPanel unitInfoPanel;
@@ -75,6 +76,7 @@ public class StageUIController : MonoBehaviour
         unitDragActionUI?.Initialize(economy, preparationService);
 
         hpSummaryUI?.Initialize(monsterHpTracker, unitHpTracker);
+        combatStatisticsUI?.Initialize(session, preparationService?.UnitRoster);
         resultUI?.Initialize(session, sceneFlowService);
         relicUI?.Initialize();
         monsterInfoUI?.Initialize(session);
@@ -133,6 +135,7 @@ public class StageUIController : MonoBehaviour
         hudPresenter?.Dispose();
         prepareActionUI?.Dispose();
         hpSummaryUI?.Dispose();
+        combatStatisticsUI?.Dispose();
 
         topControlUI?.Dispose();
         pausePanelUI?.Dispose();

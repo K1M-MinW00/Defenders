@@ -62,12 +62,14 @@ public static class GameSceneProjectValidator
 
         ValidateRequiredComponent<StagePhaseRuntimeController>(scene, sceneAsset, report,
             "prepareTimerController",
+            "bossBattleTimerController",
             "waveController",
             "preparationService",
             "monsterSpawner",
             "monsterPrewarmService",
             "stageTimeController",
-            "poolManager");
+            "poolManager",
+            "pathPreview");
 
         ValidateRequiredComponent<StageUIController>(scene, sceneAsset, report,
             "phaseUIView",

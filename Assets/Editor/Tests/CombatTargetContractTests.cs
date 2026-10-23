@@ -163,16 +163,48 @@ public sealed class CombatTargetContractTests
         }
     }
 
+    [Test]
+    public void Selector_ReturnsMostInjuredByRatio_AndSkipsFullHealthTargets()
+    {
+        GameObject lowMaximumObject = new("Low Maximum");
+        GameObject injuredObject = new("Injured");
+        GameObject lessInjuredObject = new("Less Injured");
+        FakeTarget fullLowMaximum = new(lowMaximumObject.transform, false, 100f, 100f);
+        FakeTarget injured = new(injuredObject.transform, false, 500f, 1000f);
+        FakeTarget lessInjured = new(lessInjuredObject.transform, false, 80f, 100f);
+
+        try
+        {
+            FakeTarget result = CombatTargetSelector.FindMostInjured(
+                new[] { fullLowMaximum, lessInjured, injured });
+
+            Assert.That(result, Is.SameAs(injured));
+            Assert.That(
+                CombatTargetSelector.FindMostInjured(new[] { fullLowMaximum }),
+                Is.Null);
+        }
+        finally
+        {
+            Object.DestroyImmediate(lowMaximumObject);
+            Object.DestroyImmediate(injuredObject);
+            Object.DestroyImmediate(lessInjuredObject);
+        }
+    }
+
     private sealed class FakeTarget : ICombatTarget
     {
         public Transform TargetTransform { get; }
         public ICombatHealth CombatHealth { get; }
         public bool IsDead => CombatHealth.IsDead;
 
-        public FakeTarget(Transform targetTransform, bool isDead, float currentHp = 1f)
+        public FakeTarget(
+            Transform targetTransform,
+            bool isDead,
+            float currentHp = 1f,
+            float maxHp = 1f)
         {
             TargetTransform = targetTransform;
-            CombatHealth = new FakeHealth(isDead, currentHp);
+            CombatHealth = new FakeHealth(isDead, currentHp, maxHp);
         }
     }
 
@@ -194,12 +226,13 @@ public sealed class CombatTargetContractTests
     private sealed class FakeHealth : ICombatHealth
     {
         public float CurrentHp { get; private set; }
-        public float MaxHp => 1f;
+        public float MaxHp { get; }
         public bool IsDead { get; private set; }
 
-        public FakeHealth(bool isDead, float currentHp = 1f)
+        public FakeHealth(bool isDead, float currentHp = 1f, float maxHp = 1f)
         {
-            CurrentHp = isDead ? 0f : Mathf.Clamp01(currentHp);
+            MaxHp = Mathf.Max(0f, maxHp);
+            CurrentHp = isDead ? 0f : Mathf.Clamp(currentHp, 0f, MaxHp);
             IsDead = isDead;
         }
 

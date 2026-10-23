@@ -3,7 +3,8 @@ public enum DamageRejectReason
     None = 0,
     InvalidAmount = 1,
     TargetAlreadyDead = 2,
-    FullyPrevented = 3
+    FullyPrevented = 3,
+    InvalidTarget = 4
 }
 
 public readonly struct DamageResult

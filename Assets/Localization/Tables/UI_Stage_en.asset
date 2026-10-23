@@ -431,6 +431,26 @@ MonoBehaviour:
     m_Localized: IMMUNE
     m_Metadata:
       m_Items: []
+  - m_Id: 2290962560479232
+    m_Localized: Rank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616576
+    m_Localized: Unit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616577
+    m_Localized: Damage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616578
+    m_Localized: Healing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2290962606616579
+    m_Localized: Damage Taken
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:
