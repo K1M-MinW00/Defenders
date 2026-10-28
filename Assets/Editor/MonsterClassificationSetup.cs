@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class MonsterClassificationSetup
 {
-    private const string MonsterDataDirectory = "Assets/GameData/Monsters";
-    private const string BossDataDirectory = MonsterDataDirectory + "/Bosses";
-    private const string BossDefinitionDirectory = "Assets/GameData/Bosses";
+    private const string MonsterDataDirectory = "Assets/GameData/Monsters/Normal";
+    private const string BossDataDirectory = "Assets/GameData/Monsters/Bosses";
+    private const string BossDefinitionDirectory = BossDataDirectory + "/Definitions";
 
     private static readonly string[] EliteMonsterNames =
     {

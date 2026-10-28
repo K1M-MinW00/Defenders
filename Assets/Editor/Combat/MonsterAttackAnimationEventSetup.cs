@@ -8,7 +8,7 @@ using UnityEngine;
 public static class MonsterAttackAnimationEventSetup
 {
     private const string MonsterPrefabFolder = "Assets/Prefabs/Monsters";
-    private const string MonsterControllerPath = "Assets/Animations/Monster/Monster_Base.controller";
+    private const string MonsterControllerPath = "Assets/Animations/Monsters/Base/Monster_Base.controller";
     private const string AttackSpeedParameter = "AttackSpeedMultiplier";
     private const float HitNormalizedTime = 0.55f;
     private const float FinishNormalizedTime = 0.95f;

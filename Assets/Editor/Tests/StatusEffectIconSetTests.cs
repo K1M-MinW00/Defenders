@@ -27,7 +27,7 @@ public sealed class StatusEffectIconSetTests
     [TestCase("status_berserk")]
     public void GeneratedIcon_UsesSpriteUiImportSettings(string name)
     {
-        string path = $"Assets/Art/UI/Generated/StatusEffects/{name}.png";
+        string path = $"Assets/Art/UI/StatusEffects/{name}.png";
         TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
 
         Assert.That(importer, Is.Not.Null);

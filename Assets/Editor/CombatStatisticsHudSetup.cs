@@ -105,15 +105,15 @@ public static class CombatStatisticsHudSetup
 
         UnityEngine.UI.Slider damageSlider = BuildMeter(
             "Damage Meter", root, new Vector2(-150f, 0f),
-            "Assets/Art/UI/Generated/Lobby/stat_attack.png",
+            "Assets/Art/UI/Lobby/stat_attack.png",
             new Color(1f, 0.58f, 0.08f, 1f), out TMP_Text damageText);
         UnityEngine.UI.Slider healingSlider = BuildMeter(
             "Healing Meter", root, new Vector2(75f, 0f),
-            "Assets/Art/UI/Generated/Lobby/stat_max_health.png",
+            "Assets/Art/UI/Lobby/stat_max_health.png",
             new Color(0.48f, 0.92f, 0.28f, 1f), out TMP_Text healingText);
         UnityEngine.UI.Slider takenSlider = BuildMeter(
             "Taken Meter", root, new Vector2(300f, 0f),
-            "Assets/Art/UI/Generated/Lobby/stat_damage_reduction.png",
+            "Assets/Art/UI/Lobby/stat_damage_reduction.png",
             new Color(0.9f, 0.18f, 0.48f, 1f), out TMP_Text takenText);
 
         StageCombatStatisticsRowUI row = GetOrAdd<StageCombatStatisticsRowUI>(root.gameObject);

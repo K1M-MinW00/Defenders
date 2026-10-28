@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class StatusEffectIconSetup
 {
-    private const string SourceDirectory = "Assets/Art/UI/Generated/StatusEffects";
+    private const string SourceDirectory = "Assets/Art/UI/StatusEffects";
     private const string AssetDirectory = "Assets/Resources/GameData/UI";
     private const string AssetPath = AssetDirectory + "/StatusEffectIconSet.asset";
 

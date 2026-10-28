@@ -68,4 +68,19 @@ public sealed class CombatStatisticsTrackerTests
 
         Assert.That(tracker.GetTop(CombatStatisticType.DamageDealt, 3), Is.Empty);
     }
+
+    [Test]
+    public void GetTop_EqualValues_DoesNotRequireInitializedUnitRuntime()
+    {
+        UnitController first = firstObject.AddComponent<UnitController>();
+        UnitController second = secondObject.AddComponent<UnitController>();
+
+        CombatStatisticsEvents.ReportDamageDealt(first, 10f);
+        CombatStatisticsEvents.ReportDamageDealt(second, 10f);
+
+        Assert.That(
+            () => tracker.GetTop(CombatStatisticType.DamageDealt, 3),
+            Throws.Nothing);
+        Assert.That(tracker.GetTop(CombatStatisticType.DamageDealt, 3), Has.Count.EqualTo(2));
+    }
 }

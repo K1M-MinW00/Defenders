@@ -451,6 +451,47 @@ MonoBehaviour:
     m_Localized: Damage Taken
     m_Metadata:
       m_Items: []
+  - m_Id: 2300000000000001
+    m_Localized: Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2300000000000002
+    m_Localized: Area Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2300000000000003
+    m_Localized: Summon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2300000000000004
+    m_Localized: Enrage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2300000000000005
+    m_Localized: Skill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2300000000000006
+    m_Localized: Weak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2300000000000007
+    m_Localized: Resist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2300000000000008
+    m_Localized: Immune
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3724458885672960
+    m_Localized: Wraith Shaman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3724458931810304
+    m_Localized: A durable mid-range undead shaman that pressures defenders with
+      soulfire from behind the front line.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

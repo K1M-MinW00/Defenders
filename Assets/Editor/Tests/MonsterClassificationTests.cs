@@ -21,7 +21,7 @@ public sealed class MonsterClassificationTests
         foreach (string sourceName in sourceNames)
         {
             MonsterDataSO source = AssetDatabase.LoadAssetAtPath<MonsterDataSO>(
-                $"Assets/GameData/Monsters/{sourceName}.asset");
+                $"Assets/GameData/Monsters/Normal/{sourceName}.asset");
             MonsterDataSO boss = AssetDatabase.LoadAssetAtPath<MonsterDataSO>(
                 $"Assets/GameData/Monsters/Bosses/Boss_{sourceName}.asset");
 

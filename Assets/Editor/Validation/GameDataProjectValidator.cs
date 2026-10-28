@@ -268,7 +268,25 @@ public static class GameDataProjectValidator
 
             ValidatePoolReferences(banner, banner.NormalPool, units, report);
             ValidatePoolReferences(banner, banner.RarePool, units, report);
+            ValidatePoolReferences(banner, banner.EpicPool, units, report);
             ValidatePoolReferences(banner, banner.LegendPool, units, report);
+            ValidatePoolCompleteness(banner, units, report);
+        }
+    }
+
+    private static void ValidatePoolCompleteness(
+        GachaDataSO banner,
+        IUnitCatalog units,
+        GameDataValidationReport report)
+    {
+        if (units == null)
+            return;
+
+        foreach (UnitDataSO unit in units.GetAll())
+        {
+            IReadOnlyList<UnitDataSO> pool = banner.GetPool(unit.rarity);
+            if (pool == null || !pool.Contains(unit))
+                report.AddError(banner, $"Recruit pool is not synchronized: {unit.unitId} ({unit.rarity})");
         }
     }
 

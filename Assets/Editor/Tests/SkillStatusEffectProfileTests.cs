@@ -15,8 +15,13 @@ public sealed class SkillStatusEffectProfileTests
         float expectedMagnitude,
         SkillStatusMagnitudeMode expectedMode)
     {
+        string[] matchingGuids = AssetDatabase.FindAssets(
+            $"{assetName} t:SkillDataSO",
+            new[] { "Assets/GameData/Units" });
+        Assert.That(matchingGuids, Has.Length.EqualTo(1));
+
         SkillDataSO data = AssetDatabase.LoadAssetAtPath<SkillDataSO>(
-            $"Assets/GameData/Skills/{assetName}.asset");
+            AssetDatabase.GUIDToAssetPath(matchingGuids[0]));
 
         Assert.That(data, Is.Not.Null);
         Assert.That(data.onHitStatusEffect, Is.Not.Null);

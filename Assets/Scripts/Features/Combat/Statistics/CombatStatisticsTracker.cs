@@ -11,11 +11,20 @@ public enum CombatStatisticType
 public sealed class UnitCombatStatistics
 {
     public UnitController Unit { get; }
+    public string SortKey { get; }
     public float DamageDealt { get; private set; }
     public float HealingDone { get; private set; }
     public float DamageTaken { get; private set; }
 
-    public UnitCombatStatistics(UnitController unit) => Unit = unit;
+    public UnitCombatStatistics(UnitController unit)
+    {
+        Unit = unit;
+        // UnitController.UnitId depends on runtime data that may not exist yet, or may
+        // already have been released when a pooled unit leaves combat.
+        SortKey = unit != null
+            ? unit.UnitData?.unitId ?? unit.name ?? string.Empty
+            : string.Empty;
+    }
 
     public void Add(CombatStatisticType type, float amount)
     {
@@ -85,7 +94,7 @@ public sealed class CombatStatisticsTracker : IDisposable
             int valueOrder = right.GetValue(type).CompareTo(left.GetValue(type));
             if (valueOrder != 0)
                 return valueOrder;
-            return string.Compare(left.Unit.UnitId, right.Unit.UnitId, StringComparison.Ordinal);
+            return string.Compare(left.SortKey, right.SortKey, StringComparison.Ordinal);
         });
 
         if (ranking.Count > count)

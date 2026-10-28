@@ -23,7 +23,7 @@ public sealed class GameSceneUnitInfoLocalizationTests
     {
         LocalizationSettings.InitializationOperation.WaitForCompletion();
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(localeCode);
-        SkillDataSO skill = AssetDatabase.LoadAssetAtPath<SkillDataSO>("Assets/GameData/Skills/Archer_Active.asset");
+        SkillDataSO skill = AssetDatabase.LoadAssetAtPath<SkillDataSO>("Assets/GameData/Units/Archer/Skills/Archer_Active.asset");
         Assert.That(skill.GetLocalizedUpgradeDescription(0), Is.EqualTo(expected));
     }
 }

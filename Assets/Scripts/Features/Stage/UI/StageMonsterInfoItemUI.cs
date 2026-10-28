@@ -6,17 +6,33 @@ public sealed class StageMonsterInfoItemUI : MonoBehaviour
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text descriptionText;
     [SerializeField] private UnityEngine.UI.Image portraitImage;
-    [SerializeField, Min(0f)] private float bossPreferredHeight = 430f;
-    [SerializeField, Min(0f)] private float resistanceLineHeight = 24f;
+    private const float BossPreferredHeight = 300f;
+    private const float BossDescriptionBottomInset = 58f;
     private MonsterDataSO currentData;
     private UnityEngine.UI.LayoutElement layoutElement;
     private float defaultPreferredHeight;
+    private BossStatusSummaryView bossStatusSummary;
+    private RectTransform descriptionRect;
+    private float defaultDescriptionBottomInset;
 
     private void Awake()
+    {
+        EnsureReferences();
+    }
+
+    private void EnsureReferences()
     {
         layoutElement = GetComponent<UnityEngine.UI.LayoutElement>();
         if (layoutElement != null)
             defaultPreferredHeight = layoutElement.preferredHeight;
+
+        descriptionRect = descriptionText != null ? descriptionText.rectTransform : null;
+        if (descriptionRect != null)
+            defaultDescriptionBottomInset = descriptionRect.offsetMin.y;
+
+        bossStatusSummary = GetComponent<BossStatusSummaryView>();
+        if (bossStatusSummary == null)
+            bossStatusSummary = gameObject.AddComponent<BossStatusSummaryView>();
     }
 
     private void OnEnable() => LocalizationService.LocaleChanged += HandleLocaleChanged;
@@ -26,6 +42,9 @@ public sealed class StageMonsterInfoItemUI : MonoBehaviour
     {
         if (data == null)
             return;
+
+        if (bossStatusSummary == null)
+            EnsureReferences();
 
         currentData = data;
 
@@ -46,10 +65,21 @@ public sealed class StageMonsterInfoItemUI : MonoBehaviour
             descriptionText.text = description;
         }
 
+        bool isBoss = data.Classification == MonsterClassification.Boss && data.BossDefinition != null;
         if (layoutElement != null)
-            layoutElement.preferredHeight = data.Classification == MonsterClassification.Boss
-                ? bossPreferredHeight + CountVisibleResistances(data.BossDefinition) * resistanceLineHeight
-                : defaultPreferredHeight;
+            layoutElement.preferredHeight = isBoss ? BossPreferredHeight : defaultPreferredHeight;
+
+        if (descriptionRect != null)
+        {
+            Vector2 offsetMin = descriptionRect.offsetMin;
+            offsetMin.y = isBoss ? BossDescriptionBottomInset : defaultDescriptionBottomInset;
+            descriptionRect.offsetMin = offsetMin;
+        }
+
+        if (isBoss)
+            bossStatusSummary.Bind(data.BossDefinition, descriptionText);
+        else
+            bossStatusSummary.Hide();
 
         if (portraitImage != null)
         {
@@ -67,19 +97,6 @@ public sealed class StageMonsterInfoItemUI : MonoBehaviour
 
     private static string Localize(string key) =>
         LocalizationService.Get(LocalizationTables.Stage, key);
-
-    private static int CountVisibleResistances(BossDefinitionSO definition)
-    {
-        BossStatusResistanceSettings resistance = definition?.statusResistance;
-        if (resistance == null)
-            return 0;
-
-        return (resistance.slow > 0f ? 1 : 0) +
-               (resistance.stun > 0f ? 1 : 0) +
-               (resistance.poison > 0f ? 1 : 0) +
-               (resistance.burn > 0f ? 1 : 0) +
-               (resistance.defenseDown > 0f ? 1 : 0);
-    }
 
     private void OnDestroy() => LocalizationService.LocaleChanged -= HandleLocaleChanged;
 }

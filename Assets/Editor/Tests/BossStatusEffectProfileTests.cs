@@ -36,7 +36,7 @@ public sealed class BossStatusEffectProfileTests
     public void CandidateProfile_IsValidAndKeepsEffectCountReadable(string bossId)
     {
         BossDefinitionSO definition = AssetDatabase.LoadAssetAtPath<BossDefinitionSO>(
-            $"Assets/GameData/Bosses/{bossId}_Definition.asset");
+            $"Assets/GameData/Monsters/Bosses/Definitions/{bossId}_Definition.asset");
 
         Assert.That(definition, Is.Not.Null);
         Assert.That(definition.TryValidate(out string error), Is.True, error);
@@ -50,7 +50,7 @@ public sealed class BossStatusEffectProfileTests
     public void CandidateProfile_HasUnassignedOptionalBossAudioSlots(string bossId)
     {
         BossDefinitionSO definition = AssetDatabase.LoadAssetAtPath<BossDefinitionSO>(
-            $"Assets/GameData/Bosses/{bossId}_Definition.asset");
+            $"Assets/GameData/Monsters/Bosses/Definitions/{bossId}_Definition.asset");
 
         Assert.That(definition, Is.Not.Null);
         Assert.That(definition.audio, Is.Not.Null);
@@ -63,7 +63,7 @@ public sealed class BossStatusEffectProfileTests
     private static BossAreaAttackStatusSettings Load(string bossId)
     {
         BossDefinitionSO definition = AssetDatabase.LoadAssetAtPath<BossDefinitionSO>(
-            $"Assets/GameData/Bosses/{bossId}_Definition.asset");
+            $"Assets/GameData/Monsters/Bosses/Definitions/{bossId}_Definition.asset");
         Assert.That(definition, Is.Not.Null);
         return definition.areaAttackStatusEffects;
     }
@@ -72,7 +72,7 @@ public sealed class BossStatusEffectProfileTests
     public void ArmoredOrc_SummonsNormalOrcsWithSafeLimits()
     {
         BossDefinitionSO definition = AssetDatabase.LoadAssetAtPath<BossDefinitionSO>(
-            "Assets/GameData/Bosses/Boss_Armored_Orc_Definition.asset");
+            "Assets/GameData/Monsters/Bosses/Definitions/Boss_Armored_Orc_Definition.asset");
 
         Assert.That(definition.summon.enabled, Is.True);
         Assert.That(definition.summon.count, Is.EqualTo(2));
@@ -86,7 +86,7 @@ public sealed class BossStatusEffectProfileTests
     public void ArmoredSkeleton_IsImmuneToPoison()
     {
         BossDefinitionSO definition = AssetDatabase.LoadAssetAtPath<BossDefinitionSO>(
-            "Assets/GameData/Bosses/Boss_Armored_Skeleton_Definition.asset");
+            "Assets/GameData/Monsters/Bosses/Definitions/Boss_Armored_Skeleton_Definition.asset");
 
         Assert.That(definition.statusResistance.poison, Is.EqualTo(1f));
         Assert.That(definition.statusResistance.stun, Is.EqualTo(0.75f));
