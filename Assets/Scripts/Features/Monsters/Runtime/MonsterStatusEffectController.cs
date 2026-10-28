@@ -62,6 +62,13 @@ public sealed class MonsterStatusEffectController : MonoBehaviour
         {
             RuntimeEffect effect = activeEffects[index];
             TickPeriodicEffect(effect, Mathf.Min(elapsed, effect.RemainingTime));
+
+            // Periodic damage can synchronously kill and return the monster to its pool.
+            // ResetRuntime then clears both owner and activeEffects before this Tick resumes.
+            if (owner == null || index >= activeEffects.Count ||
+                !ReferenceEquals(activeEffects[index], effect))
+                return;
+
             effect.RemainingTime -= elapsed;
             if (effect.RemainingTime <= 0f)
             {
@@ -185,9 +192,16 @@ public sealed class MonsterStatusEffectController : MonoBehaviour
         effect.TimeUntilNextTick -= elapsed;
         while (effect.TimeUntilNextTick <= 0f)
         {
-            owner.CombatHealth.ApplyDamage(new DamageRequest(effect.Magnitude, effect.Source, DamageOrigin.Effect));
+            MonsterController currentOwner = owner;
+            if (currentOwner?.CombatHealth == null)
+                break;
+
+            currentOwner.CombatHealth.ApplyDamage(
+                new DamageRequest(effect.Magnitude, effect.Source, DamageOrigin.Effect));
             effect.TimeUntilNextTick += effect.TickInterval;
-            if (owner.IsDead)
+
+            // ApplyDamage may synchronously despawn the monster and reset this controller.
+            if (owner != currentOwner || currentOwner.IsDead)
                 break;
         }
     }

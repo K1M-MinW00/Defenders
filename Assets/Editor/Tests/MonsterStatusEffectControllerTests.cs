@@ -76,4 +76,14 @@ public sealed class MonsterStatusEffectControllerTests
         Assert.That(resistedType, Is.EqualTo(StatusEffectType.Poison));
         Assert.That(monster.StatusEffects.TryGet(StatusEffectType.Poison, out _, out _), Is.False);
     }
+
+    [Test]
+    public void PeriodicDamage_ResetDuringDamageCallback_DoesNotContinueUsingReleasedRuntime()
+    {
+        Assert.That(monster.ApplyStatusEffect(StatusEffectApplication.Poison(4f, 10f)), Is.True);
+        monster.Health.OnDamaged += (_, _) => monster.StatusEffects.ResetRuntime();
+
+        Assert.DoesNotThrow(() => monster.StatusEffects.Tick(1.1f));
+        Assert.That(monster.StatusEffects.ActiveEffects, Is.Empty);
+    }
 }
