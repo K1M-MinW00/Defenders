@@ -1,0 +1,305 @@
+fileFormatVersion: 2
+guid: 2001dedc064f71542af23b44404eb73e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 300016560412218940
+    second: WraithShaman-SoulBolt-Flight_0
+  - first:
+      213: -2287634419142847368
+    second: WraithShaman-SoulBolt-Flight_1
+  - first:
+      213: 4554046884213905228
+    second: WraithShaman-SoulBolt-Flight_2
+  - first:
+      213: -7695033308447786717
+    second: WraithShaman-SoulBolt-Flight_3
+  - first:
+      213: -2041879631585614603
+    second: WraithShaman-SoulBolt-Flight_4
+  - first:
+      213: 8613860541573701342
+    second: WraithShaman-SoulBolt-Flight_5
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WraithShaman_SoulBoltFlight_0
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 44
+        width: 11
+        height: 12
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d803b2ae6b43b14085729806eaf968c
+      internalID: -284311608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_SoulBoltFlight_1
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 44
+        width: 11
+        height: 12
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 704af3d2b4cd5f343a548612947c9fdc
+      internalID: -1320860770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_SoulBoltFlight_2
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 44
+        width: 11
+        height: 12
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8287079ded390f45a7bd45aebf5a228
+      internalID: -815342864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_SoulBoltFlight_3
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 44
+        width: 11
+        height: 12
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 583d40c7bc704ec4b805885e74796fe3
+      internalID: 301556530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_SoulBoltFlight_4
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 44
+        width: 11
+        height: 12
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 174afed09eb8d3a499ca89979517b36a
+      internalID: -295826080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_SoulBoltFlight_5
+      rect:
+        serializedVersion: 2
+        x: 545
+        y: 44
+        width: 11
+        height: 12
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e643dc44580c5ff4db108dea190e541f
+      internalID: 1579058131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 0090ba19cfe905c4a8b3a650d56f0b2f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      WraithShaman-SoulBolt-Flight_0: 300016560412218940
+      WraithShaman-SoulBolt-Flight_1: -2287634419142847368
+      WraithShaman-SoulBolt-Flight_2: 4554046884213905228
+      WraithShaman-SoulBolt-Flight_3: -7695033308447786717
+      WraithShaman-SoulBolt-Flight_4: -2041879631585614603
+      WraithShaman-SoulBolt-Flight_5: 8613860541573701342
+      WraithShaman_SoulBoltFlight_0: -284311608
+      WraithShaman_SoulBoltFlight_1: -1320860770
+      WraithShaman_SoulBoltFlight_2: -815342864
+      WraithShaman_SoulBoltFlight_3: 301556530
+      WraithShaman_SoulBoltFlight_4: -295826080
+      WraithShaman_SoulBoltFlight_5: 1579058131
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

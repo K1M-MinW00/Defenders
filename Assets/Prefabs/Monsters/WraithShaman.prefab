@@ -1,0 +1,153 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4173564328375385891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1925848441152492399}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1925848441152492399
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4173564328375385891}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.72, y: 0.62, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5610506544192355594}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &4647208859089415070
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2540078424007288543, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 4946124435302183037, guid: e7c83562646d6ac40880b0724b36468d, type: 3}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4277420300358080374, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 22100000, guid: 4228b377c27d78d4ab17f438686c91ef, type: 2}
+    - target: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Name
+      value: WraithShaman
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 982547969679316628, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1925848441152492399}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3916252969943827427}
+    - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4276506003729090387}
+  m_SourcePrefab: {fileID: 100100000, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+--- !u!1 &1195200200730229743 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+  m_PrefabInstance: {fileID: 4647208859089415070}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4276506003729090387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1195200200730229743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa28e63f54b40139355edfdba6d26ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterAnimationEvent
+--- !u!4 &5610506544192355594 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 982547969679316628, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+  m_PrefabInstance: {fileID: 4647208859089415070}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8975921178476588895 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+  m_PrefabInstance: {fileID: 4647208859089415070}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3916252969943827427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8975921178476588895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f79cd2200ab9e040ac2ef51c040fe62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RangedMonsterAttack
+  useAnimationEvents: 1
+  projectilePrefab: {fileID: 164122403374507269, guid: 4988a41443da352499b5fe6f3d1d9da5, type: 3}
+  firePoint: {fileID: 1925848441152492399}
+  speed: 5
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128

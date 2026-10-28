@@ -1,0 +1,377 @@
+fileFormatVersion: 2
+guid: 6dd8024c1b55714458c5f34389d815dc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6184988090354268492
+    second: WraithShaman-Die-Animation-Source-v2_0
+  - first:
+      213: 1977826198061589978
+    second: WraithShaman-Die-Animation-Source-v2_1
+  - first:
+      213: 1186846586331601554
+    second: WraithShaman-Die-Animation-Source-v2_2
+  - first:
+      213: 3871005781327210533
+    second: WraithShaman-Die-Animation-Source-v2_3
+  - first:
+      213: -1725239346909700230
+    second: WraithShaman-Die-Animation-Source-v2_4
+  - first:
+      213: -6573698303003796025
+    second: WraithShaman-Die-Animation-Source-v2_5
+  - first:
+      213: 5219128153838706952
+    second: WraithShaman-Die-Animation-Source-v2_6
+  - first:
+      213: -2762735847903021007
+    second: WraithShaman-Die-Animation-Source-v2_7
+  - first:
+      213: -3658960790043559333
+    second: WraithShaman-Die-Animation-Source-v2_8
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_0
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 34
+        width: 464
+        height: 644
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c49769116ed75d550800000000000000
+      internalID: 6184988090354268492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_1
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 634
+        width: 62
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad52ceab276a27b10800000000000000
+      internalID: 1977826198061589978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_2
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 601
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29a1e2d9ea6887010800000000000000
+      internalID: 1186846586331601554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_3
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 0
+        width: 518
+        height: 619
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 528ed77af3398b530800000000000000
+      internalID: 3871005781327210533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_4
+      rect:
+        serializedVersion: 2
+        x: 1066
+        y: 399
+        width: 77
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7f9be664f7be08e0800000000000000
+      internalID: -1725239346909700230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_5
+      rect:
+        serializedVersion: 2
+        x: 1504
+        y: 339
+        width: 34
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cddedce83885c4a0800000000000000
+      internalID: -6573698303003796025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_6
+      rect:
+        serializedVersion: 2
+        x: 1078
+        y: 23
+        width: 544
+        height: 356
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 801ebce57611e6840800000000000000
+      internalID: 5219128153838706952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_7
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 337
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 138b089426ac8a9d0800000000000000
+      internalID: -2762735847903021007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Die-Animation-Source-v2_8
+      rect:
+        serializedVersion: 2
+        x: 1652
+        y: 63
+        width: 492
+        height: 283
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5afe562c82c83dc0800000000000000
+      internalID: -3658960790043559333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      WraithShaman-Die-Animation-Source-v2_0: 6184988090354268492
+      WraithShaman-Die-Animation-Source-v2_1: 1977826198061589978
+      WraithShaman-Die-Animation-Source-v2_2: 1186846586331601554
+      WraithShaman-Die-Animation-Source-v2_3: 3871005781327210533
+      WraithShaman-Die-Animation-Source-v2_4: -1725239346909700230
+      WraithShaman-Die-Animation-Source-v2_5: -6573698303003796025
+      WraithShaman-Die-Animation-Source-v2_6: 5219128153838706952
+      WraithShaman-Die-Animation-Source-v2_7: -2762735847903021007
+      WraithShaman-Die-Animation-Source-v2_8: -3658960790043559333
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

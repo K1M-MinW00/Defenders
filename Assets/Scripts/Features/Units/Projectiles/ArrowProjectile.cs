@@ -10,7 +10,7 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
     private Poolable poolable;
     private LayerMask targetLayer;
     private float damage;
-    private UnitController source;
+    private ICombatTarget source;
     private Vector2 direction;
     private float speed;
     private bool isActive;
@@ -24,7 +24,7 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
     public void Initialize(float damage, float speed, Vector2 dir, LayerMask target, ICombatTarget source)
     {
         this.damage = damage;
-        this.source = source as UnitController;
+        this.source = source;
         this.speed = speed;
         this.direction = dir;
         targetLayer = target;
@@ -56,7 +56,15 @@ public class ArrowProjectile : MonoBehaviour, IPoolable
                 out ICombatHealth combatHealth))
             return;
 
-        UnitBasicAttackHitResolver.Apply(source, target, combatHealth, damage);
+        if (source is UnitController unitSource)
+        {
+            UnitBasicAttackHitResolver.Apply(unitSource, target, combatHealth, damage);
+        }
+        else
+        {
+            combatHealth.ApplyDamage(
+                new DamageRequest(damage, source, DamageOrigin.BasicAttack));
+        }
 
         ReturnToPool();
     }

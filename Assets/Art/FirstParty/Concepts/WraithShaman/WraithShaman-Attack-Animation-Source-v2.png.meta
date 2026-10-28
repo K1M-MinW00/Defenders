@@ -1,0 +1,3211 @@
+fileFormatVersion: 2
+guid: e645d0d88f20d3a49aee5d14a1c7c725
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -678786319379492857
+    second: WraithShaman-Attack-Animation-Source-v2_0
+  - first:
+      213: 6570754535140773893
+    second: WraithShaman-Attack-Animation-Source-v2_1
+  - first:
+      213: -1168342815048450931
+    second: WraithShaman-Attack-Animation-Source-v2_2
+  - first:
+      213: 6825223035789718049
+    second: WraithShaman-Attack-Animation-Source-v2_3
+  - first:
+      213: -610472038518470861
+    second: WraithShaman-Attack-Animation-Source-v2_4
+  - first:
+      213: -8076780914707583839
+    second: WraithShaman-Attack-Animation-Source-v2_5
+  - first:
+      213: 758110990006839598
+    second: WraithShaman-Attack-Animation-Source-v2_6
+  - first:
+      213: 9207973733079058568
+    second: WraithShaman-Attack-Animation-Source-v2_7
+  - first:
+      213: -8980818433643647289
+    second: WraithShaman-Attack-Animation-Source-v2_8
+  - first:
+      213: -7140891702970643178
+    second: WraithShaman-Attack-Animation-Source-v2_9
+  - first:
+      213: 1485125510151550283
+    second: WraithShaman-Attack-Animation-Source-v2_10
+  - first:
+      213: 5393000046752913762
+    second: WraithShaman-Attack-Animation-Source-v2_11
+  - first:
+      213: -4819873384587627834
+    second: WraithShaman-Attack-Animation-Source-v2_12
+  - first:
+      213: 7138435403802091727
+    second: WraithShaman-Attack-Animation-Source-v2_13
+  - first:
+      213: -7726612512867037420
+    second: WraithShaman-Attack-Animation-Source-v2_14
+  - first:
+      213: 7770369859232371841
+    second: WraithShaman-Attack-Animation-Source-v2_15
+  - first:
+      213: 1677561862047521192
+    second: WraithShaman-Attack-Animation-Source-v2_16
+  - first:
+      213: -8098983408222926289
+    second: WraithShaman-Attack-Animation-Source-v2_17
+  - first:
+      213: -4136063845348549558
+    second: WraithShaman-Attack-Animation-Source-v2_18
+  - first:
+      213: 6432297740270200712
+    second: WraithShaman-Attack-Animation-Source-v2_19
+  - first:
+      213: 2790389096298171760
+    second: WraithShaman-Attack-Animation-Source-v2_20
+  - first:
+      213: -4248816075427731064
+    second: WraithShaman-Attack-Animation-Source-v2_21
+  - first:
+      213: 2214334659325079744
+    second: WraithShaman-Attack-Animation-Source-v2_22
+  - first:
+      213: 2172465786997813485
+    second: WraithShaman-Attack-Animation-Source-v2_23
+  - first:
+      213: -7294045026090365020
+    second: WraithShaman-Attack-Animation-Source-v2_24
+  - first:
+      213: 6586514782095627369
+    second: WraithShaman-Attack-Animation-Source-v2_25
+  - first:
+      213: 7705229802119452655
+    second: WraithShaman-Attack-Animation-Source-v2_26
+  - first:
+      213: -8880699624824496773
+    second: WraithShaman-Attack-Animation-Source-v2_27
+  - first:
+      213: -207393271621152291
+    second: WraithShaman-Attack-Animation-Source-v2_28
+  - first:
+      213: -227837631877904966
+    second: WraithShaman-Attack-Animation-Source-v2_29
+  - first:
+      213: 3768112223903379752
+    second: WraithShaman-Attack-Animation-Source-v2_30
+  - first:
+      213: 3230162606402218683
+    second: WraithShaman-Attack-Animation-Source-v2_31
+  - first:
+      213: -4111223174919411058
+    second: WraithShaman-Attack-Animation-Source-v2_32
+  - first:
+      213: 5618160930527040892
+    second: WraithShaman-Attack-Animation-Source-v2_33
+  - first:
+      213: 918280420257638512
+    second: WraithShaman-Attack-Animation-Source-v2_34
+  - first:
+      213: 6061287730841373515
+    second: WraithShaman-Attack-Animation-Source-v2_35
+  - first:
+      213: 8205345731088215715
+    second: WraithShaman-Attack-Animation-Source-v2_36
+  - first:
+      213: -8566989082941974951
+    second: WraithShaman-Attack-Animation-Source-v2_37
+  - first:
+      213: -7881889783324261717
+    second: WraithShaman-Attack-Animation-Source-v2_38
+  - first:
+      213: -3751213720646574186
+    second: WraithShaman-Attack-Animation-Source-v2_39
+  - first:
+      213: 3931502118594478939
+    second: WraithShaman-Attack-Animation-Source-v2_40
+  - first:
+      213: 7555979373113518814
+    second: WraithShaman-Attack-Animation-Source-v2_41
+  - first:
+      213: 1629149792128499360
+    second: WraithShaman-Attack-Animation-Source-v2_42
+  - first:
+      213: 3702384368016169866
+    second: WraithShaman-Attack-Animation-Source-v2_43
+  - first:
+      213: -5999142731498146035
+    second: WraithShaman-Attack-Animation-Source-v2_44
+  - first:
+      213: 1356876239712776462
+    second: WraithShaman-Attack-Animation-Source-v2_45
+  - first:
+      213: -881688712018095138
+    second: WraithShaman-Attack-Animation-Source-v2_46
+  - first:
+      213: 4581358975443195270
+    second: WraithShaman-Attack-Animation-Source-v2_47
+  - first:
+      213: 2465182219994443527
+    second: WraithShaman-Attack-Animation-Source-v2_48
+  - first:
+      213: -3741088804427150960
+    second: WraithShaman-Attack-Animation-Source-v2_49
+  - first:
+      213: -2239140042003175519
+    second: WraithShaman-Attack-Animation-Source-v2_50
+  - first:
+      213: -3601584409569056757
+    second: WraithShaman-Attack-Animation-Source-v2_51
+  - first:
+      213: -5117746041458629942
+    second: WraithShaman-Attack-Animation-Source-v2_52
+  - first:
+      213: 7108788880749324762
+    second: WraithShaman-Attack-Animation-Source-v2_53
+  - first:
+      213: 4874548232140610449
+    second: WraithShaman-Attack-Animation-Source-v2_54
+  - first:
+      213: -8531084112508862830
+    second: WraithShaman-Attack-Animation-Source-v2_55
+  - first:
+      213: 6533541071171147494
+    second: WraithShaman-Attack-Animation-Source-v2_56
+  - first:
+      213: -9075150576313860669
+    second: WraithShaman-Attack-Animation-Source-v2_57
+  - first:
+      213: 5753251010539398186
+    second: WraithShaman-Attack-Animation-Source-v2_58
+  - first:
+      213: 5210733829267773328
+    second: WraithShaman-Attack-Animation-Source-v2_59
+  - first:
+      213: 6539013896087627257
+    second: WraithShaman-Attack-Animation-Source-v2_60
+  - first:
+      213: 8545461463379421319
+    second: WraithShaman-Attack-Animation-Source-v2_61
+  - first:
+      213: -5425974927190533751
+    second: WraithShaman-Attack-Animation-Source-v2_62
+  - first:
+      213: 2428309449656760057
+    second: WraithShaman-Attack-Animation-Source-v2_63
+  - first:
+      213: -577476374774482817
+    second: WraithShaman-Attack-Animation-Source-v2_64
+  - first:
+      213: -3214616534522682585
+    second: WraithShaman-Attack-Animation-Source-v2_65
+  - first:
+      213: -5781337300607712067
+    second: WraithShaman-Attack-Animation-Source-v2_66
+  - first:
+      213: 5764137986368932669
+    second: WraithShaman-Attack-Animation-Source-v2_67
+  - first:
+      213: -5135023606959347468
+    second: WraithShaman-Attack-Animation-Source-v2_68
+  - first:
+      213: 5329627965849518561
+    second: WraithShaman-Attack-Animation-Source-v2_69
+  - first:
+      213: 3528804652708420922
+    second: WraithShaman-Attack-Animation-Source-v2_70
+  - first:
+      213: -2088905835003155069
+    second: WraithShaman-Attack-Animation-Source-v2_71
+  - first:
+      213: 2464715934623512590
+    second: WraithShaman-Attack-Animation-Source-v2_72
+  - first:
+      213: 4075782458259939172
+    second: WraithShaman-Attack-Animation-Source-v2_73
+  - first:
+      213: -2101910868766632426
+    second: WraithShaman-Attack-Animation-Source-v2_74
+  - first:
+      213: 4498534179507462801
+    second: WraithShaman-Attack-Animation-Source-v2_75
+  - first:
+      213: -752977992659343878
+    second: WraithShaman-Attack-Animation-Source-v2_76
+  - first:
+      213: -4958340555423263723
+    second: WraithShaman-Attack-Animation-Source-v2_77
+  - first:
+      213: 8050390665880118989
+    second: WraithShaman-Attack-Animation-Source-v2_78
+  - first:
+      213: -4899643573281937021
+    second: WraithShaman-Attack-Animation-Source-v2_79
+  - first:
+      213: 2255437972190871878
+    second: WraithShaman-Attack-Animation-Source-v2_80
+  - first:
+      213: -7318401394057823940
+    second: WraithShaman-Attack-Animation-Source-v2_81
+  - first:
+      213: -5381022259694177555
+    second: WraithShaman-Attack-Animation-Source-v2_82
+  - first:
+      213: 8471393888174287007
+    second: WraithShaman-Attack-Animation-Source-v2_83
+  - first:
+      213: 7113952194896282715
+    second: WraithShaman-Attack-Animation-Source-v2_84
+  - first:
+      213: -793007649134041043
+    second: WraithShaman-Attack-Animation-Source-v2_85
+  - first:
+      213: 5914558676074445749
+    second: WraithShaman-Attack-Animation-Source-v2_86
+  - first:
+      213: -324184997876299559
+    second: WraithShaman-Attack-Animation-Source-v2_87
+  - first:
+      213: -7668198506699191836
+    second: WraithShaman-Attack-Animation-Source-v2_88
+  - first:
+      213: 8108611181044066960
+    second: WraithShaman-Attack-Animation-Source-v2_89
+  - first:
+      213: 4535543844446362285
+    second: WraithShaman-Attack-Animation-Source-v2_90
+  - first:
+      213: -9141224021719938550
+    second: WraithShaman-Attack-Animation-Source-v2_91
+  - first:
+      213: -4179583754925835235
+    second: WraithShaman-Attack-Animation-Source-v2_92
+  - first:
+      213: -3348618455383024491
+    second: WraithShaman-Attack-Animation-Source-v2_93
+  - first:
+      213: -6051068609351973818
+    second: WraithShaman-Attack-Animation-Source-v2_94
+  - first:
+      213: -6966810698143247524
+    second: WraithShaman-Attack-Animation-Source-v2_95
+  - first:
+      213: 104977261534266118
+    second: WraithShaman-Attack-Animation-Source-v2_96
+  - first:
+      213: -490316193613095820
+    second: WraithShaman-Attack-Animation-Source-v2_97
+  - first:
+      213: 7045915258146133999
+    second: WraithShaman-Attack-Animation-Source-v2_98
+  - first:
+      213: 8488040217125622586
+    second: WraithShaman-Attack-Animation-Source-v2_99
+  - first:
+      213: -3693851426157912679
+    second: WraithShaman-Attack-Animation-Source-v2_100
+  - first:
+      213: 6573236701674296974
+    second: WraithShaman-Attack-Animation-Source-v2_101
+  - first:
+      213: 6082421584058951499
+    second: WraithShaman-Attack-Animation-Source-v2_102
+  - first:
+      213: 46490686040792368
+    second: WraithShaman-Attack-Animation-Source-v2_103
+  - first:
+      213: 8151606482753453844
+    second: WraithShaman-Attack-Animation-Source-v2_104
+  - first:
+      213: -6096675604841525892
+    second: WraithShaman-Attack-Animation-Source-v2_105
+  - first:
+      213: 4610807156003504663
+    second: WraithShaman-Attack-Animation-Source-v2_106
+  - first:
+      213: 29781525991536595
+    second: WraithShaman-Attack-Animation-Source-v2_107
+  - first:
+      213: 6508679155989259278
+    second: WraithShaman-Attack-Animation-Source-v2_108
+  - first:
+      213: -1772336566809750786
+    second: WraithShaman-Attack-Animation-Source-v2_109
+  - first:
+      213: -760209076461216573
+    second: WraithShaman-Attack-Animation-Source-v2_110
+  - first:
+      213: -9175358473901614627
+    second: WraithShaman-Attack-Animation-Source-v2_111
+  - first:
+      213: 5988308598444974131
+    second: WraithShaman-Attack-Animation-Source-v2_112
+  - first:
+      213: -8628526730429428133
+    second: WraithShaman-Attack-Animation-Source-v2_113
+  - first:
+      213: -4639943182421888629
+    second: WraithShaman-Attack-Animation-Source-v2_114
+  - first:
+      213: 6151753128448539275
+    second: WraithShaman-Attack-Animation-Source-v2_115
+  - first:
+      213: -6222530803174618409
+    second: WraithShaman-Attack-Animation-Source-v2_116
+  - first:
+      213: -64003713254998781
+    second: WraithShaman-Attack-Animation-Source-v2_117
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_0
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 668
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7009dfa50777496f0800000000000000
+      internalID: -678786319379492857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_1
+      rect:
+        serializedVersion: 2
+        x: 1000
+        y: 454
+        width: 294
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5005a55bf62003b50800000000000000
+      internalID: 6570754535140773893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_2
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 545
+        width: 128
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8c382d566639cfe0800000000000000
+      internalID: -1168342815048450931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_3
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 500
+        width: 119
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1223f01803018be50800000000000000
+      internalID: 6825223035789718049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_4
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 619
+        width: 32
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3374cc65aea2787f0800000000000000
+      internalID: -610472038518470861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_5
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 587
+        width: 91
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ac233afc8289ef80800000000000000
+      internalID: -8076780914707583839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_6
+      rect:
+        serializedVersion: 2
+        x: 1716
+        y: 563
+        width: 46
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e296da3cde9558a00800000000000000
+      internalID: 758110990006839598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_7
+      rect:
+        serializedVersion: 2
+        x: 1901
+        y: 547
+        width: 63
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8880e45035b49cf70800000000000000
+      internalID: 9207973733079058568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_8
+      rect:
+        serializedVersion: 2
+        x: 2021
+        y: 595
+        width: 78
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cee36e8739bd5380800000000000000
+      internalID: -8980818433643647289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_9
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 533
+        width: 64
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61d86e884d476ec90800000000000000
+      internalID: -7140891702970643178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_10
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 547
+        width: 52
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b45347f68c93c9410800000000000000
+      internalID: 1485125510151550283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_11
+      rect:
+        serializedVersion: 2
+        x: 652
+        y: 518
+        width: 102
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2695f5c18f8c7da40800000000000000
+      internalID: 5393000046752913762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_12
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 555
+        width: 210
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c27b4981be5c1db0800000000000000
+      internalID: -4819873384587627834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_13
+      rect:
+        serializedVersion: 2
+        x: 1309
+        y: 514
+        width: 125
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc022bfbd21d01360800000000000000
+      internalID: 7138435403802091727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_14
+      rect:
+        serializedVersion: 2
+        x: 1429
+        y: 452
+        width: 134
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41fc87d5bde85c490800000000000000
+      internalID: -7726612512867037420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_15
+      rect:
+        serializedVersion: 2
+        x: 1640
+        y: 575
+        width: 25
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18492f0c736e5db60800000000000000
+      internalID: 7770369859232371841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_16
+      rect:
+        serializedVersion: 2
+        x: 1678
+        y: 550
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a9d51c10a5e74710800000000000000
+      internalID: 1677561862047521192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_17
+      rect:
+        serializedVersion: 2
+        x: 1710
+        y: 563
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2a071f1081aa9f80800000000000000
+      internalID: -8098983408222926289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_18
+      rect:
+        serializedVersion: 2
+        x: 1791
+        y: 485
+        width: 73
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4cd9a1b8dfb996c0800000000000000
+      internalID: -4136063845348549558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_19
+      rect:
+        serializedVersion: 2
+        x: 2094
+        y: 563
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8876a5a07bc144950800000000000000
+      internalID: 6432297740270200712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_20
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 494
+        width: 53
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07dc9f5591479b620800000000000000
+      internalID: 2790389096298171760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_21
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 545
+        width: 19
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88929246a4c2905c0800000000000000
+      internalID: -4248816075427731064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_22
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 553
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c038eef3a5eabe10800000000000000
+      internalID: 2214334659325079744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_23
+      rect:
+        serializedVersion: 2
+        x: 1596
+        y: 466
+        width: 75
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de0b1b08f16262e10800000000000000
+      internalID: 2172465786997813485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_24
+      rect:
+        serializedVersion: 2
+        x: 1746
+        y: 537
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4afcd2cb1b856ca90800000000000000
+      internalID: -7294045026090365020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_25
+      rect:
+        serializedVersion: 2
+        x: 1803
+        y: 553
+        width: 13
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9645ba62c40086b50800000000000000
+      internalID: 6586514782095627369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_26
+      rect:
+        serializedVersion: 2
+        x: 1877
+        y: 541
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe755145ea97eea60800000000000000
+      internalID: 7705229802119452655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_27
+      rect:
+        serializedVersion: 2
+        x: 1911
+        y: 563
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7d14614eba61c480800000000000000
+      internalID: -8880699624824496773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_28
+      rect:
+        serializedVersion: 2
+        x: 1975
+        y: 545
+        width: 33
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd117341be03f1df0800000000000000
+      internalID: -207393271621152291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_29
+      rect:
+        serializedVersion: 2
+        x: 2033
+        y: 563
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab5837581ee86dcf0800000000000000
+      internalID: -227837631877904966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_30
+      rect:
+        serializedVersion: 2
+        x: 2039
+        y: 545
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82171937a160b4430800000000000000
+      internalID: 3768112223903379752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_31
+      rect:
+        serializedVersion: 2
+        x: 2058
+        y: 544
+        width: 17
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbaaa51c6c7d3dc20800000000000000
+      internalID: 3230162606402218683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_32
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 531
+        width: 20
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8a239afd4002f6c0800000000000000
+      internalID: -4111223174919411058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_33
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 472
+        width: 39
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c75da0b9997b7fd40800000000000000
+      internalID: 5618160930527040892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_34
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 545
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07827ad4d236ebc00800000000000000
+      internalID: 918280420257638512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_35
+      rect:
+        serializedVersion: 2
+        x: 634
+        y: 547
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4bcb3eb3150e1450800000000000000
+      internalID: 6061287730841373515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_36
+      rect:
+        serializedVersion: 2
+        x: 698
+        y: 549
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3aee7c8f77e3fd170800000000000000
+      internalID: 8205345731088215715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_37
+      rect:
+        serializedVersion: 2
+        x: 1742
+        y: 549
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9561894a1d0fb1980800000000000000
+      internalID: -8566989082941974951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_38
+      rect:
+        serializedVersion: 2
+        x: 1813
+        y: 537
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba24d2a8007ed9290800000000000000
+      internalID: -7881889783324261717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_39
+      rect:
+        serializedVersion: 2
+        x: 1895
+        y: 498
+        width: 49
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69f1a40fef201fbc0800000000000000
+      internalID: -3751213720646574186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_40
+      rect:
+        serializedVersion: 2
+        x: 1945
+        y: 545
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53058cc8508f8630800000000000000
+      internalID: 3931502118594478939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_41
+      rect:
+        serializedVersion: 2
+        x: 2007
+        y: 547
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eda2c90e43b3cd860800000000000000
+      internalID: 7555979373113518814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_42
+      rect:
+        serializedVersion: 2
+        x: 2043
+        y: 529
+        width: 32
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ae78b5ba17eb9610800000000000000
+      internalID: 1629149792128499360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_43
+      rect:
+        serializedVersion: 2
+        x: 2074
+        y: 473
+        width: 75
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8b109577f2816330800000000000000
+      internalID: 3702384368016169866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_44
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 539
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d07bf247873cebca0800000000000000
+      internalID: -5999142731498146035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_45
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 521
+        width: 26
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e017f3040c794d210800000000000000
+      internalID: 1356876239712776462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_46
+      rect:
+        serializedVersion: 2
+        x: 1772
+        y: 531
+        width: 24
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed390bda9cc93c3f0800000000000000
+      internalID: -881688712018095138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_47
+      rect:
+        serializedVersion: 2
+        x: 1879
+        y: 531
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 685d6df07b1449f30800000000000000
+      internalID: 4581358975443195270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_48
+      rect:
+        serializedVersion: 2
+        x: 1943
+        y: 530
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70fa0610b26163220800000000000000
+      internalID: 2465182219994443527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_49
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 498
+        width: 26
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 099cde2bd8bf41cc0800000000000000
+      internalID: -3741088804427150960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_50
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 525
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a72c0acef9fce0e0800000000000000
+      internalID: -2239140042003175519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_51
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 519
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b082d0fbf0a940ec0800000000000000
+      internalID: -3601584409569056757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_52
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 515
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac2623c171d1af8b0800000000000000
+      internalID: -5117746041458629942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_53
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 512
+        width: 33
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad96f44b2dd77a260800000000000000
+      internalID: 7108788880749324762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_54
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 504
+        width: 20
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19bdf396acfd5a340800000000000000
+      internalID: 4874548232140610449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_55
+      rect:
+        serializedVersion: 2
+        x: 971
+        y: 504
+        width: 12
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29e3ee403308b9980800000000000000
+      internalID: -8531084112508862830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_56
+      rect:
+        serializedVersion: 2
+        x: 1789
+        y: 506
+        width: 13
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e6d490fcfccbaa50800000000000000
+      internalID: 6533541071171147494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_57
+      rect:
+        serializedVersion: 2
+        x: 1995
+        y: 510
+        width: 22
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cd71af02a69e0280800000000000000
+      internalID: -9075150576313860669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_58
+      rect:
+        serializedVersion: 2
+        x: 2045
+        y: 518
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a24abd2ef47a7df40800000000000000
+      internalID: 5753251010539398186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_59
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 510
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 097dd906fce305840800000000000000
+      internalID: 5210733829267773328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_60
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 486
+        width: 32
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f565a94e7e3fba50800000000000000
+      internalID: 6539013896087627257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_61
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 498
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7882586dce3979670800000000000000
+      internalID: 8545461463379421319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_62
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 176
+        width: 240
+        height: 336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 989d1a04d8013b4b0800000000000000
+      internalID: -5425974927190533751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_63
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 494
+        width: 18
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f6f387249613b120800000000000000
+      internalID: 2428309449656760057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_64
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 488
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f78f267fb446cf7f0800000000000000
+      internalID: -577476374774482817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_65
+      rect:
+        serializedVersion: 2
+        x: 1293
+        y: 498
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 723adaa2b436363d0800000000000000
+      internalID: -3214616534522682585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_66
+      rect:
+        serializedVersion: 2
+        x: 2033
+        y: 479
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db4cf8e1b5094cfa0800000000000000
+      internalID: -5781337300607712067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_67
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 488
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3b0bd975f45eff40800000000000000
+      internalID: 5764137986368932669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_68
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 490
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f861f96c3bbcb8b0800000000000000
+      internalID: -5135023606959347468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_69
+      rect:
+        serializedVersion: 2
+        x: 698
+        y: 493
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e1c279b564a6f940800000000000000
+      internalID: 5329627965849518561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_70
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 178
+        width: 324
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3d5e6e9225d8f030800000000000000
+      internalID: 3528804652708420922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_71
+      rect:
+        serializedVersion: 2
+        x: 965
+        y: 464
+        width: 18
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38d6567e537b203e0800000000000000
+      internalID: -2088905835003155069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_72
+      rect:
+        serializedVersion: 2
+        x: 1130
+        y: 462
+        width: 17
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e08ba7b751e643220800000000000000
+      internalID: 2464715934623512590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_73
+      rect:
+        serializedVersion: 2
+        x: 1148
+        y: 482
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46f1a562d86109830800000000000000
+      internalID: 4075782458259939172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_74
+      rect:
+        serializedVersion: 2
+        x: 1154
+        y: 480
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 616d1a5833384d2e0800000000000000
+      internalID: -2101910868766632426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_75
+      rect:
+        serializedVersion: 2
+        x: 1162
+        y: 466
+        width: 11
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 192ee7380010e6e30800000000000000
+      internalID: 4498534179507462801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_76
+      rect:
+        serializedVersion: 2
+        x: 1301
+        y: 446
+        width: 61
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af56adf4182ec85f0800000000000000
+      internalID: -752977992659343878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_77
+      rect:
+        serializedVersion: 2
+        x: 1712
+        y: 156
+        width: 220
+        height: 335
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5145596098f603bb0800000000000000
+      internalID: -4958340555423263723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_78
+      rect:
+        serializedVersion: 2
+        x: 1803
+        y: 488
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc6a7e668abb8bf60800000000000000
+      internalID: 8050390665880118989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_79
+      rect:
+        serializedVersion: 2
+        x: 2118
+        y: 480
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38921882128f00cb0800000000000000
+      internalID: -4899643573281937021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_80
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 39
+        width: 227
+        height: 441
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6414d59c2ecec4f10800000000000000
+      internalID: 2255437972190871878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_81
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 466
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c39b577e4b0df6a90800000000000000
+      internalID: -7318401394057823940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_82
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 188
+        width: 211
+        height: 283
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de27572c3c4c255b0800000000000000
+      internalID: -5381022259694177555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_83
+      rect:
+        serializedVersion: 2
+        x: 1499
+        y: 466
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f982b01abdf609570800000000000000
+      internalID: 8471393888174287007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_84
+      rect:
+        serializedVersion: 2
+        x: 1630
+        y: 456
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5447e574d5d9b260800000000000000
+      internalID: 7113952194896282715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_85
+      rect:
+        serializedVersion: 2
+        x: 1827
+        y: 19
+        width: 314
+        height: 464
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d28a231aebbaef4f0800000000000000
+      internalID: -793007649134041043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_86
+      rect:
+        serializedVersion: 2
+        x: 1499
+        y: 450
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bb3f9a77cbb41250800000000000000
+      internalID: 5914558676074445749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_87
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 32
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d882184673408bf0800000000000000
+      internalID: -324184997876299559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_88
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 70
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e983050616159590800000000000000
+      internalID: -7668198506699191836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_89
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 51
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09a64eb68e2978070800000000000000
+      internalID: 8108611181044066960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_90
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 18
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: daa5f6f981d71fe30800000000000000
+      internalID: 4535543844446362285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_91
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 23
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0a8d1d3f29d32180800000000000000
+      internalID: -9141224021719938550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_92
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 100
+        width: 21
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1cf6a228b22ff5c0800000000000000
+      internalID: -4179583754925835235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_93
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 59
+        width: 101
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59cd39ea1415781d0800000000000000
+      internalID: -3348618455383024491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_94
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 63
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6440f04e829460ca0800000000000000
+      internalID: -6051068609351973818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_95
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 19
+        width: 196
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c53d7cfe49ae05f90800000000000000
+      internalID: -6966810698143247524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_96
+      rect:
+        serializedVersion: 2
+        x: 666
+        y: 59
+        width: 156
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6034e3f5344f47100800000000000000
+      internalID: 104977261534266118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_97
+      rect:
+        serializedVersion: 2
+        x: 763
+        y: 47
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47cd11c050c0239f0800000000000000
+      internalID: -490316193613095820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_98
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 31
+        width: 62
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe71e4fa89e18c160800000000000000
+      internalID: 7045915258146133999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_99
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 63
+        width: 94
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a33900d1b939bc570800000000000000
+      internalID: 8488040217125622586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_100
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 104
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99d99c2e2bdccbcc0800000000000000
+      internalID: -3693851426157912679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_101
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 96
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e865bd324f3d83b50800000000000000
+      internalID: 6573236701674296974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_102
+      rect:
+        serializedVersion: 2
+        x: 986
+        y: 96
+        width: 51
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b47a004643a196450800000000000000
+      internalID: 6082421584058951499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_103
+      rect:
+        serializedVersion: 2
+        x: 1044
+        y: 15
+        width: 376
+        height: 434
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03d53da580b25a000800000000000000
+      internalID: 46490686040792368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_104
+      rect:
+        serializedVersion: 2
+        x: 1172
+        y: 81
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41f7a4138e2502170800000000000000
+      internalID: 8151606482753453844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_105
+      rect:
+        serializedVersion: 2
+        x: 1196
+        y: 94
+        width: 28
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7d81a6c6d1446ba0800000000000000
+      internalID: -6096675604841525892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_106
+      rect:
+        serializedVersion: 2
+        x: 1212
+        y: 120
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7120b65eda0ecff30800000000000000
+      internalID: 4610807156003504663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_107
+      rect:
+        serializedVersion: 2
+        x: 1216
+        y: 110
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d7389dd32ec96000800000000000000
+      internalID: 29781525991536595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_108
+      rect:
+        serializedVersion: 2
+        x: 1218
+        y: 79
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e04aab93539735a50800000000000000
+      internalID: 6508679155989259278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_109
+      rect:
+        serializedVersion: 2
+        x: 1369
+        y: 101
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef29ed068456767e0800000000000000
+      internalID: -1772336566809750786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_110
+      rect:
+        serializedVersion: 2
+        x: 1395
+        y: 80
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cc508a6fd13375f0800000000000000
+      internalID: -760209076461216573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_111
+      rect:
+        serializedVersion: 2
+        x: 1413
+        y: 0
+        width: 302
+        height: 437
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd95934c4149aa080800000000000000
+      internalID: -9175358473901614627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_112
+      rect:
+        serializedVersion: 2
+        x: 1435
+        y: 49
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 330eabf51feba1350800000000000000
+      internalID: 5988308598444974131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_113
+      rect:
+        serializedVersion: 2
+        x: 1526
+        y: 87
+        width: 7
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5e8ac197a0514880800000000000000
+      internalID: -8628526730429428133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_114
+      rect:
+        serializedVersion: 2
+        x: 1660
+        y: 81
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b817fb1524c9b9fb0800000000000000
+      internalID: -4639943182421888629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_115
+      rect:
+        serializedVersion: 2
+        x: 1708
+        y: 67
+        width: 58
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8ab21f70ea6f5550800000000000000
+      internalID: 6151753128448539275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_116
+      rect:
+        serializedVersion: 2
+        x: 1764
+        y: 0
+        width: 38
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7dac9d0f33125a9a0800000000000000
+      internalID: -6222530803174618409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Attack-Animation-Source-v2_117
+      rect:
+        serializedVersion: 2
+        x: 1967
+        y: 55
+        width: 37
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30d312f36fc9c1ff0800000000000000
+      internalID: -64003713254998781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      WraithShaman-Attack-Animation-Source-v2_0: -678786319379492857
+      WraithShaman-Attack-Animation-Source-v2_1: 6570754535140773893
+      WraithShaman-Attack-Animation-Source-v2_10: 1485125510151550283
+      WraithShaman-Attack-Animation-Source-v2_100: -3693851426157912679
+      WraithShaman-Attack-Animation-Source-v2_101: 6573236701674296974
+      WraithShaman-Attack-Animation-Source-v2_102: 6082421584058951499
+      WraithShaman-Attack-Animation-Source-v2_103: 46490686040792368
+      WraithShaman-Attack-Animation-Source-v2_104: 8151606482753453844
+      WraithShaman-Attack-Animation-Source-v2_105: -6096675604841525892
+      WraithShaman-Attack-Animation-Source-v2_106: 4610807156003504663
+      WraithShaman-Attack-Animation-Source-v2_107: 29781525991536595
+      WraithShaman-Attack-Animation-Source-v2_108: 6508679155989259278
+      WraithShaman-Attack-Animation-Source-v2_109: -1772336566809750786
+      WraithShaman-Attack-Animation-Source-v2_11: 5393000046752913762
+      WraithShaman-Attack-Animation-Source-v2_110: -760209076461216573
+      WraithShaman-Attack-Animation-Source-v2_111: -9175358473901614627
+      WraithShaman-Attack-Animation-Source-v2_112: 5988308598444974131
+      WraithShaman-Attack-Animation-Source-v2_113: -8628526730429428133
+      WraithShaman-Attack-Animation-Source-v2_114: -4639943182421888629
+      WraithShaman-Attack-Animation-Source-v2_115: 6151753128448539275
+      WraithShaman-Attack-Animation-Source-v2_116: -6222530803174618409
+      WraithShaman-Attack-Animation-Source-v2_117: -64003713254998781
+      WraithShaman-Attack-Animation-Source-v2_12: -4819873384587627834
+      WraithShaman-Attack-Animation-Source-v2_13: 7138435403802091727
+      WraithShaman-Attack-Animation-Source-v2_14: -7726612512867037420
+      WraithShaman-Attack-Animation-Source-v2_15: 7770369859232371841
+      WraithShaman-Attack-Animation-Source-v2_16: 1677561862047521192
+      WraithShaman-Attack-Animation-Source-v2_17: -8098983408222926289
+      WraithShaman-Attack-Animation-Source-v2_18: -4136063845348549558
+      WraithShaman-Attack-Animation-Source-v2_19: 6432297740270200712
+      WraithShaman-Attack-Animation-Source-v2_2: -1168342815048450931
+      WraithShaman-Attack-Animation-Source-v2_20: 2790389096298171760
+      WraithShaman-Attack-Animation-Source-v2_21: -4248816075427731064
+      WraithShaman-Attack-Animation-Source-v2_22: 2214334659325079744
+      WraithShaman-Attack-Animation-Source-v2_23: 2172465786997813485
+      WraithShaman-Attack-Animation-Source-v2_24: -7294045026090365020
+      WraithShaman-Attack-Animation-Source-v2_25: 6586514782095627369
+      WraithShaman-Attack-Animation-Source-v2_26: 7705229802119452655
+      WraithShaman-Attack-Animation-Source-v2_27: -8880699624824496773
+      WraithShaman-Attack-Animation-Source-v2_28: -207393271621152291
+      WraithShaman-Attack-Animation-Source-v2_29: -227837631877904966
+      WraithShaman-Attack-Animation-Source-v2_3: 6825223035789718049
+      WraithShaman-Attack-Animation-Source-v2_30: 3768112223903379752
+      WraithShaman-Attack-Animation-Source-v2_31: 3230162606402218683
+      WraithShaman-Attack-Animation-Source-v2_32: -4111223174919411058
+      WraithShaman-Attack-Animation-Source-v2_33: 5618160930527040892
+      WraithShaman-Attack-Animation-Source-v2_34: 918280420257638512
+      WraithShaman-Attack-Animation-Source-v2_35: 6061287730841373515
+      WraithShaman-Attack-Animation-Source-v2_36: 8205345731088215715
+      WraithShaman-Attack-Animation-Source-v2_37: -8566989082941974951
+      WraithShaman-Attack-Animation-Source-v2_38: -7881889783324261717
+      WraithShaman-Attack-Animation-Source-v2_39: -3751213720646574186
+      WraithShaman-Attack-Animation-Source-v2_4: -610472038518470861
+      WraithShaman-Attack-Animation-Source-v2_40: 3931502118594478939
+      WraithShaman-Attack-Animation-Source-v2_41: 7555979373113518814
+      WraithShaman-Attack-Animation-Source-v2_42: 1629149792128499360
+      WraithShaman-Attack-Animation-Source-v2_43: 3702384368016169866
+      WraithShaman-Attack-Animation-Source-v2_44: -5999142731498146035
+      WraithShaman-Attack-Animation-Source-v2_45: 1356876239712776462
+      WraithShaman-Attack-Animation-Source-v2_46: -881688712018095138
+      WraithShaman-Attack-Animation-Source-v2_47: 4581358975443195270
+      WraithShaman-Attack-Animation-Source-v2_48: 2465182219994443527
+      WraithShaman-Attack-Animation-Source-v2_49: -3741088804427150960
+      WraithShaman-Attack-Animation-Source-v2_5: -8076780914707583839
+      WraithShaman-Attack-Animation-Source-v2_50: -2239140042003175519
+      WraithShaman-Attack-Animation-Source-v2_51: -3601584409569056757
+      WraithShaman-Attack-Animation-Source-v2_52: -5117746041458629942
+      WraithShaman-Attack-Animation-Source-v2_53: 7108788880749324762
+      WraithShaman-Attack-Animation-Source-v2_54: 4874548232140610449
+      WraithShaman-Attack-Animation-Source-v2_55: -8531084112508862830
+      WraithShaman-Attack-Animation-Source-v2_56: 6533541071171147494
+      WraithShaman-Attack-Animation-Source-v2_57: -9075150576313860669
+      WraithShaman-Attack-Animation-Source-v2_58: 5753251010539398186
+      WraithShaman-Attack-Animation-Source-v2_59: 5210733829267773328
+      WraithShaman-Attack-Animation-Source-v2_6: 758110990006839598
+      WraithShaman-Attack-Animation-Source-v2_60: 6539013896087627257
+      WraithShaman-Attack-Animation-Source-v2_61: 8545461463379421319
+      WraithShaman-Attack-Animation-Source-v2_62: -5425974927190533751
+      WraithShaman-Attack-Animation-Source-v2_63: 2428309449656760057
+      WraithShaman-Attack-Animation-Source-v2_64: -577476374774482817
+      WraithShaman-Attack-Animation-Source-v2_65: -3214616534522682585
+      WraithShaman-Attack-Animation-Source-v2_66: -5781337300607712067
+      WraithShaman-Attack-Animation-Source-v2_67: 5764137986368932669
+      WraithShaman-Attack-Animation-Source-v2_68: -5135023606959347468
+      WraithShaman-Attack-Animation-Source-v2_69: 5329627965849518561
+      WraithShaman-Attack-Animation-Source-v2_7: 9207973733079058568
+      WraithShaman-Attack-Animation-Source-v2_70: 3528804652708420922
+      WraithShaman-Attack-Animation-Source-v2_71: -2088905835003155069
+      WraithShaman-Attack-Animation-Source-v2_72: 2464715934623512590
+      WraithShaman-Attack-Animation-Source-v2_73: 4075782458259939172
+      WraithShaman-Attack-Animation-Source-v2_74: -2101910868766632426
+      WraithShaman-Attack-Animation-Source-v2_75: 4498534179507462801
+      WraithShaman-Attack-Animation-Source-v2_76: -752977992659343878
+      WraithShaman-Attack-Animation-Source-v2_77: -4958340555423263723
+      WraithShaman-Attack-Animation-Source-v2_78: 8050390665880118989
+      WraithShaman-Attack-Animation-Source-v2_79: -4899643573281937021
+      WraithShaman-Attack-Animation-Source-v2_8: -8980818433643647289
+      WraithShaman-Attack-Animation-Source-v2_80: 2255437972190871878
+      WraithShaman-Attack-Animation-Source-v2_81: -7318401394057823940
+      WraithShaman-Attack-Animation-Source-v2_82: -5381022259694177555
+      WraithShaman-Attack-Animation-Source-v2_83: 8471393888174287007
+      WraithShaman-Attack-Animation-Source-v2_84: 7113952194896282715
+      WraithShaman-Attack-Animation-Source-v2_85: -793007649134041043
+      WraithShaman-Attack-Animation-Source-v2_86: 5914558676074445749
+      WraithShaman-Attack-Animation-Source-v2_87: -324184997876299559
+      WraithShaman-Attack-Animation-Source-v2_88: -7668198506699191836
+      WraithShaman-Attack-Animation-Source-v2_89: 8108611181044066960
+      WraithShaman-Attack-Animation-Source-v2_9: -7140891702970643178
+      WraithShaman-Attack-Animation-Source-v2_90: 4535543844446362285
+      WraithShaman-Attack-Animation-Source-v2_91: -9141224021719938550
+      WraithShaman-Attack-Animation-Source-v2_92: -4179583754925835235
+      WraithShaman-Attack-Animation-Source-v2_93: -3348618455383024491
+      WraithShaman-Attack-Animation-Source-v2_94: -6051068609351973818
+      WraithShaman-Attack-Animation-Source-v2_95: -6966810698143247524
+      WraithShaman-Attack-Animation-Source-v2_96: 104977261534266118
+      WraithShaman-Attack-Animation-Source-v2_97: -490316193613095820
+      WraithShaman-Attack-Animation-Source-v2_98: 7045915258146133999
+      WraithShaman-Attack-Animation-Source-v2_99: 8488040217125622586
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

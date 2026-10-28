@@ -1,0 +1,359 @@
+fileFormatVersion: 2
+guid: 30c13bfe3a0057e429577c318abe9000
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1913420943211100580
+    second: WraithShaman-Walk_0
+  - first:
+      213: 1368467904503259649
+    second: WraithShaman-Walk_1
+  - first:
+      213: 4362996954283216417
+    second: WraithShaman-Walk_2
+  - first:
+      213: 1654489997656027208
+    second: WraithShaman-Walk_3
+  - first:
+      213: 5473577781427411041
+    second: WraithShaman-Walk_4
+  - first:
+      213: 7166465568803841882
+    second: WraithShaman-Walk_5
+  - first:
+      213: 2718326307588912979
+    second: WraithShaman-Walk_6
+  - first:
+      213: 8260825776756307539
+    second: WraithShaman-Walk_7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WraithShaman_Walk_0
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 44
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6adf2004048422c4b8884da986daafa7
+      internalID: -1964739207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Walk_1
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 44
+        width: 21
+        height: 29
+      alignment: 9
+      pivot: {x: 0.42857143, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4893d69dcd60c7947affc481b09a787e
+      internalID: 918313173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Walk_2
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 44
+        width: 21
+        height: 29
+      alignment: 9
+      pivot: {x: 0.42857143, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d008c236941247647bb365efa9e52ea0
+      internalID: -622319684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Walk_3
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 44
+        width: 22
+        height: 29
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c92291c3847a1444e90e81a321428493
+      internalID: -88023479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Walk_4
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 44
+        width: 23
+        height: 29
+      alignment: 9
+      pivot: {x: 0.47826087, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 248511fee8195b84dab38378eca3c25b
+      internalID: -405293576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Walk_5
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 44
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3698ee1e556b3d47ba3f966c992b9c7
+      internalID: 1375627427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Walk_6
+      rect:
+        serializedVersion: 2
+        x: 638
+        y: 44
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9442e8f0ccf312b47b2448dce36bfc79
+      internalID: -616446468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Walk_7
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 44
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0024639b62867a44a9ae0e2ade3304f7
+      internalID: -1203303823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 079ece9c09cf8d64dba07108d9b66fac
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      WraithShaman-Walk_0: -1913420943211100580
+      WraithShaman-Walk_1: 1368467904503259649
+      WraithShaman-Walk_2: 4362996954283216417
+      WraithShaman-Walk_3: 1654489997656027208
+      WraithShaman-Walk_4: 5473577781427411041
+      WraithShaman-Walk_5: 7166465568803841882
+      WraithShaman-Walk_6: 2718326307588912979
+      WraithShaman-Walk_7: 8260825776756307539
+      WraithShaman_Walk_0: -1964739207
+      WraithShaman_Walk_1: 918313173
+      WraithShaman_Walk_2: -622319684
+      WraithShaman_Walk_3: -88023479
+      WraithShaman_Walk_4: -405293576
+      WraithShaman_Walk_5: 1375627427
+      WraithShaman_Walk_6: -616446468
+      WraithShaman_Walk_7: -1203303823
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

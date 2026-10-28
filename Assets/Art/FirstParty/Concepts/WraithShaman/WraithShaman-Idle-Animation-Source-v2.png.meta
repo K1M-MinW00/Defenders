@@ -1,0 +1,1729 @@
+fileFormatVersion: 2
+guid: b40d27bc4ca33a84e9db0643ecfe402e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7619216795617181575
+    second: WraithShaman-Idle-Animation-Source-v2_0
+  - first:
+      213: -5966988779101876296
+    second: WraithShaman-Idle-Animation-Source-v2_1
+  - first:
+      213: 2354879938689246742
+    second: WraithShaman-Idle-Animation-Source-v2_2
+  - first:
+      213: -4251647729323869603
+    second: WraithShaman-Idle-Animation-Source-v2_3
+  - first:
+      213: -4377398310323888130
+    second: WraithShaman-Idle-Animation-Source-v2_4
+  - first:
+      213: 5926939369782351437
+    second: WraithShaman-Idle-Animation-Source-v2_5
+  - first:
+      213: 1916789658816665032
+    second: WraithShaman-Idle-Animation-Source-v2_6
+  - first:
+      213: -2902000302598964394
+    second: WraithShaman-Idle-Animation-Source-v2_7
+  - first:
+      213: -2689117961076249334
+    second: WraithShaman-Idle-Animation-Source-v2_8
+  - first:
+      213: -1516363029431965612
+    second: WraithShaman-Idle-Animation-Source-v2_9
+  - first:
+      213: 5679516551914722174
+    second: WraithShaman-Idle-Animation-Source-v2_10
+  - first:
+      213: -8764801349932513526
+    second: WraithShaman-Idle-Animation-Source-v2_11
+  - first:
+      213: -4198747983097279297
+    second: WraithShaman-Idle-Animation-Source-v2_12
+  - first:
+      213: 4769760840927967818
+    second: WraithShaman-Idle-Animation-Source-v2_13
+  - first:
+      213: -316405180113846765
+    second: WraithShaman-Idle-Animation-Source-v2_14
+  - first:
+      213: 7782378810788350609
+    second: WraithShaman-Idle-Animation-Source-v2_15
+  - first:
+      213: -7408786915260547958
+    second: WraithShaman-Idle-Animation-Source-v2_16
+  - first:
+      213: 2840821168372086932
+    second: WraithShaman-Idle-Animation-Source-v2_17
+  - first:
+      213: -4263409405073081023
+    second: WraithShaman-Idle-Animation-Source-v2_18
+  - first:
+      213: 7077601750606663236
+    second: WraithShaman-Idle-Animation-Source-v2_19
+  - first:
+      213: 2205944797178099806
+    second: WraithShaman-Idle-Animation-Source-v2_20
+  - first:
+      213: 9214100211725351666
+    second: WraithShaman-Idle-Animation-Source-v2_21
+  - first:
+      213: -7083677847986099144
+    second: WraithShaman-Idle-Animation-Source-v2_22
+  - first:
+      213: 2472864098770740617
+    second: WraithShaman-Idle-Animation-Source-v2_23
+  - first:
+      213: -4985045534783276985
+    second: WraithShaman-Idle-Animation-Source-v2_24
+  - first:
+      213: 5884569290735585157
+    second: WraithShaman-Idle-Animation-Source-v2_25
+  - first:
+      213: 1874751518997694456
+    second: WraithShaman-Idle-Animation-Source-v2_26
+  - first:
+      213: 2716060646083289874
+    second: WraithShaman-Idle-Animation-Source-v2_27
+  - first:
+      213: -5823046441913779630
+    second: WraithShaman-Idle-Animation-Source-v2_28
+  - first:
+      213: 8444909495422900175
+    second: WraithShaman-Idle-Animation-Source-v2_29
+  - first:
+      213: -183910308994329429
+    second: WraithShaman-Idle-Animation-Source-v2_30
+  - first:
+      213: 2025890733803931216
+    second: WraithShaman-Idle-Animation-Source-v2_31
+  - first:
+      213: -1868806890292480353
+    second: WraithShaman-Idle-Animation-Source-v2_32
+  - first:
+      213: 3932814913596380521
+    second: WraithShaman-Idle-Animation-Source-v2_33
+  - first:
+      213: -3896317249647175441
+    second: WraithShaman-Idle-Animation-Source-v2_34
+  - first:
+      213: -3642271076124209197
+    second: WraithShaman-Idle-Animation-Source-v2_35
+  - first:
+      213: -5753065165339827609
+    second: WraithShaman-Idle-Animation-Source-v2_36
+  - first:
+      213: -6036509018447944823
+    second: WraithShaman-Idle-Animation-Source-v2_37
+  - first:
+      213: -8528297223814817400
+    second: WraithShaman-Idle-Animation-Source-v2_38
+  - first:
+      213: 4961412677859233958
+    second: WraithShaman-Idle-Animation-Source-v2_39
+  - first:
+      213: 1424005051751510161
+    second: WraithShaman-Idle-Animation-Source-v2_40
+  - first:
+      213: -2786526825956256854
+    second: WraithShaman-Idle-Animation-Source-v2_41
+  - first:
+      213: 8706445842700002789
+    second: WraithShaman-Idle-Animation-Source-v2_42
+  - first:
+      213: -4061161253503364130
+    second: WraithShaman-Idle-Animation-Source-v2_43
+  - first:
+      213: 4026904931177875123
+    second: WraithShaman-Idle-Animation-Source-v2_44
+  - first:
+      213: 3272542193519659746
+    second: WraithShaman-Idle-Animation-Source-v2_45
+  - first:
+      213: 4053412891923037735
+    second: WraithShaman-Idle-Animation-Source-v2_46
+  - first:
+      213: -7428851269337581741
+    second: WraithShaman-Idle-Animation-Source-v2_47
+  - first:
+      213: -4658466357416073172
+    second: WraithShaman-Idle-Animation-Source-v2_48
+  - first:
+      213: 4076555301646829747
+    second: WraithShaman-Idle-Animation-Source-v2_49
+  - first:
+      213: -6202288698512496791
+    second: WraithShaman-Idle-Animation-Source-v2_50
+  - first:
+      213: -4310868033888849778
+    second: WraithShaman-Idle-Animation-Source-v2_51
+  - first:
+      213: 8306778254179514441
+    second: WraithShaman-Idle-Animation-Source-v2_52
+  - first:
+      213: -6037564126170029074
+    second: WraithShaman-Idle-Animation-Source-v2_53
+  - first:
+      213: 2955283564028098714
+    second: WraithShaman-Idle-Animation-Source-v2_54
+  - first:
+      213: 4084992660229809121
+    second: WraithShaman-Idle-Animation-Source-v2_55
+  - first:
+      213: 5767727760024588425
+    second: WraithShaman-Idle-Animation-Source-v2_56
+  - first:
+      213: 196258907423613295
+    second: WraithShaman-Idle-Animation-Source-v2_57
+  - first:
+      213: -7607348339930771157
+    second: WraithShaman-Idle-Animation-Source-v2_58
+  - first:
+      213: 1949298349503813724
+    second: WraithShaman-Idle-Animation-Source-v2_59
+  - first:
+      213: -1069944143546343409
+    second: WraithShaman-Idle-Animation-Source-v2_60
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 403
+        height: 716
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9704c8651ba134690800000000000000
+      internalID: -7619216795617181575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_1
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 659
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bf04e2e15ff03da0800000000000000
+      internalID: -5966988779101876296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_2
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 683
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 616244ad3d63ea020800000000000000
+      internalID: 2354879938689246742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_3
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 659
+        width: 21
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5afd879aec1ff4c0800000000000000
+      internalID: -4251647729323869603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_4
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 646
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: effdfb0ed6b5043c0800000000000000
+      internalID: -4377398310323888130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_5
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 621
+        width: 104
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d46972d54f7b04250800000000000000
+      internalID: 5926939369782351437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_6
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 568
+        width: 73
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c5d8e20a0ec99a10800000000000000
+      internalID: 1916789658816665032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_7
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 620
+        width: 116
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65b3389a9160ab7d0800000000000000
+      internalID: -2902000302598964394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_8
+      rect:
+        serializedVersion: 2
+        x: 909
+        y: 659
+        width: 55
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0d6de246755eaad0800000000000000
+      internalID: -2689117961076249334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_9
+      rect:
+        serializedVersion: 2
+        x: 1054
+        y: 570
+        width: 190
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4582c28dbdbc4fae0800000000000000
+      internalID: -1516363029431965612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_10
+      rect:
+        serializedVersion: 2
+        x: 1466
+        y: 566
+        width: 57
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7314dc6632b1de40800000000000000
+      internalID: 5679516551914722174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_11
+      rect:
+        serializedVersion: 2
+        x: 1538
+        y: 632
+        width: 42
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0788623c9b2d5680800000000000000
+      internalID: -8764801349932513526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_12
+      rect:
+        serializedVersion: 2
+        x: 1729
+        y: 576
+        width: 144
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbc491e84fc0bb5c0800000000000000
+      internalID: -4198747983097279297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_13
+      rect:
+        serializedVersion: 2
+        x: 1925
+        y: 626
+        width: 54
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4a741ba638913240800000000000000
+      internalID: 4769760840927967818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_14
+      rect:
+        serializedVersion: 2
+        x: 1953
+        y: 587
+        width: 104
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31e78324a27eb9bf0800000000000000
+      internalID: -316405180113846765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_15
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 626
+        width: 7
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19a019cab40900c60800000000000000
+      internalID: 7782378810788350609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_16
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 588
+        width: 103
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8c3553dd83be2990800000000000000
+      internalID: -7408786915260547958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_17
+      rect:
+        serializedVersion: 2
+        x: 1267
+        y: 582
+        width: 45
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4987a332dcf9c6720800000000000000
+      internalID: 2840821168372086932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_18
+      rect:
+        serializedVersion: 2
+        x: 1571
+        y: 562
+        width: 115
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14d3f8e0cb355d4c0800000000000000
+      internalID: -4263409405073081023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_19
+      rect:
+        serializedVersion: 2
+        x: 1977
+        y: 642
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44ec79e1b41b83260800000000000000
+      internalID: 7077601750606663236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_20
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 562
+        width: 129
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e58fbedfa171d9e10800000000000000
+      internalID: 2205944797178099806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_21
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 608
+        width: 25
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fabdbcf25f0fdf70800000000000000
+      internalID: 9214100211725351666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_22
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 586
+        width: 56
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83c2c773788b1bd90800000000000000
+      internalID: -7083677847986099144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_23
+      rect:
+        serializedVersion: 2
+        x: 1001
+        y: 622
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 985eb09cbc0615220800000000000000
+      internalID: 2472864098770740617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_24
+      rect:
+        serializedVersion: 2
+        x: 1005
+        y: 620
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 748781e7f7f81dab0800000000000000
+      internalID: -4985045534783276985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_25
+      rect:
+        serializedVersion: 2
+        x: 1086
+        y: 610
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 587877697903aa150800000000000000
+      internalID: 5884569290735585157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_26
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 554
+        width: 67
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f74bfbd294740a10800000000000000
+      internalID: 1874751518997694456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_27
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 616
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 213663e64c261b520800000000000000
+      internalID: 2716060646083289874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_28
+      rect:
+        serializedVersion: 2
+        x: 1995
+        y: 612
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25a7027ec12603fa0800000000000000
+      internalID: -5823046441913779630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_29
+      rect:
+        serializedVersion: 2
+        x: 1997
+        y: 620
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc7510b6178523570800000000000000
+      internalID: 8444909495422900175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_30
+      rect:
+        serializedVersion: 2
+        x: 1999
+        y: 609
+        width: 11
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba45cd16c8e927df0800000000000000
+      internalID: -183910308994329429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_31
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 600
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 056832683e86d1c10800000000000000
+      internalID: 2025890733803931216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_32
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 596
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f96705ed80aa016e0800000000000000
+      internalID: -1868806890292480353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_33
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 602
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9655544b35a249630800000000000000
+      internalID: 3932814913596380521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_34
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 599
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe89d82ea108de9c0800000000000000
+      internalID: -3896317249647175441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_35
+      rect:
+        serializedVersion: 2
+        x: 1762
+        y: 588
+        width: 21
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dfcfebf0cd047dc0800000000000000
+      internalID: -3642271076124209197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_36
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 588
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 762ee3296b10920b0800000000000000
+      internalID: -5753065165339827609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_37
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 0
+        width: 343
+        height: 589
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 983e7ffc7030a3ca0800000000000000
+      internalID: -6036509018447944823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_38
+      rect:
+        serializedVersion: 2
+        x: 1237
+        y: 578
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 889519b1cd665a980800000000000000
+      internalID: -8528297223814817400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_39
+      rect:
+        serializedVersion: 2
+        x: 1245
+        y: 574
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a05be73b8a7ad440800000000000000
+      internalID: 4961412677859233958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_40
+      rect:
+        serializedVersion: 2
+        x: 1645
+        y: 572
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 190b204cc0513c310800000000000000
+      internalID: 1424005051751510161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_41
+      rect:
+        serializedVersion: 2
+        x: 1770
+        y: 572
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa3d7cd8d944459d0800000000000000
+      internalID: -2786526825956256854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_42
+      rect:
+        serializedVersion: 2
+        x: 1835
+        y: 23
+        width: 328
+        height: 566
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e56f4e7d5283d870800000000000000
+      internalID: 8706445842700002789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_43
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 563
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed31a5d5b5bd3a7c0800000000000000
+      internalID: -4061161253503364130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_44
+      rect:
+        serializedVersion: 2
+        x: 915
+        y: 562
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b6402f03b072e730800000000000000
+      internalID: 4026904931177875123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_45
+      rect:
+        serializedVersion: 2
+        x: 1207
+        y: 562
+        width: 23
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ea873d49c76a6d20800000000000000
+      internalID: 3272542193519659746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_46
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 562
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72ebf0f9c8d904830800000000000000
+      internalID: 4053412891923037735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_47
+      rect:
+        serializedVersion: 2
+        x: 1782
+        y: 570
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3577ce9512b67e890800000000000000
+      internalID: -7428851269337581741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_48
+      rect:
+        serializedVersion: 2
+        x: 1977
+        y: 548
+        width: 47
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c286b10978dc95fb0800000000000000
+      internalID: -4658466357416073172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_49
+      rect:
+        serializedVersion: 2
+        x: 2033
+        y: 576
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b805e5c275d29830800000000000000
+      internalID: 4076555301646829747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_50
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 562
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9672eb23a4b0de9a0800000000000000
+      internalID: -6202288698512496791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_51
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 562
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e80f776fc58bc24c0800000000000000
+      internalID: -4310868033888849778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_52
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 63
+        width: 333
+        height: 505
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9483f4c9fca974370800000000000000
+      internalID: 8306778254179514441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_53
+      rect:
+        serializedVersion: 2
+        x: 1233
+        y: 554
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee36ef66a63463ca0800000000000000
+      internalID: -6037564126170029074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_54
+      rect:
+        serializedVersion: 2
+        x: 1253
+        y: 560
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a98f1746eb6430920800000000000000
+      internalID: 2955283564028098714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_55
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 564
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e363176e2fc0b830800000000000000
+      internalID: 4084992660229809121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_56
+      rect:
+        serializedVersion: 2
+        x: 1613
+        y: 524
+        width: 55
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 980dc69c6d51b0050800000000000000
+      internalID: 5767727760024588425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_57
+      rect:
+        serializedVersion: 2
+        x: 1108
+        y: 23
+        width: 351
+        height: 534
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f61adfcbf6049b200800000000000000
+      internalID: 196258907423613295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_58
+      rect:
+        serializedVersion: 2
+        x: 1468
+        y: 33
+        width: 357
+        height: 518
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b21d4c38df44d6690800000000000000
+      internalID: -7607348339930771157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_59
+      rect:
+        serializedVersion: 2
+        x: 1681
+        y: 531
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c581e63658c4d0b10800000000000000
+      internalID: 1949298349503813724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Idle-Animation-Source-v2_60
+      rect:
+        serializedVersion: 2
+        x: 1518
+        y: 15
+        width: 12
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f002962687bc621f0800000000000000
+      internalID: -1069944143546343409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      WraithShaman-Idle-Animation-Source-v2_0: -7619216795617181575
+      WraithShaman-Idle-Animation-Source-v2_1: -5966988779101876296
+      WraithShaman-Idle-Animation-Source-v2_10: 5679516551914722174
+      WraithShaman-Idle-Animation-Source-v2_11: -8764801349932513526
+      WraithShaman-Idle-Animation-Source-v2_12: -4198747983097279297
+      WraithShaman-Idle-Animation-Source-v2_13: 4769760840927967818
+      WraithShaman-Idle-Animation-Source-v2_14: -316405180113846765
+      WraithShaman-Idle-Animation-Source-v2_15: 7782378810788350609
+      WraithShaman-Idle-Animation-Source-v2_16: -7408786915260547958
+      WraithShaman-Idle-Animation-Source-v2_17: 2840821168372086932
+      WraithShaman-Idle-Animation-Source-v2_18: -4263409405073081023
+      WraithShaman-Idle-Animation-Source-v2_19: 7077601750606663236
+      WraithShaman-Idle-Animation-Source-v2_2: 2354879938689246742
+      WraithShaman-Idle-Animation-Source-v2_20: 2205944797178099806
+      WraithShaman-Idle-Animation-Source-v2_21: 9214100211725351666
+      WraithShaman-Idle-Animation-Source-v2_22: -7083677847986099144
+      WraithShaman-Idle-Animation-Source-v2_23: 2472864098770740617
+      WraithShaman-Idle-Animation-Source-v2_24: -4985045534783276985
+      WraithShaman-Idle-Animation-Source-v2_25: 5884569290735585157
+      WraithShaman-Idle-Animation-Source-v2_26: 1874751518997694456
+      WraithShaman-Idle-Animation-Source-v2_27: 2716060646083289874
+      WraithShaman-Idle-Animation-Source-v2_28: -5823046441913779630
+      WraithShaman-Idle-Animation-Source-v2_29: 8444909495422900175
+      WraithShaman-Idle-Animation-Source-v2_3: -4251647729323869603
+      WraithShaman-Idle-Animation-Source-v2_30: -183910308994329429
+      WraithShaman-Idle-Animation-Source-v2_31: 2025890733803931216
+      WraithShaman-Idle-Animation-Source-v2_32: -1868806890292480353
+      WraithShaman-Idle-Animation-Source-v2_33: 3932814913596380521
+      WraithShaman-Idle-Animation-Source-v2_34: -3896317249647175441
+      WraithShaman-Idle-Animation-Source-v2_35: -3642271076124209197
+      WraithShaman-Idle-Animation-Source-v2_36: -5753065165339827609
+      WraithShaman-Idle-Animation-Source-v2_37: -6036509018447944823
+      WraithShaman-Idle-Animation-Source-v2_38: -8528297223814817400
+      WraithShaman-Idle-Animation-Source-v2_39: 4961412677859233958
+      WraithShaman-Idle-Animation-Source-v2_4: -4377398310323888130
+      WraithShaman-Idle-Animation-Source-v2_40: 1424005051751510161
+      WraithShaman-Idle-Animation-Source-v2_41: -2786526825956256854
+      WraithShaman-Idle-Animation-Source-v2_42: 8706445842700002789
+      WraithShaman-Idle-Animation-Source-v2_43: -4061161253503364130
+      WraithShaman-Idle-Animation-Source-v2_44: 4026904931177875123
+      WraithShaman-Idle-Animation-Source-v2_45: 3272542193519659746
+      WraithShaman-Idle-Animation-Source-v2_46: 4053412891923037735
+      WraithShaman-Idle-Animation-Source-v2_47: -7428851269337581741
+      WraithShaman-Idle-Animation-Source-v2_48: -4658466357416073172
+      WraithShaman-Idle-Animation-Source-v2_49: 4076555301646829747
+      WraithShaman-Idle-Animation-Source-v2_5: 5926939369782351437
+      WraithShaman-Idle-Animation-Source-v2_50: -6202288698512496791
+      WraithShaman-Idle-Animation-Source-v2_51: -4310868033888849778
+      WraithShaman-Idle-Animation-Source-v2_52: 8306778254179514441
+      WraithShaman-Idle-Animation-Source-v2_53: -6037564126170029074
+      WraithShaman-Idle-Animation-Source-v2_54: 2955283564028098714
+      WraithShaman-Idle-Animation-Source-v2_55: 4084992660229809121
+      WraithShaman-Idle-Animation-Source-v2_56: 5767727760024588425
+      WraithShaman-Idle-Animation-Source-v2_57: 196258907423613295
+      WraithShaman-Idle-Animation-Source-v2_58: -7607348339930771157
+      WraithShaman-Idle-Animation-Source-v2_59: 1949298349503813724
+      WraithShaman-Idle-Animation-Source-v2_6: 1916789658816665032
+      WraithShaman-Idle-Animation-Source-v2_60: -1069944143546343409
+      WraithShaman-Idle-Animation-Source-v2_7: -2902000302598964394
+      WraithShaman-Idle-Animation-Source-v2_8: -2689117961076249334
+      WraithShaman-Idle-Animation-Source-v2_9: -1516363029431965612
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -37,6 +37,13 @@ MonoBehaviour:
         spawnPointIndex: 1
         interval: 0.65
         delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: b9e88047c5e756f489377085151c6da5, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 1
+        spawnPointIndex: 1
+        interval: 0.8
+        delayAfterGroup: 0.35
       delayAfterSubWave: 1.5
   - waveType: 0
     hpMultiplier: 0.98
@@ -147,6 +154,13 @@ MonoBehaviour:
         count: 3
         spawnPointIndex: 1
         interval: 0.58
+        delayAfterGroup: 0.35
+      - data: {fileID: 11400000, guid: b9e88047c5e756f489377085151c6da5, type: 2}
+        hpMultiplier: 1
+        attackMultiplier: 1
+        count: 2
+        spawnPointIndex: 1
+        interval: 0.72
         delayAfterGroup: 0.35
       delayAfterSubWave: 1.5
   - waveType: 2

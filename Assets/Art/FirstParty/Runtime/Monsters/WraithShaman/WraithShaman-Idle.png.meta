@@ -1,0 +1,333 @@
+fileFormatVersion: 2
+guid: e7c83562646d6ac40880b0724b36468d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2820745631435745103
+    second: WraithShaman-Idle_0
+  - first:
+      213: 1621533587941563931
+    second: WraithShaman-Idle_1
+  - first:
+      213: -1056371591334726290
+    second: WraithShaman-Idle_2
+  - first:
+      213: -6098681742152515932
+    second: WraithShaman-Idle_3
+  - first:
+      213: 7882105336741574873
+    second: WraithShaman-Idle_4
+  - first:
+      213: 3475356337053149485
+    second: WraithShaman-Idle_5
+  - first:
+      213: -7840186876811868474
+    second: WraithShaman-Idle_6
+  - first:
+      213: -1254111671616306153
+    second: WraithShaman-Idle_7
+  - first:
+      213: 4946124435302183037
+    second: WraithShaman_Idle_0
+  - first:
+      213: 6363564900765176078
+    second: WraithShaman_Idle_1
+  - first:
+      213: 842204695747978993
+    second: WraithShaman_Idle_2
+  - first:
+      213: 3404767482738702106
+    second: WraithShaman_Idle_3
+  - first:
+      213: 8126990818208390345
+    second: WraithShaman_Idle_4
+  - first:
+      213: 8770734913212314725
+    second: WraithShaman_Idle_5
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WraithShaman_Idle_0
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 44
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5165571d2178fb4a88d3a928d6f02f0
+      internalID: 4946124435302183037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Idle_1
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 44
+        width: 21
+        height: 29
+      alignment: 9
+      pivot: {x: 0.42857143, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b239d42a84865e4fbf2a47de3f829bf
+      internalID: 6363564900765176078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Idle_2
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 44
+        width: 22
+        height: 29
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 301c0f851cff3984e96570abbb6fb230
+      internalID: 842204695747978993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Idle_3
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 44
+        width: 22
+        height: 29
+      alignment: 9
+      pivot: {x: 0.45454547, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 014924ea4943b72429c4ce6c5bcbc9f9
+      internalID: 3404767482738702106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Idle_4
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 44
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f0f5d50ad175a748af12f84aac6b1b2
+      internalID: 8126990818208390345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman_Idle_5
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 44
+        width: 24
+        height: 29
+      alignment: 9
+      pivot: {x: 0.5, y: 0.20689656}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e8f353769228f746980d4fda43ac815
+      internalID: 8770734913212314725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 77263565c9fb4b249bc42fa1cc56b0c6
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      WraithShaman-Idle_0: -2820745631435745103
+      WraithShaman-Idle_1: 1621533587941563931
+      WraithShaman-Idle_2: -1056371591334726290
+      WraithShaman-Idle_3: -6098681742152515932
+      WraithShaman-Idle_4: 7882105336741574873
+      WraithShaman-Idle_5: 3475356337053149485
+      WraithShaman-Idle_6: -7840186876811868474
+      WraithShaman-Idle_7: -1254111671616306153
+      WraithShaman_Idle_0: 4946124435302183037
+      WraithShaman_Idle_1: 6363564900765176078
+      WraithShaman_Idle_2: 842204695747978993
+      WraithShaman_Idle_3: 3404767482738702106
+      WraithShaman_Idle_4: 8126990818208390345
+      WraithShaman_Idle_5: 8770734913212314725
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

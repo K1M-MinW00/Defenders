@@ -1,0 +1,2171 @@
+fileFormatVersion: 2
+guid: 67b4bd02e84e2e4429160330bdb9fcf0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6800644728133535502
+    second: WraithShaman-Walk-Animation-Source-v2_0
+  - first:
+      213: 3482035940198864957
+    second: WraithShaman-Walk-Animation-Source-v2_1
+  - first:
+      213: 6605657726282804566
+    second: WraithShaman-Walk-Animation-Source-v2_2
+  - first:
+      213: 6293883844502077465
+    second: WraithShaman-Walk-Animation-Source-v2_3
+  - first:
+      213: -2635014901828006906
+    second: WraithShaman-Walk-Animation-Source-v2_4
+  - first:
+      213: 1134294815084227516
+    second: WraithShaman-Walk-Animation-Source-v2_5
+  - first:
+      213: 373574473819438221
+    second: WraithShaman-Walk-Animation-Source-v2_6
+  - first:
+      213: -7037915812103014027
+    second: WraithShaman-Walk-Animation-Source-v2_7
+  - first:
+      213: -4371942146099800088
+    second: WraithShaman-Walk-Animation-Source-v2_8
+  - first:
+      213: -459057194010466693
+    second: WraithShaman-Walk-Animation-Source-v2_9
+  - first:
+      213: 7004759483048340362
+    second: WraithShaman-Walk-Animation-Source-v2_10
+  - first:
+      213: -1864594254915626729
+    second: WraithShaman-Walk-Animation-Source-v2_11
+  - first:
+      213: -2449193768511023078
+    second: WraithShaman-Walk-Animation-Source-v2_12
+  - first:
+      213: 5247272826274166608
+    second: WraithShaman-Walk-Animation-Source-v2_13
+  - first:
+      213: -1815844106772582742
+    second: WraithShaman-Walk-Animation-Source-v2_14
+  - first:
+      213: -6664600035651461951
+    second: WraithShaman-Walk-Animation-Source-v2_15
+  - first:
+      213: 29930215365456754
+    second: WraithShaman-Walk-Animation-Source-v2_16
+  - first:
+      213: -3328217266993358952
+    second: WraithShaman-Walk-Animation-Source-v2_17
+  - first:
+      213: -6385815238711485759
+    second: WraithShaman-Walk-Animation-Source-v2_18
+  - first:
+      213: 740885712209771220
+    second: WraithShaman-Walk-Animation-Source-v2_19
+  - first:
+      213: -7079029083646537479
+    second: WraithShaman-Walk-Animation-Source-v2_20
+  - first:
+      213: 4542372702811381520
+    second: WraithShaman-Walk-Animation-Source-v2_21
+  - first:
+      213: -5226937509188736021
+    second: WraithShaman-Walk-Animation-Source-v2_22
+  - first:
+      213: -6209884178279294066
+    second: WraithShaman-Walk-Animation-Source-v2_23
+  - first:
+      213: -3575740868372040621
+    second: WraithShaman-Walk-Animation-Source-v2_24
+  - first:
+      213: 6357150211493130720
+    second: WraithShaman-Walk-Animation-Source-v2_25
+  - first:
+      213: 6518337426637082685
+    second: WraithShaman-Walk-Animation-Source-v2_26
+  - first:
+      213: -306724745506706189
+    second: WraithShaman-Walk-Animation-Source-v2_27
+  - first:
+      213: -380016839023553227
+    second: WraithShaman-Walk-Animation-Source-v2_28
+  - first:
+      213: -2744391409418203474
+    second: WraithShaman-Walk-Animation-Source-v2_29
+  - first:
+      213: -5449010119872785291
+    second: WraithShaman-Walk-Animation-Source-v2_30
+  - first:
+      213: -7883675858538104555
+    second: WraithShaman-Walk-Animation-Source-v2_31
+  - first:
+      213: 4407495082974257064
+    second: WraithShaman-Walk-Animation-Source-v2_32
+  - first:
+      213: 6615332499627449052
+    second: WraithShaman-Walk-Animation-Source-v2_33
+  - first:
+      213: 5482275729459497842
+    second: WraithShaman-Walk-Animation-Source-v2_34
+  - first:
+      213: -2859412385398223233
+    second: WraithShaman-Walk-Animation-Source-v2_35
+  - first:
+      213: 5316127884587123320
+    second: WraithShaman-Walk-Animation-Source-v2_36
+  - first:
+      213: -8944752609949457847
+    second: WraithShaman-Walk-Animation-Source-v2_37
+  - first:
+      213: 3312854109511653587
+    second: WraithShaman-Walk-Animation-Source-v2_38
+  - first:
+      213: -5617930684752523336
+    second: WraithShaman-Walk-Animation-Source-v2_39
+  - first:
+      213: 225883197354720707
+    second: WraithShaman-Walk-Animation-Source-v2_40
+  - first:
+      213: -8357420983457688079
+    second: WraithShaman-Walk-Animation-Source-v2_41
+  - first:
+      213: -8480131892402254369
+    second: WraithShaman-Walk-Animation-Source-v2_42
+  - first:
+      213: -4642720599405135681
+    second: WraithShaman-Walk-Animation-Source-v2_43
+  - first:
+      213: 5450628036865976404
+    second: WraithShaman-Walk-Animation-Source-v2_44
+  - first:
+      213: -6834918121142764529
+    second: WraithShaman-Walk-Animation-Source-v2_45
+  - first:
+      213: -5889101945014322452
+    second: WraithShaman-Walk-Animation-Source-v2_46
+  - first:
+      213: -3783684765401477518
+    second: WraithShaman-Walk-Animation-Source-v2_47
+  - first:
+      213: 4468111132511974530
+    second: WraithShaman-Walk-Animation-Source-v2_48
+  - first:
+      213: 6504744618381426354
+    second: WraithShaman-Walk-Animation-Source-v2_49
+  - first:
+      213: -7821920637457758607
+    second: WraithShaman-Walk-Animation-Source-v2_50
+  - first:
+      213: -4640810636953654363
+    second: WraithShaman-Walk-Animation-Source-v2_51
+  - first:
+      213: 1131270334617999771
+    second: WraithShaman-Walk-Animation-Source-v2_52
+  - first:
+      213: 4814511281219609041
+    second: WraithShaman-Walk-Animation-Source-v2_53
+  - first:
+      213: 109141823180889993
+    second: WraithShaman-Walk-Animation-Source-v2_54
+  - first:
+      213: 2666029792517260714
+    second: WraithShaman-Walk-Animation-Source-v2_55
+  - first:
+      213: 8302189369795031819
+    second: WraithShaman-Walk-Animation-Source-v2_56
+  - first:
+      213: 7504715668853424161
+    second: WraithShaman-Walk-Animation-Source-v2_57
+  - first:
+      213: -1874717340949918855
+    second: WraithShaman-Walk-Animation-Source-v2_58
+  - first:
+      213: -3170969241934099495
+    second: WraithShaman-Walk-Animation-Source-v2_59
+  - first:
+      213: 9141469142951279945
+    second: WraithShaman-Walk-Animation-Source-v2_60
+  - first:
+      213: -4522223339149519835
+    second: WraithShaman-Walk-Animation-Source-v2_61
+  - first:
+      213: -6651562909452904390
+    second: WraithShaman-Walk-Animation-Source-v2_62
+  - first:
+      213: -2056095605972426375
+    second: WraithShaman-Walk-Animation-Source-v2_63
+  - first:
+      213: 9142571937121627209
+    second: WraithShaman-Walk-Animation-Source-v2_64
+  - first:
+      213: -2892663139215326465
+    second: WraithShaman-Walk-Animation-Source-v2_65
+  - first:
+      213: 3101320353220047940
+    second: WraithShaman-Walk-Animation-Source-v2_66
+  - first:
+      213: 6599910112906279092
+    second: WraithShaman-Walk-Animation-Source-v2_67
+  - first:
+      213: 8197241016658360553
+    second: WraithShaman-Walk-Animation-Source-v2_68
+  - first:
+      213: 2251656191288489075
+    second: WraithShaman-Walk-Animation-Source-v2_69
+  - first:
+      213: 1710702124859509895
+    second: WraithShaman-Walk-Animation-Source-v2_70
+  - first:
+      213: 4272636659841833255
+    second: WraithShaman-Walk-Animation-Source-v2_71
+  - first:
+      213: 524622781178826508
+    second: WraithShaman-Walk-Animation-Source-v2_72
+  - first:
+      213: -4020862746078895174
+    second: WraithShaman-Walk-Animation-Source-v2_73
+  - first:
+      213: -9105325908213212809
+    second: WraithShaman-Walk-Animation-Source-v2_74
+  - first:
+      213: -8548608327681501301
+    second: WraithShaman-Walk-Animation-Source-v2_75
+  - first:
+      213: 6575705277372253987
+    second: WraithShaman-Walk-Animation-Source-v2_76
+  - first:
+      213: 7218686568475289492
+    second: WraithShaman-Walk-Animation-Source-v2_77
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_0
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 531
+        width: 150
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e074800595eb06e50800000000000000
+      internalID: 6800644728133535502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_1
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 514
+        width: 162
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3852be2d3da25030800000000000000
+      internalID: 3482035940198864957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_2
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 603
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65da6ea24b20cab50800000000000000
+      internalID: 6605657726282804566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_3
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 617
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 910cd19920e585750800000000000000
+      internalID: 6293883844502077465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_4
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 547
+        width: 76
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60c4eae58eb8e6bd0800000000000000
+      internalID: -2635014901828006906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_5
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 547
+        width: 196
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbba9a3ef13ddbf00800000000000000
+      internalID: 1134294815084227516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_6
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 583
+        width: 57
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8c392131043f2500800000000000000
+      internalID: 373574473819438221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_7
+      rect:
+        serializedVersion: 2
+        x: 1342
+        y: 543
+        width: 182
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 579be7c7bdc445e90800000000000000
+      internalID: -7037915812103014027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_8
+      rect:
+        serializedVersion: 2
+        x: 1726
+        y: 587
+        width: 57
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e7992b18cdb353c0800000000000000
+      internalID: -4371942146099800088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_9
+      rect:
+        serializedVersion: 2
+        x: 1784
+        y: 561
+        width: 43
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b762b6b0ae911a9f0800000000000000
+      internalID: -459057194010466693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_10
+      rect:
+        serializedVersion: 2
+        x: 1832
+        y: 595
+        width: 42
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8b252413a7e53160800000000000000
+      internalID: 7004759483048340362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_11
+      rect:
+        serializedVersion: 2
+        x: 1881
+        y: 601
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71915897761af16e0800000000000000
+      internalID: -1864594254915626729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_12
+      rect:
+        serializedVersion: 2
+        x: 1903
+        y: 581
+        width: 45
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a18dcc17e37b20ed0800000000000000
+      internalID: -2449193768511023078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_13
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 515
+        width: 118
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 057b1a195de02d840800000000000000
+      internalID: 5247272826274166608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_14
+      rect:
+        serializedVersion: 2
+        x: 1109
+        y: 531
+        width: 74
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aae6558d763dcc6e0800000000000000
+      internalID: -1815844106772582742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_15
+      rect:
+        serializedVersion: 2
+        x: 1292
+        y: 561
+        width: 59
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cc50f004959283a0800000000000000
+      internalID: -6664600035651461951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_16
+      rect:
+        serializedVersion: 2
+        x: 1563
+        y: 579
+        width: 14
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 273b8ee4f555a6000800000000000000
+      internalID: 29930215365456754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_17
+      rect:
+        serializedVersion: 2
+        x: 1611
+        y: 561
+        width: 72
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8971a81870ccfc1d0800000000000000
+      internalID: -3328217266993358952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_18
+      rect:
+        serializedVersion: 2
+        x: 1822
+        y: 598
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca5357bfd60167a0800000000000000
+      internalID: -6385815238711485759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_19
+      rect:
+        serializedVersion: 2
+        x: 1969
+        y: 579
+        width: 78
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dafc6f31a7284a00800000000000000
+      internalID: 740885712209771220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_20
+      rect:
+        serializedVersion: 2
+        x: 2039
+        y: 591
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f0d6920e8c32cd90800000000000000
+      internalID: -7079029083646537479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_21
+      rect:
+        serializedVersion: 2
+        x: 2063
+        y: 587
+        width: 28
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01fd08c18efb90f30800000000000000
+      internalID: 4542372702811381520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_22
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 533
+        width: 57
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bebe3a567003677b0800000000000000
+      internalID: -5226937509188736021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_23
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 569
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8b1851cd3f02d9a0800000000000000
+      internalID: -6209884178279294066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_24
+      rect:
+        serializedVersion: 2
+        x: 1205
+        y: 494
+        width: 76
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35476d310aa606ec0800000000000000
+      internalID: -3575740868372040621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_25
+      rect:
+        serializedVersion: 2
+        x: 1569
+        y: 539
+        width: 29
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e1f8db8f62293850800000000000000
+      internalID: 6357150211493130720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_26
+      rect:
+        serializedVersion: 2
+        x: 1822
+        y: 569
+        width: 10
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3056d89a59c57a50800000000000000
+      internalID: 6518337426637082685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_27
+      rect:
+        serializedVersion: 2
+        x: 2047
+        y: 577
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fc2044187b4ebbf0800000000000000
+      internalID: -306724745506706189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_28
+      rect:
+        serializedVersion: 2
+        x: 2053
+        y: 571
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5359555c2b8e9baf0800000000000000
+      internalID: -380016839023553227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_29
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 518
+        width: 82
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eae8ef4bd86f9e9d0800000000000000
+      internalID: -2744391409418203474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_30
+      rect:
+        serializedVersion: 2
+        x: 1043
+        y: 544
+        width: 31
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57459738a2a3164b0800000000000000
+      internalID: -5449010119872785291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_31
+      rect:
+        serializedVersion: 2
+        x: 1262
+        y: 543
+        width: 27
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 519738f739e879290800000000000000
+      internalID: -7883675858538104555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_32
+      rect:
+        serializedVersion: 2
+        x: 1437
+        y: 508
+        width: 61
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8af16f11d619a2d30800000000000000
+      internalID: 4407495082974257064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_33
+      rect:
+        serializedVersion: 2
+        x: 1485
+        y: 541
+        width: 13
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cda146fdbd16ecb50800000000000000
+      internalID: 6615332499627449052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_34
+      rect:
+        serializedVersion: 2
+        x: 1501
+        y: 547
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27bcd27cab4f41c40800000000000000
+      internalID: 5482275729459497842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_35
+      rect:
+        serializedVersion: 2
+        x: 1631
+        y: 539
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7e8cf5d5935158d0800000000000000
+      internalID: -2859412385398223233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_36
+      rect:
+        serializedVersion: 2
+        x: 1635
+        y: 63
+        width: 263
+        height: 493
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8724d5d152ea6c940800000000000000
+      internalID: 5316127884587123320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_37
+      rect:
+        serializedVersion: 2
+        x: 1774
+        y: 536
+        width: 11
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 942e63084eaddd380800000000000000
+      internalID: -8944752609949457847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_38
+      rect:
+        serializedVersion: 2
+        x: 1804
+        y: 550
+        width: 13
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d89226a24f99fd20800000000000000
+      internalID: 3312854109511653587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_39
+      rect:
+        serializedVersion: 2
+        x: 1838
+        y: 531
+        width: 12
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bf0f8aaec91902b0800000000000000
+      internalID: -5617930684752523336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_40
+      rect:
+        serializedVersion: 2
+        x: 2023
+        y: 526
+        width: 49
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cdbe0b329f722300800000000000000
+      internalID: 225883197354720707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_41
+      rect:
+        serializedVersion: 2
+        x: 2072
+        y: 533
+        width: 35
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f5db9225e9740c80800000000000000
+      internalID: -8357420983457688079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_42
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 284
+        height: 538
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdd07e839f4805a80800000000000000
+      internalID: -8480131892402254369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_43
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 530
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb87119863eb19fb0800000000000000
+      internalID: -4642720599405135681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_44
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 521
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4586e24225584ab40800000000000000
+      internalID: 5450628036865976404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_45
+      rect:
+        serializedVersion: 2
+        x: 836
+        y: 15
+        width: 286
+        height: 534
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0cb7688e2e7521a0800000000000000
+      internalID: -6834918121142764529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_46
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 509
+        width: 34
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ceafb599bf4b54ea0800000000000000
+      internalID: -5889101945014322452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_47
+      rect:
+        serializedVersion: 2
+        x: 1296
+        y: 490
+        width: 40
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27e0030b0c6ad7bc0800000000000000
+      internalID: -3783684765401477518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_48
+      rect:
+        serializedVersion: 2
+        x: 1535
+        y: 531
+        width: 25
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2843856e66be10e30800000000000000
+      internalID: 4468111132511974530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_49
+      rect:
+        serializedVersion: 2
+        x: 1784
+        y: 535
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2be324d44ce754a50800000000000000
+      internalID: 6504744618381426354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_50
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 533
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 176880f5f94f27390800000000000000
+      internalID: -7821920637457758607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_51
+      rect:
+        serializedVersion: 2
+        x: 1897
+        y: 55
+        width: 256
+        height: 493
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5abe5825057889fb0800000000000000
+      internalID: -4640810636953654363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_52
+      rect:
+        serializedVersion: 2
+        x: 2064
+        y: 533
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b99d7d7206413bf00800000000000000
+      internalID: 1131270334617999771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_53
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 84
+        width: 263
+        height: 434
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d1a43c708490d240800000000000000
+      internalID: 4814511281219609041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_54
+      rect:
+        serializedVersion: 2
+        x: 571
+        y: 17
+        width: 266
+        height: 517
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98fd5d0f8efb38100800000000000000
+      internalID: 109141823180889993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_55
+      rect:
+        serializedVersion: 2
+        x: 1163
+        y: 490
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa5899798f3aff420800000000000000
+      internalID: 2666029792517260714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_56
+      rect:
+        serializedVersion: 2
+        x: 1185
+        y: 504
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0338a4be3d473370800000000000000
+      internalID: 8302189369795031819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_57
+      rect:
+        serializedVersion: 2
+        x: 1517
+        y: 514
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 120015e932b162860800000000000000
+      internalID: 7504715668853424161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_58
+      rect:
+        serializedVersion: 2
+        x: 1533
+        y: 512
+        width: 27
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97b4a66d28aabf5e0800000000000000
+      internalID: -1874717340949918855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_59
+      rect:
+        serializedVersion: 2
+        x: 1203
+        y: 502
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9db04d466447ef3d0800000000000000
+      internalID: -3170969241934099495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_60
+      rect:
+        serializedVersion: 2
+        x: 1212
+        y: 500
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94d3ece70c50dde70800000000000000
+      internalID: 9141469142951279945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_61
+      rect:
+        serializedVersion: 2
+        x: 1352
+        y: 25
+        width: 262
+        height: 485
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 524130335d5dd31c0800000000000000
+      internalID: -4522223339149519835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_62
+      rect:
+        serializedVersion: 2
+        x: 1465
+        y: 504
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3855ec76c6e0b3a0800000000000000
+      internalID: -6651562909452904390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_63
+      rect:
+        serializedVersion: 2
+        x: 530
+        y: 132
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 971a5c5a0f74773e0800000000000000
+      internalID: -2056095605972426375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_64
+      rect:
+        serializedVersion: 2
+        x: 1091
+        y: 128
+        width: 262
+        height: 365
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94ce695ccb0f0ee70800000000000000
+      internalID: 9142571937121627209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_65
+      rect:
+        serializedVersion: 2
+        x: 1300
+        y: 112
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff2443c63323bd7d0800000000000000
+      internalID: -2892663139215326465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_66
+      rect:
+        serializedVersion: 2
+        x: 1595
+        y: 126
+        width: 14
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 444be540e6a1a0b20800000000000000
+      internalID: 3101320353220047940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_67
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 81
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b87945a747979b50800000000000000
+      internalID: 6599910112906279092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_68
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 77
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e8fe28164372c170800000000000000
+      internalID: 8197241016658360553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_69
+      rect:
+        serializedVersion: 2
+        x: 1611
+        y: 86
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3743f0e406d7f3f10800000000000000
+      internalID: 2251656191288489075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_70
+      rect:
+        serializedVersion: 2
+        x: 1613
+        y: 82
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78cc1c4d482adb710800000000000000
+      internalID: 1710702124859509895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_71
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 79
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7291f2c97647b4b30800000000000000
+      internalID: 4272636659841833255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_72
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 53
+        width: 15
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0fcd31d3a5d74700800000000000000
+      internalID: 524622781178826508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_73
+      rect:
+        serializedVersion: 2
+        x: 1282
+        y: 53
+        width: 25
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab3ad59c2a60338c0800000000000000
+      internalID: -4020862746078895174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_74
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 71
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7795acc145263a180800000000000000
+      internalID: -9105325908213212809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_75
+      rect:
+        serializedVersion: 2
+        x: 1953
+        y: 65
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b871998b40e3d5980800000000000000
+      internalID: -8548608327681501301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_76
+      rect:
+        serializedVersion: 2
+        x: 1121
+        y: 49
+        width: 21
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3274f653c19914b50800000000000000
+      internalID: 6575705277372253987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WraithShaman-Walk-Animation-Source-v2_77
+      rect:
+        serializedVersion: 2
+        x: 1846
+        y: 63
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4976ad2103ded2460800000000000000
+      internalID: 7218686568475289492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      WraithShaman-Walk-Animation-Source-v2_0: 6800644728133535502
+      WraithShaman-Walk-Animation-Source-v2_1: 3482035940198864957
+      WraithShaman-Walk-Animation-Source-v2_10: 7004759483048340362
+      WraithShaman-Walk-Animation-Source-v2_11: -1864594254915626729
+      WraithShaman-Walk-Animation-Source-v2_12: -2449193768511023078
+      WraithShaman-Walk-Animation-Source-v2_13: 5247272826274166608
+      WraithShaman-Walk-Animation-Source-v2_14: -1815844106772582742
+      WraithShaman-Walk-Animation-Source-v2_15: -6664600035651461951
+      WraithShaman-Walk-Animation-Source-v2_16: 29930215365456754
+      WraithShaman-Walk-Animation-Source-v2_17: -3328217266993358952
+      WraithShaman-Walk-Animation-Source-v2_18: -6385815238711485759
+      WraithShaman-Walk-Animation-Source-v2_19: 740885712209771220
+      WraithShaman-Walk-Animation-Source-v2_2: 6605657726282804566
+      WraithShaman-Walk-Animation-Source-v2_20: -7079029083646537479
+      WraithShaman-Walk-Animation-Source-v2_21: 4542372702811381520
+      WraithShaman-Walk-Animation-Source-v2_22: -5226937509188736021
+      WraithShaman-Walk-Animation-Source-v2_23: -6209884178279294066
+      WraithShaman-Walk-Animation-Source-v2_24: -3575740868372040621
+      WraithShaman-Walk-Animation-Source-v2_25: 6357150211493130720
+      WraithShaman-Walk-Animation-Source-v2_26: 6518337426637082685
+      WraithShaman-Walk-Animation-Source-v2_27: -306724745506706189
+      WraithShaman-Walk-Animation-Source-v2_28: -380016839023553227
+      WraithShaman-Walk-Animation-Source-v2_29: -2744391409418203474
+      WraithShaman-Walk-Animation-Source-v2_3: 6293883844502077465
+      WraithShaman-Walk-Animation-Source-v2_30: -5449010119872785291
+      WraithShaman-Walk-Animation-Source-v2_31: -7883675858538104555
+      WraithShaman-Walk-Animation-Source-v2_32: 4407495082974257064
+      WraithShaman-Walk-Animation-Source-v2_33: 6615332499627449052
+      WraithShaman-Walk-Animation-Source-v2_34: 5482275729459497842
+      WraithShaman-Walk-Animation-Source-v2_35: -2859412385398223233
+      WraithShaman-Walk-Animation-Source-v2_36: 5316127884587123320
+      WraithShaman-Walk-Animation-Source-v2_37: -8944752609949457847
+      WraithShaman-Walk-Animation-Source-v2_38: 3312854109511653587
+      WraithShaman-Walk-Animation-Source-v2_39: -5617930684752523336
+      WraithShaman-Walk-Animation-Source-v2_4: -2635014901828006906
+      WraithShaman-Walk-Animation-Source-v2_40: 225883197354720707
+      WraithShaman-Walk-Animation-Source-v2_41: -8357420983457688079
+      WraithShaman-Walk-Animation-Source-v2_42: -8480131892402254369
+      WraithShaman-Walk-Animation-Source-v2_43: -4642720599405135681
+      WraithShaman-Walk-Animation-Source-v2_44: 5450628036865976404
+      WraithShaman-Walk-Animation-Source-v2_45: -6834918121142764529
+      WraithShaman-Walk-Animation-Source-v2_46: -5889101945014322452
+      WraithShaman-Walk-Animation-Source-v2_47: -3783684765401477518
+      WraithShaman-Walk-Animation-Source-v2_48: 4468111132511974530
+      WraithShaman-Walk-Animation-Source-v2_49: 6504744618381426354
+      WraithShaman-Walk-Animation-Source-v2_5: 1134294815084227516
+      WraithShaman-Walk-Animation-Source-v2_50: -7821920637457758607
+      WraithShaman-Walk-Animation-Source-v2_51: -4640810636953654363
+      WraithShaman-Walk-Animation-Source-v2_52: 1131270334617999771
+      WraithShaman-Walk-Animation-Source-v2_53: 4814511281219609041
+      WraithShaman-Walk-Animation-Source-v2_54: 109141823180889993
+      WraithShaman-Walk-Animation-Source-v2_55: 2666029792517260714
+      WraithShaman-Walk-Animation-Source-v2_56: 8302189369795031819
+      WraithShaman-Walk-Animation-Source-v2_57: 7504715668853424161
+      WraithShaman-Walk-Animation-Source-v2_58: -1874717340949918855
+      WraithShaman-Walk-Animation-Source-v2_59: -3170969241934099495
+      WraithShaman-Walk-Animation-Source-v2_6: 373574473819438221
+      WraithShaman-Walk-Animation-Source-v2_60: 9141469142951279945
+      WraithShaman-Walk-Animation-Source-v2_61: -4522223339149519835
+      WraithShaman-Walk-Animation-Source-v2_62: -6651562909452904390
+      WraithShaman-Walk-Animation-Source-v2_63: -2056095605972426375
+      WraithShaman-Walk-Animation-Source-v2_64: 9142571937121627209
+      WraithShaman-Walk-Animation-Source-v2_65: -2892663139215326465
+      WraithShaman-Walk-Animation-Source-v2_66: 3101320353220047940
+      WraithShaman-Walk-Animation-Source-v2_67: 6599910112906279092
+      WraithShaman-Walk-Animation-Source-v2_68: 8197241016658360553
+      WraithShaman-Walk-Animation-Source-v2_69: 2251656191288489075
+      WraithShaman-Walk-Animation-Source-v2_7: -7037915812103014027
+      WraithShaman-Walk-Animation-Source-v2_70: 1710702124859509895
+      WraithShaman-Walk-Animation-Source-v2_71: 4272636659841833255
+      WraithShaman-Walk-Animation-Source-v2_72: 524622781178826508
+      WraithShaman-Walk-Animation-Source-v2_73: -4020862746078895174
+      WraithShaman-Walk-Animation-Source-v2_74: -9105325908213212809
+      WraithShaman-Walk-Animation-Source-v2_75: -8548608327681501301
+      WraithShaman-Walk-Animation-Source-v2_76: 6575705277372253987
+      WraithShaman-Walk-Animation-Source-v2_77: 7218686568475289492
+      WraithShaman-Walk-Animation-Source-v2_8: -4371942146099800088
+      WraithShaman-Walk-Animation-Source-v2_9: -459057194010466693
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
