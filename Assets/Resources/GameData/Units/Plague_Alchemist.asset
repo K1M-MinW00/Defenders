@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cd2ef374427a441ba114976adb758d, type: 3}
+  m_Name: Plague_Alchemist
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDataSO
+  unitId: unit_plague_alchemist
+  displayName: "\uC5ED\uBCD1 \uC5F0\uAE08\uC220\uC0AC"
+  icon: {fileID: -5011153527255102356, guid: 27eead260b3105d47b170db5632b221f, type: 3}
+  rarity: 3
+  unitPrefab: {fileID: 5097564104609807795, guid: ea670b6fdd9b66e4e97819211e829ff2, type: 3}
+  attackSound:
+    clip: {fileID: 0}
+    volume: 1
+  hitSound:
+    clip: {fileID: 0}
+    volume: 1
+  passiveSkill: {fileID: 11400000, guid: 44a2a1bcf662590419a73f3a0064f7bd, type: 2}
+  activeSkill: {fileID: 11400000, guid: 7bfc4e5858a468b4e9f552627717e051, type: 2}
+  baseStats:
+    Attack: 42
+    MaxHp: 320
+    AttackPerSec: 0.85
+    DetectRange: 5.5
+    CritChance: 0.08
+    CritDamage: 1.5
+    EnergyRecovery: 11
+    DamageReduction: 0
+  maxLevel: 50
+  attackGrowthValue: 2
+  hpGrowthValue: 10
+  starAttackMultipliers:
+  - 1
+  - 1.35
+  - 1.8
+  - 2.4
+  starHpMultipliers:
+  - 1
+  - 1.25
+  - 1.6
+  - 2.05
+  starDetectRangeMultipliers:
+  - 1
+  - 1.03
+  - 1.06
+  - 1.1
+  starAttackPerSecondMultipliers:
+  - 1
+  - 1.05
+  - 1.1
+  - 1.15
+  promotionCost:
+  - MaterialId: material_prom_1
+    Count: 5
+  - MaterialId: material_prom_2
+    Count: 10
+  - MaterialId: material_prom_3
+    Count: 15
+  - MaterialId: material_prom_4
+    Count: 20
+  limitBreaks:
+  - statType: 0
+    value: 10
+    description: "\uACF5\uACA9\uB825 10% \uC99D\uAC00"
+  - statType: 6
+    value: 10
+    description: "\uC5D0\uB108\uC9C0 \uD68C\uBCF5 10% \uC99D\uAC00"
+  - statType: 4
+    value: 15
+    description: "\uCE58\uBA85\uD0C0 \uD655\uB960 15% \uC99D\uAC00"
+  - statType: 2
+    value: 10
+    description: "\uACF5\uACA9 \uC18D\uB3C4 10% \uC99D\uAC00"
+  - statType: 5
+    value: 15
+    description: "\uCE58\uBA85\uD0C0 \uD53C\uD574 15% \uC99D\uAC00"

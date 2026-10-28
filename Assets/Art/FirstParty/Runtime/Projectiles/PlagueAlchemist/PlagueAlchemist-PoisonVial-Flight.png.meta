@@ -1,0 +1,359 @@
+fileFormatVersion: 2
+guid: b9254e5a3bf538c4293bd64c18a98e08
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -206382208005479850
+    second: PlagueAlchemist-PoisonVial-Flight_0
+  - first:
+      213: -1658492065149557428
+    second: PlagueAlchemist-PoisonVial-Flight_1
+  - first:
+      213: 6683909970680855434
+    second: PlagueAlchemist-PoisonVial-Flight_2
+  - first:
+      213: 5693766912584287633
+    second: PlagueAlchemist-PoisonVial-Flight_3
+  - first:
+      213: 8697261184423042096
+    second: PlagueAlchemist-PoisonVial-Flight_4
+  - first:
+      213: 6483026812274314429
+    second: PlagueAlchemist-PoisonVial-Flight_5
+  - first:
+      213: -4729451740752616621
+    second: PlagueAlchemist-PoisonVial-Flight_6
+  - first:
+      213: -4946608995321411696
+    second: PlagueAlchemist-PoisonVial-Flight_7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_0
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 46
+        width: 7
+        height: 8
+      alignment: 9
+      pivot: {x: 0.42857143, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41be7d4c7aed1b749847d630d7de1503
+      internalID: -164927222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_1
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 46
+        width: 8
+        height: 8
+      alignment: 9
+      pivot: {x: 0.375, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df25fb75fee7e0b46bba87fddea730d9
+      internalID: -988709754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_2
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 46
+        width: 8
+        height: 7
+      alignment: 9
+      pivot: {x: 0.375, y: 0.5714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c2891054881f484f8240eb69515704d
+      internalID: -1547734349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_3
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 45
+        width: 8
+        height: 8
+      alignment: 9
+      pivot: {x: 0.375, y: 0.625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4232887536a8c5e4e8c21165b95b7f49
+      internalID: 714606987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_4
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 45
+        width: 7
+        height: 8
+      alignment: 9
+      pivot: {x: 0.42857143, y: 0.625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db8967ade9ddb8047babd50c8879d7e4
+      internalID: 1551101705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_5
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 45
+        width: 8
+        height: 8
+      alignment: 9
+      pivot: {x: 0.5, y: 0.625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7195870ede1b2d343a197a8f0554e78d
+      internalID: 1908190858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_6
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 46
+        width: 8
+        height: 7
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c352dc33aaeb274ea8554a639b6de7e
+      internalID: -107010741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_PoisonVialFlight_7
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 46
+        width: 8
+        height: 8
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f20fbb1a8676bd46903e50cad9e1e77
+      internalID: 2086451092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 536bea105724903458b1de9c6fe77019
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      PlagueAlchemist-PoisonVial-Flight_0: -206382208005479850
+      PlagueAlchemist-PoisonVial-Flight_1: -1658492065149557428
+      PlagueAlchemist-PoisonVial-Flight_2: 6683909970680855434
+      PlagueAlchemist-PoisonVial-Flight_3: 5693766912584287633
+      PlagueAlchemist-PoisonVial-Flight_4: 8697261184423042096
+      PlagueAlchemist-PoisonVial-Flight_5: 6483026812274314429
+      PlagueAlchemist-PoisonVial-Flight_6: -4729451740752616621
+      PlagueAlchemist-PoisonVial-Flight_7: -4946608995321411696
+      PlagueAlchemist_PoisonVialFlight_0: -164927222
+      PlagueAlchemist_PoisonVialFlight_1: -988709754
+      PlagueAlchemist_PoisonVialFlight_2: -1547734349
+      PlagueAlchemist_PoisonVialFlight_3: 714606987
+      PlagueAlchemist_PoisonVialFlight_4: 1551101705
+      PlagueAlchemist_PoisonVialFlight_5: 1908190858
+      PlagueAlchemist_PoisonVialFlight_6: -107010741
+      PlagueAlchemist_PoisonVialFlight_7: 2086451092
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

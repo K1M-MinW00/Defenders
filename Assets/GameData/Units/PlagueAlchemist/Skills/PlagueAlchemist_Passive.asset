@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1308368e53fa951488e3b270f62caf3c, type: 3}
+  m_Name: PlagueAlchemist_Passive
+  m_EditorClassIdentifier: Assembly-CSharp::SkillDataSO
+  skillName: "\uB3C5\uC131 \uCD95\uC801"
+  icon: {fileID: -5011153527255102356, guid: 27eead260b3105d47b170db5632b221f, type: 3}
+  skillType: 1
+  skillSound:
+    clip: {fileID: 0}
+    volume: 1
+  onHitStatusEffect:
+    enabled: 0
+    type: 0
+    chance: 1
+    duration: 1
+    magnitude: 0
+    magnitudeMode: 0
+    tickInterval: 1
+  upgrades:
+  - promotionLevel: 0
+    description: "\uAE30\uBCF8 \uACF5\uACA9\uC774 \uC911\uB3C5\uC744 \uBD80\uC5EC\uD558\uBA70
+      \uAC19\uC740 \uC801\uC744 \uC5F0\uC18D \uACF5\uACA9\uD558\uBA74 \uCD5C\uB300
+      3\uB2E8\uACC4\uAE4C\uC9C0 \uD53C\uD574\uAC00 \uC99D\uAC00\uD55C\uB2E4."
+  - promotionLevel: 2
+    description: "\uB3C5\uC131 \uCD95\uC801\uC758 \uCD5C\uB300 \uB2E8\uACC4\uAC00
+      4\uB2E8\uACC4\uB85C \uC99D\uAC00\uD55C\uB2E4."
+  - promotionLevel: 4
+    description: "\uC804\uD22C \uC2DC\uC791 \uC2DC \uC5D0\uB108\uC9C0\uB97C 50% \uD68D\uB4DD\uD55C\uB2E4."

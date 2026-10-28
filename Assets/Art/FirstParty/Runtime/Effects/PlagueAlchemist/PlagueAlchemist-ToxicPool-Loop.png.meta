@@ -1,0 +1,359 @@
+fileFormatVersion: 2
+guid: 52597b0e4af83c64194672a1548a614f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1202579305260367061
+    second: PlagueAlchemist-ToxicPool-Loop_0
+  - first:
+      213: 6313749326641489724
+    second: PlagueAlchemist-ToxicPool-Loop_1
+  - first:
+      213: 7822763858446623608
+    second: PlagueAlchemist-ToxicPool-Loop_2
+  - first:
+      213: 5135235099741826730
+    second: PlagueAlchemist-ToxicPool-Loop_3
+  - first:
+      213: 2851361220432591990
+    second: PlagueAlchemist-ToxicPool-Loop_4
+  - first:
+      213: 3367871631581664640
+    second: PlagueAlchemist-ToxicPool-Loop_5
+  - first:
+      213: -1980104722310302918
+    second: PlagueAlchemist-ToxicPool-Loop_6
+  - first:
+      213: -6283393842302722429
+    second: PlagueAlchemist-ToxicPool-Loop_7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_0
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 41
+        width: 42
+        height: 11
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8181818}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c4e540ac432e194d8c6d89fb1206998
+      internalID: 1008365644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_1
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 41
+        width: 42
+        height: 11
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8181818}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4103a6d23a2d86f4da6e8a1af19f73b6
+      internalID: 1483666495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_2
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 41
+        width: 42
+        height: 12
+      alignment: 9
+      pivot: {x: 0.5, y: 0.75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef0388e5b1fc5bb488c8f2388d926acb
+      internalID: 1715931869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_3
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 41
+        width: 42
+        height: 11
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8181818}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07c4ac20de1be5648ba82a8666c184ca
+      internalID: -1421205333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_4
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 41
+        width: 42
+        height: 12
+      alignment: 9
+      pivot: {x: 0.5, y: 0.75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a6a50dd3c99c4543b4c711ee8f9a7fc
+      internalID: -1322374809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_5
+      rect:
+        serializedVersion: 2
+        x: 529
+        y: 41
+        width: 42
+        height: 11
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8181818}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee92008386928714ca02fcf52a035a60
+      internalID: 314086497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_6
+      rect:
+        serializedVersion: 2
+        x: 629
+        y: 41
+        width: 42
+        height: 12
+      alignment: 9
+      pivot: {x: 0.5, y: 0.75}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5b0c76d21f361a4fb058adee9c26704
+      internalID: -32733979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlagueAlchemist_ToxicPoolLoop_7
+      rect:
+        serializedVersion: 2
+        x: 729
+        y: 41
+        width: 42
+        height: 11
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8181818}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c940e6a8a4d55da478913f49828f58d7
+      internalID: 1405471176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 7c28dfd053c6cc842980d9afe91a0d2e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      PlagueAlchemist-ToxicPool-Loop_0: 1202579305260367061
+      PlagueAlchemist-ToxicPool-Loop_1: 6313749326641489724
+      PlagueAlchemist-ToxicPool-Loop_2: 7822763858446623608
+      PlagueAlchemist-ToxicPool-Loop_3: 5135235099741826730
+      PlagueAlchemist-ToxicPool-Loop_4: 2851361220432591990
+      PlagueAlchemist-ToxicPool-Loop_5: 3367871631581664640
+      PlagueAlchemist-ToxicPool-Loop_6: -1980104722310302918
+      PlagueAlchemist-ToxicPool-Loop_7: -6283393842302722429
+      PlagueAlchemist_ToxicPoolLoop_0: 1008365644
+      PlagueAlchemist_ToxicPoolLoop_1: 1483666495
+      PlagueAlchemist_ToxicPoolLoop_2: 1715931869
+      PlagueAlchemist_ToxicPoolLoop_3: -1421205333
+      PlagueAlchemist_ToxicPoolLoop_4: -1322374809
+      PlagueAlchemist_ToxicPoolLoop_5: 314086497
+      PlagueAlchemist_ToxicPoolLoop_6: -32733979
+      PlagueAlchemist_ToxicPoolLoop_7: 1405471176
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
