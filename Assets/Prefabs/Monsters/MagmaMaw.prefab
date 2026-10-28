@@ -1,0 +1,209 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7789344883223449228
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5496853608822935764}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5496853608822935764
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7789344883223449228}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.8, y: 2.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8887191305144408995}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &8572341632485477687
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1662279240561831942, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Speed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1662279240561831942, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Height
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1662279240561831942, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Radius
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540078424007288543, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540078424007288543, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1802047329, guid: 0a653facff261f54eb777bcf0fa7e84b, type: 3}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916252732923675883, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4277420300358080374, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 22100000, guid: f1cee3c49f85cd1458b82da720a69422, type: 2}
+    - target: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Name
+      value: MagmaMaw
+      objectReference: {fileID: 0}
+    - target: {fileID: 8054379882903055387, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Radius
+      value: 4.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8054379882903055387, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      propertyPath: m_Offset.y
+      value: 2.4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 982547969679316628, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5496853608822935764}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1499499450941057485}
+    - targetCorrespondingSourceObject: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8798561816980920088}
+    - targetCorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8601527489577770275}
+  m_SourcePrefab: {fileID: 100100000, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+--- !u!1 &2746937242416340294 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5829918057703837809, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+  m_PrefabInstance: {fileID: 8572341632485477687}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8601527489577770275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2746937242416340294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa28e63f54b40139355edfdba6d26ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterAnimationEvent
+--- !u!1 &5339510349316278774 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4390678771801392321, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+  m_PrefabInstance: {fileID: 8572341632485477687}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1499499450941057485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5339510349316278774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7d261d847664ea4b807330b4cdcb589, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagmaMawAttack
+  useAnimationEvents: 1
+  firePoint: {fileID: 5496853608822935764}
+  smallFireballPrefab: {fileID: 2006321421972852244, guid: 316eee8fa8242264496fff6aa9d1aa28, type: 3}
+  largeMagmaBallPrefab: {fileID: 5523913685059259901, guid: e7271fb888eff4e4d9ede9b12c9ec259, type: 3}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  smallFireballSpeed: 8
+  tripleDamageMultiplier: 0.45
+  tripleInterval: 0.14
+  largeMagmaBallSpeed: 5
+  largeDamageMultiplier: 1.6
+  largeImpactRadius: 2.2
+  burnDuration: 3
+  burnDamageMultiplier: 0.12
+--- !u!114 &8798561816980920088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5339510349316278774}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5af075a798e664e82fcfc66ece98f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAreaAttackAbility
+  initialDelay: 3
+  cooldown: 8
+  priority: 0
+  targetSelection: 0
+  radius: 2
+  telegraphDuration: 2
+  recoveryDuration: 0.5
+  damageMultiplier: 1.5
+  telegraphPrefab: {fileID: 0}
+--- !u!4 &8887191305144408995 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 982547969679316628, guid: dfeb122772c18254f8351e18defbb0c1, type: 3}
+  m_PrefabInstance: {fileID: 8572341632485477687}
+  m_PrefabAsset: {fileID: 0}

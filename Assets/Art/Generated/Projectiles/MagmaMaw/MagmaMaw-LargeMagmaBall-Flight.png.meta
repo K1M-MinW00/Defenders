@@ -1,0 +1,305 @@
+fileFormatVersion: 2
+guid: 5f9388f4544c9b74e9cfd941758bef5e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -550380653611508726
+    second: MagmaMaw-LargeMagmaBall-Flight_0
+  - first:
+      213: 6114195885501566133
+    second: MagmaMaw-LargeMagmaBall-Flight_1
+  - first:
+      213: 690467193676132968
+    second: MagmaMaw-LargeMagmaBall-Flight_2
+  - first:
+      213: 6784489778205976091
+    second: MagmaMaw-LargeMagmaBall-Flight_3
+  - first:
+      213: 7812480700201646843
+    second: MagmaMaw-LargeMagmaBall-Flight_4
+  - first:
+      213: -2897293427318620354
+    second: MagmaMaw-LargeMagmaBall-Flight_5
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: MagmaMaw_LargeMagmaBall_0
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 21
+        width: 49
+        height: 38
+      alignment: 9
+      pivot: {x: 0.5714286, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd0a5b1ec37bab445bf4c5138590662b
+      internalID: 365473590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MagmaMaw_LargeMagmaBall_1
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 21
+        width: 49
+        height: 38
+      alignment: 9
+      pivot: {x: 0.53061223, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04b9a27a1349ab444b83e4714c2e3da8
+      internalID: -1113954360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MagmaMaw_LargeMagmaBall_2
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 21
+        width: 49
+        height: 38
+      alignment: 9
+      pivot: {x: 0.5510204, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 675421f5402ac214fa9eabd59b714125
+      internalID: 517364733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MagmaMaw_LargeMagmaBall_3
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 20
+        width: 50
+        height: 38
+      alignment: 9
+      pivot: {x: 0.54, y: 0.5263158}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc5c9f9096227c041a8372d99e4ba3bd
+      internalID: -1801624807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MagmaMaw_LargeMagmaBall_4
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 22
+        width: 52
+        height: 37
+      alignment: 9
+      pivot: {x: 0.5192308, y: 0.4864865}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e5822fff331fe941a78252914f5697c
+      internalID: 778359370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MagmaMaw_LargeMagmaBall_5
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 21
+        width: 48
+        height: 38
+      alignment: 9
+      pivot: {x: 0.5416667, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3123fcceeae26764790283cc8096d503
+      internalID: 457420681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 33c73c616004e96459a4f9fef145ebcc
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      MagmaMaw-LargeMagmaBall-Flight_0: -550380653611508726
+      MagmaMaw-LargeMagmaBall-Flight_1: 6114195885501566133
+      MagmaMaw-LargeMagmaBall-Flight_2: 690467193676132968
+      MagmaMaw-LargeMagmaBall-Flight_3: 6784489778205976091
+      MagmaMaw-LargeMagmaBall-Flight_4: 7812480700201646843
+      MagmaMaw-LargeMagmaBall-Flight_5: -2897293427318620354
+      MagmaMaw_LargeMagmaBall_0: 365473590
+      MagmaMaw_LargeMagmaBall_1: -1113954360
+      MagmaMaw_LargeMagmaBall_2: 517364733
+      MagmaMaw_LargeMagmaBall_3: -1801624807
+      MagmaMaw_LargeMagmaBall_4: 778359370
+      MagmaMaw_LargeMagmaBall_5: 457420681
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
