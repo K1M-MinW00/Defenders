@@ -85,7 +85,7 @@ public static class LobbyLevelUpSceneUtility
 
     private static Sprite LoadArrowSprite()
     {
-        Object[] sprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Art/ThirdParty/RPG/Images/UnitTab_Icons.png");
+        Object[] sprites = AssetDatabase.LoadAllAssetsAtPath("Assets/Art/UI/Atlases/UnitTabIcons.png");
         foreach (Object asset in sprites)
         {
             if (asset is Sprite candidate && candidate.name == "UnitTab_Icons_0")

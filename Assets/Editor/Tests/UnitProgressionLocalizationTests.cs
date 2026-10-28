@@ -31,7 +31,7 @@ public sealed class UnitProgressionLocalizationTests
     [TestCase("en", "Piercing Shot")]
     public void SkillName_UsesSelectedLocale(string localeCode, string expected)
     {
-        SkillDataSO skill = AssetDatabase.LoadAssetAtPath<SkillDataSO>("Assets/GameData/Skills/Archer_Active.asset");
+        SkillDataSO skill = AssetDatabase.LoadAssetAtPath<SkillDataSO>("Assets/GameData/Units/Archer/Skills/Archer_Active.asset");
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(localeCode);
         Assert.That(skill.LocalizedName, Is.EqualTo(expected));
     }

@@ -12,7 +12,7 @@ public static class TutorialSceneSetup
     private const string StartupScenePath = "Assets/Scenes/StartScene.unity";
     private const string LobbyScenePath = "Assets/Scenes/LobbyScene.unity";
     private const string SourceStagePath = "Assets/Resources/GameData/Stages/Stage_1_1.asset";
-    private const string SourceEconomyPath = "Assets/GameData/Economy/BaseConfig.asset";
+    private const string SourceEconomyPath = "Assets/GameData/Economy/Configs/BaseConfig.asset";
     private const string TutorialDataFolder = "Assets/GameData/Tutorial";
     private const string TutorialStagePath = TutorialDataFolder + "/Tutorial_FirstBattle.asset";
     private const string TutorialEconomyPath = TutorialDataFolder + "/Tutorial_Economy.asset";

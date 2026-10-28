@@ -71,6 +71,14 @@ public static class StageStringTableSetup
         new("monster.description.unavailable", "설명이 준비 중입니다.", "Description coming soon."),
         new("monster.info.title", "몬스터 정보", "Monster Information"),
         new("monster.info.empty", "이 웨이브에는 표시할 몬스터가 없습니다.", "There are no monsters to display for this wave."),
+        new("monster.info.mechanic.shield", "보호막", "Shield"),
+        new("monster.info.mechanic.area_attack", "광역 공격", "Area Attack"),
+        new("monster.info.mechanic.summon", "증원 소환", "Summon"),
+        new("monster.info.mechanic.enrage", "광폭화", "Enrage"),
+        new("monster.info.summary.skill", "스킬", "Skill"),
+        new("monster.info.summary.weakness", "약점", "Weak"),
+        new("monster.info.summary.resistance", "저항", "Resist"),
+        new("monster.info.summary.immunity", "면역", "Immune"),
         new("monster.info.boss_skills", "보스 스킬", "Boss Skills"),
         new("monster.info.area_attack", "• 예고 광역 공격", "• Telegraph Area Attack"),
         new("monster.info.shield", "• 보호막: HP {0}%에서 최대 HP의 {1}%", "• Shield: {1}% max HP at {0}% HP", true),
@@ -112,6 +120,7 @@ public static class StageStringTableSetup
         new("monster.name.Skeleton_Archer", "스켈레톤 궁수", "Skeleton Archer"),
         new("monster.name.Slime", "슬라임", "Slime"),
         new("monster.name.WereWolf", "늑대인간", "Werewolf"),
+        new("monster.name.Wraith_Shaman", "망령 주술사", "Wraith Shaman"),
         new("monster.description.Orc", "빠르게 돌진하는 근접 오크 전사", "A melee orc warrior that charges swiftly."),
         new("monster.description.Elite_Orc", "빠르고 강력한 정예 오크 전사", "A fast and powerful elite orc warrior."),
         new("monster.description.Armored_Orc", "단단한 갑옷과 강한 공격력을 지닌 오크", "An orc with heavy armor and powerful attacks."),
@@ -121,6 +130,7 @@ public static class StageStringTableSetup
         new("monster.description.Skeleton_Archer", "멀리서 화살을 쏘는 해골 궁수", "A skeleton archer that fires arrows from a distance."),
         new("monster.description.Slime", "빠르게 접근해 연속 공격하는 슬라임", "A slime that closes in quickly and attacks repeatedly."),
         new("monster.description.WereWolf", "빠르고 거센 연속 공격을 가하는 늑대인간", "A werewolf that unleashes fast, ferocious combinations."),
+        new("monster.description.Wraith_Shaman", "전열 뒤에서 영혼불을 발사하며 천천히 압박하는 튼튼한 중거리 언데드 주술사", "A durable mid-range undead shaman that pressures defenders with soulfire from behind the front line."),
     };
 
     public static void Configure(Locale korean, Locale english, string tablesDirectory)

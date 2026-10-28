@@ -97,7 +97,7 @@ public static class UnitProgressionStringTableSetup
         StringTable skillsEn = GetTable(LocalizationTables.Skills, korean, english, tablesDirectory, english);
         Set(skillsKo, "skill.effect.base", "기본 효과"); Set(skillsEn, "skill.effect.base", "Base Effect");
         Set(skillsKo, "skill.effect.promotion", "{0} 진급 효과", true); Set(skillsEn, "skill.effect.promotion", "Promotion {0} Effect", true);
-        foreach (string guid in AssetDatabase.FindAssets("t:SkillDataSO", new[] { "Assets/GameData/Skills" }))
+        foreach (string guid in AssetDatabase.FindAssets("t:SkillDataSO", new[] { "Assets/GameData/Units" }))
         {
             SkillDataSO skill = AssetDatabase.LoadAssetAtPath<SkillDataSO>(AssetDatabase.GUIDToAssetPath(guid));
             if (skill == null) continue;

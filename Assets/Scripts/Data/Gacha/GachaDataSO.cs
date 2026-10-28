@@ -29,11 +29,11 @@ public class GachaDataSO : ScriptableObject
     [Header("Pity")]
     [SerializeField] private int legendPityCount = 50;
 
-    [Header("Pools")]
-    [SerializeField] private List<UnitDataSO> normalPool = new();
-    [SerializeField] private List<UnitDataSO> rarePool = new();
-    [SerializeField] private List<UnitDataSO> epicPool = new();
-    [SerializeField] private List<UnitDataSO> legendPool = new();
+    // Editor-generated from the canonical UnitDataSO catalog. Do not maintain these by hand.
+    [SerializeField, HideInInspector] private List<UnitDataSO> normalPool = new();
+    [SerializeField, HideInInspector] private List<UnitDataSO> rarePool = new();
+    [SerializeField, HideInInspector] private List<UnitDataSO> epicPool = new();
+    [SerializeField, HideInInspector] private List<UnitDataSO> legendPool = new();
 
     [Header("Cost")]
     [SerializeField] private string ticketItemId;

@@ -21,8 +21,8 @@ public sealed class ShopValidationReport
 
 public static class ShopDataValidator
 {
-    private const string GroupPath = "Assets/GameData/Shops/ShopItems.asset";
-    private const string ProductFolder = "Assets/GameData/Shops/Products";
+    private const string GroupPath = "Assets/GameData/Economy/Shops/ShopItems.asset";
+    private const string ProductFolder = "Assets/GameData/Economy/Shops/Products";
     private const string PrefabFolder = "Assets/Prefabs/UI/Shop";
 
     [MenuItem("Tools/Defenders/Validate Shop Data")]
