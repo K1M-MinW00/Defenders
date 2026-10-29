@@ -57,6 +57,10 @@ public sealed class StageEntryFuelUseCaseTests
         public Task SaveProfileAsync(string userId, UserProfileData profile) => throw new NotSupportedException();
         public Task SaveProgressAsync(string userId, UserProgressData progress) => throw new NotSupportedException();
         public Task SaveRosterAsync(string userId, UserRosterData roster) => throw new NotSupportedException();
-        public Task SaveSectionsAsync(string userId, UserDataUpdate update) => throw new NotSupportedException();
+        public Task SaveSectionsAsync(string userId, UserDataUpdate update)
+        {
+            SaveCount++;
+            return Task.CompletedTask;
+        }
     }
 }

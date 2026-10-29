@@ -1,10 +1,21 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEngine.Localization.Settings;
 
 public sealed class EquipmentSystemTests
 {
     [OneTimeSetUp]
-    public void OneTimeSetUp() => GameConfig.Initialize();
+    public void OneTimeSetUp()
+    {
+        GameConfig.Initialize();
+        LocalizationSettings.InitializationOperation.WaitForCompletion();
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("ko");
+    }
 
     [Test]
     public void Equip_SwapsSameSlotAndKeepsSingleAuthoritativeInstance()
